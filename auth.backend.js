@@ -101,7 +101,7 @@ window.Auth = {
     await sb.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${BASE_URL}/2fa.html`,
+        redirectTo: `${BASE_URL}/tradex-auth.html?oauth=1`,
       },
     });
   },
