@@ -475,7 +475,22 @@ $('s2-next').addEventListener('click', async () => {
 
   if (error) { alert$('s2-err', error.message); return; }
   st.email = email;
-  goStep(3);
+  /* Show "check your email" message instead of step 3 */
+  setLoad(btn, false);
+  $('step-2').style.display = 'none';
+  $('step-2').insertAdjacentHTML('afterend', `
+    <div style="text-align:center;padding:2rem 1rem;animation:fadeIn 0.3s ease">
+      <div style="font-size:3rem;margin-bottom:1rem">📧</div>
+      <h2 style="font-family:var(--serif);font-size:1.4rem;font-weight:700;margin-bottom:0.6rem;color:var(--text)">Check your email!</h2>
+      <p style="color:var(--muted);font-size:0.9rem;line-height:1.7;margin-bottom:1.5rem">
+        We sent a confirmation link to<br>
+        <strong style="color:var(--text)">${email}</strong><br><br>
+        Click the link in the email to activate your account and log in.
+      </p>
+      <p style="color:var(--dim);font-size:0.78rem">Didn't get it? Check your spam folder or <button onclick="resendConfirmation('${email}')" style="background:none;border:none;color:var(--amber);font-size:0.78rem;cursor:pointer;font-family:var(--sans)">resend the email</button></p>
+    </div>
+  `);
+  return;
 });
 
 /* Step 3: method select */
@@ -522,11 +537,31 @@ document.querySelectorAll('[data-provider]').forEach(b =>
   b.addEventListener('click', () => api('loginWithOAuth', b.dataset.provider))
 );
 
+/* ── Resend confirmation ── */
+async function resendConfirmation(email) {
+  const { error } = await api('resendOtp', email, 'signup');
+  if (error) { alert('Failed to resend: ' + error.message); return; }
+  alert('Confirmation email resent! Check your inbox.');
+}
+
 /* ── Init ── */
 goStep(1);
 
 /* Auto-switch to signup tab if URL has #signup */
 if (window.location.hash === '#signup') switchTab('signup');
+
+/* Handle email confirmation redirect — ?confirmed=1 */
+if (window.location.search.includes('confirmed=1')) {
+  goStep(1);
+  switchTab('login');
+  /* Show a success message */
+  const alert = document.createElement('div');
+  alert.style.cssText = 'background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);color:#6EE7B7;padding:0.75rem 1rem;border-radius:10px;font-size:0.85rem;margin-bottom:1rem;text-align:center';
+  alert.textContent = '✅ Email confirmed! Please log in to continue.';
+  const loginForm = document.querySelector('.login-form, #login-form, form');
+  if (loginForm) loginForm.prepend(alert);
+  else document.querySelector('.wrap, .card, .auth-card')?.prepend(alert);
+}
 </script>
 </body>
 </html>

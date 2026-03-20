@@ -59,7 +59,10 @@ window.Auth = {
     const { data, error } = await sb.auth.signUp({
       email,
       password,
-      options: { data: meta },
+      options: {
+        data: meta,
+        emailRedirectTo: `${BASE_URL}/tradex-auth.html?confirmed=1`,
+      },
     });
 
     if (error || !data.user) return { error };
