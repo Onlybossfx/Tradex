@@ -96,11 +96,15 @@ window.Auth = {
      Called by: 2fa.html
      Verifies 6-digit email or SMS code.
   ───────────────────────────────────────────── */
-  verifyOtp: async (email, token) => {
+  verifyOtp: async (email, token, context = 'login') => {
+    /* type must match what was sent:
+       signup flow  → 'signup'
+       login/other  → 'email'  */
+    const type = context === 'signup' ? 'signup' : 'email';
     const { error } = await sb.auth.verifyOtp({
       email,
       token,
-      type: 'email',
+      type,
     });
     return { error };
   },
@@ -109,9 +113,10 @@ window.Auth = {
      RESEND OTP
      Called by: 2fa.html
   ───────────────────────────────────────────── */
-  resendOtp: async (email) => {
+  resendOtp: async (email, context = 'login') => {
+    const type = context === 'signup' ? 'signup' : 'email';
     const { error } = await sb.auth.resend({
-      type:  'signup',
+      type,
       email,
     });
     return { error };

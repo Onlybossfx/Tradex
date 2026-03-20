@@ -236,7 +236,7 @@ async function verify() {
   const btn = $('verify-btn');
   setLoad(btn, true); clearAlerts();
 
-  const { error } = await api('verifyOtp', email, token);
+  const { error } = await api('verifyOtp', email, token, context);
 
   setLoad(btn, false);
 
@@ -272,7 +272,7 @@ function startTimer() {
 }
 
 $('resend-btn').addEventListener('click', async () => {
-  const { error } = await api('resendOtp', email);
+  const { error } = await api('resendOtp', email, context);
   if (error) { showAlert('otp-err', error.message); return; }
   resetOtp(); startTimer();
   showAlert('otp-info', 'Code resent! Check your inbox.', 'info');
