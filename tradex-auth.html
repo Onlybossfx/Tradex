@@ -475,22 +475,39 @@ $('s2-next').addEventListener('click', async () => {
 
   if (error) { alert$('s2-err', error.message); return; }
   st.email = email;
-  /* Show "check your email" message instead of step 3 */
-  setLoad(btn, false);
-  $('step-2').style.display = 'none';
-  $('step-2').insertAdjacentHTML('afterend', `
-    <div style="text-align:center;padding:2rem 1rem;animation:fadeIn 0.3s ease">
-      <div style="font-size:3rem;margin-bottom:1rem">📧</div>
-      <h2 style="font-family:var(--serif);font-size:1.4rem;font-weight:700;margin-bottom:0.6rem;color:var(--text)">Check your email!</h2>
-      <p style="color:var(--muted);font-size:0.9rem;line-height:1.7;margin-bottom:1.5rem">
+
+  /* ── Show "Check your email" screen ── */
+  const wrap = $('s2-next').closest('.step, .card, form') || document.querySelector('.wrap') || document.body;
+  $('step-2') && ($('step-2').style.display = 'none');
+
+  /* Insert confirmation screen after the form */
+  const confirmHTML = `
+    <div id="email-confirm-screen" style="text-align:center;padding:2rem 1rem">
+      <div style="font-size:3.5rem;margin-bottom:1rem">📧</div>
+      <h2 style="font-family:var(--serif);font-size:1.5rem;font-weight:700;margin-bottom:0.75rem;color:#fff">Check your email!</h2>
+      <p style="color:rgba(255,255,255,0.55);font-size:0.88rem;line-height:1.8;margin-bottom:1.5rem">
         We sent a confirmation link to<br>
-        <strong style="color:var(--text)">${email}</strong><br><br>
-        Click the link in the email to activate your account and log in.
+        <strong style="color:#fff">${email}</strong><br><br>
+        Click the link in your email to activate your account.<br>
+        Then come back here to log in.
       </p>
-      <p style="color:var(--dim);font-size:0.78rem">Didn't get it? Check your spam folder or <button onclick="resendConfirmation('${email}')" style="background:none;border:none;color:var(--amber);font-size:0.78rem;cursor:pointer;font-family:var(--sans)">resend the email</button></p>
-    </div>
-  `);
-  return;
+      <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:10px;padding:0.85rem;font-size:0.8rem;color:rgba(255,255,255,0.45);margin-bottom:1.25rem">
+        💡 Check your spam folder if you don't see it within 1 minute.
+      </div>
+      <button onclick="resendConfirmation('${email}')" style="background:transparent;border:1px solid rgba(245,158,11,0.3);color:#F59E0B;padding:0.6rem 1.25rem;border-radius:8px;font-size:0.82rem;cursor:pointer;font-family:inherit">
+        Resend confirmation email
+      </button>
+      <br><br>
+      <a href="tradex-auth.html" style="color:rgba(255,255,255,0.35);font-size:0.78rem">← Back to login</a>
+    </div>`;
+
+  /* Find the card/form element and replace its content */
+  const formEl = document.getElementById('step-2');
+  if (formEl) {
+    formEl.outerHTML = confirmHTML;
+  } else {
+    document.querySelector('.wrap')?.insertAdjacentHTML('beforeend', confirmHTML);
+  }
 });
 
 /* Step 3: method select */
@@ -526,10 +543,8 @@ $('l-btn').addEventListener('click', async () => {
 
   if (error) { alert$('l-err', error.message); return; }
 
-  /* Pass email to 2FA page */
-  sessionStorage.setItem('tradex_2fa_email',  email);
-  sessionStorage.setItem('tradex_2fa_context','login');
-  window.location.href = '2fa.html';
+  /* Login successful — go straight to dashboard */
+  await api('onSuccess', { context: 'login' });
 });
 
 /* ── OAuth ── BACKEND HOOK */
