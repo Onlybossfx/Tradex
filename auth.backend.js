@@ -18,12 +18,24 @@
   ============================================================
 */
 
-/* ── Config ── */
+  /* ── Config ── */
 const SUPABASE_URL  = 'https://rtwbrcbifnowrqpgivma.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7';
 
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+/* ── Base URL — works on localhost AND GitHub Pages ── */
+const BASE_URL = (() => {
+  const origin = window.location.origin;
+  const path   = window.location.pathname;
+  const parts  = path.split('/').filter(Boolean);
+  /* GitHub Pages serves from /RepoName/ subfolder */
+  if (origin.includes('github.io') && parts.length > 0) {
+    return `${origin}/${parts[0]}`;
+  }
+  return origin;
+})();
 
 window.Auth = {
 
@@ -86,7 +98,7 @@ window.Auth = {
     await sb.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${window.location.origin}/2fa.html`,
+        redirectTo: `${BASE_URL}/2fa.html`,
       },
     });
   },
@@ -129,7 +141,7 @@ window.Auth = {
   ───────────────────────────────────────────── */
   forgotPassword: async (email) => {
     const { error } = await sb.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/account-recovery.html`,
+      redirectTo: `${BASE_URL}/account-recovery.html`,
     });
     return { error };
   },
