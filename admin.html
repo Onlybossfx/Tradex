@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tradex — Admin</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#F59E0B" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="auth.guard.js"></script>
+  <script src="dashboard.backend.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --amber: #F59E0B; --amber-light: #FBBF24; --amber-dim: rgba(245,158,11,0.1);
+      --bg: #0a0a0a; --bg2: #0f0f0f; --bg3: #141414; --bg4: #181818;
+      --border: rgba(255,255,255,0.07); --border-md: rgba(255,255,255,0.11);
+      --text: #fff; --muted: rgba(255,255,255,0.45); --dim: rgba(255,255,255,0.22);
+      --error: #EF4444; --success: #10B981; --info: #3B82F6;
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans: 'DM Sans', system-ui, sans-serif;
+      --sw: 230px; --nh: 60px;
+    }
+    html { overflow-x: hidden; }
+    body { background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; font-family: var(--sans); }
+    input, select, textarea { font-family: var(--sans); }
+
+    /* NAV */
+    #nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: var(--nh); padding: 0 1.25rem; background: rgba(10,10,10,0.97); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.85rem; }
+    .nav-logo { display: flex; align-items: center; gap: 6px; text-decoration: none; }
+    .nav-logo span { font-family: var(--serif); font-size: 1.2rem; font-weight: 700; }
+    .nav-logo i { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); display: inline-block; }
+    .admin-badge { background: var(--error); color: #fff; font-size: 0.65rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 100px; letter-spacing: 0.04em; }
+    .nav-right { margin-left: auto; display: flex; align-items: center; gap: 0.65rem; }
+    .nav-av { width: 30px; height: 30px; border-radius: 50%; background: var(--amber-dim); border: 1px solid rgba(245,158,11,0.3); display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 700; color: var(--amber); }
+    .btn-sm-out { background: transparent; border: 1px solid var(--border-md); color: var(--muted); padding: 0.35rem 0.75rem; border-radius: 7px; font-size: 0.78rem; transition: all 0.2s; }
+    .btn-sm-out:hover { color: var(--text); }
+
+    /* LAYOUT */
+    .shell { display: grid; grid-template-columns: var(--sw) 1fr; min-height: 100vh; padding-top: var(--nh); }
+
+    /* SIDEBAR */
+    #sb { background: var(--bg2); border-right: 1px solid var(--border); padding: 1.25rem 0.6rem; position: sticky; top: var(--nh); height: calc(100vh - var(--nh)); overflow-y: auto; display: flex; flex-direction: column; gap: 0.2rem; }
+    .ns { font-size: 0.62rem; font-weight: 700; color: var(--dim); letter-spacing: 0.1em; text-transform: uppercase; padding: 0.65rem 0.65rem 0.32rem; }
+    .ni { display: flex; align-items: center; gap: 0.6rem; padding: 0.55rem 0.65rem; border-radius: 9px; cursor: pointer; transition: all 0.18s; border: 1px solid transparent; font-size: 0.83rem; color: var(--muted); }
+    .ni:hover { background: var(--bg3); color: var(--text); }
+    .ni.on { background: var(--amber-dim); border-color: rgba(245,158,11,0.2); color: var(--amber); }
+    .ni .ic { font-size: 0.92rem; flex-shrink: 0; width: 18px; text-align: center; }
+    .ni .lb { flex: 1; }
+    .ni .bd { background: var(--error); color: #fff; font-size: 0.58rem; font-weight: 700; padding: 0.08rem 0.36rem; border-radius: 100px; }
+    .sb-bot { margin-top: auto; padding-top: 0.85rem; border-top: 1px solid var(--border); }
+
+    /* MAIN */
+    #main { padding: 1.5rem; }
+    .panel { display: none; animation: fi 0.22s ease; }
+    .panel.on { display: block; }
+    @keyframes fi { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
+    .ph { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.75rem; }
+    .ph h1 { font-family: var(--serif); font-size: clamp(1.3rem,3vw,1.8rem); font-weight: 700; letter-spacing: -0.02em; }
+    .ph p { color: var(--muted); font-size: 0.82rem; margin-top: 0.15rem; }
+
+    /* STAT GRID */
+    .sg { display: grid; grid-template-columns: repeat(6,1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
+    .sc { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; }
+    .sc-lbl { font-size: 0.7rem; color: var(--muted); margin-bottom: 0.42rem; }
+    .sc-val { font-family: var(--serif); font-size: 1.5rem; font-weight: 700; line-height: 1; }
+    .sc-val.a { color: var(--amber); }
+    .sc-val.g { color: var(--success); }
+    .sc-val.r { color: var(--error); }
+    .sc-note { font-size: 0.68rem; color: var(--dim); margin-top: 0.22rem; }
+
+    /* CONTROLS */
+    .ctrl { display: flex; gap: 0.6rem; margin-bottom: 1rem; flex-wrap: wrap; align-items: center; }
+    .search-inp { flex: 1; min-width: 180px; background: var(--bg3); border: 1px solid var(--border-md); border-radius: 8px; padding: 0.52rem 0.85rem; color: var(--text); font-size: 0.83rem; outline: none; transition: border-color 0.2s; }
+    .search-inp:focus { border-color: rgba(245,158,11,0.4); }
+    .search-inp::placeholder { color: var(--dim); }
+    .fsel { background: var(--bg3); border: 1px solid var(--border-md); color: var(--text); padding: 0.52rem 0.7rem; border-radius: 8px; font-size: 0.81rem; outline: none; cursor: pointer; }
+    .fsel option { background: var(--bg3); }
+
+    /* TABLE */
+    .tbl-wrap { overflow-x: auto; }
+    .tbl { width: 100%; border-collapse: collapse; }
+    .tbl th { font-size: 0.67rem; font-weight: 600; color: var(--dim); text-transform: uppercase; letter-spacing: 0.06em; padding: 0 0 0.65rem; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    .tbl td { padding: 0.78rem 0; border-bottom: 1px solid rgba(255,255,255,0.032); font-size: 0.82rem; vertical-align: middle; }
+    .tbl tr:last-child td { border-bottom: none; }
+    .tbl tr:hover td { background: rgba(255,255,255,0.012); }
+    .cell-main { font-weight: 500; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .cell-sub { font-size: 0.73rem; color: var(--muted); margin-top: 1px; }
+    .av { width: 30px; height: 30px; border-radius: 50%; background: var(--amber-dim); border: 1px solid rgba(245,158,11,0.2); display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; color: var(--amber); flex-shrink: 0; }
+    .amt { font-family: var(--serif); font-weight: 700; color: var(--amber); }
+
+    /* STATUS PILLS */
+    .sp { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.68rem; font-weight: 600; padding: 0.18rem 0.52rem; border-radius: 100px; white-space: nowrap; }
+    .sp-a  { background: rgba(16,185,129,0.12);  color: #34D399; border: 1px solid rgba(16,185,129,0.2); }
+    .sp-p  { background: rgba(245,158,11,0.12);  color: var(--amber); border: 1px solid rgba(245,158,11,0.2); }
+    .sp-e  { background: rgba(59,130,246,0.12);  color: #60A5FA; border: 1px solid rgba(59,130,246,0.2); }
+    .sp-c  { background: rgba(255,255,255,0.06); color: var(--muted); border: 1px solid var(--border); }
+    .sp-r  { background: rgba(239,68,68,0.12);   color: #F87171; border: 1px solid rgba(239,68,68,0.2); }
+    .sp-b  { background: rgba(59,130,246,0.12);  color: #93C5FD; border: 1px solid rgba(59,130,246,0.2); }
+
+    /* ACTION BUTTONS */
+    .btn-act { padding: 0.3rem 0.65rem; border-radius: 6px; font-size: 0.74rem; font-weight: 500; border: 1px solid var(--border-md); background: transparent; color: var(--muted); transition: all 0.18s; cursor: pointer; }
+    .btn-act:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+    .btn-act.danger { border-color: rgba(239,68,68,0.2); color: #F87171; }
+    .btn-act.danger:hover { background: rgba(239,68,68,0.08); }
+    .btn-act.success { border-color: rgba(16,185,129,0.2); color: #34D399; }
+    .btn-act.success:hover { background: rgba(16,185,129,0.08); }
+    .btn-act.amber { border-color: rgba(245,158,11,0.25); color: var(--amber); }
+    .btn-act.amber:hover { background: var(--amber-dim); }
+    .acts { display: flex; gap: 0.35rem; flex-wrap: wrap; }
+
+    /* PAGINATION */
+    .pag { display: flex; align-items: center; justify-content: space-between; margin-top: 1.25rem; flex-wrap: wrap; gap: 0.5rem; }
+    .pag-info { font-size: 0.78rem; color: var(--muted); }
+    .pag-btns { display: flex; gap: 0.35rem; }
+    .pb { width: 30px; height: 30px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.18s; }
+    .pb:hover { border-color: var(--border-md); color: var(--text); }
+    .pb.on { background: var(--amber); border-color: var(--amber); color: #0a0a0a; font-weight: 700; }
+    .pb:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    /* CHART ROW */
+    .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+    .cc { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 1.1rem; }
+    .cc h3 { font-size: 0.83rem; font-weight: 600; color: var(--muted); margin-bottom: 1rem; }
+    .bars { display: flex; align-items: flex-end; gap: 0.35rem; height: 100px; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+    .bar-w { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 3px; height: 100%; }
+    .bar-f { width: 100%; background: var(--amber-dim); border: 1px solid rgba(245,158,11,0.2); border-radius: 3px 3px 0 0; min-height: 3px; cursor: pointer; }
+    .bar-f:hover { background: rgba(245,158,11,0.22); }
+    .bar-l { font-size: 0.56rem; color: var(--dim); }
+
+    /* MODAL */
+    .mo { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 300; backdrop-filter: blur(6px); align-items: center; justify-content: center; padding: 1.25rem; }
+    .mo.open { display: flex; }
+    .mbox { background: var(--bg2); border: 1px solid var(--border-md); border-radius: 16px; width: 100%; max-width: 520px; padding: 1.75rem; position: relative; animation: mi 0.22s ease; }
+    @keyframes mi { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+    .mc { position: absolute; top: 1rem; right: 1rem; background: var(--bg3); border: 1px solid var(--border); color: var(--muted); width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; cursor: pointer; }
+    .mbox h2 { font-family: var(--serif); font-size: 1.25rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .msub { color: var(--muted); font-size: 0.82rem; margin-bottom: 1.25rem; }
+    .frow { margin-bottom: 0.9rem; }
+    .frow label { display: block; font-size: 0.76rem; font-weight: 600; color: rgba(255,255,255,0.65); margin-bottom: 0.35rem; }
+    .finp { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 0.65rem 0.85rem; color: var(--text); font-size: 0.85rem; outline: none; transition: border-color 0.2s; }
+    .finp:focus { border-color: rgba(245,158,11,0.4); }
+    textarea.finp { resize: vertical; min-height: 80px; line-height: 1.55; }
+    select.finp { cursor: pointer; }
+    select.finp option { background: var(--bg3); }
+    .mfoot { display: flex; gap: 0.6rem; justify-content: flex-end; margin-top: 1.35rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+    .btn-cancel { background: transparent; border: 1px solid var(--border-md); color: var(--muted); padding: 0.6rem 1.2rem; border-radius: 8px; font-size: 0.83rem; transition: all 0.18s; }
+    .btn-primary { background: var(--amber); border: none; color: #0a0a0a; padding: 0.6rem 1.35rem; border-radius: 8px; font-size: 0.83rem; font-weight: 700; transition: background 0.18s; position: relative; }
+    .btn-primary:hover { background: var(--amber-light); }
+    .btn-primary.ld .lbl { visibility: hidden; }
+    .btn-primary.ld::after { content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:14px; height:14px; border:2px solid rgba(10,10,10,0.3); border-top-color:#0a0a0a; border-radius:50%; animation:sp 0.7s linear infinite; }
+    @keyframes sp { to{transform:translate(-50%,-50%) rotate(360deg)} }
+
+    /* TOAST */
+    #toast { position: fixed; bottom: 1.25rem; right: 1.25rem; z-index: 500; display: flex; flex-direction: column; gap: 0.42rem; pointer-events: none; }
+    .ti { background: var(--bg2); border: 1px solid var(--border-md); border-radius: 9px; padding: 0.65rem 0.88rem; font-size: 0.8rem; display: flex; align-items: center; gap: 0.48rem; animation: tin 0.25s ease; pointer-events: all; max-width: 260px; }
+    .ti.ok  { border-color: rgba(16,185,129,0.3); }
+    .ti.err { border-color: rgba(239,68,68,0.3); }
+    .ti.inf { border-color: rgba(245,158,11,0.3); }
+    @keyframes tin { from{opacity:0;transform:translateX(14px)} to{opacity:1;transform:translateX(0)} }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .shell { grid-template-columns: 1fr; }
+      #sb { display: none; }
+      .sg { grid-template-columns: repeat(3,1fr); }
+      .chart-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 520px) {
+      .sg { grid-template-columns: repeat(2,1fr); }
+    }
+  </style>
+</head>
+<body>
+<div id="toast"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="tradex.html" class="nav-logo"><span>Tradex</span><i></i></a>
+  <span class="admin-badge">ADMIN</span>
+  <div class="nav-right">
+    <div class="nav-av" id="nav-av">A</div>
+    <button class="btn-sm-out" onclick="window.location.href='dashboard-seller.html'">← Dashboard</button>
+    <button class="btn-sm-out" onclick="DB.logout()">Log Out</button>
+  </div>
+</nav>
+
+<!-- SIDEBAR -->
+<aside id="sb">
+  <div class="ns">Overview</div>
+  <div class="ni on" data-p="overview">  <span class="ic">📊</span><span class="lb">Overview</span></div>
+  <div class="ns">Manage</div>
+  <div class="ni" data-p="users">        <span class="ic">👥</span><span class="lb">Users</span></div>
+  <div class="ni" data-p="listings">     <span class="ic">📋</span><span class="lb">Listings</span></div>
+  <div class="ni" data-p="orders">       <span class="ic">🛒</span><span class="lb">Orders</span></div>
+  <div class="ni" data-p="disputes">     <span class="ic">⚖️</span><span class="lb">Disputes</span><span class="bd" id="disp-badge">0</span></div>
+  <div class="ni" data-p="payouts">      <span class="ic">💸</span><span class="lb">Payouts</span><span class="bd" id="pay-badge">0</span></div>
+  <div class="ni" data-p="notify">       <span class="ic">🔔</span><span class="lb">Send Notification</span></div>
+  <div class="sb-bot">
+    <div class="ni" onclick="window.location.href='tradex.html'"><span class="ic">🏪</span><span class="lb">View Site</span></div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main id="main">
+
+  <!-- OVERVIEW -->
+  <div class="panel on" id="panel-overview">
+    <div class="ph"><div><h1>Admin Overview</h1><p>Full platform health at a glance.</p></div><div style="font-size:0.8rem;color:var(--dim)" id="last-updated"></div></div>
+    <div class="sg">
+      <div class="sc"><div class="sc-lbl">👥 Total Users</div><div class="sc-val" id="st-users">—</div><div class="sc-note">registered accounts</div></div>
+      <div class="sc"><div class="sc-lbl">📋 Listings</div><div class="sc-val" id="st-lists">—</div><div class="sc-note">active listings</div></div>
+      <div class="sc"><div class="sc-lbl">🛒 Total Orders</div><div class="sc-val" id="st-orders">—</div><div class="sc-note">all time</div></div>
+      <div class="sc"><div class="sc-lbl">💰 GMV</div><div class="sc-val a" id="st-gmv">—</div><div class="sc-note">gross merchandise value</div></div>
+      <div class="sc"><div class="sc-lbl">💸 Platform Fees</div><div class="sc-val g" id="st-fees">—</div><div class="sc-note">8% of GMV</div></div>
+      <div class="sc"><div class="sc-lbl">⚖️ Open Disputes</div><div class="sc-val r" id="st-disps">—</div><div class="sc-note">needs attention</div></div>
+    </div>
+    <div class="chart-row">
+      <div class="cc">
+        <h3>Revenue — Last 7 months</h3>
+        <div class="bars" id="rev-bars"></div>
+        <div style="display:flex;margin-top:0.4rem" id="rev-lbls"></div>
+      </div>
+      <div class="cc">
+        <h3>Quick Actions</h3>
+        <div style="display:flex;flex-direction:column;gap:0.6rem;margin-top:0.5rem">
+          <button onclick="switchP('disputes')" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#F87171;padding:0.75rem 1rem;border-radius:9px;text-align:left;font-size:0.83rem;cursor:pointer">⚖️ Review Open Disputes</button>
+          <button onclick="switchP('payouts')"  style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);color:var(--amber);padding:0.75rem 1rem;border-radius:9px;text-align:left;font-size:0.83rem;cursor:pointer">💸 Process Pending Payouts</button>
+          <button onclick="switchP('notify')"   style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);color:#60A5FA;padding:0.75rem 1rem;border-radius:9px;text-align:left;font-size:0.83rem;cursor:pointer">🔔 Send Notification</button>
+          <button onclick="switchP('users')"    style="background:var(--bg3);border:1px solid var(--border-md);color:var(--muted);padding:0.75rem 1rem;border-radius:9px;text-align:left;font-size:0.83rem;cursor:pointer">👥 Manage Users</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- USERS -->
+  <div class="panel" id="panel-users">
+    <div class="ph"><div><h1>Users</h1><p>All registered accounts.</p></div></div>
+    <div class="ctrl">
+      <input class="search-inp" id="u-search" placeholder="Search by name or email..." />
+      <select class="fsel" id="u-role"><option value="">All roles</option><option value="buyer">Buyer</option><option value="seller">Seller</option><option value="both">Both</option></select>
+      <button onclick="loadUsers()" style="background:var(--amber);border:none;color:#0a0a0a;padding:0.52rem 1rem;border-radius:8px;font-size:0.81rem;font-weight:700;cursor:pointer">Search</button>
+    </div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>User</th><th>Role</th><th>Joined</th><th>Verified</th><th>Admin</th><th>Actions</th></tr></thead>
+        <tbody id="users-body"></tbody>
+      </table>
+    </div>
+    <div class="pag"><div class="pag-info" id="u-pag-info"></div><div class="pag-btns" id="u-pag-btns"></div></div>
+  </div>
+
+  <!-- LISTINGS -->
+  <div class="panel" id="panel-listings">
+    <div class="ph"><div><h1>Listings</h1><p>All marketplace listings.</p></div></div>
+    <div class="ctrl">
+      <input class="search-inp" id="l-search" placeholder="Search listings..." />
+      <select class="fsel" id="l-cat"><option value="">All categories</option><option value="physical">Physical</option><option value="digital">Digital</option><option value="freelance">Freelance</option><option value="experience">Experience</option></select>
+      <select class="fsel" id="l-status"><option value="">All status</option><option value="active">Active</option><option value="paused">Paused</option></select>
+      <button onclick="loadListings()" style="background:var(--amber);border:none;color:#0a0a0a;padding:0.52rem 1rem;border-radius:8px;font-size:0.81rem;font-weight:700;cursor:pointer">Search</button>
+    </div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Listing</th><th>Seller</th><th>Category</th><th>Price</th><th>Orders</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="listings-body"></tbody>
+      </table>
+    </div>
+    <div class="pag"><div class="pag-info" id="l-pag-info"></div><div class="pag-btns" id="l-pag-btns"></div></div>
+  </div>
+
+  <!-- ORDERS -->
+  <div class="panel" id="panel-orders">
+    <div class="ph"><div><h1>Orders</h1><p>All marketplace transactions.</p></div></div>
+    <div class="ctrl">
+      <select class="fsel" id="o-status"><option value="">All status</option><option value="pending">Pending</option><option value="escrowed">Escrowed</option><option value="delivered">Delivered</option><option value="complete">Complete</option><option value="disputed">Disputed</option></select>
+      <button onclick="loadOrders()" style="background:var(--amber);border:none;color:#0a0a0a;padding:0.52rem 1rem;border-radius:8px;font-size:0.81rem;font-weight:700;cursor:pointer">Filter</button>
+    </div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Order</th><th>Buyer</th><th>Seller</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
+        <tbody id="orders-body"></tbody>
+      </table>
+    </div>
+    <div class="pag"><div class="pag-info" id="o-pag-info"></div><div class="pag-btns" id="o-pag-btns"></div></div>
+  </div>
+
+  <!-- DISPUTES -->
+  <div class="panel" id="panel-disputes">
+    <div class="ph"><div><h1>Disputes</h1><p>Review and resolve buyer-seller disputes.</p></div></div>
+    <div class="ctrl">
+      <select class="fsel" id="d-status"><option value="">All</option><option value="open">Open</option><option value="under_review">Under Review</option><option value="resolved_buyer">Resolved (Buyer)</option><option value="resolved_seller">Resolved (Seller)</option></select>
+      <button onclick="loadDisputes()" style="background:var(--amber);border:none;color:#0a0a0a;padding:0.52rem 1rem;border-radius:8px;font-size:0.81rem;font-weight:700;cursor:pointer">Filter</button>
+    </div>
+    <div id="disputes-list"></div>
+  </div>
+
+  <!-- PAYOUTS -->
+  <div class="panel" id="panel-payouts">
+    <div class="ph"><div><h1>Payouts</h1><p>Manage seller payout requests.</p></div></div>
+    <div class="ctrl">
+      <select class="fsel" id="p-status"><option value="">All</option><option value="pending">Pending</option><option value="processing">Processing</option><option value="paid">Paid</option><option value="failed">Failed</option></select>
+      <button onclick="loadPayouts()" style="background:var(--amber);border:none;color:#0a0a0a;padding:0.52rem 1rem;border-radius:8px;font-size:0.81rem;font-weight:700;cursor:pointer">Filter</button>
+    </div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Seller</th><th>Amount</th><th>Method</th><th>Account</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+        <tbody id="payouts-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- NOTIFY -->
+  <div class="panel" id="panel-notify">
+    <div class="ph"><div><h1>Send Notification</h1><p>Broadcast or target specific users.</p></div></div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:1.5rem;max-width:560px">
+      <div class="frow">
+        <label>Target</label>
+        <select class="finp" id="n-target">
+          <option value="all">All Users</option>
+          <option value="buyers">All Buyers</option>
+          <option value="sellers">All Sellers</option>
+          <option value="specific">Specific User ID</option>
+        </select>
+      </div>
+      <div class="frow" id="n-userid-row" style="display:none">
+        <label>User ID</label>
+        <input class="finp" id="n-userid" placeholder="User UUID" />
+      </div>
+      <div class="frow">
+        <label>Type</label>
+        <select class="finp" id="n-type">
+          <option value="system">📢 Announcement</option>
+          <option value="payout">💰 Payout Update</option>
+          <option value="dispute">⚖️ Dispute Update</option>
+          <option value="order_placed">🛒 Order Update</option>
+        </select>
+      </div>
+      <div class="frow">
+        <label>Title *</label>
+        <input class="finp" id="n-title" placeholder="Notification title" maxlength="80" />
+      </div>
+      <div class="frow">
+        <label>Message *</label>
+        <textarea class="finp" id="n-body" rows="3" placeholder="Notification body text..."></textarea>
+      </div>
+      <div class="frow">
+        <label>Link (optional)</label>
+        <input class="finp" id="n-link" placeholder="e.g. dashboard-buyer.html" />
+      </div>
+      <div style="display:flex;align-items:center;gap:0.75rem">
+        <button id="send-notif-btn" style="background:var(--amber);border:none;color:#0a0a0a;padding:0.72rem 1.5rem;border-radius:9px;font-size:0.88rem;font-weight:700;cursor:pointer;position:relative">
+          <span class="lbl">Send Notification</span>
+        </button>
+        <div id="n-result" style="font-size:0.82rem;color:var(--success);display:none"></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- RESOLVE DISPUTE MODAL -->
+<div class="mo" id="resolve-mo">
+  <div class="mbox">
+    <button class="mc" onclick="$('resolve-mo').classList.remove('open')">✕</button>
+    <h2>Resolve Dispute</h2>
+    <p class="msub" id="resolve-desc">Review the dispute and make a ruling.</p>
+    <input type="hidden" id="resolve-id" />
+    <div class="frow">
+      <label>Rule in favour of</label>
+      <select class="finp" id="resolve-winner">
+        <option value="buyer">🛒 Buyer (issue refund)</option>
+        <option value="seller">🏪 Seller (release payment)</option>
+      </select>
+    </div>
+    <div class="frow">
+      <label>Resolution note *</label>
+      <textarea class="finp" id="resolve-note" rows="3" placeholder="Explain your decision to both parties..."></textarea>
+    </div>
+    <div class="mfoot">
+      <button class="btn-cancel" onclick="$('resolve-mo').classList.remove('open')">Cancel</button>
+      <button class="btn-primary" id="resolve-btn"><span class="lbl">Apply Resolution</span></button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════
+   ADMIN PANEL — Fully connected to Supabase
+   Guard: only users with is_admin = true
+══════════════════════════════════════════════ */
+let U = null;
+const $ = id => document.getElementById(id);
+const fmt  = n => Number(n||0).toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmtD = d => new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+const spCls = { active:'sp-a', paused:'sp-c', pending:'sp-p', escrowed:'sp-e', delivered:'sp-a', complete:'sp-c', disputed:'sp-r', paid:'sp-a', failed:'sp-r', processing:'sp-b', open:'sp-r', under_review:'sp-e', resolved_buyer:'sp-a', resolved_seller:'sp-c', both:'sp-b', buyer:'sp-b', seller:'sp-a' };
+
+/* ══ INIT ══ */
+async function init() {
+  /* Hard guard — logged in */
+  U = await AuthGuard.require('admin.html');
+  if (!U) return;
+
+  /* Admin check */
+  const isAdmin = await DB.admin.isAdmin();
+  if (!isAdmin) {
+    document.body.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:1rem;font-family:sans-serif;color:#fff;background:#0a0a0a;text-align:center;padding:2rem">
+      <div style="font-size:3rem">🚫</div>
+      <h2 style="font-family:serif;font-size:1.5rem">Access Denied</h2>
+      <p style="color:rgba(255,255,255,0.45)">You don't have admin privileges.</p>
+      <a href="tradex.html" style="color:#F59E0B">← Back to Tradex</a>
+    </div>`;
+    return;
+  }
+
+  $('nav-av').textContent = (U.user_metadata?.full_name || U.email || 'A')[0].toUpperCase();
+  $('last-updated').textContent = 'Updated: ' + new Date().toLocaleTimeString();
+
+  loadOverview();
+}
+
+/* ══ OVERVIEW ══ */
+async function loadOverview() {
+  const stats = await DB.admin.getStats();
+  $('st-users').textContent  = stats.users.toLocaleString();
+  $('st-lists').textContent  = stats.listings.toLocaleString();
+  $('st-orders').textContent = stats.orders.toLocaleString();
+  $('st-gmv').textContent    = '$' + fmt(stats.totalRevenue);
+  $('st-fees').textContent   = '$' + fmt(stats.platformFees);
+  $('st-disps').textContent  = stats.openDisputes;
+  $('disp-badge').textContent= stats.openDisputes;
+  /* Real revenue chart from orders grouped by month */
+  if (stats.chart) {
+    const entries = Object.entries(stats.chart);
+    const max = Math.max(...entries.map(e=>e[1]), 1);
+    $('rev-bars').innerHTML = entries.map(([,v])=>`<div class="bar-w"><div class="bar-f" style="height:${Math.max(3,(v/max)*100)}%" title="$${fmt(v)}"></div></div>`).join('');
+    $('rev-lbls').innerHTML = entries.map(([k])=>`<span style="flex:1;text-align:center;font-size:0.56rem;color:var(--dim)">${k}</span>`).join('');
+  }
+}
+
+/* ══ USERS ══ */
+let uPage = 1;
+async function loadUsers() {
+  const search = $('u-search').value;
+  const role   = $('u-role').value;
+  const { data, count } = await DB.admin.getUsers({ search, role, page: uPage });
+  $('users-body').innerHTML = data.map(u => `<tr>
+    <td><div style="display:flex;align-items:center;gap:0.6rem">
+      <div class="av">${(u.full_name||u.email||'?')[0].toUpperCase()}</div>
+      <div><div class="cell-main">${u.full_name||'—'}</div><div class="cell-sub">${u.email||'—'}</div></div>
+    </div></td>
+    <td><span class="sp ${spCls[u.role]||'sp-c'}">${u.role||'—'}</span></td>
+    <td style="color:var(--dim);font-size:0.77rem">${fmtD(u.created_at)}</td>
+    <td>${u.verified?'✅':'—'}</td>
+    <td>${u.is_admin?'<span style="color:var(--error);font-size:0.75rem;font-weight:600">ADMIN</span>':'—'}</td>
+    <td><div class="acts">
+      <button class="btn-act amber" onclick="toggleVerify('${u.id}',${!u.verified})">${u.verified?'Unverify':'Verify'}</button>
+      <button class="btn-act" onclick="sendNotifToUser('${u.id}','${(u.full_name||u.email||'').replace(/'/g,'')}')" >📢 Notify</button>
+      <a href="mailto:${u.email}" class="btn-act" style="display:inline-flex;align-items:center">✉️ Email</a>
+    </div></td>
+  </tr>`).join('') || `<tr><td colspan="6" style="color:var(--dim);text-align:center;padding:1.5rem 0">No users found.</td></tr>`;
+  renderPag('u', count, uPage, p => { uPage=p; loadUsers(); });
+}
+async function toggleVerify(id, verified) {
+  const {error} = await DB.admin.updateUserStatus(id, { verified });
+  if (error) { toast('Failed.','err'); return; }
+  toast(`User ${verified?'verified':'unverified'}.`, 'ok');
+  loadUsers();
+}
+function sendNotifToUser(id, name) {
+  $('n-target').value = 'specific';
+  $('n-userid').value = id;
+  $('n-userid-row').style.display = '';
+  $('n-title').value = `Message from Tradex Admin`;
+  switchP('notify');
+}
+
+/* ══ LISTINGS ══ */
+let lPage = 1;
+async function loadListings() {
+  const search   = $('l-search').value;
+  const category = $('l-cat').value;
+  const status   = $('l-status').value;
+  const { data, count } = await DB.admin.getListings({ search, category, status, page: lPage });
+  $('listings-body').innerHTML = data.map(l => `<tr>
+    <td><div style="display:flex;align-items:center;gap:0.6rem">
+      ${l.images?.[0]?`<img src="${l.images[0]}" style="width:32px;height:32px;border-radius:6px;object-fit:cover;flex-shrink:0" loading="lazy" />`:''}
+      <div class="cell-main">${l.title}</div>
+    </div></td>
+    <td style="color:var(--muted);font-size:0.78rem">${l.seller_name||'—'}</td>
+    <td><span style="font-size:0.75rem;color:var(--muted)">${l.category}</span></td>
+    <td class="amt">$${l.price}</td>
+    <td style="font-weight:500">${l.order_count||0}</td>
+    <td><span class="sp ${spCls[l.status]||'sp-c'}">${l.status}</span></td>
+    <td><div class="acts">
+      <button class="btn-act" onclick="window.open('listing.html?id=${l.id}','_blank')">View</button>
+      <button class="btn-act ${l.status==='active'?'danger':'amber'}" onclick="adminToggleListing('${l.id}','${l.status==='active'?'paused':'active'}')">${l.status==='active'?'Pause':'Activate'}</button>
+    </div></td>
+  </tr>`).join('') || `<tr><td colspan="7" style="color:var(--dim);text-align:center;padding:1.5rem 0">No listings found.</td></tr>`;
+  renderPag('l', count, lPage, p => { lPage=p; loadListings(); });
+}
+async function adminToggleListing(id, status) {
+  const {error} = await DB.admin.updateListingStatus(id, status);
+  if (error) { toast('Failed.','err'); return; }
+  toast(`Listing ${status}.`, 'ok'); loadListings();
+}
+
+/* ══ ORDERS ══ */
+let oPage = 1;
+async function loadOrders() {
+  const status = $('o-status').value;
+  const { data, count } = await DB.admin.getOrders({ status, page: oPage });
+  $('orders-body').innerHTML = data.map(o => `<tr>
+    <td><div class="cell-main">${o.listing_title||'—'}</div><div class="cell-sub">#${o.id} · ${o.package_label||'Basic'}</div></td>
+    <td style="color:var(--muted);font-size:0.78rem">${o.buyer_name||'—'}</td>
+    <td style="color:var(--muted);font-size:0.78rem">${o.seller_name||'—'}</td>
+    <td class="amt">$${fmt(o.amount)}</td>
+    <td><span class="sp ${spCls[o.status]||'sp-c'}">${o.status}</span></td>
+    <td style="color:var(--dim);font-size:0.76rem">${fmtD(o.created_at)}</td>
+  </tr>`).join('') || `<tr><td colspan="6" style="color:var(--dim);text-align:center;padding:1.5rem 0">No orders found.</td></tr>`;
+  renderPag('o', count, oPage, p => { oPage=p; loadOrders(); });
+}
+
+/* ══ DISPUTES ══ */
+async function loadDisputes() {
+  const status = $('d-status').value;
+  const { data } = await DB.admin.getDisputes({ status });
+  const el = $('disputes-list');
+  if (!data?.length) {
+    el.innerHTML = `<div style="text-align:center;padding:3rem 0;color:var(--muted)"><div style="font-size:2.5rem;margin-bottom:0.75rem">⚖️</div><p>${status?'No '+status+' disputes.':'No disputes found.'}</p></div>`;
+    return;
+  }
+  el.innerHTML = data.map(d => `
+    <div style="background:var(--bg2);border:1px solid ${d.status==='open'?'rgba(239,68,68,0.25)':'var(--border)'};border-radius:13px;padding:1.25rem;margin-bottom:0.85rem">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:0.75rem;margin-bottom:0.85rem;flex-wrap:wrap">
+        <div>
+          <div style="font-size:0.9rem;font-weight:600;margin-bottom:0.22rem">${d.orders?.listing_title||'Order #'+d.order_id}</div>
+          <div style="font-size:0.78rem;color:var(--muted)">Reason: <strong style="color:var(--text)">${d.reason?.replace(/_/g,' ')}</strong></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.6rem">
+          <span class="sp ${spCls[d.status]||'sp-c'}">${d.status?.replace(/_/g,' ')}</span>
+          <span style="font-size:0.72rem;color:var(--dim)">${fmtD(d.created_at)}</span>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.85rem">
+        <div style="background:var(--bg3);border-radius:9px;padding:0.75rem">
+          <div style="font-size:0.68rem;color:var(--dim);margin-bottom:0.25rem;text-transform:uppercase;letter-spacing:0.06em">Buyer</div>
+          <div style="font-size:0.83rem;font-weight:500">${d.buyer?.full_name||'—'}</div>
+          <div style="font-size:0.75rem;color:var(--muted)">${d.buyer?.email||'—'}</div>
+        </div>
+        <div style="background:var(--bg3);border-radius:9px;padding:0.75rem">
+          <div style="font-size:0.68rem;color:var(--dim);margin-bottom:0.25rem;text-transform:uppercase;letter-spacing:0.06em">Seller</div>
+          <div style="font-size:0.83rem;font-weight:500">${d.seller?.full_name||'—'}</div>
+          <div style="font-size:0.75rem;color:var(--muted)">${d.seller?.email||'—'}</div>
+        </div>
+      </div>
+      <div style="font-size:0.82rem;color:var(--muted);background:var(--bg3);border-radius:9px;padding:0.75rem;margin-bottom:0.85rem;line-height:1.55">${d.description||'No description.'}</div>
+      ${d.resolution?`<div style="font-size:0.82rem;color:rgba(16,185,129,0.9);background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15);border-radius:9px;padding:0.75rem;margin-bottom:0.85rem">✅ Resolution: ${d.resolution}</div>`:''}
+      ${d.status==='open'||d.status==='under_review'?`<div style="display:flex;gap:0.5rem">
+        <button class="btn-act amber" onclick="openResolve('${d.id}','${(d.orders?.listing_title||'').replace(/'/g,'`')}')">⚖️ Resolve Dispute</button>
+        <button class="btn-act" onclick="markUnderReview('${d.id}')">🔍 Mark Under Review</button>
+        <button class="btn-act" onclick="notifyParties('${d.buyer_id}','${d.seller_id}')">📢 Notify Both Parties</button>
+      </div>`:''}</div>`).join('');
+}
+function openResolve(id, title) {
+  $('resolve-id').value = id;
+  $('resolve-desc').textContent = 'Dispute: ' + title;
+  $('resolve-note').value = '';
+  $('resolve-mo').classList.add('open');
+}
+async function markUnderReview(id) {
+  const SUPABASE_URL = 'https://rtwbrcbifnowrqpgivma.supabase.co';
+  const SUPABASE_ANON = 'sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7';
+  const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+  await _sb.from('disputes').update({ status: 'under_review' }).eq('id', id);
+  toast('Marked as under review.', 'ok'); loadDisputes();
+}
+async function notifyParties(buyerId, sellerId) {
+  await Promise.all([
+    DB.createNotification(buyerId, 'dispute', 'Dispute Update', 'Your dispute is being reviewed by the Tradex team. We will notify you of the resolution shortly.'),
+    DB.createNotification(sellerId, 'dispute', 'Dispute Notification', 'A dispute has been raised on one of your orders. The Tradex team is reviewing the case.'),
+  ]);
+  toast('Both parties notified. ✅', 'ok');
+}
+$('resolve-btn').addEventListener('click', async () => {
+  const id       = $('resolve-id').value;
+  const winner   = $('resolve-winner').value;
+  const note     = $('resolve-note').value.trim();
+  if (!note) { toast('Please provide a resolution note.', 'err'); return; }
+  const btn = $('resolve-btn'); btn.classList.add('ld'); btn.disabled = true;
+  const { error } = await DB.admin.resolveDispute(id, note, winner);
+  btn.classList.remove('ld'); btn.disabled = false;
+  if (error) { toast('Failed: ' + error.message, 'err'); return; }
+  $('resolve-mo').classList.remove('open');
+  toast(`Dispute resolved — ruled in favour of ${winner}. ✅`, 'ok');
+  loadDisputes(); loadOverview();
+});
+
+/* ══ PAYOUTS ══ */
+async function loadPayouts() {
+  const status = $('p-status').value;
+  const { data } = await DB.admin.getPayouts({ status });
+  $('pay-badge').textContent = (data||[]).filter(p=>p.status==='pending').length;
+  $('payouts-body').innerHTML = (data||[]).map(p => `<tr>
+    <td><div class="cell-main">${p.seller?.full_name||'—'}</div><div class="cell-sub">${p.seller?.email||'—'}</div></td>
+    <td class="amt">$${fmt(p.amount)}</td>
+    <td style="color:var(--muted);font-size:0.78rem">${p.method}</td>
+    <td style="color:var(--muted);font-size:0.76rem;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.account||'—'}</td>
+    <td><span class="sp ${spCls[p.status]||'sp-c'}">${p.status}</span></td>
+    <td style="color:var(--dim);font-size:0.76rem">${fmtD(p.created_at)}</td>
+    <td><div class="acts">
+      ${p.status==='pending'?`
+        <button class="btn-act success" onclick="processPayout('${p.id}','paid')">✅ Mark Paid</button>
+        <button class="btn-act amber"   onclick="processPayout('${p.id}','processing')">🔄 Processing</button>
+        <button class="btn-act danger"  onclick="processPayout('${p.id}','failed')">✗ Fail</button>
+      `:p.status==='processing'?`
+        <button class="btn-act success" onclick="processPayout('${p.id}','paid')">✅ Mark Paid</button>
+        <button class="btn-act danger"  onclick="processPayout('${p.id}','failed')">✗ Fail</button>
+      `:'—'}
+    </div></td>
+  </tr>`).join('') || `<tr><td colspan="7" style="color:var(--dim);text-align:center;padding:1.5rem 0">No payout requests.</td></tr>`;
+}
+async function processPayout(id, status) {
+  const ref = status === 'paid' ? prompt('Enter payment reference / transaction ID:') || '' : '';
+  const { error } = await DB.admin.processPayout(id, status, ref);
+  if (error) { toast('Failed: ' + error.message, 'err'); return; }
+  toast(`Payout marked as ${status}. ✅`, 'ok');
+  loadPayouts();
+}
+
+/* ══ NOTIFICATIONS BROADCAST ══ */
+$('n-target').addEventListener('change', function() {
+  $('n-userid-row').style.display = this.value === 'specific' ? '' : 'none';
+});
+
+$('send-notif-btn').addEventListener('click', async () => {
+  const target = $('n-target').value;
+  const type   = $('n-type').value;
+  const title  = $('n-title').value.trim();
+  const body   = $('n-body').value.trim();
+  const link   = $('n-link').value.trim();
+  if (!title || !body) { toast('Please fill in title and message.', 'err'); return; }
+
+  const btn = $('send-notif-btn'); btn.classList.add('ld'); btn.disabled = true;
+  let sent = 0;
+
+  if (target === 'specific') {
+    const uid = $('n-userid').value.trim();
+    if (!uid) { toast('Please enter a user ID.', 'err'); btn.classList.remove('ld'); btn.disabled=false; return; }
+    const { error } = await DB.createNotification(uid, type, title, body, link||null);
+    if (!error) sent = 1;
+  } else {
+    /* get all matching users */
+    const SUPABASE_URL = 'https://rtwbrcbifnowrqpgivma.supabase.co';
+    const SUPABASE_ANON = 'sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7';
+    const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+    let q = _sb.from('users').select('id, role');
+    if (target === 'buyers')  q = q.in('role', ['buyer','both']);
+    if (target === 'sellers') q = q.in('role', ['seller','both']);
+    const { data: users } = await q;
+    for (const u of (users||[])) {
+      await DB.createNotification(u.id, type, title, body, link||null);
+      sent++;
+    }
+  }
+
+  btn.classList.remove('ld'); btn.disabled = false;
+  $('n-result').style.display = '';
+  $('n-result').textContent = `✅ Sent to ${sent} user${sent!==1?'s':''}`;
+  toast(`Notification sent to ${sent} user${sent!==1?'s':''}.`, 'ok');
+  setTimeout(() => { $('n-result').style.display = 'none'; }, 4000);
+});
+
+/* ══ PAGINATION HELPER ══ */
+function renderPag(prefix, total, current, onPage, perPage = 20) {
+  const pages = Math.ceil(total / perPage);
+  const info  = $(`${prefix}-pag-info`);
+  const btns  = $(`${prefix}-pag-btns`);
+  if (!info || !btns) return;
+  info.textContent = `${((current-1)*perPage)+1}–${Math.min(current*perPage,total)} of ${total}`;
+  if (pages <= 1) { btns.innerHTML = ''; return; }
+  let html = `<button class="pb" ${current===1?'disabled':''} onclick="(${onPage})(${current-1})">←</button>`;
+  for (let i = 1; i <= pages; i++) {
+    if (i===1||i===pages||Math.abs(i-current)<=1)
+      html += `<button class="pb ${i===current?'on':''}" onclick="(${onPage})(${i})">${i}</button>`;
+    else if (Math.abs(i-current)===2)
+      html += `<span style="color:var(--dim);padding:0 2px">…</span>`;
+  }
+  html += `<button class="pb" ${current===pages?'disabled':''} onclick="(${onPage})(${current+1})">→</button>`;
+  btns.innerHTML = html;
+}
+
+/* ══ NAVIGATION ══ */
+function switchP(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.ni[data-p]').forEach(n => n.classList.remove('on'));
+  $(`panel-${id}`)?.classList.add('on');
+  document.querySelector(`[data-p="${id}"]`)?.classList.add('on');
+  const loaders = { users: loadUsers, listings: loadListings, orders: loadOrders, disputes: loadDisputes, payouts: loadPayouts };
+  loaders[id]?.();
+}
+document.querySelectorAll('[data-p]').forEach(el => el.addEventListener('click', () => switchP(el.dataset.p)));
+
+/* ══ TOAST ══ */
+function toast(msg, type = 'ok') {
+  const icons = { ok:'✅', err:'⚠️', inf:'ℹ️' };
+  const el = document.createElement('div'); el.className = `ti ${type}`;
+  el.innerHTML = `<span>${icons[type]||'ℹ️'}</span><span>${msg}</span>`;
+  $('toast').appendChild(el); setTimeout(() => el.remove(), 3500);
+}
+
+/* ══ INIT ══ */
+init();
+</script>
+</body>
+</html>

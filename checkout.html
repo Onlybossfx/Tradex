@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tradex — Checkout</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#F59E0B" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="auth.guard.js"></script>
+  <script src="dashboard.backend.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --amber: #F59E0B; --amber-light: #FBBF24; --amber-dim: rgba(245,158,11,0.1);
+      --bg: #0a0a0a; --bg2: #0f0f0f; --bg3: #141414; --bg4: #181818;
+      --border: rgba(255,255,255,0.07); --border-md: rgba(255,255,255,0.11);
+      --text: #fff; --muted: rgba(255,255,255,0.45); --dim: rgba(255,255,255,0.22);
+      --error: #EF4444; --success: #10B981;
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans: 'DM Sans', system-ui, sans-serif;
+      --nav-h: 62px;
+    }
+    html { overflow-x: hidden; scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; font-family: var(--sans); }
+    input, select { font-family: var(--sans); }
+
+    /* ── NAV ── */
+    #nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: var(--nav-h); padding: 0 1.25rem; background: rgba(10,10,10,0.97); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 1rem; }
+    .nav-logo { display: flex; align-items: center; gap: 6px; text-decoration: none; }
+    .nav-logo span { font-family: var(--serif); font-size: 1.25rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
+    .nav-logo i { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); display: inline-block; }
+    .nav-sep { width: 1px; height: 18px; background: var(--border); }
+    .nav-step { font-size: 0.8rem; color: var(--muted); }
+    .nav-secure { margin-left: auto; display: flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; color: var(--success); }
+
+    /* ── PROGRESS BAR ── */
+    .progress { padding: calc(var(--nav-h) + 1.5rem) 1.25rem 0; max-width: 900px; margin: 0 auto; }
+    .prog-steps { display: flex; align-items: center; margin-bottom: 2rem; }
+    .ps { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--dim); flex-shrink: 0; }
+    .ps .dot { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; transition: all 0.3s; }
+    .ps.done .dot { background: var(--success); border-color: var(--success); color: #fff; }
+    .ps.active .dot { border-color: var(--amber); color: var(--amber); }
+    .ps.active { color: var(--text); font-weight: 500; }
+    .ps-line { flex: 1; height: 2px; background: var(--border); margin: 0 0.5rem; transition: background 0.3s; }
+    .ps-line.done { background: var(--success); }
+
+    /* ── LAYOUT ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 0 1.25rem 4rem; display: grid; grid-template-columns: 1fr 340px; gap: 1.75rem; align-items: start; }
+
+    /* ── PANELS ── */
+    .step-panel { display: none; }
+    .step-panel.active { display: block; }
+
+    /* ── SECTION CARD ── */
+    .scard { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; margin-bottom: 1rem; }
+    .scard h2 { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.6rem; }
+    .scard h2 .step-num { width: 26px; height: 26px; border-radius: 50%; background: var(--amber); color: #0a0a0a; font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: var(--sans); }
+
+    /* ── FORM FIELDS ── */
+    .frow { margin-bottom: 1rem; }
+    .frow label { display: block; font-size: 0.78rem; font-weight: 600; color: rgba(255,255,255,0.65); margin-bottom: 0.38rem; }
+    .finp { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 9px; padding: 0.7rem 0.9rem; color: var(--text); font-size: 0.88rem; outline: none; transition: border-color 0.2s; }
+    .finp:focus { border-color: rgba(245,158,11,0.4); }
+    .finp::placeholder { color: var(--dim); }
+    .finp.err { border-color: var(--error); }
+    select.finp { cursor: pointer; }
+    select.finp option { background: var(--bg3); }
+    .f2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .f3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; }
+    .ferr { color: var(--error); font-size: 0.72rem; margin-top: 0.28rem; display: none; }
+    .ferr.on { display: block; }
+
+    /* ── PAYMENT METHOD SELECTOR ── */
+    .pay-methods { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.25rem; }
+    .pay-method { background: var(--bg3); border: 2px solid var(--border); border-radius: 12px; padding: 1rem; cursor: pointer; transition: all 0.2s; position: relative; }
+    .pay-method:hover { border-color: var(--border-md); }
+    .pay-method.selected { border-color: var(--amber); background: var(--amber-dim); }
+    .pay-method .pm-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .pay-method .pm-name { font-size: 0.88rem; font-weight: 600; margin-bottom: 0.18rem; }
+    .pay-method .pm-desc { font-size: 0.72rem; color: var(--muted); }
+    .pay-method.selected .pm-desc { color: var(--amber); }
+    .pm-check { position: absolute; top: 0.75rem; right: 0.75rem; width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border); transition: all 0.2s; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; }
+    .pay-method.selected .pm-check { background: var(--amber); border-color: var(--amber); color: #0a0a0a; }
+    .pay-method.selected .pm-check::after { content: '✓'; font-weight: 700; }
+
+    /* ── CARD INPUT VISUAL ── */
+    .card-visual { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.25rem; position: relative; overflow: hidden; min-height: 130px; }
+    .card-visual::before { content: ''; position: absolute; top: -30px; right: -30px; width: 120px; height: 120px; border-radius: 50%; background: rgba(245,158,11,0.08); }
+    .card-visual::after  { content: ''; position: absolute; bottom: -40px; left: -20px; width: 140px; height: 140px; border-radius: 50%; background: rgba(99,102,241,0.08); }
+    .cv-chip { width: 32px; height: 24px; background: linear-gradient(135deg, #d4a853, #f0c040); border-radius: 4px; margin-bottom: 0.85rem; }
+    .cv-num  { font-size: 1.05rem; letter-spacing: 0.18em; color: rgba(255,255,255,0.85); margin-bottom: 0.75rem; font-family: 'Courier New', monospace; }
+    .cv-bot  { display: flex; justify-content: space-between; align-items: flex-end; }
+    .cv-label { font-size: 0.6rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.2rem; }
+    .cv-val   { font-size: 0.82rem; color: rgba(255,255,255,0.85); }
+    .cv-network { font-size: 1.5rem; position: absolute; bottom: 1rem; right: 1rem; }
+
+    /* ── FLUTTERWAVE PANEL ── */
+    .fw-methods { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.6rem; margin-bottom: 1.25rem; }
+    .fw-method { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 0.75rem 0.5rem; cursor: pointer; text-align: center; transition: all 0.2s; }
+    .fw-method:hover { border-color: var(--border-md); }
+    .fw-method.on { border-color: rgba(245,158,11,0.3); background: var(--amber-dim); }
+    .fw-icon { font-size: 1.3rem; margin-bottom: 0.3rem; }
+    .fw-lbl  { font-size: 0.72rem; font-weight: 600; color: var(--muted); }
+    .fw-method.on .fw-lbl { color: var(--amber); }
+
+    /* ── REGION SELECTOR ── */
+    .region-tabs { display: flex; background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 3px; margin-bottom: 1.25rem; }
+    .rtab { flex: 1; padding: 0.5rem; border: none; background: transparent; color: var(--muted); font-size: 0.82rem; font-family: var(--sans); border-radius: 8px; cursor: pointer; transition: all 0.2s; text-align: center; }
+    .rtab.on { background: var(--bg2); color: var(--text); border: 1px solid var(--border-md); }
+
+    /* ── ALERTS ── */
+    .alert { display: none; padding: 0.75rem 1rem; border-radius: 10px; font-size: 0.83rem; margin-bottom: 1rem; align-items: center; gap: 0.6rem; line-height: 1.5; }
+    .alert.on { display: flex; }
+    .alert.err  { background: rgba(239,68,68,0.1);  border: 1px solid rgba(239,68,68,0.25);  color: #FCA5A5; }
+    .alert.ok   { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25); color: #6EE7B7; }
+    .alert.info { background: var(--amber-dim);     border: 1px solid rgba(245,158,11,0.25); color: #FCD34D; }
+
+    /* ── BUTTONS ── */
+    .btn-primary { width: 100%; padding: 0.9rem; background: var(--amber); border: none; border-radius: 10px; color: #0a0a0a; font-size: 0.95rem; font-weight: 700; transition: all 0.2s; position: relative; }
+    .btn-primary:hover:not(:disabled) { background: var(--amber-light); transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
+    .btn-primary.ld .lbl { visibility: hidden; }
+    .btn-primary.ld::after { content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:18px; height:18px; border:2px solid rgba(10,10,10,0.3); border-top-color:#0a0a0a; border-radius:50%; animation:spin 0.7s linear infinite; }
+    @keyframes spin { to{transform:translate(-50%,-50%) rotate(360deg)} }
+    .btn-back { background: transparent; border: 1px solid var(--border-md); color: var(--muted); padding: 0.7rem 1.5rem; border-radius: 10px; font-size: 0.88rem; transition: all 0.2s; }
+    .btn-back:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+    .btn-row { display: flex; gap: 0.75rem; align-items: center; margin-top: 1.25rem; }
+    .btn-row .btn-primary { flex: 1; }
+
+    /* ── ORDER SUMMARY (right col) ── */
+    .summary { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 1.35rem; position: sticky; top: calc(var(--nav-h) + 1.25rem); }
+    .summary h3 { font-family: var(--serif); font-size: 1rem; font-weight: 700; margin-bottom: 1.1rem; padding-bottom: 0.85rem; border-bottom: 1px solid var(--border); }
+    .sum-listing { display: flex; gap: 0.85rem; margin-bottom: 1.1rem; padding-bottom: 1.1rem; border-bottom: 1px solid var(--border); }
+    .sum-img { width: 64px; height: 64px; border-radius: 10px; overflow: hidden; background: var(--bg3); flex-shrink: 0; }
+    .sum-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .sum-img-ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; }
+    .sum-info { flex: 1; min-width: 0; }
+    .sum-title { font-size: 0.88rem; font-weight: 600; line-height: 1.35; margin-bottom: 0.25rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .sum-seller { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.35rem; }
+    .sum-pkg { display: inline-flex; align-items: center; gap: 0.3rem; background: var(--amber-dim); border: 1px solid rgba(245,158,11,0.2); color: var(--amber); font-size: 0.7rem; font-weight: 600; padding: 0.18rem 0.55rem; border-radius: 100px; }
+    .sum-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.83rem; margin-bottom: 0.6rem; }
+    .sum-row .lbl { color: var(--muted); }
+    .sum-row .val { font-weight: 500; }
+    .sum-row .val.amber { color: var(--amber); }
+    .sum-divider { height: 1px; background: var(--border); margin: 0.85rem 0; }
+    .sum-total { display: flex; justify-content: space-between; align-items: center; }
+    .sum-total .lbl { font-size: 0.88rem; font-weight: 600; }
+    .sum-total .val { font-family: var(--serif); font-size: 1.5rem; font-weight: 700; color: var(--amber); }
+    .escrow-note { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2); border-radius: 10px; padding: 0.75rem 0.9rem; margin-top: 1rem; }
+    .escrow-note p { font-size: 0.75rem; color: rgba(16,185,129,0.9); line-height: 1.55; }
+    .trust-row { display: flex; justify-content: space-around; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+    .ti { text-align: center; }
+    .ti-icon { font-size: 1rem; margin-bottom: 0.2rem; }
+    .ti-lbl { font-size: 0.62rem; color: var(--dim); line-height: 1.3; }
+
+    /* ── SUCCESS STATE ── */
+    #step-success { text-align: center; padding: 2rem 1rem; }
+    .success-icon { font-size: 4rem; margin-bottom: 1.25rem; animation: pop 0.5s ease; }
+    @keyframes pop { 0%{transform:scale(0)} 70%{transform:scale(1.2)} 100%{transform:scale(1)} }
+    .success-title { font-family: var(--serif); font-size: 1.75rem; font-weight: 700; margin-bottom: 0.6rem; }
+    .success-sub { color: var(--muted); font-size: 0.92rem; line-height: 1.65; margin-bottom: 2rem; }
+    .success-sub strong { color: var(--text); }
+    .success-actions { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+    .btn-outline { background: transparent; border: 1px solid var(--border-md); color: var(--text); padding: 0.75rem 1.75rem; border-radius: 10px; font-size: 0.9rem; transition: all 0.2s; }
+    .btn-outline:hover { border-color: rgba(255,255,255,0.2); }
+    .order-id-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.25rem; margin: 1.25rem auto; max-width: 360px; }
+    .oid-label { font-size: 0.72rem; color: var(--dim); margin-bottom: 0.25rem; }
+    .oid-val { font-size: 1rem; font-weight: 600; color: var(--amber); letter-spacing: 0.05em; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 700px) {
+      .page { grid-template-columns: 1fr; }
+      .summary { position: static; }
+      .f2, .f3 { grid-template-columns: 1fr; }
+      .pay-methods { grid-template-columns: 1fr; }
+      .fw-methods { grid-template-columns: repeat(2,1fr); }
+    }
+    @media (max-width: 400px) {
+      .fw-methods { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="tradex.html" class="nav-logo"><span>Tradex</span><i></i></a>
+  <div class="nav-sep"></div>
+  <span class="nav-step">Secure Checkout</span>
+  <div class="nav-secure">🔒 SSL Encrypted</div>
+</nav>
+
+<!-- PROGRESS -->
+<div class="progress">
+  <div class="prog-steps">
+    <div class="ps done"    id="ps1"><div class="dot">✓</div><span>Review</span></div>
+    <div class="ps-line"    id="pl1"></div>
+    <div class="ps active"  id="ps2"><div class="dot">2</div><span>Payment</span></div>
+    <div class="ps-line"    id="pl2"></div>
+    <div class="ps"         id="ps3"><div class="dot">3</div><span>Confirm</span></div>
+  </div>
+</div>
+
+<!-- PAGE -->
+<div class="page">
+
+  <!-- LEFT COL -->
+  <div id="left-col">
+
+    <!-- STEP 1: Review order -->
+    <div class="step-panel active" id="step-review">
+      <div class="scard">
+        <h2><span class="step-num">1</span> Review Your Order</h2>
+        <div id="review-detail"></div>
+      </div>
+
+      <div class="scard">
+        <h2><span class="step-num" style="background:var(--bg3);color:var(--muted);border:1px solid var(--border)">2</span> Delivery Information</h2>
+        <div class="frow">
+          <label>Full Name *</label>
+          <!-- Saved address selector -->
+          <div id="saved-addr-wrap" style="display:none;margin-bottom:1rem">
+            <label style="display:block;font-size:0.78rem;font-weight:600;color:rgba(255,255,255,0.65);margin-bottom:0.38rem">Use a saved address</label>
+            <select class="finp" id="saved-addr-sel" onchange="applyAddr(this.value)">
+              <option value="">— Select saved address —</option>
+            </select>
+            <div style="font-size:0.72rem;color:var(--dim);margin-top:0.3rem">Or fill in manually below</div>
+          </div>
+          <input class="finp" id="d-name" placeholder="Your full name" autocomplete="name" />
+          <div class="ferr" id="e-dname">Required.</div>
+        </div>
+        <div class="frow">
+          <label>Email Address *</label>
+          <input class="finp" id="d-email" type="email" placeholder="you@example.com" autocomplete="email" />
+          <div class="ferr" id="e-demail">Valid email required.</div>
+        </div>
+        <div class="f2">
+          <div class="frow">
+            <label>Phone Number</label>
+            <input class="finp" id="d-phone" placeholder="+234 800 000 0000" autocomplete="tel" />
+          </div>
+          <div class="frow">
+            <label>Country *</label>
+            <select class="finp" id="d-country">
+              <option value="">Select country</option>
+              <optgroup label="Africa">
+                <option value="NG">🇳🇬 Nigeria</option>
+                <option value="GH">🇬🇭 Ghana</option>
+                <option value="KE">🇰🇪 Kenya</option>
+                <option value="ZA">🇿🇦 South Africa</option>
+                <option value="EG">🇪🇬 Egypt</option>
+                <option value="ET">🇪🇹 Ethiopia</option>
+                <option value="TZ">🇹🇿 Tanzania</option>
+                <option value="UG">🇺🇬 Uganda</option>
+              </optgroup>
+              <optgroup label="Europe">
+                <option value="GB">🇬🇧 United Kingdom</option>
+                <option value="DE">🇩🇪 Germany</option>
+                <option value="FR">🇫🇷 France</option>
+                <option value="NL">🇳🇱 Netherlands</option>
+                <option value="ES">🇪🇸 Spain</option>
+                <option value="IT">🇮🇹 Italy</option>
+              </optgroup>
+              <optgroup label="Americas">
+                <option value="US">🇺🇸 United States</option>
+                <option value="CA">🇨🇦 Canada</option>
+                <option value="BR">🇧🇷 Brazil</option>
+              </optgroup>
+            </select>
+            <div class="ferr" id="e-dcountry">Required.</div>
+          </div>
+        </div>
+        <div class="frow" id="address-row">
+          <label>Delivery Address <span style="color:var(--dim);font-weight:400">(for physical goods)</span></label>
+          <input class="finp" id="d-address" placeholder="Street address, city, state" />
+        </div>
+      </div>
+
+      <div class="alert err"  id="step1-err"><span>⚠️</span><span id="step1-err-msg"></span></div>
+
+      <div class="btn-row">
+        <button class="btn-back" onclick="history.back()">← Back</button>
+        <button class="btn-primary" id="step1-next"><span class="lbl">Continue to Payment →</span></button>
+      </div>
+    </div>
+
+    <!-- STEP 2: Payment -->
+    <div class="step-panel" id="step-payment">
+      <div class="scard">
+        <h2><span class="step-num">2</span> Choose Payment Method</h2>
+
+        <!-- Region tabs -->
+        <div class="region-tabs" id="region-tabs">
+          <button class="rtab on" data-region="global">🌍 Global (Card)</button>
+          <button class="rtab" data-region="africa">🌍 Africa (Local)</button>
+        </div>
+
+        <!-- Global: Stripe card -->
+        <div id="global-payment">
+          <div class="card-visual">
+            <div class="cv-chip"></div>
+            <div class="cv-num" id="cv-num">•••• •••• •••• ••••</div>
+            <div class="cv-bot">
+              <div>
+                <div class="cv-label">Card Holder</div>
+                <div class="cv-val" id="cv-name">Your Name</div>
+              </div>
+              <div>
+                <div class="cv-label">Expires</div>
+                <div class="cv-val" id="cv-exp">MM / YY</div>
+              </div>
+            </div>
+            <div class="cv-network">💳</div>
+          </div>
+
+          <div class="frow">
+            <label>Card Number *</label>
+            <input class="finp" id="card-num" placeholder="1234 5678 9012 3456" maxlength="19" inputmode="numeric" />
+            <div class="ferr" id="e-cardnum">Enter a valid 16-digit card number.</div>
+          </div>
+          <div class="frow">
+            <label>Cardholder Name *</label>
+            <input class="finp" id="card-name" placeholder="Name as on card" />
+            <div class="ferr" id="e-cardname">Required.</div>
+          </div>
+          <div class="f2">
+            <div class="frow">
+              <label>Expiry Date *</label>
+              <input class="finp" id="card-exp" placeholder="MM / YY" maxlength="7" inputmode="numeric" />
+              <div class="ferr" id="e-cardexp">Invalid expiry.</div>
+            </div>
+            <div class="frow">
+              <label>CVV *</label>
+              <input class="finp" id="card-cvv" placeholder="•••" maxlength="4" inputmode="numeric" type="password" />
+              <div class="ferr" id="e-cardcvv">Invalid CVV.</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.25rem">
+            <span style="font-size:0.72rem;color:var(--dim)">Powered by</span>
+            <span style="font-size:0.78rem;font-weight:700;color:#635BFF">Stripe</span>
+            <span style="font-size:0.72rem;color:var(--dim)">· 256-bit SSL · PCI DSS Compliant</span>
+          </div>
+        </div>
+
+        <!-- Africa: Flutterwave -->
+        <div id="africa-payment" style="display:none">
+          <div class="fw-methods" id="fw-methods">
+            <div class="fw-method on" data-fw="card">       <div class="fw-icon">💳</div><div class="fw-lbl">Card</div></div>
+            <div class="fw-method" data-fw="mobile_money">  <div class="fw-icon">📱</div><div class="fw-lbl">Mobile Money</div></div>
+            <div class="fw-method" data-fw="bank_transfer"> <div class="fw-icon">🏦</div><div class="fw-lbl">Bank Transfer</div></div>
+            <div class="fw-method" data-fw="ussd">          <div class="fw-icon">📲</div><div class="fw-lbl">USSD</div></div>
+          </div>
+
+          <!-- FW Card -->
+          <div id="fw-card-fields">
+            <div class="frow">
+              <label>Card Number *</label>
+              <input class="finp" id="fw-cardnum" placeholder="1234 5678 9012 3456" maxlength="19" inputmode="numeric" />
+            </div>
+            <div class="f2">
+              <div class="frow"><label>Expiry *</label><input class="finp" id="fw-exp" placeholder="MM / YY" maxlength="7" /></div>
+              <div class="frow"><label>CVV *</label><input class="finp" id="fw-cvv" placeholder="•••" maxlength="4" type="password" /></div>
+            </div>
+          </div>
+
+          <!-- FW Mobile Money -->
+          <div id="fw-mobile-fields" style="display:none">
+            <div class="frow">
+              <label>Network *</label>
+              <select class="finp" id="fw-network">
+                <option value="">Select network</option>
+                <option value="MTN">MTN Mobile Money</option>
+                <option value="VODAFONE">Vodafone Cash</option>
+                <option value="AIRTEL">Airtel Money</option>
+                <option value="MPESA">M-Pesa</option>
+                <option value="TIGO">Tigo Cash</option>
+              </select>
+            </div>
+            <div class="frow">
+              <label>Phone Number *</label>
+              <input class="finp" id="fw-phone" placeholder="+234 800 000 0000" inputmode="tel" />
+            </div>
+          </div>
+
+          <!-- FW Bank Transfer -->
+          <div id="fw-bank-fields" style="display:none">
+            <div class="alert info on" style="margin-bottom:0"><span>ℹ️</span><span>We'll generate a dedicated account number for this transaction. Funds must be transferred within 30 minutes.</span></div>
+          </div>
+
+          <!-- FW USSD -->
+          <div id="fw-ussd-fields" style="display:none">
+            <div class="frow"><label>Bank *</label>
+              <select class="finp" id="fw-bank">
+                <option value="">Select your bank</option>
+                <option>Access Bank</option><option>GTBank</option><option>UBA</option>
+                <option>First Bank</option><option>Zenith Bank</option><option>Sterling Bank</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.85rem">
+            <span style="font-size:0.72rem;color:var(--dim)">Powered by</span>
+            <span style="font-size:0.78rem;font-weight:700;color:#F5A623">Flutterwave</span>
+            <span style="font-size:0.72rem;color:var(--dim)">· PCI DSS Compliant</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert err"  id="step2-err"><span>⚠️</span><span id="step2-err-msg"></span></div>
+      <div class="alert info" id="step2-info"><span>ℹ️</span><span id="step2-info-msg"></span></div>
+
+      <div class="btn-row">
+        <button class="btn-back" onclick="goStep(1)">← Back</button>
+        <button class="btn-primary" id="step2-next"><span class="lbl">Review & Confirm →</span></button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Confirm -->
+    <div class="step-panel" id="step-confirm">
+      <div class="scard">
+        <h2><span class="step-num">3</span> Confirm Your Order</h2>
+        <div id="confirm-detail"></div>
+      </div>
+
+      <div class="scard" style="background:rgba(16,185,129,0.05);border-color:rgba(16,185,129,0.15)">
+        <div style="display:flex;gap:0.75rem;align-items:flex-start">
+          <span style="font-size:1.4rem;flex-shrink:0">🔒</span>
+          <div>
+            <div style="font-size:0.88rem;font-weight:600;margin-bottom:0.3rem;color:var(--success)">Escrow Protection Active</div>
+            <div style="font-size:0.8rem;color:rgba(255,255,255,0.55);line-height:1.6">Your payment is held securely in escrow. Funds are only released to the seller once you confirm delivery. If anything goes wrong, you're covered by Tradex Buyer Protection.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert err" id="step3-err"><span>⚠️</span><span id="step3-err-msg"></span></div>
+
+      <div class="btn-row">
+        <button class="btn-back" onclick="goStep(2)">← Back</button>
+        <button class="btn-primary" id="place-order-btn"><span class="lbl">Place Order & Pay $<span id="confirm-price">0</span></span></button>
+      </div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="step-panel" id="step-success">
+      <div class="success-icon">🎉</div>
+      <div class="success-title">Order Placed!</div>
+      <div class="success-sub">
+        Your payment is held in escrow and your order has been sent to <strong id="success-seller">the seller</strong>.<br><br>
+        You'll receive a confirmation email shortly. Track your order in your dashboard.
+      </div>
+      <div class="order-id-box">
+        <div class="oid-label">Order Reference</div>
+        <div class="oid-val" id="success-order-id">#TRX-000000</div>
+      </div>
+      <div class="success-actions">
+        <button class="btn-primary" style="width:auto;padding:0.75rem 2rem" onclick="window.location.href='dashboard-buyer.html'">Track Order →</button>
+        <button class="btn-outline" onclick="window.location.href='browse.html'">Continue Shopping</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT COL: Order summary -->
+  <div class="summary" id="order-summary">
+    <h3>Order Summary</h3>
+
+    <div class="sum-listing">
+      <div class="sum-img" id="sum-img">
+        <div class="sum-img-ph">📦</div>
+      </div>
+      <div class="sum-info">
+        <div class="sum-title" id="sum-title">Loading...</div>
+        <div class="sum-seller" id="sum-seller"></div>
+        <div class="sum-pkg" id="sum-pkg">Basic</div>
+      </div>
+    </div>
+
+    <div class="sum-row"><span class="lbl">Package price</span><span class="val" id="sum-price">$0</span></div>
+    <div class="sum-row"><span class="lbl">Platform fee (8%)</span><span class="val" id="sum-fee">$0</span></div>
+    <div class="sum-row"><span class="lbl">Delivery time</span><span class="val" id="sum-delivery">—</span></div>
+    <div class="sum-divider"></div>
+    <div class="sum-total"><span class="lbl">Total</span><span class="val" id="sum-total">$0</span></div>
+
+    <div class="escrow-note">
+      <p>🔒 <strong>Escrow protected</strong> — your money is held safely until you confirm delivery.</p>
+    </div>
+
+    <div class="trust-row">
+      <div class="ti"><div class="ti-icon">🛡️</div><div class="ti-lbl">Buyer<br>Protection</div></div>
+      <div class="ti"><div class="ti-icon">↩️</div><div class="ti-lbl">Refund<br>Policy</div></div>
+      <div class="ti"><div class="ti-icon">💬</div><div class="ti-lbl">24/7<br>Support</div></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/*
+  ============================================================
+  checkout.html — TRADEX CHECKOUT
+  
+  Reads order data from sessionStorage (set by listing.html)
+  Creates order in Supabase on confirmation
+  
+  Payment processors:
+    Stripe  → Global (card payments) 
+    Flutterwave → Africa (card, mobile money, bank, USSD)
+  
+  NOTE: In production, payment processing MUST happen server-side
+  via Supabase Edge Functions. The UI here collects payment intent
+  and passes to your backend. Card details never touch your server.
+  ============================================================
+*/
+
+const SUPABASE_URL  = 'https://rtwbrcbifnowrqpgivma.supabase.co';
+const SUPABASE_ANON = 'sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7';
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+/* ── State ── */
+let checkout  = null; /* from sessionStorage */
+let user      = null;
+let currentStep = 1;
+let region    = 'global';
+let fwMethod  = 'card';
+
+/* delivery info */
+let delivery  = {};
+
+const $ = id => document.getElementById(id);
+const isEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+const fmt = n => Number(n||0).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+/* ── Load checkout data ── */
+async function init() {
+  /* Hard guard — must be logged in to checkout */
+  user = await AuthGuard.require('checkout.html');
+  if (!user) return;
+
+  /* Load checkout data from sessionStorage */
+  const raw = sessionStorage.getItem('tradex_checkout');
+  if (!raw) {
+    showGlobalError('No order data found. Please go back and select a package.');
+    return;
+  }
+  checkout = JSON.parse(raw);
+
+  /* Pre-fill delivery info from account */
+  $('d-name').value  = user.user_metadata?.full_name || '';
+  $('d-email').value = user.email || '';
+
+  /* Load saved addresses */
+  try {
+    const { data: addrs } = await DB.getAddresses(user.id);
+    if (addrs && addrs.length > 0) {
+      const sel = $('saved-addr-sel');
+      addrs.forEach(a => {
+        const opt = document.createElement('option');
+        opt.value = a.id;
+        opt.textContent = `${a.label}: ${a.full_name} — ${a.address}, ${a.city}${a.is_default ? ' (Default)' : ''}`;
+        sel.appendChild(opt);
+      });
+      $('saved-addr-wrap').style.display = '';
+      /* auto-select default */
+      const def = addrs.find(a => a.is_default) || addrs[0];
+      if (def) { sel.value = def.id; applyAddrObj(def); }
+      window._savedAddrs = addrs;
+    }
+  } catch(e) {}
+
+  renderSummary();
+  renderReviewDetail();
+}
+
+/* ── Summary ── */
+function renderSummary() {
+  const c = checkout;
+  const fee   = c.price * 0.08;
+  const total = c.price + fee;
+
+  /* image */
+  if (c.listing_image) {
+    $('sum-img').innerHTML = `<img src="${c.listing_image}" alt="" onerror="this.style.display='none'" style="width:100%;height:100%;object-fit:cover;display:block" />`;
+  }
+  $('sum-title').textContent    = c.listing_title;
+  $('sum-seller').textContent   = `by ${c.seller_name}`;
+  $('sum-pkg').textContent      = c.package_label;
+  $('sum-price').textContent    = `$${fmt(c.price)}`;
+  $('sum-fee').textContent      = `$${fmt(fee)}`;
+  $('sum-delivery').textContent = `${c.delivery_days} day${c.delivery_days!==1?'s':''}`;
+  $('sum-total').textContent    = `$${fmt(total)}`;
+  $('confirm-price').textContent= fmt(total);
+}
+
+/* ── Review detail (step 1) ── */
+function renderReviewDetail() {
+  const c = checkout;
+  const fee   = c.price * 0.08;
+  const total = c.price + fee;
+  const catIcons = {physical:'📦',digital:'💾',freelance:'🛠️',experience:'🎓'};
+
+  $('review-detail').innerHTML = `
+    <div style="display:flex;gap:1rem;padding-bottom:1rem;border-bottom:1px solid var(--border);margin-bottom:1rem">
+      <div style="width:80px;height:80px;border-radius:10px;overflow:hidden;background:var(--bg3);flex-shrink:0">
+        ${c.listing_image
+          ? `<img src="${c.listing_image}" alt="" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.style.display='none'" />`
+          : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem">${catIcons[c.category]||'📦'}</div>`}
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:600;font-size:0.92rem;margin-bottom:0.25rem;line-height:1.35">${c.listing_title}</div>
+        <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.5rem">by ${c.seller_name}</div>
+        <div style="display:inline-flex;align-items:center;gap:0.3rem;background:var(--amber-dim);border:1px solid rgba(245,158,11,0.2);color:var(--amber);font-size:0.7rem;font-weight:600;padding:0.18rem 0.55rem;border-radius:100px">${c.package_label} Package</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.55rem">
+      <div style="display:flex;justify-content:space-between;font-size:0.83rem"><span style="color:var(--muted)">Package</span><span style="font-weight:500">$${fmt(c.price)}</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:0.83rem"><span style="color:var(--muted)">Platform fee (8%)</span><span style="font-weight:500">$${fmt(fee)}</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:0.83rem"><span style="color:var(--muted)">Delivery</span><span style="font-weight:500">${c.delivery_days} day${c.delivery_days!==1?'s':''}</span></div>
+      <div style="height:1px;background:var(--border);margin:0.25rem 0"></div>
+      <div style="display:flex;justify-content:space-between"><span style="font-weight:600">Total</span><span style="font-family:var(--serif);font-size:1.2rem;font-weight:700;color:var(--amber)">$${fmt(total)}</span></div>
+    </div>`;
+}
+
+/* ── Confirm detail (step 3) ── */
+function renderConfirmDetail() {
+  const c = checkout;
+  const fee   = c.price * 0.08;
+  const total = c.price + fee;
+  const methodLabel = region === 'global'
+    ? `💳 Card ending ····${($('card-num').value.replace(/\s/g,'')).slice(-4) || '••••'}`
+    : fwMethod === 'card'         ? `💳 Card (Flutterwave)`
+    : fwMethod === 'mobile_money' ? `📱 Mobile Money — ${$('fw-network').value||'—'}`
+    : fwMethod === 'bank_transfer'? `🏦 Bank Transfer`
+    : `📲 USSD — ${$('fw-bank').value||'—'}`;
+
+  $('confirm-detail').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:0.7rem">
+      <div style="display:flex;justify-content:space-between;font-size:0.83rem;padding:0.65rem 0.85rem;background:var(--bg3);border-radius:9px"><span style="color:var(--muted)">Item</span><span style="font-weight:500;max-width:200px;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.listing_title}</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:0.83rem;padding:0.65rem 0.85rem;background:var(--bg3);border-radius:9px"><span style="color:var(--muted)">Package</span><span style="font-weight:500">${c.package_label}</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:0.83rem;padding:0.65rem 0.85rem;background:var(--bg3);border-radius:9px"><span style="color:var(--muted)">Delivering to</span><span style="font-weight:500">${delivery.name || '—'} · ${delivery.country || '—'}</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:0.83rem;padding:0.65rem 0.85rem;background:var(--bg3);border-radius:9px"><span style="color:var(--muted)">Payment</span><span style="font-weight:500">${methodLabel}</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:0.83rem;padding:0.65rem 0.85rem;background:var(--amber-dim);border:1px solid rgba(245,158,11,0.2);border-radius:9px"><span style="color:var(--amber);font-weight:600">Total charge</span><span style="font-family:var(--serif);font-size:1.1rem;font-weight:700;color:var(--amber)">$${fmt(total)}</span></div>
+    </div>`;
+  $('success-seller').textContent = c.seller_name;
+}
+
+/* ── Step management ── */
+function goStep(n) {
+  currentStep = n;
+  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+  const panels = ['step-review','step-payment','step-confirm','step-success'];
+  $(panels[n-1])?.classList.add('active');
+
+  /* update progress dots */
+  [1,2,3].forEach(i => {
+    const dot = $(`ps${i}`);
+    dot.classList.remove('done','active');
+    if (i < n)      dot.classList.add('done');
+    else if (i===n) dot.classList.add('active');
+    if ($(`pl${i}`)) $(`pl${i}`).classList.toggle('done', i < n);
+  });
+
+  /* hide summary on success */
+  $('order-summary').style.display = n === 4 ? 'none' : '';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ── STEP 1: Validate delivery info ── */
+$('step1-next').addEventListener('click', () => {
+  const name    = $('d-name').value.trim();
+  const email   = $('d-email').value.trim();
+  const country = $('d-country').value;
+  let ok = true;
+
+  const fe = (id, show) => { $(id).classList.toggle('on', show); if(show) ok=false; };
+  fe('e-dname',    !name);
+  fe('e-demail',   !isEmail(email));
+  fe('e-dcountry', !country);
+  $('step1-err').classList.remove('on');
+
+  if (!ok) { showAlert('step1-err','Please fill in all required fields.'); return; }
+
+  delivery = { name, email, country, phone: $('d-phone').value, address: $('d-address').value };
+
+  /* Auto-select region based on country */
+  const africaCountries = ['NG','GH','KE','ZA','EG','ET','TZ','UG'];
+  if (africaCountries.includes(country)) {
+    setRegion('africa');
+  } else {
+    setRegion('global');
+  }
+
+  goStep(2);
+});
+
+/* ── STEP 2: Payment ── */
+
+/* Region tabs */
+$('region-tabs').addEventListener('click', e => {
+  const tab = e.target.closest('.rtab'); if(!tab) return;
+  setRegion(tab.dataset.region);
+});
+
+function setRegion(r) {
+  region = r;
+  document.querySelectorAll('.rtab').forEach(t => t.classList.toggle('on', t.dataset.region === r));
+  $('global-payment').style.display  = r === 'global' ? '' : 'none';
+  $('africa-payment').style.display  = r === 'africa' ? '' : 'none';
+}
+
+/* Flutterwave method tabs */
+$('fw-methods').addEventListener('click', e => {
+  const m = e.target.closest('.fw-method'); if(!m) return;
+  document.querySelectorAll('.fw-method').forEach(x => x.classList.remove('on'));
+  m.classList.add('on'); fwMethod = m.dataset.fw;
+  /* show correct fields */
+  ['card','mobile_money','bank_transfer','ussd'].forEach(k => {
+    const el = $(`fw-${k.replace('_','-')}-fields`);
+    if(el) el.style.display = k===fwMethod ? '' : 'none';
+  });
+});
+
+/* Card number formatting */
+[$('card-num'), $('fw-cardnum')].forEach(inp => {
+  if(!inp) return;
+  inp.addEventListener('input', function() {
+    let v = this.value.replace(/\D/g,'').slice(0,16);
+    this.value = v.match(/.{1,4}/g)?.join(' ') || v;
+    if(this.id==='card-num') {
+      $('cv-num').textContent = v.padEnd(16,'•').match(/.{1,4}/g).join(' ');
+    }
+  });
+});
+
+/* Card name live update */
+$('card-name').addEventListener('input', function() {
+  $('cv-name').textContent = this.value || 'Your Name';
+});
+
+/* Expiry formatting */
+[$('card-exp'), $('fw-exp')].forEach(inp => {
+  if(!inp) return;
+  inp.addEventListener('input', function() {
+    let v = this.value.replace(/\D/g,'').slice(0,4);
+    if(v.length > 2) v = v.slice(0,2) + ' / ' + v.slice(2);
+    this.value = v;
+    if(this.id==='card-exp') $('cv-exp').textContent = v || 'MM / YY';
+  });
+});
+
+$('step2-next').addEventListener('click', () => {
+  $('step2-err').classList.remove('on');
+  if (region === 'global') {
+    const num  = $('card-num').value.replace(/\s/g,'');
+    const name = $('card-name').value.trim();
+    const exp  = $('card-exp').value.trim();
+    const cvv  = $('card-cvv').value.trim();
+    if (num.length < 16)  { showAlert('step2-err','Please enter a valid card number.'); return; }
+    if (!name)             { showAlert('step2-err','Please enter the cardholder name.'); return; }
+    if (exp.length < 7)   { showAlert('step2-err','Please enter a valid expiry date.'); return; }
+    if (cvv.length < 3)   { showAlert('step2-err','Please enter a valid CVV.'); return; }
+  } else {
+    if (fwMethod === 'mobile_money') {
+      if (!$('fw-network').value) { showAlert('step2-err','Please select a network.'); return; }
+      if (!$('fw-phone').value)   { showAlert('step2-err','Please enter your phone number.'); return; }
+    }
+    if (fwMethod === 'card') {
+      const num = $('fw-cardnum').value.replace(/\s/g,'');
+      if (num.length < 16) { showAlert('step2-err','Please enter a valid card number.'); return; }
+    }
+  }
+  renderConfirmDetail();
+  goStep(3);
+});
+
+/* ── STEP 3: Place order ── */
+$('place-order-btn').addEventListener('click', async () => {
+  const btn = $('place-order-btn');
+  btn.classList.add('ld'); btn.disabled = true;
+  $('step3-err').classList.remove('on');
+
+  const c       = checkout;
+  const fee     = c.price * 0.08;
+  const total   = c.price + fee;
+  const payout  = c.price * 0.92;
+
+  /* Guard: seller_id must exist */
+  if (!c.seller_id) {
+    btn.classList.remove('ld'); btn.disabled = false;
+    showAlert('step3-err', 'This listing has no assigned seller. Please contact support.');
+    return;
+  }
+
+  /* Guard: must be logged in (shouldn't reach here if not, but just in case) */
+  if (!user) {
+    btn.classList.remove('ld'); btn.disabled = false;
+    showAlert('step3-err', 'Please log in to complete your purchase.');
+    return;
+  }
+
+  /* Guard: buyer can't buy their own listing */
+  if (c.seller_id === user.id) {
+    btn.classList.remove('ld'); btn.disabled = false;
+    showAlert('step3-err', 'You cannot purchase your own listing.');
+    return;
+  }
+
+  /*
+    PRODUCTION NOTE:
+    In production, create a Supabase Edge Function that:
+    1. Creates the Stripe PaymentIntent / Flutterwave charge
+    2. Only creates the order record AFTER payment succeeds
+    3. Stores the payment intent ID on the order
+
+    For now we create the order record directly and mark as 'escrowed'
+    to demonstrate the full flow. Wire up real payments when ready.
+  */
+  const orderPayload = {
+    buyer_id:      user.id,
+    seller_id:     c.seller_id,
+    listing_id:    c.listing_id,
+    listing_title: c.listing_title,
+    listing_image: c.listing_image,
+    seller_name:   c.seller_name,
+    buyer_name:    delivery.name,
+    amount:        total,
+    platform_fee:  fee,
+    seller_payout: payout,
+    status:        'escrowed', /* payment collected, in escrow */
+    package_label: c.package_label,
+  };
+
+  const { data: order, error } = await DB.createOrder(orderPayload);
+
+  btn.classList.remove('ld'); btn.disabled = false;
+
+  if (error) {
+    /* If not logged in error */
+    if (error.message?.includes('auth')) {
+      showAlert('step3-err','Please log in to complete your purchase.');
+    } else {
+      showAlert('step3-err', 'Order failed: ' + error.message);
+    }
+    return;
+  }
+
+  /* Clear checkout data */
+  sessionStorage.removeItem('tradex_checkout');
+
+  /* Show success */
+  $('success-order-id').textContent = `#TRX-${String(order.id).padStart(6,'0')}`;
+  goStep(4);
+});
+
+/* ── Login prompt (shown when user hits checkout without being logged in) ── */
+function showAlert(id, msg) {
+  const el = $(id); el.classList.add('on');
+  el.querySelectorAll('span')[1].textContent = msg;
+}
+function showGlobalError(msg) {
+  document.querySelector('.page').innerHTML = `
+    <div style="grid-column:1/-1;text-align:center;padding:4rem 1rem">
+      <div style="font-size:3rem;margin-bottom:1rem">⚠️</div>
+      <h2 style="font-family:var(--serif);font-size:1.4rem;margin-bottom:0.75rem">Something went wrong</h2>
+      <p style="color:var(--muted);margin-bottom:1.5rem">${msg}</p>
+      <button onclick="history.back()" style="background:var(--amber);border:none;color:#0a0a0a;padding:0.75rem 2rem;border-radius:9px;font-size:0.9rem;font-weight:700;cursor:pointer">← Go Back</button>
+    </div>`;
+}
+
+/* ── Address helpers ── */
+function applyAddr(id) {
+  const addrs = window._savedAddrs || [];
+  const a = addrs.find(x => String(x.id) === String(id));
+  if (a) applyAddrObj(a);
+}
+function applyAddrObj(a) {
+  if (!a) return;
+  $('d-name').value    = a.full_name || '';
+  $('d-phone').value   = a.phone || '';
+  $('d-address').value = [a.address, a.city, a.state].filter(Boolean).join(', ');
+  const sel = $('d-country');
+  if (sel && a.country) sel.value = a.country;
+}
+
+/* ── Init ── */
+init();
+</script>
+</body>
+</html>

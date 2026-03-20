@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Browse Listings — Tradex Marketplace</title>
+  <meta name="description" content="Discover thousands of products, digital downloads, freelance services and experiences on Tradex. Filter by category, price, rating and delivery time." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://tradex.market/browse.html" />
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content="https://tradex.market/browse.html" />
+  <meta property="og:title"       content="Browse Listings — Tradex Marketplace" />
+  <meta property="og:description" content="Discover thousands of products, services and skills on Tradex." />
+  <meta property="og:image"       content="https://tradex.market/og-image.png" />
+  <meta name="twitter:card"       content="summary_large_image" />
+  <meta name="twitter:title"      content="Browse Listings — Tradex" />
+  <meta name="twitter:image"      content="https://tradex.market/og-image.png" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#F59E0B" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="auth.guard.js"></script>
+  <script src="listings.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --amber: #F59E0B; --amber-light: #FBBF24; --amber-dim: rgba(245,158,11,0.1);
+      --bg: #0a0a0a; --bg2: #0f0f0f; --bg3: #141414; --bg4: #181818;
+      --border: rgba(255,255,255,0.07); --border-md: rgba(255,255,255,0.11);
+      --text: #fff; --muted: rgba(255,255,255,0.45); --dim: rgba(255,255,255,0.22);
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans: 'DM Sans', system-ui, sans-serif;
+      --nav-h: 62px;
+    }
+    html { overflow-x: hidden; scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; font-family: var(--sans); }
+    .scroll-x { overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    .scroll-x::-webkit-scrollbar { display: none; }
+
+    /* ══ NAV ══ */
+    #nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: var(--nav-h); padding: 0 1.25rem;
+      background: rgba(10,10,10,0.96); backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 6px; flex-shrink: 0; text-decoration: none; }
+    .nav-logo span { font-family: var(--serif); font-size: 1.3rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
+    .nav-logo i { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); display: inline-block; }
+    .nav-search { flex: 1; display: flex; background: var(--bg3); border: 1px solid var(--border-md); border-radius: 10px; overflow: hidden; max-width: 500px; }
+    .nav-search input { flex: 1; background: transparent; border: none; outline: none; padding: 0.6rem 1rem; color: var(--text); font-size: 0.88rem; font-family: var(--sans); min-width: 0; }
+    .nav-search input::placeholder { color: var(--dim); }
+    .nav-search button { background: var(--amber); border: none; color: #0a0a0a; padding: 0 1rem; font-size: 0.82rem; font-weight: 600; white-space: nowrap; transition: background 0.2s; }
+    .nav-search button:hover { background: var(--amber-light); }
+    .nav-right { display: flex; align-items: center; gap: 0.6rem; margin-left: auto; flex-shrink: 0; }
+    .btn-nav-ghost { background: transparent; border: 1px solid var(--border-md); color: var(--text); padding: 0.38rem 0.85rem; border-radius: 7px; font-size: 0.8rem; transition: all 0.2s; white-space: nowrap; }
+    .btn-nav-amber { background: var(--amber); border: none; color: #0a0a0a; padding: 0.38rem 0.85rem; border-radius: 7px; font-size: 0.8rem; font-weight: 600; transition: background 0.2s; white-space: nowrap; }
+    .btn-nav-amber:hover { background: var(--amber-light); }
+    .hamburger { display: none; flex-direction: column; gap: 5px; background: transparent; border: none; padding: 4px; }
+    .hamburger span { display: block; width: 20px; height: 2px; background: var(--text); border-radius: 2px; transition: transform 0.25s, opacity 0.25s; }
+    .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
+    #mob-search { display: none; position: fixed; top: var(--nav-h); left: 0; right: 0; z-index: 99; background: var(--bg2); border-bottom: 1px solid var(--border); padding: 0.75rem 1.25rem; }
+    #mob-search.show { display: block; }
+    #mob-search .msb { display: flex; background: var(--bg3); border: 1px solid var(--border-md); border-radius: 10px; overflow: hidden; }
+    #mob-search input { flex: 1; background: transparent; border: none; outline: none; padding: 0.7rem 1rem; color: var(--text); font-size: 0.88rem; font-family: var(--sans); min-width: 0; }
+    #mob-search input::placeholder { color: var(--dim); }
+    #mob-search button { background: var(--amber); border: none; color: #0a0a0a; padding: 0 1rem; font-size: 0.82rem; font-weight: 600; }
+
+    /* ══ LAYOUT ══ */
+    .page { display: grid; grid-template-columns: 252px 1fr; min-height: 100vh; padding-top: var(--nav-h); }
+
+    /* ══ SIDEBAR ══ */
+    #sidebar { background: var(--bg2); border-right: 1px solid var(--border); padding: 1.5rem 1rem; position: sticky; top: var(--nav-h); height: calc(100vh - var(--nav-h)); overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+    .filter-section { margin-bottom: 1.5rem; }
+    .filter-title { font-size: 0.7rem; font-weight: 700; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.75rem; }
+    .cat-list { display: flex; flex-direction: column; gap: 0.25rem; }
+    .cat-item { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.65rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; border: 1px solid transparent; }
+    .cat-item:hover { background: var(--bg3); }
+    .cat-item.active { background: var(--amber-dim); border-color: rgba(245,158,11,0.2); }
+    .ci-left { display: flex; align-items: center; gap: 0.5rem; }
+    .ci-icon { font-size: 0.95rem; }
+    .ci-name { font-size: 0.83rem; font-weight: 500; color: var(--muted); }
+    .cat-item.active .ci-name { color: var(--amber); }
+    .ci-count { font-size: 0.7rem; color: var(--dim); background: var(--bg3); padding: 0.1rem 0.4rem; border-radius: 100px; }
+    .cat-item.active .ci-count { background: rgba(245,158,11,0.15); color: var(--amber); }
+    .price-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; }
+    .price-input { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 0.65rem; color: var(--text); font-size: 0.83rem; font-family: var(--sans); outline: none; width: 100%; transition: border-color 0.2s; }
+    .price-input:focus { border-color: rgba(245,158,11,0.4); }
+    .price-input::placeholder { color: var(--dim); }
+    .filter-list { display: flex; flex-direction: column; gap: 0.25rem; }
+    .filter-item { display: flex; align-items: center; gap: 0.55rem; padding: 0.42rem 0.6rem; border-radius: 8px; cursor: pointer; transition: background 0.2s; }
+    .filter-item:hover { background: var(--bg3); }
+    .filter-item.active { background: var(--amber-dim); }
+    .check-box { width: 15px; height: 15px; border: 1.5px solid var(--border-md); border-radius: 4px; flex-shrink: 0; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+    .filter-item.active .check-box { background: var(--amber); border-color: var(--amber); }
+    .filter-item.active .check-box::after { content: '✓'; font-size: 0.6rem; color: #0a0a0a; font-weight: 700; }
+    .filter-label { font-size: 0.82rem; color: var(--muted); }
+    .filter-item.active .filter-label { color: var(--amber); }
+    .stars-display { color: var(--amber); font-size: 0.82rem; letter-spacing: 1px; }
+    .clear-btn { width: 100%; padding: 0.55rem; background: transparent; border: 1px solid var(--border); color: var(--muted); border-radius: 8px; font-size: 0.8rem; transition: all 0.2s; margin-top: 0.5rem; }
+    .clear-btn:hover { border-color: #EF4444; color: #EF4444; }
+
+    /* ══ MAIN ══ */
+    #main { padding: 1.5rem; }
+    .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem; }
+    .result-info h1 { font-family: var(--serif); font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; }
+    .result-count { color: var(--muted); font-size: 0.82rem; margin-top: 0.15rem; }
+    .result-count span { color: var(--amber); font-weight: 600; }
+    .top-actions { display: flex; align-items: center; gap: 0.6rem; }
+    .sort-select { background: var(--bg3); border: 1px solid var(--border-md); color: var(--text); padding: 0.45rem 0.75rem; border-radius: 8px; font-size: 0.82rem; font-family: var(--sans); outline: none; cursor: pointer; }
+    .sort-select option { background: var(--bg3); }
+    .view-btns { display: flex; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .view-btn { background: transparent; border: none; color: var(--dim); padding: 0.4rem 0.6rem; font-size: 0.95rem; transition: all 0.2s; }
+    .view-btn.active { background: var(--bg4); color: var(--amber); }
+    .btn-filter-mob { display: none; align-items: center; gap: 0.4rem; background: var(--bg3); border: 1px solid var(--border-md); color: var(--text); padding: 0.45rem 0.75rem; border-radius: 8px; font-size: 0.82rem; }
+    .filter-badge-count { background: var(--amber); color: #0a0a0a; font-size: 0.62rem; font-weight: 700; width: 15px; height: 15px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+    /* active chips */
+    .chips-row { display: flex; gap: 0.45rem; margin-bottom: 1rem; flex-wrap: wrap; align-items: center; }
+    .chips-row.empty { display: none; }
+    .chip { display: flex; align-items: center; gap: 0.35rem; background: var(--amber-dim); border: 1px solid rgba(245,158,11,0.25); color: var(--amber); padding: 0.25rem 0.65rem; border-radius: 100px; font-size: 0.76rem; font-weight: 500; }
+    .chip button { background: none; border: none; color: var(--amber); font-size: 0.8rem; padding: 0; line-height: 1; cursor: pointer; opacity: 0.7; }
+    .chip button:hover { opacity: 1; }
+
+    /* ══ GRID ══ */
+    #grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
+    #grid.list-view { grid-template-columns: 1fr; }
+
+    /* card */
+    .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; cursor: pointer; transition: all 0.25s; animation: fadeUp 0.3s ease both; text-decoration: none; display: block; }
+    .card:hover { border-color: rgba(245,158,11,0.22); transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,0.45); }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+
+    /* card image */
+    .card-img { height: 160px; position: relative; overflow: hidden; background: var(--bg3); }
+    .card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; display: block; }
+    .card:hover .card-img img { transform: scale(1.04); }
+    .card-img-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 3rem; background: var(--bg3); }
+    .card-badge { position: absolute; top: 9px; left: 9px; font-size: 0.63rem; font-weight: 700; padding: 0.18rem 0.5rem; border-radius: 100px; }
+    .badge-top  { background: var(--amber); color: #0a0a0a; }
+    .badge-best { background: #6366F1; color: #fff; }
+    .badge-new  { background: #10B981; color: #fff; }
+    .badge-ver  { background: rgba(255,255,255,0.12); color: #fff; }
+    .card-save { position: absolute; top: 9px; right: 9px; background: rgba(10,10,10,0.65); border: 1px solid rgba(255,255,255,0.12); border-radius: 7px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; transition: all 0.2s; backdrop-filter: blur(4px); cursor: pointer; }
+    .card-save:hover { background: rgba(245,158,11,0.2); border-color: rgba(245,158,11,0.4); }
+    .card-save.saved { background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.4); }
+
+    .card-body { padding: 0.9rem; }
+    .card-cat { font-size: 0.68rem; font-weight: 600; color: var(--amber); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.3rem; }
+    .card-title { font-size: 0.88rem; font-weight: 600; line-height: 1.35; margin-bottom: 0.28rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: var(--text); }
+    .card-seller { display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.6rem; }
+    .seller-dot { width: 16px; height: 16px; border-radius: 50%; background: var(--amber-dim); border: 1px solid rgba(245,158,11,0.2); display: flex; align-items: center; justify-content: center; font-size: 0.55rem; font-weight: 700; color: var(--amber); flex-shrink: 0; }
+    .seller-name { font-size: 0.76rem; color: var(--muted); }
+    .card-foot { display: flex; align-items: center; justify-content: space-between; }
+    .card-rating { display: flex; align-items: center; gap: 3px; }
+    .star { color: var(--amber); font-size: 0.75rem; }
+    .rv { font-size: 0.76rem; font-weight: 500; }
+    .rc { font-size: 0.7rem; color: var(--dim); }
+    .card-price { font-family: var(--serif); font-size: 0.98rem; font-weight: 700; color: var(--amber); }
+    .card-price small { font-family: var(--sans); font-size: 0.68rem; color: var(--muted); font-weight: 400; margin-right: 2px; }
+
+    /* list view */
+    #grid.list-view .card { display: grid; grid-template-columns: 180px 1fr; }
+    #grid.list-view .card-img { height: 100%; min-height: 130px; border-radius: 0; }
+    #grid.list-view .card-body { display: flex; flex-direction: column; justify-content: space-between; }
+
+    /* skeleton */
+    .skeleton { background: linear-gradient(90deg,var(--bg3) 25%,var(--bg4) 50%,var(--bg3) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 8px; }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    .card-skel { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+    .sk-img { height: 160px; }
+    .sk-body { padding: 0.9rem; display: flex; flex-direction: column; gap: 0.55rem; }
+    .sk-line { height: 11px; }
+    .sk-short { width: 55%; }
+    .sk-shorter { width: 35%; }
+
+    /* empty */
+    #empty { display: none; text-align: center; padding: 4rem 1.5rem; }
+    #empty.show { display: block; }
+    .empty-icon { font-size: 3rem; margin-bottom: 0.85rem; }
+    #empty h2 { font-family: var(--serif); font-size: 1.4rem; margin-bottom: 0.5rem; }
+    #empty p { color: var(--muted); font-size: 0.88rem; margin-bottom: 1.25rem; }
+    .btn-reset { background: var(--amber); border: none; color: #0a0a0a; padding: 0.7rem 1.75rem; border-radius: 8px; font-size: 0.88rem; font-weight: 600; }
+
+    /* pagination */
+    #pagination { display: flex; align-items: center; justify-content: center; gap: 0.45rem; margin-top: 2rem; padding-bottom: 2rem; flex-wrap: wrap; }
+    .pg-btn { width: 34px; height: 34px; border-radius: 7px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-size: 0.83rem; font-family: var(--sans); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+    .pg-btn:hover { border-color: var(--border-md); color: var(--text); }
+    .pg-btn.active { background: var(--amber); border-color: var(--amber); color: #0a0a0a; font-weight: 700; }
+    .pg-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    /* search suggestions */
+    .search-suggestions { position: absolute; top: 100%; left: 0; right: 0; background: var(--bg2); border: 1px solid var(--border-md); border-top: none; border-radius: 0 0 10px 10px; overflow: hidden; z-index: 50; max-height: 280px; overflow-y: auto; }
+    .suggestion { display: flex; align-items: center; gap: 0.6rem; padding: 0.65rem 1rem; cursor: pointer; transition: background 0.15s; font-size: 0.85rem; }
+    .suggestion:hover { background: var(--bg3); }
+    .suggestion img { width: 36px; height: 36px; object-fit: cover; border-radius: 6px; flex-shrink: 0; }
+    .suggestion .s-title { font-weight: 500; color: var(--text); }
+    .suggestion .s-price { color: var(--amber); font-size: 0.78rem; margin-left: auto; flex-shrink: 0; }
+    .nav-search-wrap { position: relative; flex: 1; max-width: 500px; display: flex; }
+    .nav-search-wrap .nav-search { width: 100%; }
+
+    /* drawer */
+    #filter-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; backdrop-filter: blur(4px); }
+    #filter-overlay.show { display: block; }
+    #filter-drawer { position: fixed; top: 0; right: -100%; bottom: 0; width: min(300px,90vw); background: var(--bg2); z-index: 201; transition: right 0.3s ease; overflow-y: auto; padding: 1.25rem; border-left: 1px solid var(--border); }
+    #filter-drawer.open { right: 0; }
+    .drawer-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+    .drawer-head h3 { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; }
+    .drawer-close { background: none; border: none; color: var(--muted); font-size: 1.2rem; cursor: pointer; }
+
+    /* ══ RESPONSIVE ══ */
+    @media (max-width: 900px) {
+      .page { grid-template-columns: 1fr; }
+      #sidebar { display: none; }
+      .btn-filter-mob { display: flex; }
+      .nav-search { display: none; }
+      .hamburger { display: flex; }
+      .btn-nav-ghost { display: none; }
+    }
+    @media (max-width: 640px) {
+      #grid { grid-template-columns: 1fr 1fr; }
+      #grid.list-view { grid-template-columns: 1fr; }
+      .card-img { height: 120px; }
+      #main { padding: 1rem; }
+      .sk-img { height: 120px; }
+    }
+    @media (max-width: 380px) {
+      #grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="tradex.html" class="nav-logo"><span>Tradex</span><i></i></a>
+
+  <div class="nav-search-wrap">
+    <div class="nav-search">
+      <input type="text" id="search-input" placeholder="Search listings, skills, products..." autocomplete="off" />
+      <button id="search-btn">Search</button>
+    </div>
+    <div class="search-suggestions" id="suggestions" style="display:none"></div>
+  </div>
+
+  <div class="nav-right">
+    <button class="btn-filter-mob" id="filter-mob-btn">
+      🔧 Filters
+      <span class="filter-badge-count" id="filter-badge" style="display:none">0</span>
+    </button>
+    <div class="view-btns">
+      <button class="view-btn active" id="grid-btn" title="Grid">⊞</button>
+      <button class="view-btn" id="list-btn" title="List">☰</button>
+    </div>
+    <button class="btn-nav-ghost" id="nav-login"  onclick="window.location.href='tradex-auth.html'" style="display:none">Log In</button>
+    <button class="btn-nav-amber" id="nav-signup" onclick="window.location.href='tradex-auth.html#signup'" style="display:none">Sign Up</button>
+    <div id="nav-avatar" style="display:none;width:32px;height:32px;border-radius:50%;background:var(--amber-dim);border:1px solid rgba(245,158,11,0.3);align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:var(--amber);cursor:pointer;flex-shrink:0;text-decoration:none"></div>
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- mobile search -->
+<div id="mob-search">
+  <div class="msb">
+    <input type="text" id="mob-search-input" placeholder="Search listings..." />
+    <button id="mob-search-btn">Go</button>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <div class="filter-section">
+      <div class="filter-title">Category</div>
+      <div class="cat-list" id="cat-list">
+        <div class="cat-item active" data-cat="all"><div class="ci-left"><span class="ci-icon">🏪</span><span class="ci-name">All listings</span></div><span class="ci-count" id="cnt-all">0</span></div>
+        <div class="cat-item" data-cat="physical"><div class="ci-left"><span class="ci-icon">📦</span><span class="ci-name">Physical Goods</span></div><span class="ci-count" id="cnt-physical">0</span></div>
+        <div class="cat-item" data-cat="digital"><div class="ci-left"><span class="ci-icon">💾</span><span class="ci-name">Digital Products</span></div><span class="ci-count" id="cnt-digital">0</span></div>
+        <div class="cat-item" data-cat="freelance"><div class="ci-left"><span class="ci-icon">🛠️</span><span class="ci-name">Freelance Skills</span></div><span class="ci-count" id="cnt-freelance">0</span></div>
+        <div class="cat-item" data-cat="experience"><div class="ci-left"><span class="ci-icon">🎓</span><span class="ci-name">Experiences</span></div><span class="ci-count" id="cnt-experience">0</span></div>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-title">Price Range</div>
+      <div class="price-inputs">
+        <input class="price-input" type="number" id="price-min" placeholder="Min $" min="0" />
+        <input class="price-input" type="number" id="price-max" placeholder="Max $" min="0" />
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-title">Minimum Rating</div>
+      <div class="filter-list" id="rating-list">
+        <div class="filter-item active" data-rating="0"><div class="check-box"></div><span class="filter-label">Any rating</span></div>
+        <div class="filter-item" data-rating="3"><div class="check-box"></div><span class="stars-display">★★★</span><span class="filter-label" style="margin-left:4px">3+</span></div>
+        <div class="filter-item" data-rating="4"><div class="check-box"></div><span class="stars-display">★★★★</span><span class="filter-label" style="margin-left:4px">4+</span></div>
+        <div class="filter-item" data-rating="4.5"><div class="check-box"></div><span class="stars-display">★★★★½</span><span class="filter-label" style="margin-left:4px">4.5+</span></div>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-title">Delivery Time</div>
+      <div class="filter-list" id="delivery-list">
+        <div class="filter-item active" data-days="0"><div class="check-box"></div><span class="filter-label">Any time</span></div>
+        <div class="filter-item" data-days="1"><div class="check-box"></div><span class="filter-label">Up to 1 day</span></div>
+        <div class="filter-item" data-days="3"><div class="check-box"></div><span class="filter-label">Up to 3 days</span></div>
+        <div class="filter-item" data-days="7"><div class="check-box"></div><span class="filter-label">Up to 7 days</span></div>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-title">Seller</div>
+      <div class="filter-list" id="verified-list">
+        <div class="filter-item active" data-verified="all"><div class="check-box"></div><span class="filter-label">All sellers</span></div>
+        <div class="filter-item" data-verified="true"><div class="check-box"></div><span class="filter-label">✅ Verified only</span></div>
+      </div>
+    </div>
+
+    <button class="clear-btn" id="clear-btn">Clear all filters</button>
+  </aside>
+
+  <!-- MAIN -->
+  <main id="main">
+
+    <div class="top-bar">
+      <div class="result-info">
+        <h1 id="page-title">All Listings</h1>
+        <div class="result-count"><span id="result-count">0</span> results found</div>
+      </div>
+      <div class="top-actions">
+        <select class="sort-select" id="sort-select">
+          <option value="newest">Newest first</option>
+          <option value="price_asc">Price: Low → High</option>
+          <option value="price_desc">Price: High → Low</option>
+          <option value="rating">Top Rated</option>
+          <option value="popular">Most Popular</option>
+        </select>
+        <div class="view-btns" style="display:none" id="view-btns-main">
+          <button class="view-btn active" id="grid-btn2">⊞</button>
+          <button class="view-btn" id="list-btn2">☰</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- active filter chips -->
+    <div class="chips-row empty" id="chips-row"></div>
+
+    <!-- grid -->
+    <div id="grid"></div>
+
+    <!-- empty -->
+    <div id="empty">
+      <div class="empty-icon">🔍</div>
+      <h2>No listings found</h2>
+      <p>Try adjusting your search or filters.</p>
+      <button class="btn-reset" id="empty-reset">Clear filters</button>
+    </div>
+
+    <!-- pagination -->
+    <div id="pagination"></div>
+
+  </main>
+</div>
+
+<!-- FILTER DRAWER -->
+<div id="filter-overlay"></div>
+<div id="filter-drawer">
+  <div class="drawer-head">
+    <h3>Filters</h3>
+    <button class="drawer-close" id="drawer-close">✕</button>
+  </div>
+  <div id="drawer-body"></div>
+</div>
+
+<script>
+/* ── State ── */
+const st = {
+  search: '', category: 'all', priceMin: null, priceMax: null,
+  rating: 0, days: 0, verified: 'all', sort: 'newest', page: 1, perPage: 12, view: 'grid',
+};
+
+let saved     = new Set();
+let allCounts = {};
+let searchTimer = null;
+
+const $ = id => document.getElementById(id);
+const CAT_NAMES = { all:'All Listings', physical:'Physical Goods', digital:'Digital Products', freelance:'Freelance Skills', experience:'Experiences' };
+
+/* ── Skeletons ── */
+function showSkeletons(n = 6) {
+  $('grid').innerHTML = Array.from({length:n}, () => `
+    <div class="card-skel">
+      <div class="sk-img skeleton"></div>
+      <div class="sk-body">
+        <div class="sk-line skeleton sk-shorter"></div>
+        <div class="sk-line skeleton"></div>
+        <div class="sk-line skeleton sk-short"></div>
+        <div class="sk-line skeleton sk-shorter"></div>
+      </div>
+    </div>`).join('');
+}
+
+/* ── Render card ── */
+function renderCard(l, idx) {
+  const img   = Listings.getImage(l, 0);
+  const badge = Listings.getBadgeLabel(l.badge);
+  const bCls  = Listings.getBadgeClass(l.badge);
+  const isSv  = saved.has(l.id);
+  return `
+    <a class="card" href="listing.html?id=${l.id}" style="animation-delay:${idx*0.04}s">
+      <div class="card-img">
+        <img src="${img}" alt="${l.title}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <div class="card-img-placeholder" style="display:none">${Listings.getCatEmoji(l.category)}</div>
+        ${badge ? `<span class="card-badge ${bCls}">${badge}</span>` : ''}
+        <button class="card-save ${isSv?'saved':''}" onclick="toggleSave(event,${l.id})" title="${isSv?'Unsave':'Save'}">${isSv?'❤️':'🤍'}</button>
+      </div>
+      <div class="card-body">
+        <div class="card-cat">${Listings.getCatEmoji(l.category)} ${Listings.getCatName(l.category)}</div>
+        <div class="card-title">${l.title}</div>
+        <div class="card-seller">
+          <div class="seller-dot">${l.seller_name ? l.seller_name[0] : '?'}</div>
+          <span class="seller-name">${l.seller_name || 'Unknown'} ${l.seller_verified ? '✅' : ''}</span>
+        </div>
+        <div class="card-foot">
+          <div class="card-rating">
+            <span class="star">★</span>
+            <span class="rv">${l.rating || '—'}</span>
+            <span class="rc">(${l.review_count || 0})</span>
+          </div>
+          <div class="card-price"><small>from</small>$${l.price}</div>
+        </div>
+      </div>
+    </a>`;
+}
+
+/* ── Main render ── */
+async function render() {
+  showSkeletons();
+  $('empty').classList.remove('show');
+
+  const { data, count, error } = await Listings.getAll(st);
+
+  if (error) {
+    $('grid').innerHTML = `<div style="color:var(--muted);padding:2rem;text-align:center;grid-column:1/-1">Failed to load listings. Please try again.</div>`;
+    return;
+  }
+
+  $('page-title').textContent   = st.search ? `Results for "${st.search}"` : CAT_NAMES[st.category];
+  $('result-count').textContent = count || 0;
+
+  renderChips();
+  updateCounts();
+
+  if (!data || data.length === 0) {
+    $('grid').innerHTML = '';
+    $('empty').classList.add('show');
+    $('pagination').innerHTML = '';
+    return;
+  }
+
+  $('grid').innerHTML = data.map((l,i) => renderCard(l, i)).join('');
+  renderPagination(count);
+}
+
+/* ── Category counts ── */
+async function updateCounts() {
+  if (Object.keys(allCounts).length === 0) {
+    const { data } = await Listings.getCounts();
+    if (data) allCounts = data;
+  }
+  Object.entries(allCounts).forEach(([cat, n]) => {
+    const el = $(`cnt-${cat}`);
+    if (el) el.textContent = n;
+  });
+}
+
+/* ── Chips ── */
+function renderChips() {
+  const chips = [];
+  if (st.category !== 'all')   chips.push({label: CAT_NAMES[st.category], key:'category'});
+  if (st.priceMin !== null)     chips.push({label: `Min $${st.priceMin}`,  key:'priceMin'});
+  if (st.priceMax !== null)     chips.push({label: `Max $${st.priceMax}`,  key:'priceMax'});
+  if (st.rating > 0)            chips.push({label: `${st.rating}+ stars`,  key:'rating'});
+  if (st.days > 0)              chips.push({label: `≤ ${st.days} day${st.days>1?'s':''}`, key:'days'});
+  if (st.verified === 'true')   chips.push({label: 'Verified only',        key:'verified'});
+  if (st.search)                chips.push({label: `"${st.search}"`,       key:'search'});
+
+  const el = $('chips-row');
+  el.classList.toggle('empty', chips.length === 0);
+  el.innerHTML = chips.map(c => `
+    <div class="chip">${c.label}<button onclick="removeChip('${c.key}')">✕</button></div>`
+  ).join('');
+
+  const badge = $('filter-badge');
+  const n = chips.filter(c => c.key !== 'search').length;
+  badge.textContent = n;
+  badge.style.display = n ? 'flex' : 'none';
+}
+
+function removeChip(key) {
+  if (key === 'category') st.category = 'all';
+  if (key === 'priceMin') { st.priceMin = null; $('price-min').value = ''; }
+  if (key === 'priceMax') { st.priceMax = null; $('price-max').value = ''; }
+  if (key === 'rating')   st.rating = 0;
+  if (key === 'days')     st.days = 0;
+  if (key === 'verified') st.verified = 'all';
+  if (key === 'search')   { st.search = ''; $('search-input').value = ''; if($('mob-search-input')) $('mob-search-input').value = ''; }
+  syncSidebarUI();
+  st.page = 1; render();
+}
+
+/* ── Sidebar UI sync ── */
+function syncSidebarUI() {
+  document.querySelectorAll('[data-cat]').forEach(b => b.classList.toggle('active', b.dataset.cat === st.category));
+  document.querySelectorAll('[data-rating]').forEach(b => b.classList.toggle('active', parseFloat(b.dataset.rating) === st.rating));
+  document.querySelectorAll('[data-days]').forEach(b => b.classList.toggle('active', parseInt(b.dataset.days) === st.days));
+  document.querySelectorAll('[data-verified]').forEach(b => b.classList.toggle('active', b.dataset.verified === st.verified));
+}
+
+/* ── Pagination ── */
+function renderPagination(total) {
+  const pages = Math.ceil(total / st.perPage);
+  const el = $('pagination');
+  if (pages <= 1) { el.innerHTML = ''; return; }
+  let html = `<button class="pg-btn" ${st.page===1?'disabled':''} onclick="goPage(${st.page-1})">←</button>`;
+  for (let i = 1; i <= pages; i++) {
+    if (i===1 || i===pages || Math.abs(i-st.page)<=1) {
+      html += `<button class="pg-btn ${i===st.page?'active':''}" onclick="goPage(${i})">${i}</button>`;
+    } else if (Math.abs(i-st.page)===2) {
+      html += `<span style="color:var(--dim);padding:0 2px">…</span>`;
+    }
+  }
+  html += `<button class="pg-btn" ${st.page===pages?'disabled':''} onclick="goPage(${st.page+1})">→</button>`;
+  el.innerHTML = html;
+}
+
+function goPage(p) { st.page = p; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+
+/* ── Search with live suggestions ── */
+async function showSuggestions(q) {
+  const box = $('suggestions');
+  if (!q || q.length < 2) { box.style.display = 'none'; return; }
+  const { data } = await Listings.search(q, 5);
+  if (!data || data.length === 0) { box.style.display = 'none'; return; }
+  box.innerHTML = data.map(l => `
+    <div class="suggestion" onclick="window.location.href='listing.html?id=${l.id}'">
+      <img src="${Listings.getImage(l,0)}" alt="" onerror="this.src=''"/>
+      <span class="s-title">${l.title}</span>
+      <span class="s-price">$${l.price}</span>
+    </div>`).join('');
+  box.style.display = 'block';
+}
+
+function doSearch(q) {
+  st.search = q || $('search-input').value.trim();
+  $('suggestions').style.display = 'none';
+  st.page = 1; render();
+}
+
+$('search-input').addEventListener('input', function() {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => showSuggestions(this.value.trim()), 300);
+});
+$('search-input').addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+$('search-btn').addEventListener('click', () => doSearch());
+
+/* close suggestions on outside click */
+document.addEventListener('click', e => {
+  if (!e.target.closest('.nav-search-wrap')) $('suggestions').style.display = 'none';
+});
+
+/* mobile search */
+$('mob-search-btn').addEventListener('click', () => {
+  st.search = $('mob-search-input').value.trim();
+  $('search-input').value = st.search;
+  st.page = 1; render();
+  $('hamburger').classList.remove('open');
+  $('mob-search').classList.remove('show');
+});
+$('mob-search-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') $('mob-search-btn').click();
+});
+
+/* ── Filters ── */
+$('cat-list').addEventListener('click', e => {
+  const item = e.target.closest('[data-cat]'); if (!item) return;
+  st.category = item.dataset.cat; st.page = 1;
+  syncSidebarUI(); render();
+});
+$('price-min').addEventListener('change', () => {
+  st.priceMin = $('price-min').value ? parseFloat($('price-min').value) : null;
+  st.page = 1; render();
+});
+$('price-max').addEventListener('change', () => {
+  st.priceMax = $('price-max').value ? parseFloat($('price-max').value) : null;
+  st.page = 1; render();
+});
+$('rating-list').addEventListener('click', e => {
+  const item = e.target.closest('[data-rating]'); if (!item) return;
+  st.rating = parseFloat(item.dataset.rating); st.page = 1;
+  syncSidebarUI(); render();
+});
+$('delivery-list').addEventListener('click', e => {
+  const item = e.target.closest('[data-days]'); if (!item) return;
+  st.days = parseInt(item.dataset.days); st.page = 1;
+  syncSidebarUI(); render();
+});
+$('verified-list').addEventListener('click', e => {
+  const item = e.target.closest('[data-verified]'); if (!item) return;
+  st.verified = item.dataset.verified; st.page = 1;
+  syncSidebarUI(); render();
+});
+$('sort-select').addEventListener('change', () => { st.sort = $('sort-select').value; st.page=1; render(); });
+
+function clearAll() {
+  st.search=''; st.category='all'; st.priceMin=null; st.priceMax=null;
+  st.rating=0; st.days=0; st.verified='all'; st.page=1;
+  $('search-input').value='';
+  if($('mob-search-input')) $('mob-search-input').value='';
+  $('price-min').value=''; $('price-max').value='';
+  syncSidebarUI(); render();
+}
+$('clear-btn').addEventListener('click', clearAll);
+$('empty-reset').addEventListener('click', clearAll);
+
+/* ── View toggle ── */
+function setView(v) {
+  st.view = v;
+  $('grid').classList.toggle('list-view', v === 'list');
+  [$('grid-btn'),$('list-btn')].forEach(b => { if(b){ b.classList.toggle('active', b.id === (v==='grid'?'grid-btn':'list-btn')); }});
+}
+$('grid-btn').addEventListener('click', () => setView('grid'));
+$('list-btn').addEventListener('click', () => setView('list'));
+
+/* ── Save ── */
+async function toggleSave(e, id) {
+  e.preventDefault(); e.stopPropagation();
+  await AuthGuard.protectAction(async () => {
+    if (saved.has(id)) { saved.delete(id); await Listings.unsave(id); }
+    else               { saved.add(id);    await Listings.save(id);   }
+    const btn = e.currentTarget;
+    btn.textContent = saved.has(id) ? '❤️' : '🤍';
+    btn.classList.toggle('saved', saved.has(id));
+  }, { label: 'save listings' });
+}
+
+/* ── Hamburger ── */
+$('hamburger').addEventListener('click', () => {
+  $('hamburger').classList.toggle('open');
+  $('mob-search').classList.toggle('show');
+});
+
+/* ── Mobile filter drawer ── */
+$('filter-mob-btn').addEventListener('click', () => {
+  $('drawer-body').innerHTML = $('sidebar').innerHTML;
+  bindDrawer();
+  $('filter-drawer').classList.add('open');
+  $('filter-overlay').classList.add('show');
+});
+function closeDrawer() { $('filter-drawer').classList.remove('open'); $('filter-overlay').classList.remove('show'); }
+$('drawer-close').addEventListener('click', closeDrawer);
+$('filter-overlay').addEventListener('click', closeDrawer);
+
+function bindDrawer() {
+  $('drawer-body').querySelectorAll('[data-cat]').forEach(b => b.addEventListener('click', () => { st.category=b.dataset.cat; st.page=1; syncSidebarUI(); closeDrawer(); render(); }));
+  $('drawer-body').querySelectorAll('[data-rating]').forEach(b => b.addEventListener('click', () => { st.rating=parseFloat(b.dataset.rating); st.page=1; syncSidebarUI(); closeDrawer(); render(); }));
+  $('drawer-body').querySelectorAll('[data-days]').forEach(b => b.addEventListener('click', () => { st.days=parseInt(b.dataset.days); st.page=1; syncSidebarUI(); closeDrawer(); render(); }));
+  $('drawer-body').querySelectorAll('[data-verified]').forEach(b => b.addEventListener('click', () => { st.verified=b.dataset.verified; st.page=1; syncSidebarUI(); closeDrawer(); render(); }));
+  const cb = $('drawer-body').querySelector('.clear-btn');
+  if (cb) cb.addEventListener('click', () => { closeDrawer(); clearAll(); });
+}
+
+/* ── URL params ── */
+function readParams() {
+  const p = new URLSearchParams(window.location.search);
+  if (p.get('q'))   { st.search = p.get('q'); $('search-input').value = st.search; }
+  if (p.get('cat')) { st.category = p.get('cat'); syncSidebarUI(); }
+}
+
+/* ── Load saved listings (only if logged in) ── */
+async function loadSaved() {
+  const user = await AuthGuard.user();
+  if (!user) return; /* guests have no saved items */
+  const { data } = await Listings.getSaved();
+  if (data) saved = new Set(data);
+}
+
+/* ── Init ── */
+(async () => {
+  /* Sync nav — show login/signup for guests, avatar for logged-in */
+  AuthGuard.syncNav({
+    guestEls:  ['nav-login', 'nav-signup'],
+    authEls:   ['nav-avatar'],
+    avatarEl:  'nav-avatar',
+  }).then(user => {
+    /* make avatar a link to dashboard */
+    const av = $('nav-avatar');
+    if (av && user) {
+      av.style.display = 'flex';
+      av.onclick = () => {
+        const role = user.user_metadata?.role || 'buyer';
+        window.location.href = (role === 'seller' || role === 'both')
+          ? 'dashboard-seller.html'
+          : 'dashboard-buyer.html';
+      };
+    }
+  });
+
+  await loadSaved();
+  readParams();
+
+  /* pre-load category counts */
+  const { data: counts } = await Listings.getCounts();
+  if (counts) {
+    allCounts = counts;
+    Object.entries(counts).forEach(([cat, n]) => {
+      const el = $(`cnt-${cat}`);
+      if (el) el.textContent = n;
+    });
+  }
+  render();
+})();
+</script>
+</body>
+</html>

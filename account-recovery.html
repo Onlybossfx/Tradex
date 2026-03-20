@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tradex — Account Recovery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="auth.backend.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --amber: #F59E0B; --amber-light: #FBBF24; --amber-dim: rgba(245,158,11,0.12);
+      --bg: #0a0a0a; --bg2: #0f0f0f; --bg3: #141414;
+      --border: rgba(255,255,255,0.08); --border-focus: rgba(245,158,11,0.5);
+      --text: #fff; --muted: rgba(255,255,255,0.45); --dim: rgba(255,255,255,0.25);
+      --error: #EF4444; --success: #10B981;
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans: 'DM Sans', system-ui, sans-serif;
+    }
+    html, body { height: 100%; overflow-x: hidden; }
+    body { background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem 1.25rem; }
+
+    /* ── CARD ── */
+    .card { width: 100%; max-width: 440px; background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 2.5rem 2rem; position: relative; overflow: hidden; }
+    .card-glow { position: absolute; top: -30%; left: 50%; transform: translateX(-50%); width: 320px; height: 200px; background: radial-gradient(ellipse, rgba(245,158,11,0.1) 0%, transparent 70%); pointer-events: none; }
+
+    /* ── LOGO ── */
+    .logo { display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 2.5rem; text-decoration: none; }
+    .logo span { font-family: var(--serif); font-size: 1.3rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
+    .logo i { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); display: inline-block; }
+
+    /* ── STEPS ── */
+    .step-bar { display: flex; align-items: center; margin-bottom: 2.25rem; }
+    .sdot { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; color: var(--dim); flex-shrink: 0; transition: all 0.3s; }
+    .sdot.active { border-color: var(--amber); color: var(--amber); }
+    .sdot.done   { background: var(--amber); border-color: var(--amber); color: #0a0a0a; }
+    .sline { flex: 1; height: 2px; background: var(--border); transition: background 0.3s; }
+    .sline.done { background: var(--amber); }
+
+    /* ── PANELS ── */
+    .panel { display: none; animation: fadeUp 0.25s ease; }
+    .panel.active { display: block; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+    /* ── HEADER ── */
+    .head { text-align: center; margin-bottom: 1.75rem; }
+    .icon-wrap { width: 64px; height: 64px; background: var(--amber-dim); border: 1px solid rgba(245,158,11,0.25); border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 1.1rem; }
+    .head h1 { font-family: var(--serif); font-size: 1.65rem; font-weight: 700; margin-bottom: 0.4rem; letter-spacing: -0.02em; }
+    .head p { color: var(--muted); font-size: 0.875rem; line-height: 1.6; }
+    .head p strong { color: var(--text); }
+
+    /* ── FIELDS ── */
+    .field { margin-bottom: 1.1rem; }
+    .field label { display: block; font-size: 0.8rem; font-weight: 600; color: rgba(255,255,255,0.7); margin-bottom: 0.45rem; }
+    .wrap { position: relative; }
+    .wrap .ico { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--dim); font-size: 1rem; pointer-events: none; }
+    .wrap input { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 0.78rem 1rem 0.78rem 2.6rem; color: var(--text); font-size: 0.9rem; font-family: var(--sans); outline: none; transition: border-color 0.2s, background 0.2s; }
+    .wrap input::placeholder { color: var(--dim); }
+    .wrap input:focus { border-color: var(--border-focus); background: rgba(245,158,11,0.04); }
+    .wrap .eye { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--dim); cursor: pointer; font-size: 1rem; padding: 0; transition: color 0.2s; }
+    .wrap .eye:hover { color: var(--muted); }
+    .ferr { color: var(--error); font-size: 0.75rem; margin-top: 0.35rem; display: none; }
+    .ferr.on { display: block; }
+
+    /* ── PASSWORD STRENGTH ── */
+    .pw-bars { display: flex; gap: 4px; margin-top: 0.5rem; margin-bottom: 0.3rem; }
+    .pw-bar { flex: 1; height: 3px; border-radius: 2px; background: var(--border); transition: background 0.3s; }
+    .pw-bar.weak { background: var(--error); }
+    .pw-bar.fair { background: var(--amber); }
+    .pw-bar.strong { background: var(--success); }
+    .pw-lbl { font-size: 0.72rem; color: var(--dim); }
+
+    /* ── ALERTS ── */
+    .alert { display: none; padding: 0.75rem 1rem; border-radius: 10px; font-size: 0.83rem; margin-bottom: 1.25rem; align-items: center; gap: 0.6rem; line-height: 1.5; }
+    .alert.on { display: flex; }
+    .alert.err  { background: rgba(239,68,68,0.1);  border: 1px solid rgba(239,68,68,0.25);  color: #FCA5A5; }
+    .alert.ok   { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25); color: #6EE7B7; }
+    .alert.info { background: var(--amber-dim);     border: 1px solid rgba(245,158,11,0.25); color: #FCD34D; }
+
+    /* ── BUTTONS ── */
+    .btn-primary { width: 100%; padding: 0.88rem; background: var(--amber); border: none; border-radius: 10px; color: #0a0a0a; font-size: 0.95rem; font-weight: 700; font-family: var(--sans); cursor: pointer; transition: all 0.2s; position: relative; margin-bottom: 1rem; }
+    .btn-primary:hover:not(:disabled) { background: var(--amber-light); transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-primary.loading .lbl { visibility: hidden; }
+    .btn-primary.loading::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 18px; height: 18px; border: 2px solid rgba(10,10,10,0.3); border-top-color: #0a0a0a; border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: translate(-50%,-50%) rotate(360deg); } }
+
+    .btn-link { display: block; text-align: center; background: none; border: none; color: var(--muted); font-size: 0.83rem; font-family: var(--sans); cursor: pointer; padding: 0.5rem; width: 100%; transition: color 0.2s; text-decoration: none; }
+    .btn-link:hover { color: var(--text); }
+    .btn-link.amber { color: var(--amber); font-weight: 600; }
+
+    /* ── SUCCESS STATE ── */
+    .success-card { text-align: center; padding: 1rem 0; }
+    .success-icon { font-size: 3.5rem; margin-bottom: 1.25rem; display: block; }
+    .success-card h2 { font-family: var(--serif); font-size: 1.6rem; font-weight: 700; margin-bottom: 0.75rem; }
+    .success-card p { color: var(--muted); font-size: 0.9rem; line-height: 1.7; margin-bottom: 1.75rem; }
+    .success-card p strong { color: var(--text); }
+
+    /* ── REQUIREMENTS ── */
+    .req-list { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.75rem; margin-bottom: 1.25rem; }
+    .req { display: flex; align-items: center; gap: 0.6rem; font-size: 0.8rem; color: var(--dim); transition: color 0.2s; }
+    .req .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); flex-shrink: 0; transition: background 0.2s; }
+    .req.met { color: var(--success); }
+    .req.met .dot { background: var(--success); }
+
+    /* ── MOBILE ── */
+    @media (max-width: 480px) {
+      body { padding: 1.25rem; align-items: flex-start; padding-top: 2rem; }
+      .card { padding: 2rem 1.25rem; border-radius: 16px; border: none; background: transparent; }
+    }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="card-glow"></div>
+  <a href="tradex-auth.html" class="logo"><span>Tradex</span><i></i></a>
+
+  <!-- Step bar -->
+  <div class="step-bar">
+    <div class="sdot active" id="d1">1</div>
+    <div class="sline" id="ln1"></div>
+    <div class="sdot" id="d2">2</div>
+    <div class="sline" id="ln2"></div>
+    <div class="sdot" id="d3">3</div>
+  </div>
+
+  <!-- ══ STEP 1: Request reset ══ -->
+  <div class="panel active" id="p1">
+    <div class="head">
+      <div class="icon-wrap">🔑</div>
+      <h1>Forgot password?</h1>
+      <p>No worries — enter your email and we'll send you a reset link.</p>
+    </div>
+
+    <div class="alert err" id="r-err"><span>⚠️</span><span id="r-err-msg"></span></div>
+
+    <div class="field">
+      <label for="r-email">Email address</label>
+      <div class="wrap">
+        <span class="ico">✉</span>
+        <input type="email" id="r-email" placeholder="you@example.com" autocomplete="email" />
+      </div>
+      <div class="ferr" id="re-err">Please enter a valid email.</div>
+    </div>
+
+    <button class="btn-primary" id="r-btn"><span class="lbl">Send Reset Link</span></button>
+    <a href="tradex-auth.html" class="btn-link">← Back to login</a>
+  </div>
+
+  <!-- ══ STEP 2: Check email ══ -->
+  <div class="panel" id="p2">
+    <div class="success-card">
+      <span class="success-icon">📬</span>
+      <h2>Check your inbox</h2>
+      <p>We sent a reset link to <strong id="sent-email"></strong>. Click it to set a new password.<br><br>Can't find it? Check your spam folder.</p>
+      <button class="btn-primary" id="resend-link-btn"><span class="lbl">Resend email</span></button>
+      <button class="btn-link" id="wrong-email-btn">Wrong email address?</button>
+    </div>
+  </div>
+
+  <!-- ══ STEP 3: Set new password ══ -->
+  <!-- This panel activates when user arrives from the email link -->
+  <!-- Supabase appends #access_token=... to the URL automatically -->
+  <div class="panel" id="p3">
+    <div class="head">
+      <div class="icon-wrap">🛡️</div>
+      <h1>Set new password</h1>
+      <p>Choose a strong password for your Tradex account.</p>
+    </div>
+
+    <div class="alert err" id="np-err"><span>⚠️</span><span id="np-err-msg"></span></div>
+    <div class="alert ok"  id="np-ok"><span>✅</span><span>Password updated! Redirecting to login...</span></div>
+
+    <div class="field">
+      <label for="new-pw">New password</label>
+      <div class="wrap">
+        <span class="ico">🔑</span>
+        <input type="password" id="new-pw" placeholder="Min. 8 characters" autocomplete="new-password" />
+        <button class="eye" data-t="new-pw">👁</button>
+      </div>
+      <div class="pw-bars"><div class="pw-bar" id="pb1"></div><div class="pw-bar" id="pb2"></div><div class="pw-bar" id="pb3"></div><div class="pw-bar" id="pb4"></div></div>
+      <div class="pw-lbl" id="pw-lbl">Enter a password</div>
+      <!-- Requirements -->
+      <div class="req-list">
+        <div class="req" id="req-len"><div class="dot"></div>At least 8 characters</div>
+        <div class="req" id="req-upper"><div class="dot"></div>One uppercase letter</div>
+        <div class="req" id="req-num"><div class="dot"></div>One number</div>
+        <div class="req" id="req-sym"><div class="dot"></div>One special character</div>
+      </div>
+      <div class="ferr" id="pw-err">Password does not meet requirements.</div>
+    </div>
+
+    <div class="field">
+      <label for="confirm-pw">Confirm password</label>
+      <div class="wrap">
+        <span class="ico">🔑</span>
+        <input type="password" id="confirm-pw" placeholder="Repeat your password" autocomplete="new-password" />
+        <button class="eye" data-t="confirm-pw">👁</button>
+      </div>
+      <div class="ferr" id="cpw-err">Passwords do not match.</div>
+    </div>
+
+    <button class="btn-primary" id="np-btn"><span class="lbl">Update Password</span></button>
+    <a href="tradex-auth.html" class="btn-link">← Back to login</a>
+  </div>
+
+</div>
+
+<script>
+/*
+  ============================================================
+  account-recovery.html — FRONTEND ONLY
+  Handles 3 states:
+    Step 1 — User enters email → request reset link
+    Step 2 — Confirmation screen + resend
+    Step 3 — User arrived via email link → set new password
+
+  Supabase appends a hash fragment to the reset URL:
+    https://yoursite.com/account-recovery.html#access_token=...
+  This file detects that and auto-jumps to Step 3.
+
+  Backend hooks via window.Auth (auth.backend.js):
+    Auth.forgotPassword(email)         → { error }
+    Auth.updatePassword(newPassword)   → { error }
+    Auth.onSuccess(ctx)                → redirect
+  ============================================================
+*/
+
+const $ = id => document.getElementById(id);
+const isEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+
+let userEmail = '';
+
+/* ── Alert helpers ── */
+function showAlert(id, msg, type = 'err') {
+  const el = $(id); el.className = `alert ${type} on`;
+  if (msg) { const sp = el.querySelectorAll('span')[1]; if (sp) sp.textContent = msg; }
+}
+function clearAlert(id) { $(id).classList.remove('on'); }
+function ferr(id, show)  { $(id).classList.toggle('on', show); }
+function setLoad(btn, on) { btn.classList.toggle('loading', on); btn.disabled = on; }
+
+async function api(method, ...args) {
+  if (window.Auth?.[method]) return await window.Auth[method](...args);
+  console.warn(`[Auth] Not connected — Auth.${method}`, args);
+  return { error: null };
+}
+
+/* ── Step management ── */
+function goStep(n) {
+  [1,2,3].forEach(i => {
+    const d = $(`d${i}`);
+    d.classList.remove('active','done');
+    if (i < n)      { d.classList.add('done'); d.textContent = '✓'; }
+    else if (i ===n){ d.classList.add('active'); d.textContent = i; }
+    else              d.textContent = i;
+    if (i <= 2) $(`ln${i}`).classList.toggle('done', i < n);
+    $(`p${i}`).classList.toggle('active', i === n);
+  });
+}
+
+/* ── Detect reset token in URL (Supabase puts it in hash) ── */
+function hasResetToken() {
+  const hash = window.location.hash;
+  return hash.includes('access_token') || hash.includes('type=recovery');
+}
+
+/* ── STEP 1: Request reset ── BACKEND HOOK */
+$('r-btn').addEventListener('click', async () => {
+  const email = $('r-email').value.trim();
+  ferr('re-err', !isEmail(email));
+  clearAlert('r-err');
+  if (!isEmail(email)) return;
+
+  const btn = $('r-btn'); setLoad(btn, true);
+  const { error } = await api('forgotPassword', email);
+  setLoad(btn, false);
+
+  if (error) { showAlert('r-err', error.message); return; }
+
+  userEmail = email;
+  $('sent-email').textContent = email;
+  goStep(2);
+});
+
+/* ── STEP 2: Resend ── BACKEND HOOK */
+$('resend-link-btn').addEventListener('click', async () => {
+  const btn = $('resend-link-btn'); setLoad(btn, true);
+  await api('forgotPassword', userEmail);
+  setLoad(btn, false);
+  btn.querySelector('.lbl').textContent = 'Email resent!';
+  setTimeout(() => { btn.querySelector('.lbl').textContent = 'Resend email'; }, 3000);
+});
+
+$('wrong-email-btn').addEventListener('click', () => goStep(1));
+
+/* ── Password toggle ── */
+document.querySelectorAll('.eye').forEach(b =>
+  b.addEventListener('click', () => {
+    const i = $(b.dataset.t);
+    i.type = i.type === 'password' ? 'text' : 'password';
+    b.textContent = i.type === 'password' ? '👁' : '🙈';
+  })
+);
+
+/* ── Password strength + requirements ── */
+$('new-pw').addEventListener('input', function () {
+  const v = this.value;
+  const bars = [$('pb1'),$('pb2'),$('pb3'),$('pb4')];
+  bars.forEach(b => b.className = 'pw-bar');
+
+  const checks = {
+    'req-len':   v.length >= 8,
+    'req-upper': /[A-Z]/.test(v),
+    'req-num':   /[0-9]/.test(v),
+    'req-sym':   /[^A-Za-z0-9]/.test(v),
+  };
+  Object.entries(checks).forEach(([id, met]) => $(id).classList.toggle('met', met));
+
+  if (!v) { $('pw-lbl').textContent = 'Enter a password'; return; }
+  const sc = Object.values(checks).filter(Boolean).length;
+  const cls = sc <= 1 ? 'weak' : sc <= 3 ? 'fair' : 'strong';
+  for (let i = 0; i < sc; i++) bars[i].classList.add(cls);
+  $('pw-lbl').textContent = ['','Too weak','Fair','Good','Strong'][sc] || '';
+  $('pw-lbl').style.color = {weak:'var(--error)',fair:'var(--amber)',strong:'var(--success)'}[cls];
+});
+
+/* ── STEP 3: Update password ── BACKEND HOOK */
+$('np-btn').addEventListener('click', async () => {
+  const pw      = $('new-pw').value;
+  const confirm = $('confirm-pw').value;
+
+  const strong = pw.length >= 8 && /[A-Z]/.test(pw) && /[0-9]/.test(pw) && /[^A-Za-z0-9]/.test(pw);
+  ferr('pw-err',  !strong);
+  ferr('cpw-err', pw !== confirm);
+  clearAlert('np-err');
+
+  if (!strong)       { showAlert('np-err', 'Please meet all password requirements.'); return; }
+  if (pw !== confirm){ showAlert('np-err', 'Passwords do not match.');              return; }
+
+  const btn = $('np-btn'); setLoad(btn, true);
+
+  /* ── BACKEND HOOK: updatePassword ── */
+  const { error } = await api('updatePassword', pw);
+
+  setLoad(btn, false);
+
+  if (error) { showAlert('np-err', error.message); return; }
+
+  clearAlert('np-err');
+  showAlert('np-ok', null, 'ok');
+
+  /* ── BACKEND HOOK: onSuccess ── */
+  setTimeout(() => api('onSuccess', { context: 'passwordReset' }), 1800);
+});
+
+/* ── Init: auto-jump to step 3 if reset token in URL ── */
+if (hasResetToken()) {
+  goStep(3);
+} else {
+  goStep(1);
+}
+</script>
+</body>
+</html>

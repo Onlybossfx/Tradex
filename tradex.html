@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tradex — One Marketplace. Every Kind of Trade.</title>
+  <meta name="description" content="Buy and sell physical goods, digital products, freelance skills and experiences — all in one trusted marketplace with escrow payments and verified sellers." />
+  <meta name="keywords" content="marketplace, buy, sell, freelance, digital products, escrow, Africa, Nigeria, Ghana, Kenya" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://tradex.market/" />
+  <!-- Open Graph -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content="https://tradex.market/" />
+  <meta property="og:title"       content="Tradex — One Marketplace. Every Kind of Trade." />
+  <meta property="og:description" content="Buy and sell physical goods, digital products, freelance skills and experiences — all in one trusted marketplace with escrow payments and verified sellers." />
+  <meta property="og:image"       content="https://tradex.market/og-image.png" />
+  <meta property="og:site_name"   content="Tradex" />
+  <!-- Twitter -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content="Tradex — One Marketplace. Every Kind of Trade." />
+  <meta name="twitter:description" content="Buy, sell, and trade anything — escrow-protected marketplace for Africa, Europe and beyond." />
+  <meta name="twitter:image"       content="https://tradex.market/og-image.png" />
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#F59E0B" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --amber: #F59E0B;
+      --amber-light: #FBBF24;
+      --bg: #0a0a0a;
+      --bg2: #0f0f0f;
+      --border: rgba(255,255,255,0.07);
+      --border-bright: rgba(255,255,255,0.12);
+      --text: #ffffff;
+      --text-muted: rgba(255,255,255,0.45);
+      --text-dim: rgba(255,255,255,0.28);
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans: 'DM Sans', system-ui, sans-serif;
+    }
+
+    html { overflow-x: hidden; scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--sans); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; font-family: var(--sans); }
+    img { max-width: 100%; }
+
+    /* ── scrollbar hide utility ── */
+    .scroll-x { overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    .scroll-x::-webkit-scrollbar { display: none; }
+
+    /* ══════════════════ NAV ══════════════════ */
+    #nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: 62px; padding: 0 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: background 0.3s, backdrop-filter 0.3s, border-color 0.3s;
+      border-bottom: 1px solid transparent;
+    }
+    #nav.scrolled {
+      background: rgba(10,10,10,0.94);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-color: var(--border);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 6px; }
+    .nav-logo span { font-family: var(--serif); font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; }
+    .nav-logo i { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); display: inline-block; margin-bottom: 2px; }
+    .nav-links { display: flex; align-items: center; gap: 1.75rem; }
+    .nav-links a { color: rgba(255,255,255,0.65); font-size: 0.875rem; transition: color 0.2s; }
+    .nav-links a:hover { color: #fff; }
+    .btn-outline {
+      background: transparent; border: 1px solid rgba(255,255,255,0.25); color: #fff;
+      padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.85rem; transition: background 0.2s;
+    }
+    .btn-outline:hover { background: rgba(255,255,255,0.08); }
+    .btn-amber {
+      background: var(--amber); border: none; color: #0a0a0a;
+      padding: 0.4rem 1.1rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600; transition: background 0.2s;
+    }
+    .btn-amber:hover { background: var(--amber-light); }
+
+    /* hamburger */
+    .hamburger { display: none; flex-direction: column; gap: 5px; background: transparent; border: none; padding: 6px; }
+    .hamburger span { display: block; width: 22px; height: 2px; background: #fff; border-radius: 2px; transition: transform 0.25s, opacity 0.25s; }
+    .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+    /* mobile menu */
+    #mobile-menu {
+      display: none; position: fixed; top: 62px; left: 0; right: 0; z-index: 99;
+      background: rgba(10,10,10,0.97); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border); padding: 1.5rem;
+      flex-direction: column; gap: 0;
+    }
+    #mobile-menu.open { display: flex; }
+    #mobile-menu a { color: rgba(255,255,255,0.7); font-size: 1.05rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border); }
+    .mobile-btns { display: flex; gap: 0.75rem; margin-top: 1rem; }
+    .mobile-btns button { flex: 1; padding: 0.7rem; border-radius: 8px; font-size: 0.9rem; }
+
+    /* ══════════════════ HERO ══════════════════ */
+    #hero {
+      min-height: 100svh; background: var(--bg);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+      padding: 7rem 1.5rem 4rem; text-align: center;
+    }
+    .hero-glow {
+      position: absolute; top: 18%; left: 50%; transform: translateX(-50%);
+      width: min(600px, 100vw); height: 360px;
+      background: radial-gradient(ellipse, rgba(245,158,11,0.13) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-grid {
+      position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
+      background-size: 52px 52px; pointer-events: none;
+    }
+    .hero-inner { position: relative; z-index: 2; max-width: 720px; width: 100%; }
+    .beta-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.25);
+      border-radius: 100px; padding: 0.3rem 0.9rem; margin-bottom: 1.75rem;
+    }
+    .beta-pill i { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); display: inline-block; }
+    .beta-pill span { color: var(--amber); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; }
+    #hero h1 {
+      font-family: var(--serif); font-size: clamp(2.3rem, 8vw, 4.8rem);
+      font-weight: 700; line-height: 1.1; margin-bottom: 1.25rem; letter-spacing: -0.03em;
+    }
+    #hero h1 em { color: var(--amber); font-style: normal; }
+    #hero p { color: rgba(255,255,255,0.52); font-size: clamp(0.92rem, 2.5vw, 1.1rem); line-height: 1.7; max-width: 480px; margin: 0 auto 2.25rem; }
+
+    .search-bar {
+      display: flex; background: rgba(255,255,255,0.05); border: 1px solid var(--border-bright);
+      border-radius: 12px; overflow: hidden; max-width: 520px; margin: 0 auto 1.5rem; width: 100%;
+    }
+    .search-bar input {
+      flex: 1; background: transparent; border: none; outline: none;
+      padding: 0.9rem 1rem; color: #fff; font-size: 0.9rem; font-family: var(--sans); min-width: 0;
+    }
+    .search-bar input::placeholder { color: var(--text-muted); }
+    .search-bar button { background: var(--amber); border: none; color: #0a0a0a; padding: 0 1.2rem; font-size: 0.88rem; font-weight: 600; white-space: nowrap; flex-shrink: 0; transition: background 0.2s; }
+    .search-bar button:hover { background: var(--amber-light); }
+
+    .tags { display: flex; gap: 0.5rem; justify-content: center; align-items: center; }
+    .tags .label { color: rgba(255,255,255,0.35); font-size: 0.78rem; flex-shrink: 0; }
+    .tag { background: rgba(255,255,255,0.05); border: 1px solid var(--border-bright); color: rgba(255,255,255,0.6); padding: 0.28rem 0.75rem; border-radius: 100px; font-size: 0.78rem; white-space: nowrap; flex-shrink: 0; transition: all 0.2s; }
+    .tag:hover { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.3); color: var(--amber); }
+
+    /* ══════════════════ STATS ══════════════════ */
+    #stats {
+      background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      padding: 2.5rem 1.5rem;
+    }
+    .stats-grid { max-width: 860px; margin: 0 auto; display: grid; grid-template-columns: repeat(4,1fr); gap: 1.5rem; text-align: center; }
+    .stat-val { font-family: var(--serif); font-size: clamp(1.6rem,4vw,2.2rem); font-weight: 700; color: var(--amber); }
+    .stat-label { color: var(--text-muted); font-size: 0.8rem; margin-top: 0.2rem; }
+
+    /* ══════════════════ SECTION SHARED ══════════════════ */
+    section { padding: 5rem 1.5rem; }
+    .section-tag { color: var(--amber); font-size: 0.75rem; letter-spacing: 0.12em; font-weight: 600; margin-bottom: 0.6rem; }
+    .section-title { font-family: var(--serif); font-size: clamp(1.8rem,5vw,3rem); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0; }
+    .section-head { text-align: center; margin-bottom: 2.75rem; }
+    .container { max-width: 980px; margin: 0 auto; }
+    .container-sm { max-width: 900px; margin: 0 auto; }
+
+    /* ══════════════════ CATEGORIES ══════════════════ */
+    #categories { background: var(--bg); }
+    .cat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; }
+    .cat-card {
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.75rem 1.5rem; cursor: pointer; transition: all 0.3s;
+    }
+    .cat-card:hover { background: rgba(245,158,11,0.06); border-color: rgba(245,158,11,0.25); transform: translateY(-4px); }
+    .cat-icon { font-size: 2rem; margin-bottom: 0.85rem; }
+    .cat-name { font-family: var(--serif); font-size: 1.05rem; font-weight: 600; margin-bottom: 0.4rem; }
+    .cat-desc { color: var(--text-muted); font-size: 0.78rem; line-height: 1.5; margin-bottom: 0.8rem; }
+    .cat-count { color: var(--amber); font-size: 0.75rem; font-weight: 500; }
+
+    /* ══════════════════ LISTINGS ══════════════════ */
+    #listings { background: var(--bg2); }
+    .filter-row { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
+    .filter-btn {
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border-bright);
+      color: rgba(255,255,255,0.6); padding: 0.38rem 0.95rem; border-radius: 100px;
+      font-size: 0.8rem; white-space: nowrap; flex-shrink: 0; transition: all 0.2s;
+    }
+    .filter-btn.active { background: var(--amber); border-color: var(--amber); color: #0a0a0a; font-weight: 600; }
+    .listings-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
+    .listing-card {
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden; cursor: pointer; transition: all 0.3s;
+    }
+    .listing-card:hover { border-color: rgba(245,158,11,0.2); transform: translateY(-3px); }
+    .listing-thumb {
+      height: 110px; background: rgba(255,255,255,0.04);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3rem; position: relative;
+    }
+    .listing-badge {
+      position: absolute; top: 10px; right: 10px;
+      font-size: 0.65rem; padding: 0.18rem 0.55rem; border-radius: 100px; font-weight: 600;
+    }
+    .badge-top { background: var(--amber); color: #0a0a0a; }
+    .badge-best { background: #6366F1; color: #fff; }
+    .badge-other { background: rgba(255,255,255,0.12); color: #fff; }
+    .listing-body { padding: 1rem; }
+    .listing-title { font-size: 0.88rem; font-weight: 600; margin-bottom: 0.28rem; line-height: 1.35; }
+    .listing-seller { color: rgba(255,255,255,0.38); font-size: 0.77rem; margin-bottom: 0.6rem; }
+    .listing-foot { display: flex; justify-content: space-between; align-items: center; }
+    .listing-rating { display: flex; align-items: center; gap: 4px; }
+    .listing-rating .star { color: var(--amber); font-size: 0.8rem; }
+    .listing-rating .rv { color: #fff; font-size: 0.8rem; font-weight: 500; }
+    .listing-rating .rc { color: rgba(255,255,255,0.3); font-size: 0.74rem; }
+    .listing-price { font-family: var(--serif); font-size: 0.98rem; font-weight: 700; color: var(--amber); }
+    .browse-more { text-align: center; margin-top: 2.5rem; }
+    .btn-ghost { background: transparent; border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 0.75rem 2rem; border-radius: 8px; font-size: 0.88rem; transition: all 0.2s; }
+    .btn-ghost:hover { border-color: var(--amber); color: var(--amber); }
+
+    /* ══════════════════ HOW IT WORKS ══════════════════ */
+    #how { background: var(--bg); }
+    .steps-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; }
+    .step-card { text-align: center; padding: 0; }
+    .step-num {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--bg); border: 1px solid rgba(245,158,11,0.4);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1rem; font-family: var(--serif); color: var(--amber); font-size: 0.85rem; font-weight: 700;
+    }
+    .step-title { font-weight: 600; font-size: 0.92rem; margin-bottom: 0.4rem; }
+    .step-desc { color: var(--text-muted); font-size: 0.79rem; line-height: 1.6; }
+
+    /* ══════════════════ TRUST ══════════════════ */
+    #trust { background: var(--bg2); border-top: 1px solid rgba(255,255,255,0.05); }
+    .trust-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; }
+    .trust-card { text-align: center; padding: 1.25rem 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; }
+    .trust-icon { font-size: 1.75rem; margin-bottom: 0.6rem; }
+    .trust-title { font-weight: 600; font-size: 0.88rem; margin-bottom: 0.35rem; }
+    .trust-desc { color: var(--text-muted); font-size: 0.76rem; line-height: 1.5; }
+
+    /* ══════════════════ PRICING ══════════════════ */
+    #pricing { background: var(--bg); border-top: 1px solid rgba(255,255,255,0.05); }
+    .pricing-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
+    .plan-card {
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      border-radius: 16px; padding: 1.75rem 1.5rem; position: relative;
+    }
+    .plan-card.highlight { background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.35); }
+    .popular-pill {
+      position: absolute; top: -11px; left: 50%; transform: translateX(-50%);
+      background: var(--amber); color: #0a0a0a; font-size: 0.67rem; font-weight: 700;
+      padding: 0.22rem 0.9rem; border-radius: 100px; white-space: nowrap; letter-spacing: 0.05em;
+    }
+    .plan-name { font-weight: 700; font-size: 1rem; margin-bottom: 0.3rem; }
+    .plan-desc { color: rgba(255,255,255,0.38); font-size: 0.8rem; margin-bottom: 1.25rem; }
+    .plan-price { margin-bottom: 1.5rem; }
+    .plan-price strong { font-family: var(--serif); font-size: 2.2rem; font-weight: 700; }
+    .plan-card.highlight .plan-price strong { color: var(--amber); }
+    .plan-price span { color: rgba(255,255,255,0.3); font-size: 0.78rem; margin-left: 4px; }
+    .plan-features { margin-bottom: 1.75rem; display: flex; flex-direction: column; gap: 0.6rem; }
+    .plan-feature { display: flex; align-items: center; gap: 0.55rem; }
+    .plan-feature .check { color: var(--amber); font-size: 0.8rem; flex-shrink: 0; }
+    .plan-feature span { color: rgba(255,255,255,0.58); font-size: 0.82rem; }
+    .plan-btn { width: 100%; padding: 0.78rem; border-radius: 8px; font-size: 0.88rem; font-weight: 600; transition: opacity 0.2s; }
+    .plan-btn:hover { opacity: 0.85; }
+    .plan-btn.primary { background: var(--amber); border: none; color: #0a0a0a; }
+    .plan-btn.secondary { background: rgba(255,255,255,0.06); border: 1px solid var(--border-bright); color: #fff; }
+    .pricing-note { text-align: center; color: var(--text-dim); font-size: 0.78rem; margin-top: 1.75rem; }
+
+    /* ══════════════════ CTA ══════════════════ */
+    #cta { background: var(--bg2); border-top: 1px solid rgba(255,255,255,0.05); position: relative; overflow: hidden; }
+    .cta-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: min(500px,100vw); height: 280px; background: radial-gradient(ellipse,rgba(245,158,11,0.1) 0%,transparent 70%); pointer-events: none; }
+    .cta-inner { max-width: 580px; margin: 0 auto; text-align: center; position: relative; z-index: 1; }
+    #cta h2 { font-family: var(--serif); font-size: clamp(1.9rem,6vw,3.2rem); font-weight: 700; margin-bottom: 1rem; letter-spacing: -0.03em; }
+    #cta p { color: rgba(255,255,255,0.48); font-size: 0.98rem; line-height: 1.7; margin-bottom: 2.25rem; }
+    .cta-btns { display: flex; gap: 0.85rem; justify-content: center; flex-wrap: wrap; }
+    .btn-amber-lg { background: var(--amber); border: none; color: #0a0a0a; padding: 0.85rem 2.25rem; border-radius: 8px; font-size: 0.95rem; font-weight: 700; transition: background 0.2s; }
+    .btn-amber-lg:hover { background: var(--amber-light); }
+    .btn-outline-lg { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 0.85rem 2.25rem; border-radius: 8px; font-size: 0.95rem; transition: border-color 0.2s; }
+    .btn-outline-lg:hover { border-color: rgba(255,255,255,0.5); }
+
+    /* ══════════════════ FOOTER ══════════════════ */
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 2.5rem 1.5rem; }
+    .footer-inner { max-width: 980px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.25rem; }
+    .footer-logo { display: flex; align-items: center; gap: 5px; }
+    .footer-logo span { font-family: var(--serif); font-weight: 700; font-size: 1.15rem; }
+    .footer-logo i { width: 5px; height: 5px; border-radius: 50%; background: var(--amber); display: inline-block; }
+    .footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .footer-links a { color: rgba(255,255,255,0.33); font-size: 0.8rem; transition: color 0.2s; }
+    .footer-links a:hover { color: rgba(255,255,255,0.7); }
+    .footer-copy { color: var(--text-dim); font-size: 0.75rem; }
+
+    /* ══════════════════ FADE-IN ANIMATION ══════════════════ */
+    .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.55s ease, transform 0.55s ease; }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    /* ══════════════════ RESPONSIVE ══════════════════ */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+
+      .stats-grid { grid-template-columns: repeat(2,1fr); }
+      .cat-grid { grid-template-columns: repeat(2,1fr); }
+      .cat-card { padding: 1.25rem 1rem; }
+      .cat-icon { font-size: 1.6rem; }
+      .cat-name { font-size: 0.9rem; }
+
+      .listings-grid { grid-template-columns: 1fr; }
+
+      .steps-grid { grid-template-columns: 1fr; gap: 0.85rem; }
+      .step-card {
+        display: flex; align-items: flex-start; gap: 1rem;
+        text-align: left; background: rgba(255,255,255,0.03);
+        border: 1px solid var(--border); border-radius: 12px; padding: 1rem;
+      }
+      .step-num { margin: 0; flex-shrink: 0; }
+
+      .trust-grid { grid-template-columns: repeat(2,1fr); }
+
+      .pricing-grid { grid-template-columns: 1fr; }
+      .plan-card.highlight { transform: none; }
+
+      section { padding: 4rem 1.25rem; }
+
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+    }
+
+    @media (max-width: 400px) {
+      #hero h1 { font-size: 2rem; }
+      .cat-grid { grid-template-columns: 1fr 1fr; }
+      .trust-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ NAV ══════════ -->
+<nav id="nav">
+  <div class="nav-logo">
+    <span>Tradex</span>
+    <i></i>
+  </div>
+  <div class="nav-links">
+    <a href="browse.html">Browse</a>
+    <a href="dashboard-seller.html">Sell</a>
+    <a href="#pricing">Pricing</a>
+    <button class="btn-outline" onclick="window.location.href='tradex-auth.html'">Log In</button>
+    <button class="btn-amber" onclick="window.location.href='tradex-auth.html#signup'">Sign Up Free</button>
+  </div>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div id="mobile-menu">
+  <a href="#categories">Browse</a>
+  <a href="#listings">Sell</a>
+  <a href="#pricing">Pricing</a>
+  <div class="mobile-btns">
+    <button class="btn-outline" style="flex:1;padding:.7rem;border-radius:8px;font-size:.9rem;" onclick="window.location.href='tradex-auth.html'">Log In</button>
+    <button class="btn-amber" style="flex:1;padding:.7rem;border-radius:8px;font-size:.9rem;font-weight:600;" onclick="window.location.href='tradex-auth.html#signup'">Sign Up Free</button>
+  </div>
+</div>
+
+<!-- ══════════ HERO ══════════ -->
+<section id="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="beta-pill">
+      <i></i>
+      <span>NOW IN BETA — JOIN FREE</span>
+    </div>
+    <h1>One marketplace.<br><em>Every</em> kind of trade.</h1>
+    <p>Buy and sell physical goods, digital products, and freelance skills — all in one trusted platform with escrow payments and verified sellers.</p>
+    <div class="search-bar">
+      <input type="text" id="hero-search" placeholder="Search products, services, skills..." onkeydown="if(event.key==='Enter') doHeroSearch()" />
+      <button onclick="doHeroSearch()">Search</button>
+    </div>
+    <div class="tags scroll-x">
+      <span class="label">Trending:</span>
+      <button class="tag" onclick="window.location.href='browse.html?q=Logo+Design'">Logo Design</button>
+      <button class="tag" onclick="window.location.href='browse.html?q=React+Dev'">React Dev</button>
+      <button class="tag" onclick="window.location.href='browse.html?q=Leather+Bag'">Leather Bag</button>
+      <button class="tag" onclick="window.location.href='browse.html?q=Photography'">Photography</button>
+      <button class="tag" onclick="window.location.href='browse.html?q=Figma+Kit'">Figma Kit</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ STATS ══════════ -->
+<div id="stats">
+  <div class="stats-grid">
+    <div class="fade-up"><div class="stat-val">43K+</div><div class="stat-label">Active Listings</div></div>
+    <div class="fade-up" style="transition-delay:.1s"><div class="stat-val">12K+</div><div class="stat-label">Verified Sellers</div></div>
+    <div class="fade-up" style="transition-delay:.2s"><div class="stat-val">$2.1M</div><div class="stat-label">Paid Out</div></div>
+    <div class="fade-up" style="transition-delay:.3s"><div class="stat-val">98%</div><div class="stat-label">Satisfaction</div></div>
+  </div>
+</div>
+
+<!-- ══════════ CATEGORIES ══════════ -->
+<section id="categories">
+  <div class="container">
+    <div class="section-head">
+      <p class="section-tag">EXPLORE</p>
+      <h2 class="section-title">Trade anything, with anyone.</h2>
+    </div>
+    <div class="cat-grid">
+      <div class="cat-card fade-up" onclick="window.location.href='browse.html?cat=physical'" style="cursor:pointer">
+        <div class="cat-icon">📦</div>
+        <div class="cat-name">Physical Goods</div>
+        <div class="cat-desc">Electronics, fashion, home & more</div>
+        <div class="cat-count">12.4k listings</div>
+      </div>
+      <div class="cat-card fade-up" style="transition-delay:.1s;cursor:pointer" onclick="window.location.href='browse.html?cat=digital'">
+        <div class="cat-icon">💾</div>
+        <div class="cat-name">Digital Products</div>
+        <div class="cat-desc">Templates, e-books, software, art</div>
+        <div class="cat-count">8.1k listings</div>
+      </div>
+      <div class="cat-card fade-up" style="transition-delay:.2s;cursor:pointer" onclick="window.location.href='browse.html?cat=freelance'">
+        <div class="cat-icon">🛠️</div>
+        <div class="cat-name">Freelance Skills</div>
+        <div class="cat-desc">Design, code, writing, consulting</div>
+        <div class="cat-count">19.3k listings</div>
+      </div>
+      <div class="cat-card fade-up" style="transition-delay:.3s;cursor:pointer" onclick="window.location.href='browse.html?cat=experience'">
+        <div class="cat-icon">🎓</div>
+        <div class="cat-name">Experiences</div>
+        <div class="cat-desc">Classes, workshops & events</div>
+        <div class="cat-count">3.7k listings</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ LISTINGS ══════════ -->
+<section id="listings">
+  <div class="container">
+    <p class="section-tag">FEATURED</p>
+    <h2 class="section-title" style="margin-bottom:1.1rem">Top listings this week</h2>
+    <div class="filter-row scroll-x" id="filters">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="freelance">Freelance</button>
+      <button class="filter-btn" data-filter="physical">Physical</button>
+      <button class="filter-btn" data-filter="digital">Digital</button>
+      <button class="filter-btn" data-filter="experience">Experience</button>
+    </div>
+    <div class="listings-grid" id="listings-grid"></div>
+    <div class="browse-more">
+      <button class="btn-ghost">Browse all listings →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ HOW IT WORKS ══════════ -->
+<section id="how">
+  <div class="container-sm">
+    <div class="section-head">
+      <p class="section-tag">SIMPLE PROCESS</p>
+      <h2 class="section-title">How Tradex works</h2>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card fade-up">
+        <div class="step-num">01</div>
+        <div><div class="step-title">Create Your Account</div><div class="step-desc">Sign up as a buyer, seller, or both. One account, full access.</div></div>
+      </div>
+      <div class="step-card fade-up" style="transition-delay:.1s">
+        <div class="step-num">02</div>
+        <div><div class="step-title">List or Browse</div><div class="step-desc">Sellers post in minutes. Buyers search and discover instantly.</div></div>
+      </div>
+      <div class="step-card fade-up" style="transition-delay:.2s">
+        <div class="step-num">03</div>
+        <div><div class="step-title">Transact Safely</div><div class="step-desc">Payments held in escrow. Released only when you're satisfied.</div></div>
+      </div>
+      <div class="step-card fade-up" style="transition-delay:.3s">
+        <div class="step-num">04</div>
+        <div><div class="step-title">Build & Grow</div><div class="step-desc">Leave reviews, earn badges, build your reputation and income.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ TRUST ══════════ -->
+<section id="trust">
+  <div class="container-sm">
+    <div class="section-head">
+      <h2 class="section-title">Built on trust</h2>
+    </div>
+    <div class="trust-grid">
+      <div class="trust-card fade-up"><div class="trust-icon">🔒</div><div class="trust-title">Escrow Payments</div><div class="trust-desc">Funds held until delivery confirmed</div></div>
+      <div class="trust-card fade-up" style="transition-delay:.1s"><div class="trust-icon">✅</div><div class="trust-title">Verified Sellers</div><div class="trust-desc">ID & skill verification available</div></div>
+      <div class="trust-card fade-up" style="transition-delay:.2s"><div class="trust-icon">🛡️</div><div class="trust-title">Buyer Protection</div><div class="trust-desc">Dispute coverage on every order</div></div>
+      <div class="trust-card fade-up" style="transition-delay:.3s"><div class="trust-icon">💬</div><div class="trust-title">In-App Messaging</div><div class="trust-desc">All communication on-platform</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ PRICING ══════════ -->
+<section id="pricing">
+  <div class="container-sm">
+    <div class="section-head">
+      <p class="section-tag">PRICING</p>
+      <h2 class="section-title">Start free. Scale when ready.</h2>
+    </div>
+    <div class="pricing-grid">
+      <div class="plan-card fade-up">
+        <div class="plan-name">Free</div>
+        <div class="plan-desc">Perfect for getting started</div>
+        <div class="plan-price"><strong>$0</strong><span>forever</span></div>
+        <div class="plan-features">
+          <div class="plan-feature"><span class="check">✓</span><span>Up to 5 listings</span></div>
+          <div class="plan-feature"><span class="check">✓</span><span>Standard placement</span></div>
+          <div class="plan-feature"><span class="check">✓</span><span>Basic analytics</span></div>
+          <div class="plan-feature"><span class="check">✓</span><span>Community support</span></div>
+        </div>
+        <button class="plan-btn secondary">Get Started</button>
+      </div>
+      <div class="plan-card highlight fade-up" style="transition-delay:.1s">
+        <div class="popular-pill">MOST POPULAR</div>
+        <div class="plan-name">Pro</div>
+        <div class="plan-desc">For serious sellers</div>
+        <div class="plan-price"><strong>$15</strong><span>per month</span></div>
+        <div class="plan-features">
+          <div class="plan-feature"><span class="check">✓</span><span>Unlimited listings</span></div>
+          <div class="plan-feature"><span class="check">✓</span><span>Priority placement</span></div>
+          <div class="plan-feature"><span class="check">✓</span><span>Full analytics dashboard</span></div>
+          <div class="plan-feature"><span class="check">✓</span><span>Lower transaction fees</span></div>
+          <div class="plan-feature"><span class="check">✓</span><span>Priority support</span></div>
+        </div>
+        <button class="plan-btn primary">Start Free Trial</button>
+      </div>
+      <div class="plan-card fade-up" style="transition-delay:.2s">
+        <div class="plan-name">Business</div>
+        <div class="plan-desc">For high-volume sellers</div>
+        <div class="plan-price"><strong>$40</strong><span>per month</span></div>
+        <div class="plan-features">
+          <div class="plan-feature"><span class="check">✓</span><span>Everything in Pro</span></div>
+          <div class="plan-feature"><span class="check">✓</span><span>Featured homepage spot</span></div>
+          <div class="plan-feature"><span class="check">✓</span><span>Lowest transaction fees</span></div>
+          <div class="plan-feature"><span class="check">✓</span><span>Bulk listing tools</span></div>
+          <div class="plan-feature"><span class="check">✓</span><span>Dedicated account manager</span></div>
+        </div>
+        <button class="plan-btn secondary">Contact Sales</button>
+      </div>
+    </div>
+    <p class="pricing-note">Transaction fees: Free 8% · Pro 5% · Business 3%</p>
+  </div>
+</section>
+
+<!-- ══════════ CTA ══════════ -->
+<section id="cta">
+  <div class="cta-glow"></div>
+  <div class="cta-inner">
+    <h2>Ready to start trading?</h2>
+    <p>Join thousands of buyers and sellers. Free to start, no credit card needed.</p>
+    <div class="cta-btns">
+      <button class="btn-amber-lg"   onclick="window.location.href='tradex-auth.html#signup'">Create Free Account</button>
+      <button class="btn-outline-lg" onclick="window.location.href='browse.html'">Browse Listings</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo"><span>Tradex</span><i></i></div>
+    <div class="footer-links">
+      <a href="#">About</a><a href="#">Terms</a><a href="#">Privacy</a><a href="#">Support</a><a href="#">Blog</a>
+    </div>
+    <div class="footer-copy">© 2026 Tradex. All rights reserved.</div>
+  </div>
+</footer>
+
+<script>
+  /* ── Hero search ── */
+  function doHeroSearch() {
+    const q = document.getElementById('hero-search').value.trim();
+    if (q) window.location.href = 'browse.html?q=' + encodeURIComponent(q);
+    else   window.location.href = 'browse.html';
+  }
+
+  /* ── listings data ── */
+  const LISTINGS = [
+    { title:"Full-Stack Web App Development", seller:"Kira M.",  rating:4.9, reviews:214, price:299, badge:"top",  badgeText:"Top Seller", img:"💻", cat:"freelance"  },
+    { title:"Handcrafted Leather Wallet",      seller:"Amos J.",  rating:4.8, reviews:87,  price:45,  badge:"other",badgeText:"Verified",  img:"👜", cat:"physical"   },
+    { title:"Brand Identity Figma Kit",        seller:"Yuna S.",  rating:5.0, reviews:312, price:19,  badge:"best", badgeText:"Bestseller",img:"🎨", cat:"digital"    },
+    { title:"SEO Strategy & Audit",            seller:"Dele O.",  rating:4.7, reviews:56,  price:149, badge:null,   badgeText:null,         img:"📈", cat:"freelance"  },
+    { title:"Photography Masterclass",         seller:"Isla R.",  rating:4.9, reviews:128, price:79,  badge:"other",badgeText:"New",        img:"📸", cat:"experience" },
+    { title:"Vintage Polaroid Camera",         seller:"Marco T.", rating:4.6, reviews:41,  price:120, badge:"other",badgeText:"Verified",   img:"📷", cat:"physical"   },
+  ];
+
+  function badgeClass(b) { return b==="top"?"badge-top":b==="best"?"badge-best":"badge-other"; }
+
+  function renderListings(filter) {
+    const grid = document.getElementById("listings-grid");
+    const items = filter==="all" ? LISTINGS : LISTINGS.filter(l=>l.cat===filter);
+    grid.innerHTML = items.map((l,i) => `
+      <div class="listing-card fade-up" style="transition-delay:${i*0.07}s;cursor:pointer" onclick="window.location.href='browse.html?q=${encodeURIComponent(l.title)}'">
+        <div class="listing-thumb">
+          <span>${l.img}</span>
+          ${l.badge ? `<span class="listing-badge ${badgeClass(l.badge)}">${l.badgeText}</span>` : ""}
+        </div>
+        <div class="listing-body">
+          <div class="listing-title">${l.title}</div>
+          <div class="listing-seller">by ${l.seller}</div>
+          <div class="listing-foot">
+            <div class="listing-rating">
+              <span class="star">★</span>
+              <span class="rv">${l.rating}</span>
+              <span class="rc">(${l.reviews})</span>
+            </div>
+            <div class="listing-price">from $${l.price}</div>
+          </div>
+        </div>
+      </div>`).join("");
+    // trigger animations
+    requestAnimationFrame(() => {
+      grid.querySelectorAll(".fade-up").forEach(el => {
+        requestAnimationFrame(() => el.classList.add("visible"));
+      });
+    });
+  }
+
+  /* ── filter buttons ── */
+  document.getElementById("filters").addEventListener("click", e => {
+    const btn = e.target.closest(".filter-btn");
+    if (!btn) return;
+    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    renderListings(btn.dataset.filter);
+  });
+
+  renderListings("all");
+
+  /* ── nav scroll ── */
+  const nav = document.getElementById("nav");
+  window.addEventListener("scroll", () => {
+    nav.classList.toggle("scrolled", window.scrollY > 40);
+  }, { passive: true });
+
+  /* ── hamburger ── */
+  const hamburger = document.getElementById("hamburger");
+  const mobileMenu = document.getElementById("mobile-menu");
+  hamburger.addEventListener("click", () => {
+    hamburger.classList.toggle("open");
+    mobileMenu.classList.toggle("open");
+  });
+  // close menu on link click
+  mobileMenu.querySelectorAll("a").forEach(a => a.addEventListener("click", () => {
+    hamburger.classList.remove("open");
+    mobileMenu.classList.remove("open");
+  }));
+
+  /* ── intersection observer for fade-up ── */
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("visible"); });
+  }, { threshold: 0.1 });
+
+  function observeAll() {
+    document.querySelectorAll(".fade-up").forEach(el => observer.observe(el));
+  }
+  observeAll();
+
+  // re-observe after filter re-render
+  const listingsGrid = document.getElementById("listings-grid");
+  new MutationObserver(observeAll).observe(listingsGrid, { childList: true });
+</script>
+</body>
+</html>

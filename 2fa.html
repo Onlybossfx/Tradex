@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tradex — Two-Factor Verification</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="auth.backend.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --amber: #F59E0B; --amber-light: #FBBF24; --amber-dim: rgba(245,158,11,0.12);
+      --bg: #0a0a0a; --bg2: #0f0f0f; --bg3: #141414;
+      --border: rgba(255,255,255,0.08); --border-focus: rgba(245,158,11,0.5);
+      --text: #fff; --muted: rgba(255,255,255,0.45); --dim: rgba(255,255,255,0.25);
+      --error: #EF4444; --success: #10B981;
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans: 'DM Sans', system-ui, sans-serif;
+    }
+    html, body { height: 100%; overflow-x: hidden; }
+    body { background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem 1.25rem; }
+
+    /* ── CARD ── */
+    .card {
+      width: 100%; max-width: 420px;
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 20px;
+      padding: 2.5rem 2rem; position: relative; overflow: hidden;
+    }
+    .card-glow { position: absolute; top: -30%; left: 50%; transform: translateX(-50%); width: 300px; height: 200px; background: radial-gradient(ellipse, rgba(245,158,11,0.1) 0%, transparent 70%); pointer-events: none; }
+
+    /* ── LOGO ── */
+    .logo { display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 2.5rem; text-decoration: none; }
+    .logo span { font-family: var(--serif); font-size: 1.3rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
+    .logo i { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); display: inline-block; }
+
+    /* ── HEADER ── */
+    .head { text-align: center; margin-bottom: 2rem; }
+    .icon-wrap { width: 68px; height: 68px; background: var(--amber-dim); border: 1px solid rgba(245,158,11,0.25); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; margin: 0 auto 1.25rem; }
+    .head h1 { font-family: var(--serif); font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+    .head p { color: var(--muted); font-size: 0.875rem; line-height: 1.6; }
+    .head p strong { color: var(--text); }
+
+    /* ── METHOD SWITCH ── */
+    .methods { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 1.75rem; }
+    .method { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 0.7rem; cursor: pointer; text-align: center; transition: all 0.2s; font-family: var(--sans); }
+    .method:hover, .method.on { border-color: rgba(245,158,11,0.35); background: var(--amber-dim); }
+    .method .mi { font-size: 1.1rem; margin-bottom: 0.25rem; }
+    .method .ml { font-size: 0.75rem; font-weight: 600; color: var(--muted); }
+    .method.on .ml { color: var(--amber); }
+
+    /* ── OTP ── */
+    .otp-row { display: flex; gap: 0.6rem; justify-content: center; margin-bottom: 1.5rem; }
+    .otp {
+      width: 52px; height: 60px; background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 12px; text-align: center; font-size: 1.5rem; font-weight: 700;
+      color: var(--text); font-family: var(--serif); outline: none;
+      transition: border-color 0.2s, background 0.2s, transform 0.2s; caret-color: var(--amber);
+    }
+    .otp:focus { border-color: var(--border-focus); background: rgba(245,158,11,0.05); transform: scale(1.06); }
+    .otp.filled { border-color: rgba(245,158,11,0.45); color: var(--amber); }
+    .otp.shake { animation: shake 0.4s ease; }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+
+    /* ── RESEND ── */
+    .resend { text-align: center; margin-bottom: 1.5rem; }
+    .resend p { color: var(--muted); font-size: 0.83rem; margin-bottom: 0.35rem; }
+    .resend-btn { background: none; border: none; color: var(--amber); font-size: 0.83rem; font-family: var(--sans); cursor: pointer; font-weight: 600; transition: opacity 0.2s; }
+    .resend-btn:disabled { color: var(--dim); cursor: not-allowed; }
+    .resend-btn:not(:disabled):hover { opacity: 0.8; }
+    #timer { color: var(--dim); font-size: 0.83rem; }
+
+    /* ── ALERTS ── */
+    .alert { display: none; padding: 0.75rem 1rem; border-radius: 10px; font-size: 0.83rem; margin-bottom: 1.25rem; align-items: center; gap: 0.6rem; }
+    .alert.on { display: flex; }
+    .alert.err  { background: rgba(239,68,68,0.1);  border: 1px solid rgba(239,68,68,0.25);  color: #FCA5A5; }
+    .alert.ok   { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25); color: #6EE7B7; }
+    .alert.info { background: var(--amber-dim);     border: 1px solid rgba(245,158,11,0.25); color: #FCD34D; }
+
+    /* ── BUTTONS ── */
+    .btn-primary { width: 100%; padding: 0.88rem; background: var(--amber); border: none; border-radius: 10px; color: #0a0a0a; font-size: 0.95rem; font-weight: 700; font-family: var(--sans); cursor: pointer; transition: all 0.2s; position: relative; margin-bottom: 1rem; }
+    .btn-primary:hover:not(:disabled) { background: var(--amber-light); transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-primary.loading .lbl { visibility: hidden; }
+    .btn-primary.loading::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 18px; height: 18px; border: 2px solid rgba(10,10,10,0.3); border-top-color: #0a0a0a; border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: translate(-50%,-50%) rotate(360deg); } }
+
+    .back { display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: none; border: none; color: var(--muted); font-size: 0.83rem; font-family: var(--sans); cursor: pointer; width: 100%; padding: 0.5rem; transition: color 0.2s; }
+    .back:hover { color: var(--text); }
+
+    /* ── MOBILE ── */
+    @media (max-width: 480px) {
+      body { padding: 1.25rem; align-items: flex-start; padding-top: 2rem; }
+      .card { padding: 2rem 1.25rem; border-radius: 16px; border: none; background: transparent; }
+      .otp { width: 44px; height: 52px; font-size: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="card-glow"></div>
+
+    <a href="tradex-auth.html" class="logo"><span>Tradex</span><i></i></a>
+
+    <div class="head">
+      <div class="icon-wrap">🔐</div>
+      <h1>Verify it's you</h1>
+      <p>Enter the 6-digit code sent to<br><strong id="target-display">your email</strong></p>
+    </div>
+
+    <!-- Method switch -->
+    <div class="methods">
+      <div class="method on" data-method="email"><div class="mi">✉️</div><div class="ml">Email</div></div>
+      <div class="method"    data-method="sms">  <div class="mi">📱</div><div class="ml">SMS</div></div>
+    </div>
+
+    <!-- Alerts -->
+    <div class="alert err"  id="otp-err"><span>⚠️</span><span id="otp-err-msg"></span></div>
+    <div class="alert ok"   id="otp-ok"><span>✅</span><span>Verified! Redirecting...</span></div>
+    <div class="alert info" id="otp-info"><span>ℹ️</span><span id="otp-info-msg"></span></div>
+
+    <!-- OTP inputs -->
+    <div class="otp-row">
+      <input class="otp" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+      <input class="otp" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+      <input class="otp" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+      <input class="otp" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+      <input class="otp" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+      <input class="otp" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+    </div>
+
+    <!-- Resend -->
+    <div class="resend">
+      <p>Didn't receive a code?</p>
+      <button class="resend-btn" id="resend-btn" disabled>Resend code</button>
+      <span id="timer"></span>
+    </div>
+
+    <button class="btn-primary" id="verify-btn"><span class="lbl">Verify & Continue</span></button>
+    <button class="back" onclick="window.location.href='tradex-auth.html'">← Back to login</button>
+  </div>
+
+<script>
+/*
+  ============================================================
+  2fa.html — FRONTEND ONLY
+  Reads context from sessionStorage set by tradex-auth.html:
+    tradex_2fa_email   — user's email address
+    tradex_2fa_context — 'login' | 'signup'
+
+  Backend hooks via window.Auth (auth.backend.js):
+    Auth.verifyOtp(email, token)  → { error }
+    Auth.resendOtp(email)         → { error }
+    Auth.onSuccess(ctx)           → redirect
+  ============================================================
+*/
+
+/* ── Read context from previous page ── */
+const email   = sessionStorage.getItem('tradex_2fa_email')   || '';
+const context = sessionStorage.getItem('tradex_2fa_context') || 'login';
+
+/* ── Show email in header ── */
+document.getElementById('target-display').textContent = email || 'your email';
+
+/* ── Helpers ── */
+const $ = id => document.getElementById(id);
+
+function showAlert(id, msg, type = 'err') {
+  ['otp-err','otp-ok','otp-info'].forEach(i => $(i).classList.remove('on'));
+  const el = $(id); el.className = `alert ${type} on`;
+  if (msg) { const sp = el.querySelectorAll('span')[1]; if (sp) sp.textContent = msg; }
+}
+function clearAlerts() { ['otp-err','otp-ok','otp-info'].forEach(i => $(i).classList.remove('on')); }
+
+function setLoad(btn, on) { btn.classList.toggle('loading', on); btn.disabled = on; }
+
+async function api(method, ...args) {
+  if (window.Auth?.[method]) return await window.Auth[method](...args);
+  console.warn(`[Auth] Not connected — Auth.${method}`, args);
+  return { error: null };
+}
+
+/* ── Method switch ── */
+document.querySelectorAll('[data-method]').forEach(btn =>
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-method]').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    $('target-display').textContent = btn.dataset.method === 'email' ? email : 'your phone';
+    resetOtp(); otpInputs[0].focus();
+  })
+);
+
+/* ── OTP inputs ── */
+const otpInputs = document.querySelectorAll('.otp');
+
+otpInputs.forEach((input, i) => {
+  input.addEventListener('input', e => {
+    const v = e.target.value.replace(/\D/g,'');
+    e.target.value = v;
+    e.target.classList.toggle('filled', !!v);
+    if (v && i < otpInputs.length - 1) otpInputs[i+1].focus();
+    if (i === otpInputs.length - 1 && v) autoVerify();
+  });
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Backspace' && !input.value && i > 0) otpInputs[i-1].focus();
+  });
+  input.addEventListener('paste', e => {
+    e.preventDefault();
+    const txt = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6);
+    txt.split('').forEach((ch, idx) => {
+      if (otpInputs[idx]) { otpInputs[idx].value = ch; otpInputs[idx].classList.add('filled'); }
+    });
+    if (txt.length === 6) autoVerify();
+  });
+});
+
+function getOtp() { return Array.from(otpInputs).map(i => i.value).join(''); }
+
+function resetOtp() {
+  otpInputs.forEach(i => { i.value = ''; i.classList.remove('filled','shake'); });
+  clearAlerts();
+}
+
+function shakeOtp() {
+  otpInputs.forEach(i => { i.classList.remove('shake'); void i.offsetWidth; i.classList.add('shake'); });
+}
+
+function autoVerify() { if (getOtp().length === 6) verify(); }
+
+/* ── Verify ── BACKEND HOOK */
+async function verify() {
+  const token = getOtp();
+  if (token.length < 6) return;
+
+  const btn = $('verify-btn');
+  setLoad(btn, true); clearAlerts();
+
+  const { error } = await api('verifyOtp', email, token);
+
+  setLoad(btn, false);
+
+  if (error) {
+    showAlert('otp-err', error.message || 'Invalid or expired code.');
+    shakeOtp(); resetOtp(); otpInputs[0].focus();
+    return;
+  }
+
+  showAlert('otp-ok', null, 'ok');
+  sessionStorage.removeItem('tradex_2fa_email');
+  sessionStorage.removeItem('tradex_2fa_context');
+
+  /* ── BACKEND HOOK: onSuccess ── */
+  setTimeout(() => api('onSuccess', { context }), 1200);
+}
+
+$('verify-btn').addEventListener('click', verify);
+
+/* ── Resend ── BACKEND HOOK */
+let resendInterval = null;
+
+function startTimer() {
+  let secs = 30;
+  const btn = $('resend-btn'), timer = $('timer');
+  btn.disabled = true; timer.textContent = `(${secs}s)`;
+  clearInterval(resendInterval);
+  resendInterval = setInterval(() => {
+    secs--;
+    if (secs > 0) timer.textContent = `(${secs}s)`;
+    else { timer.textContent = ''; btn.disabled = false; clearInterval(resendInterval); }
+  }, 1000);
+}
+
+$('resend-btn').addEventListener('click', async () => {
+  const { error } = await api('resendOtp', email);
+  if (error) { showAlert('otp-err', error.message); return; }
+  resetOtp(); startTimer();
+  showAlert('otp-info', 'Code resent! Check your inbox.', 'info');
+});
+
+/* ── Init ── */
+startTimer();
+if (otpInputs[0]) otpInputs[0].focus();
+</script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+User-agent: *
+
+# Allow public pages
+Allow: /
+Allow: /tradex.html
+Allow: /browse.html
+Allow: /listing.html
+
+# Block all private/dashboard pages
+Disallow: /dashboard-seller.html
+Disallow: /dashboard-buyer.html
+Disallow: /checkout.html
+Disallow: /admin.html
+Disallow: /tradex-auth.html
+Disallow: /2fa.html
+Disallow: /account-recovery.html
+
+# Block query strings that create duplicate content
+Disallow: /browse.html?page=*
+Disallow: /browse.html?sort=*
+
+# Sitemap location
+Sitemap: https://tradex.market/sitemap.xml
+
+# Crawl delay (be polite to servers)
+Crawl-delay: 1
