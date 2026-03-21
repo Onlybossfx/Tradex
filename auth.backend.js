@@ -188,7 +188,7 @@ window.Auth = {
     }
 
     if (context === 'passwordReset') {
-      window.location.href = 'account-recovery.html?reset=1';
+      window.location.href = 'tradex-auth.html';
       return;
     }
 
