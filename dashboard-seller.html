@@ -327,7 +327,7 @@
 <!-- NAV -->
 <nav id="nav">
   <button class="hbg" id="hbg"><span></span><span></span><span></span></button>
-  <a href="tradex.html" class="nav-logo"><span>Tradex</span><i></i></a>
+  <a href="index.html" class="nav-logo"><span>Tradex</span><i></i></a>
   <div class="nav-sep"></div>
   <span class="nav-label">Seller Dashboard</span>
   <div class="nav-right">
@@ -959,6 +959,7 @@ async function updateBadges() {
   $('msg-badge').textContent = msgs || 0;
   const nb = $('notif-badge');
   if (nb) { nb.textContent = notifs || 0; nb.style.display = notifs ? '' : 'none'; }
+  const nd = $('ndot'); if (nd) nd.style.display = notifs ? '' : 'none';
   DB.subscribeToNotifications(U.id, () => { loadNotifications(); updateBadges(); });
 }
 

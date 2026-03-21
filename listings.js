@@ -1,7 +1,14 @@
 /*
+  ⚠️  RLS REQUIRED IN SUPABASE:
+  create policy "Anyone can view active listings"
+    on public.listings for select using (status = 'active');
+  create policy "Sellers can view own listings"
+    on public.listings for select using (auth.uid() = seller_id);
+*/
+/*
   ============================================================
   listings.js — SHARED DATA LAYER
-  Used by: browse.html, listing.html, tradex.html
+  Used by: browse.html, listing.html, index.html
 
   Connects to Supabase listings table.
   All pages import this via:
@@ -127,7 +134,7 @@ window.Listings = {
 
   /* ─────────────────────────────────────────────
      GET FEATURED — for landing page
-     Used by: tradex.html
+     Used by: index.html
   ───────────────────────────────────────────── */
   getFeatured: async (limit = 6) => {
     try {

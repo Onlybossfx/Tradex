@@ -25,6 +25,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="auth.guard.js"></script>
+  <script src="auth.backend.js"></script>
   <script src="listings.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -247,7 +248,7 @@
 <!-- NAV -->
 <nav id="nav">
   <button class="nav-back" onclick="history.back()">←</button>
-  <a href="tradex.html" class="nav-logo"><span>Tradex</span><i></i></a>
+  <a href="index.html" class="nav-logo"><span>Tradex</span><i></i></a>
   <div class="nav-right">
     <button class="btn-sm"       id="nav-login"  onclick="window.location.href='tradex-auth.html'" style="display:none">Log In</button>
     <button class="btn-amber-sm" id="nav-signup" onclick="window.location.href='tradex-auth.html#signup'" style="display:none">Sign Up</button>
@@ -257,7 +258,7 @@
 
 <!-- BREADCRUMB -->
 <div class="breadcrumb">
-  <a href="tradex.html">Home</a><span class="sep">›</span>
+  <a href="index.html">Home</a><span class="sep">›</span>
   <a href="browse.html">Browse</a><span class="sep">›</span>
   <span class="cur" id="bc-cat"></span><span class="sep">›</span>
   <span class="cur" id="bc-title"></span>

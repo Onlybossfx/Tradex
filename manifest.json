@@ -2,7 +2,7 @@
   "name": "Tradex — One Marketplace. Every Kind of Trade.",
   "short_name": "Tradex",
   "description": "Buy and sell physical goods, digital products, freelance skills and experiences with escrow protection.",
-  "start_url": "/tradex.html",
+  "start_url": "/index.html",
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#0a0a0a",

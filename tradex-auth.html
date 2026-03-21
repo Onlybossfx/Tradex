@@ -478,7 +478,7 @@ $('s2-next').addEventListener('click', async () => {
 
   /* ── Show "Check your email" screen ── */
   const wrap = $('s2-next').closest('.step, .card, form') || document.querySelector('.wrap') || document.body;
-  $('step-2') && ($('step-2').style.display = 'none');
+  $('s2') && ($('s2').style.display = 'none');
 
   /* Insert confirmation screen after the form */
   const confirmHTML = `
@@ -502,7 +502,7 @@ $('s2-next').addEventListener('click', async () => {
     </div>`;
 
   /* Find the card/form element and replace its content */
-  const formEl = document.getElementById('step-2');
+  const formEl = document.getElementById('s2');
   if (formEl) {
     formEl.outerHTML = confirmHTML;
   } else {
@@ -518,12 +518,8 @@ document.querySelectorAll('[data-m]').forEach(b =>
   })
 );
 
-/* Step 3: enable 2FA → go to 2fa.html */
-$('s3-enable').addEventListener('click', () => {
-  sessionStorage.setItem('tradex_2fa_email',  st.email);
-  sessionStorage.setItem('tradex_2fa_context','signup');
-  window.location.href = '2fa.html';
-});
+/* Step 3: enable 2FA — go to dashboard (OTP needs Pro plan) */
+$('s3-enable').addEventListener('click', () => api('onSuccess', { context:'signup', role: st.role }));
 
 /* Step 3: skip */
 $('s3-skip').addEventListener('click', () => api('onSuccess', { context:'signup', role: st.role }));
@@ -564,6 +560,32 @@ goStep(1);
 
 /* Auto-switch to signup tab if URL has #signup */
 if (window.location.hash === '#signup') switchTab('signup');
+
+/* ── Supabase client for OAuth/confirm handlers ── */
+const _SURL2  = 'https://rtwbrcbifnowrqpgivma.supabase.co';
+const _SANON2 = 'sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7';
+const sb = window.supabase ? window.supabase.createClient(_SURL2, _SANON2) : null;
+
+/* ── Handle OAuth callback ── */
+if (window.location.search.includes('oauth=1') && sb) {
+  (async () => {
+    const { data: { user } } = await sb.auth.getUser();
+    if (!user) { window.location.href = 'tradex-auth.html'; return; }
+    const { data: profile } = await sb.from('users').select('id, role').eq('id', user.id).single();
+    if (!profile) {
+      const role = confirm('Welcome to Tradex!\n\nOK = Seller\nCancel = Buyer') ? 'seller' : 'buyer';
+      await sb.from('users').insert({
+        id: user.id, email: user.email,
+        full_name: user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0],
+        role, avatar_url: user.user_metadata?.avatar_url || null,
+      });
+      window.location.href = role === 'seller' ? 'dashboard-seller.html' : 'dashboard-buyer.html';
+      return;
+    }
+    const role = profile.role || 'buyer';
+    window.location.href = (role === 'seller' || role === 'both') ? 'dashboard-seller.html' : 'dashboard-buyer.html';
+  })();
+}
 
 /* Handle email confirmation redirect — ?confirmed=1 */
 if (window.location.search.includes('confirmed=1')) {

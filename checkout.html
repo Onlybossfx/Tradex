@@ -190,7 +190,7 @@
 
 <!-- NAV -->
 <nav id="nav">
-  <a href="tradex.html" class="nav-logo"><span>Tradex</span><i></i></a>
+  <a href="index.html" class="nav-logo"><span>Tradex</span><i></i></a>
   <div class="nav-sep"></div>
   <span class="nav-step">Secure Checkout</span>
   <div class="nav-secure">🔒 SSL Encrypted</div>
@@ -538,6 +538,21 @@ const isEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 const fmt = n => Number(n||0).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
 
 /* ── Load checkout data ── */
+/* ── Address helpers ── */
+function applyAddr(id) {
+  const addrs = window._savedAddrs || [];
+  const a = addrs.find(x => String(x.id) === String(id));
+  if (a) applyAddrObj(a);
+}
+function applyAddrObj(a) {
+  if (!a) return;
+  $('d-name').value    = a.full_name || '';
+  $('d-phone').value   = a.phone || '';
+  $('d-address').value = [a.address, a.city, a.state].filter(Boolean).join(', ');
+  const sel = $('d-country');
+  if (sel && a.country) sel.value = a.country;
+}
+
 async function init() {
   /* Hard guard — must be logged in to checkout */
   user = await AuthGuard.require('checkout.html');
@@ -874,20 +889,6 @@ function showGlobalError(msg) {
 }
 
 /* ── Address helpers ── */
-function applyAddr(id) {
-  const addrs = window._savedAddrs || [];
-  const a = addrs.find(x => String(x.id) === String(id));
-  if (a) applyAddrObj(a);
-}
-function applyAddrObj(a) {
-  if (!a) return;
-  $('d-name').value    = a.full_name || '';
-  $('d-phone').value   = a.phone || '';
-  $('d-address').value = [a.address, a.city, a.state].filter(Boolean).join(', ');
-  const sel = $('d-country');
-  if (sel && a.country) sel.value = a.country;
-}
-
 /* ── Init ── */
 init();
 </script>

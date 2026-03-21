@@ -2,7 +2,7 @@ User-agent: *
 
 # Allow public pages
 Allow: /
-Allow: /tradex.html
+Allow: /index.html
 Allow: /browse.html
 Allow: /listing.html
 

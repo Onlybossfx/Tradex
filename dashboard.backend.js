@@ -491,13 +491,20 @@ window.DB = {
       if (dispute?.order_id) await _sb.from('orders').update({status:'complete'}).eq('id',dispute.order_id);
       const orderRef=`#TRX-${String(dispute?.order_id||0).padStart(6,'0')}`;
       /* notify + email both parties */
-      for (const party of [dispute?.buyer,dispute?.seller].filter(Boolean)) {
-        await DB.createNotification(winner==='buyer'?dispute?.buyer_id:dispute?.seller_id,'dispute',
-          'Dispute Resolved ✅', `Resolution: ${resolution}`, 'dashboard-buyer.html');
-        if (party.email) await DB.sendEmail('dispute_resolved',party.email,{
-          toName:party.full_name, orderRef,
+      if (dispute?.buyer_id) {
+        await DB.createNotification(dispute.buyer_id,'dispute','Dispute Resolved ✅',`Resolution: ${resolution}`,'dashboard-buyer.html');
+        if (dispute?.buyer?.email) await DB.sendEmail('dispute_resolved',dispute.buyer.email,{
+          toName:dispute.buyer.full_name, orderRef,
           listingTitle:dispute?.orders?.listing_title||'your order', resolution,
           link:`${window.location.origin}/dashboard-buyer.html`,
+        });
+      }
+      if (dispute?.seller_id) {
+        await DB.createNotification(dispute.seller_id,'dispute','Dispute Resolved ✅',`Resolution: ${resolution}`,'dashboard-seller.html');
+        if (dispute?.seller?.email) await DB.sendEmail('dispute_resolved',dispute.seller.email,{
+          toName:dispute.seller.full_name, orderRef,
+          listingTitle:dispute?.orders?.listing_title||'your order', resolution,
+          link:`${window.location.origin}/dashboard-seller.html`,
         });
       }
       return {error:null};
