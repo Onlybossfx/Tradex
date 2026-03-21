@@ -251,9 +251,16 @@ window.Listings = {
   },
 
   /* ── HELPERS ── */
-  getCatEmoji: (cat) => ({ physical: '📦', digital: '💾', freelance: '🛠️', experience: '🌟' }[cat] || '🏷️'),
-  getCatName:  (cat) => ({ physical: 'Physical Goods', digital: 'Digital Products', freelance: 'Freelance Skills', experience: 'Experiences' }[cat] || cat || 'Other'),
-  getImage:    (l, i = 0) => l?.images?.[i] || '',
-  getBadgeLabel: (badge) => ({ featured: 'Featured', top_rated: 'Top Rated', new: 'New', trending: 'Trending' }[badge] || ''),
-  getBadgeClass: (badge) => ({ featured: 'badge-featured', top_rated: 'badge-top', new: 'badge-new', trending: 'badge-trend' }[badge] || ''),
+  getCatEmoji:   (cat)    => ({ physical: '📦', digital: '💾', freelance: '🛠️', experience: '🌟' }[cat] || '🏷️'),
+  getCatName:    (cat)    => ({ physical: 'Physical Goods', digital: 'Digital Products', freelance: 'Freelance Skills', experience: 'Experiences' }[cat] || cat || 'Other'),
+  getImage:      (l, i=0) => l?.images?.[i] || '',
+  getBadgeLabel: (badge)  => ({ featured: 'Featured', top_rated: 'Top Rated', new: 'New', trending: 'Trending' }[badge] || ''),
+  getBadgeClass: (badge)  => ({ featured: 'badge-featured', top_rated: 'badge-top', new: 'badge-new', trending: 'badge-trend' }[badge] || ''),
+  getStars:      (rating) => {
+    const r = parseFloat(rating) || 0;
+    const full  = Math.floor(r);
+    const half  = r % 1 >= 0.5 ? 1 : 0;
+    const empty = 5 - full - half;
+    return '★'.repeat(full) + (half ? '½' : '') + '☆'.repeat(empty);
+  },
 };
