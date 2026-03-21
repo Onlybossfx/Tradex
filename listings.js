@@ -52,7 +52,7 @@ window.Listings = {
       if (days && days > 0) query = query.lte('delivery_days', days);
 
       /* verified */
-      if (verified === 'true') query = query.eq('seller_verified', true);
+      /* seller_verified filter disabled until column confirmed */
 
       /* search — title, description, seller_name, tags */
       if (search && search.trim()) {
@@ -65,7 +65,7 @@ window.Listings = {
       if (sort === 'price_asc')  query = query.order('price', { ascending: true });
       if (sort === 'price_desc') query = query.order('price', { ascending: false });
       if (sort === 'rating')     query = query.order('rating', { ascending: false });
-      if (sort === 'popular')    query = query.order('order_count', { ascending: false });
+      if (sort === 'popular')    query = query.order('created_at', { ascending: false }); /* order_count fallback */
       if (!sort || sort === 'newest') query = query.order('created_at', { ascending: false });
 
       /* pagination */
@@ -136,7 +136,7 @@ window.Listings = {
         .select('*')
         .eq('status', 'active')
         .eq('featured', true)
-        .order('order_count', { ascending: false })
+        .order('created_at', { ascending: false }) /* order_count fallback */
         .limit(limit);
       if (error) throw error;
       return { data: data || [], error: null };
