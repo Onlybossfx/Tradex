@@ -19,11 +19,12 @@
 */
 
   /* ── Config ── */
-const SUPABASE_URL  = 'https://rtwbrcbifnowrqpgivma.supabase.co';
-const SUPABASE_ANON = 'sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7';
+;(function() {
+const _AUTH_URL  = window._AUTH_URL  || 'https://rtwbrcbifnowrqpgivma.supabase.co';
+const _AUTH_ANON = window._AUTH_ANON || 'sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7';
 
 const { createClient } = supabase;
-const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
+const sb = createClient(_AUTH_URL, _AUTH_ANON);
 
 /* ── Base URL — works on localhost AND GitHub Pages ── */
 const BASE_URL = (() => {
@@ -78,7 +79,7 @@ window.Auth = {
 
     /* Welcome email — fire and forget */
     try {
-      fetch(`${SUPABASE_URL}/functions/v1/send-email`, {
+      fetch(`${_AUTH_URL}/functions/v1/send-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_ANON}` },
         body: JSON.stringify({
@@ -188,7 +189,7 @@ window.Auth = {
     }
 
     if (context === 'passwordReset') {
-      window.location.href = 'tradex-auth.html';
+      window.location.href = 'account-recovery.html?reset=1';
       return;
     }
 
@@ -213,3 +214,5 @@ window.Auth = {
   },
 
 };
+
+})(); /* end auth.backend.js IIFE */

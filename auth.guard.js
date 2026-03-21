@@ -21,12 +21,17 @@
   ============================================================
 */
 
-const _GUARD_URL  = 'https://rtwbrcbifnowrqpgivma.supabase.co';
-const _GUARD_ANON = 'sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7';
+;(function() {
+if (!window._gSb) {
+  window._gSb = supabase.createClient(
+    'https://rtwbrcbifnowrqpgivma.supabase.co',
+    'sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7'
+  );
+}
 
 (function () {
   const { createClient } = supabase;
-  const _sb = createClient(_GUARD_URL, _GUARD_ANON);
+  const _sb = window._gSb;
 
   /* cached user so we only fetch once per page */
   let _user = undefined;
@@ -222,3 +227,5 @@ const _GUARD_ANON = 'sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7';
   /* ── expose ── */
   window.AuthGuard = { require, protectAction, syncNav, user: getUser, showAuthPrompt };
 })();
+
+})(); /* end auth.guard.js IIFE */
