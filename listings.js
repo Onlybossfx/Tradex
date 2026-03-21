@@ -1,11 +1,4 @@
 /*
-  ⚠️  RLS REQUIRED IN SUPABASE:
-  create policy "Anyone can view active listings"
-    on public.listings for select using (status = 'active');
-  create policy "Sellers can view own listings"
-    on public.listings for select using (auth.uid() = seller_id);
-*/
-/*
   ============================================================
   listings.js — SHARED DATA LAYER
   Used by: browse.html, listing.html, index.html
