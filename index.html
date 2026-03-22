@@ -602,12 +602,12 @@
 
   /* ── listings data ── */
   const LISTINGS = [
-    { title:"Full-Stack Web App Development", seller:"Kira M.",  rating:4.9, reviews:214, price:299, badge:"top",  badgeText:"Top Seller", img:"<i class="fas fa-laptop"></i>", cat:"freelance"  },
-    { title:"Handcrafted Leather Wallet",      seller:"Amos J.",  rating:4.8, reviews:87,  price:45,  badge:"other",badgeText:"Verified",  img:"<i class="fas fa-bag-shopping"></i>", cat:"physical"   },
-    { title:"Brand Identity Figma Kit",        seller:"Yuna S.",  rating:5.0, reviews:312, price:19,  badge:"best", badgeText:"Bestseller",img:"<i class="fas fa-palette"></i>", cat:"digital"    },
-    { title:"SEO Strategy & Audit",            seller:"Dele O.",  rating:4.7, reviews:56,  price:149, badge:null,   badgeText:null,         img:"<i class="fas fa-chart-line"></i>", cat:"freelance"  },
-    { title:"Photography Masterclass",         seller:"Isla R.",  rating:4.9, reviews:128, price:79,  badge:"other",badgeText:"New",        img:"<i class="fas fa-camera"></i>", cat:"experience" },
-    { title:"Vintage Polaroid Camera",         seller:"Marco T.", rating:4.6, reviews:41,  price:120, badge:"other",badgeText:"Verified",   img:"<i class="fas fa-camera"></i>", cat:"physical"   },
+    { title:"Full-Stack Web App Development", seller:"Kira M.",  rating:4.9, reviews:214, price:299, badge:"top",  badgeText:"Top Seller", img:"laptop",    cat:"freelance"  },
+    { title:"Handcrafted Leather Wallet",      seller:"Amos J.",  rating:4.8, reviews:87,  price:45,  badge:"other",badgeText:"Verified",  img:"box",        cat:"physical"   },
+    { title:"Brand Identity Figma Kit",        seller:"Yuna S.",  rating:5.0, reviews:312, price:19,  badge:"best", badgeText:"Bestseller",img:"palette",    cat:"digital"    },
+    { title:"SEO Strategy & Audit",            seller:"Dele O.",  rating:4.7, reviews:56,  price:149, badge:null,   badgeText:null,         img:"chart-line", cat:"freelance"  },
+    { title:"Photography Masterclass",         seller:"Isla R.",  rating:4.9, reviews:128, price:79,  badge:"other",badgeText:"New",        img:"camera",     cat:"experience" },
+    { title:"Vintage Polaroid Camera",         seller:"Marco T.", rating:4.6, reviews:41,  price:120, badge:"other",badgeText:"Verified",   img:"camera",     cat:"physical"   },
   ];
 
   function badgeClass(b) { return b==="top"?"badge-top":b==="best"?"badge-best":"badge-other"; }
@@ -618,7 +618,7 @@
     grid.innerHTML = items.map((l,i) => `
       <div class="listing-card fade-up" style="transition-delay:${i*0.07}s;cursor:pointer" onclick="window.location.href='browse.html?q=${encodeURIComponent(l.title)}'">
         <div class="listing-thumb">
-          <span>${l.img}</span>
+          <i class="fas fa-${l.img}" style="font-size:2.5rem;color:var(--amber)"></i>
           ${l.badge ? `<span class="listing-badge ${badgeClass(l.badge)}">${l.badgeText}</span>` : ""}
         </div>
         <div class="listing-body">
