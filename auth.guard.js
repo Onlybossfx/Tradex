@@ -117,9 +117,9 @@ if (!window._gSb) {
           color:rgba(255,255,255,0.45);width:30px;height:30px;
           border-radius:7px;font-size:0.85rem;cursor:pointer;
           display:flex;align-items:center;justify-content:center;
-        ">✕</button>
+        "><i class="fas fa-xmark"></i></button>
 
-        <div style="font-size:2.5rem;margin-bottom:1rem">🔐</div>
+        <div style="font-size:2.5rem;margin-bottom:1rem"><i class="fas fa-lock"></i></div>
         <h2 style="
           font-family:'Playfair Display',Georgia,serif;
           font-size:1.35rem;font-weight:700;color:#fff;

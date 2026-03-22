@@ -241,7 +241,20 @@
       .rv-summary { flex-direction: column; }
       .related-grid { grid-template-columns: 1fr 1fr; }
     }
+
+    /* ── Image Unavailable Placeholder ── */
+    .img-unavailable {
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      background: var(--bg3); border-radius: inherit;
+      color: var(--muted); gap: 0.5rem;
+      font-size: 0.78rem; text-align: center; padding: 1rem;
+    }
+    .img-unavailable i { font-size: 2rem; color: var(--dim); }
+    .img-unavailable span { font-size: 0.72rem; color: var(--dim); }
   </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
 
@@ -297,20 +310,20 @@
       <div class="pkg-price" id="pkg-price">—</div>
       <div class="pkg-note" id="pkg-note"></div>
       <div class="pkg-feats" id="pkg-feats"></div>
-      <div class="pkg-del"><span>⚡</span><strong id="pkg-days"></strong><span id="pkg-revs"></span></div>
+      <div class="pkg-del"><span><i class="fas fa-bolt"></i></span><strong id="pkg-days"></strong><span id="pkg-revs"></span></div>
     </div>
 
     <!-- Alerts -->
-    <div class="alert err"  id="a-err"><span>⚠️</span><span id="a-err-msg"></span></div>
-    <div class="alert ok"   id="a-ok"><span>✅</span><span>Order placed! Redirecting...</span></div>
+    <div class="alert err"  id="a-err"><span><i class="fas fa-triangle-exclamation"></i></span><span id="a-err-msg"></span></div>
+    <div class="alert ok"   id="a-ok"><span><i class="fas fa-circle-check"></i></span><span>Order placed! Redirecting...</span></div>
     <div class="alert info" id="a-info"><span>ℹ️</span><span id="a-info-msg"></span></div>
 
     <!-- Trust -->
     <div class="trust-row">
-      <div class="ti"><div class="ti-icon">🔒</div><div class="ti-label">Secure<br>Payment</div></div>
-      <div class="ti"><div class="ti-icon">🛡️</div><div class="ti-label">Buyer<br>Protection</div></div>
+      <div class="ti"><div class="ti-icon"><i class="fas fa-lock"></i></div><div class="ti-label">Secure<br>Payment</div></div>
+      <div class="ti"><div class="ti-icon"><i class="fas fa-shield-halved"></i></div><div class="ti-label">Buyer<br>Protection</div></div>
       <div class="ti"><div class="ti-icon">↩️</div><div class="ti-label">Refund<br>Policy</div></div>
-      <div class="ti"><div class="ti-icon">💬</div><div class="ti-label">24/7<br>Support</div></div>
+      <div class="ti"><div class="ti-icon"><i class="fas fa-comment-dots"></i></div><div class="ti-label">24/7<br>Support</div></div>
     </div>
 
     <!-- Tabs -->
@@ -358,18 +371,18 @@
       <div style="font-size:0.74rem;color:var(--dim);margin-top:0.25rem" id="pkg-note-d"></div>
     </div>
     <div class="pkg-feats" id="pkg-feats-d" style="margin-bottom:1rem"></div>
-    <div class="pkg-del" style="margin-bottom:1.25rem"><span>⚡</span><strong id="pkg-days-d"></strong><span id="pkg-revs-d"></span></div>
+    <div class="pkg-del" style="margin-bottom:1.25rem"><span><i class="fas fa-bolt"></i></span><strong id="pkg-days-d"></strong><span id="pkg-revs-d"></span></div>
     <button class="btn-buy" style="width:100%;margin-bottom:0.6rem" id="buy-btn-d"><span class="lbl">Continue to Payment →</span></button>
     <div style="display:flex;gap:0.5rem;margin-bottom:0.6rem">
-      <button class="btn-icon" style="flex:1" id="save-btn-d">🤍 Save</button>
-      <button class="btn-icon" id="contact-btn-d">💬</button>
-      <button class="btn-icon" id="share-btn-d">🔗</button>
+      <button class="btn-icon" style="flex:1" id="save-btn-d"><i class="far fa-heart"></i> Save</button>
+      <button class="btn-icon" id="contact-btn-d"><i class="fas fa-comment-dots"></i></button>
+      <button class="btn-icon" id="share-btn-d"><i class="fas fa-link"></i></button>
     </div>
     <div class="trust-row" style="margin-bottom:0">
-      <div class="ti"><div class="ti-icon">🔒</div><div class="ti-label">Secure<br>Payment</div></div>
-      <div class="ti"><div class="ti-icon">🛡️</div><div class="ti-label">Buyer<br>Protection</div></div>
+      <div class="ti"><div class="ti-icon"><i class="fas fa-lock"></i></div><div class="ti-label">Secure<br>Payment</div></div>
+      <div class="ti"><div class="ti-icon"><i class="fas fa-shield-halved"></i></div><div class="ti-label">Buyer<br>Protection</div></div>
       <div class="ti"><div class="ti-icon">↩️</div><div class="ti-label">Refund<br>Policy</div></div>
-      <div class="ti"><div class="ti-icon">💬</div><div class="ti-label">24/7<br>Support</div></div>
+      <div class="ti"><div class="ti-icon"><i class="fas fa-comment-dots"></i></div><div class="ti-label">24/7<br>Support</div></div>
     </div>
   </div>
 
@@ -383,8 +396,8 @@
       <div class="bar-amount" id="bar-amount">—</div>
     </div>
     <button class="btn-buy" id="buy-btn"><span class="lbl">Continue to Payment →</span></button>
-    <button class="btn-icon" id="contact-btn">💬</button>
-    <button class="btn-icon" id="save-btn">🤍</button>
+    <button class="btn-icon" id="contact-btn"><i class="fas fa-comment-dots"></i></button>
+    <button class="btn-icon" id="save-btn"><i class="far fa-heart"></i></button>
   </div>
 </div>
 
@@ -462,7 +475,7 @@ function renderAll() {
   /* gallery */
   const imgs = l.images && l.images.length ? l.images : [Listings.getImage(l)];
   $('gallery-main').innerHTML = `
-    <img src="${imgs[0]}" alt="${l.title}" id="main-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+    <img src="${imgs[0]}" alt="${l.title}" id="main-img" onerror="this.onerror=null;this.style.display='none';this.insertAdjacentHTML('afterend','<div class=\'img-unavailable\'><i class=\'fas fa-image\'></i><span>Image Unavailable</span></div>')" />
     <div class="img-placeholder" style="display:none">${Listings.getCatEmoji(l.category)}</div>`;
 
   if (imgs.length > 1) {
@@ -489,8 +502,8 @@ function renderAll() {
         <span class="stat-val">${l.rating}</span>
         <span class="stat-label">(${l.review_count} reviews)</span>
       </div>
-      <div class="stat-item"><span class="stat-icon">🛒</span><span class="stat-val">${(l.order_count||0).toLocaleString()}</span><span class="stat-label">orders</span></div>
-      ${l.seller_location ? `<div class="stat-item"><span class="stat-icon">🌍</span><span class="stat-val">${l.seller_location}</span></div>` : ''}
+      <div class="stat-item"><span class="stat-icon"><i class="fas fa-shopping-cart"></i></span><span class="stat-val">${(l.order_count||0).toLocaleString()}</span><span class="stat-label">orders</span></div>
+      ${l.seller_location ? `<div class="stat-item"><span class="stat-icon"><i class="fas fa-earth-africa"></i></span><span class="stat-val">${l.seller_location}</span></div>` : ''}
     </div>`;
 
   /* seller mini */
@@ -501,7 +514,7 @@ function renderAll() {
       <div class="sm-name">${l.seller_name || 'Unknown Seller'}</div>
       <div class="sm-tag">${Listings.getCatName(l.category)} Seller${l.seller_location ? ' · '+l.seller_location : ''}</div>
     </div>
-    ${l.seller_verified ? '<span class="sm-badge">✅ Verified</span>' : ''}`;
+    ${l.seller_verified ? '<span class="sm-badge"><i class="fas fa-circle-check"></i> Verified</span>' : ''}`;
 
   /* description */
   $('l-desc').innerHTML = l.description
@@ -552,7 +565,7 @@ function renderPkg() {
   /* mobile */
   $('pkg-price').textContent = `$${p.price}`;
   $('pkg-note').textContent  = p.note;
-  $('pkg-feats').innerHTML   = p.feats.map(f=>`<div class="pkg-feat"><span class="pf-check">✓</span>${f}</div>`).join('');
+  $('pkg-feats').innerHTML   = p.feats.map(f=>`<div class="pkg-feat"><span class="pf-check"><i class="fas fa-check"></i></span>${f}</div>`).join('');
   $('pkg-days').textContent  = `${p.days} day${p.days!==1?'s':''} delivery`;
   $('pkg-revs').textContent  = ` · ${revStr}`;
   $('bar-amount').textContent= `$${p.price}`;
@@ -560,7 +573,7 @@ function renderPkg() {
   /* desktop */
   $('pkg-price-d').textContent = `$${p.price}`;
   $('pkg-note-d').textContent  = p.note;
-  $('pkg-feats-d').innerHTML   = p.feats.map(f=>`<div class="pkg-feat"><span class="pf-check">✓</span>${f}</div>`).join('');
+  $('pkg-feats-d').innerHTML   = p.feats.map(f=>`<div class="pkg-feat"><span class="pf-check"><i class="fas fa-check"></i></span>${f}</div>`).join('');
   $('pkg-days-d').textContent  = `${p.days} day${p.days!==1?'s':''} delivery`;
   $('pkg-revs-d').textContent  = ` · ${revStr}`;
 }
@@ -674,7 +687,7 @@ async function loadSellerProfile() {
     <div class="sf-head">
       <div class="sf-av">${name[0].toUpperCase()}</div>
       <div>
-        <div class="sf-name">${name} ${verified ? '<span style="color:var(--success);font-size:0.78rem">✅ Verified</span>' : ''}</div>
+        <div class="sf-name">${name} ${verified ? '<span style="color:var(--success);font-size:0.78rem"><i class="fas fa-circle-check"></i> Verified</span>' : ''}</div>
         <div class="sf-sub">${Listings.getCatName(l.category)} Seller${location ? ' · ' + location : ''}</div>
       </div>
     </div>
@@ -717,7 +730,7 @@ async function loadRelated() {
     return `
       <a class="mini-card" href="listing.html?id=${r.id}">
         <div class="mini-img">
-          <img src="${img}" alt="${r.title}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+          <img src="${img}" alt="${r.title}" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.insertAdjacentHTML('afterend','<div class=\'img-unavailable\'><i class=\'fas fa-image\'></i><span>Image Unavailable</span></div>')" />
           <div class="mini-img-ph" style="display:none">${Listings.getCatEmoji(r.category)}</div>
         </div>
         <div class="mini-body">
@@ -779,7 +792,7 @@ async function doSave() {
     const btns = [$('save-btn'), $('save-btn-d')];
     btns.forEach(b => {
       if (!b) return;
-      b.innerHTML = isSaved ? '❤️ Saved' : '🤍 Save';
+      b.innerHTML = isSaved ? '<i class="fas fa-heart"></i> Saved' : '<i class="far fa-heart"></i> Save';
       b.classList.toggle('saved', isSaved);
     });
     if (isSaved) await Listings.save(listing.id);

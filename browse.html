@@ -100,7 +100,7 @@
     .filter-item.active { background: var(--amber-dim); }
     .check-box { width: 15px; height: 15px; border: 1.5px solid var(--border-md); border-radius: 4px; flex-shrink: 0; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
     .filter-item.active .check-box { background: var(--amber); border-color: var(--amber); }
-    .filter-item.active .check-box::after { content: '✓'; font-size: 0.6rem; color: #0a0a0a; font-weight: 700; }
+    .filter-item.active .check-box::after { content: '<i class="fas fa-check"></i>'; font-size: 0.6rem; color: #0a0a0a; font-weight: 700; }
     .filter-label { font-size: 0.82rem; color: var(--muted); }
     .filter-item.active .filter-label { color: var(--amber); }
     .stars-display { color: var(--amber); font-size: 0.82rem; letter-spacing: 1px; }
@@ -234,7 +234,20 @@
     @media (max-width: 380px) {
       #grid { grid-template-columns: 1fr; }
     }
+
+    /* ── Image Unavailable Placeholder ── */
+    .img-unavailable {
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      background: var(--bg3); border-radius: inherit;
+      color: var(--muted); gap: 0.5rem;
+      font-size: 0.78rem; text-align: center; padding: 1rem;
+    }
+    .img-unavailable i { font-size: 2rem; color: var(--dim); }
+    .img-unavailable span { font-size: 0.72rem; color: var(--dim); }
   </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
 
@@ -252,12 +265,12 @@
 
   <div class="nav-right">
     <button class="btn-filter-mob" id="filter-mob-btn">
-      🔧 Filters
+      <i class="fas fa-wrench"></i> Filters
       <span class="filter-badge-count" id="filter-badge" style="display:none">0</span>
     </button>
     <div class="view-btns">
       <button class="view-btn active" id="grid-btn" title="Grid">⊞</button>
-      <button class="view-btn" id="list-btn" title="List">☰</button>
+      <button class="view-btn" id="list-btn" title="List"><i class="fas fa-bars"></i></button>
     </div>
     <button class="btn-nav-ghost" id="nav-login"  onclick="window.location.href='tradex-auth.html'" style="display:none">Log In</button>
     <button class="btn-nav-amber" id="nav-signup" onclick="window.location.href='tradex-auth.html#signup'" style="display:none">Sign Up</button>
@@ -281,11 +294,11 @@
     <div class="filter-section">
       <div class="filter-title">Category</div>
       <div class="cat-list" id="cat-list">
-        <div class="cat-item active" data-cat="all"><div class="ci-left"><span class="ci-icon">🏪</span><span class="ci-name">All listings</span></div><span class="ci-count" id="cnt-all">0</span></div>
-        <div class="cat-item" data-cat="physical"><div class="ci-left"><span class="ci-icon">📦</span><span class="ci-name">Physical Goods</span></div><span class="ci-count" id="cnt-physical">0</span></div>
-        <div class="cat-item" data-cat="digital"><div class="ci-left"><span class="ci-icon">💾</span><span class="ci-name">Digital Products</span></div><span class="ci-count" id="cnt-digital">0</span></div>
-        <div class="cat-item" data-cat="freelance"><div class="ci-left"><span class="ci-icon">🛠️</span><span class="ci-name">Freelance Skills</span></div><span class="ci-count" id="cnt-freelance">0</span></div>
-        <div class="cat-item" data-cat="experience"><div class="ci-left"><span class="ci-icon">🎓</span><span class="ci-name">Experiences</span></div><span class="ci-count" id="cnt-experience">0</span></div>
+        <div class="cat-item active" data-cat="all"><div class="ci-left"><span class="ci-icon"><i class="fas fa-store"></i></span><span class="ci-name">All listings</span></div><span class="ci-count" id="cnt-all">0</span></div>
+        <div class="cat-item" data-cat="physical"><div class="ci-left"><span class="ci-icon"><i class="fas fa-box"></i></span><span class="ci-name">Physical Goods</span></div><span class="ci-count" id="cnt-physical">0</span></div>
+        <div class="cat-item" data-cat="digital"><div class="ci-left"><span class="ci-icon"><i class="fas fa-floppy-disk"></i></span><span class="ci-name">Digital Products</span></div><span class="ci-count" id="cnt-digital">0</span></div>
+        <div class="cat-item" data-cat="freelance"><div class="ci-left"><span class="ci-icon"><i class="fas fa-screwdriver-wrench"></i></span><span class="ci-name">Freelance Skills</span></div><span class="ci-count" id="cnt-freelance">0</span></div>
+        <div class="cat-item" data-cat="experience"><div class="ci-left"><span class="ci-icon"><i class="fas fa-graduation-cap"></i></span><span class="ci-name">Experiences</span></div><span class="ci-count" id="cnt-experience">0</span></div>
       </div>
     </div>
 
@@ -321,7 +334,7 @@
       <div class="filter-title">Seller</div>
       <div class="filter-list" id="verified-list">
         <div class="filter-item active" data-verified="all"><div class="check-box"></div><span class="filter-label">All sellers</span></div>
-        <div class="filter-item" data-verified="true"><div class="check-box"></div><span class="filter-label">✅ Verified only</span></div>
+        <div class="filter-item" data-verified="true"><div class="check-box"></div><span class="filter-label"><i class="fas fa-circle-check"></i> Verified only</span></div>
       </div>
     </div>
 
@@ -346,7 +359,7 @@
         </select>
         <div class="view-btns" style="display:none" id="view-btns-main">
           <button class="view-btn active" id="grid-btn2">⊞</button>
-          <button class="view-btn" id="list-btn2">☰</button>
+          <button class="view-btn" id="list-btn2"><i class="fas fa-bars"></i></button>
         </div>
       </div>
     </div>
@@ -359,7 +372,7 @@
 
     <!-- empty -->
     <div id="empty">
-      <div class="empty-icon">🔍</div>
+      <div class="empty-icon"><i class="fas fa-magnifying-glass"></i></div>
       <h2>No listings found</h2>
       <p>Try adjusting your search or filters.</p>
       <button class="btn-reset" id="empty-reset">Clear filters</button>
@@ -376,7 +389,7 @@
 <div id="filter-drawer">
   <div class="drawer-head">
     <h3>Filters</h3>
-    <button class="drawer-close" id="drawer-close">✕</button>
+    <button class="drawer-close" id="drawer-close"><i class="fas fa-xmark"></i></button>
   </div>
   <div id="drawer-body"></div>
 </div>
@@ -418,17 +431,17 @@ function renderCard(l, idx) {
   return `
     <a class="card" href="listing.html?id=${l.id}" style="animation-delay:${idx*0.04}s">
       <div class="card-img">
-        <img src="${img}" alt="${l.title}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <img src="${img}" alt="${l.title}" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.insertAdjacentHTML('afterend','<div class=\'img-unavailable\'><i class=\'fas fa-image\'></i><span>Image Unavailable</span></div>')"/>
         <div class="card-img-placeholder" style="display:none">${Listings.getCatEmoji(l.category)}</div>
         ${badge ? `<span class="card-badge ${bCls}">${badge}</span>` : ''}
-        <button class="card-save ${isSv?'saved':''}" onclick="toggleSave(event,${l.id})" title="${isSv?'Unsave':'Save'}">${isSv?'❤️':'🤍'}</button>
+        <button class="card-save ${isSv?'saved':''}" onclick="toggleSave(event,${l.id})" title="${isSv?'Unsave':'Save'}">${isSv?'<i class="fas fa-heart"></i>':'<i class="far fa-heart"></i>'}</button>
       </div>
       <div class="card-body">
         <div class="card-cat">${Listings.getCatEmoji(l.category)} ${Listings.getCatName(l.category)}</div>
         <div class="card-title">${l.title}</div>
         <div class="card-seller">
           <div class="seller-dot">${l.seller_name ? l.seller_name[0] : '?'}</div>
-          <span class="seller-name">${l.seller_name || 'Unknown'} ${l.seller_verified ? '✅' : ''}</span>
+          <span class="seller-name">${l.seller_name || 'Unknown'} ${l.seller_verified ? '<i class="fas fa-circle-check"></i>' : ''}</span>
         </div>
         <div class="card-foot">
           <div class="card-rating">
@@ -497,7 +510,7 @@ function renderChips() {
   const el = $('chips-row');
   el.classList.toggle('empty', chips.length === 0);
   el.innerHTML = chips.map(c => `
-    <div class="chip">${c.label}<button onclick="removeChip('${c.key}')">✕</button></div>`
+    <div class="chip">${c.label}<button onclick="removeChip('${c.key}')"><i class="fas fa-xmark"></i></button></div>`
   ).join('');
 
   const badge = $('filter-badge');
@@ -648,7 +661,7 @@ async function toggleSave(e, id) {
     if (saved.has(id)) { saved.delete(id); await Listings.unsave(id); }
     else               { saved.add(id);    await Listings.save(id);   }
     const btn = e.currentTarget;
-    btn.textContent = saved.has(id) ? '❤️' : '🤍';
+    btn.textContent = saved.has(id) ? '<i class="fas fa-heart"></i>' : '<i class="far fa-heart"></i>';
     btn.classList.toggle('saved', saved.has(id));
   }, { label: 'save listings' });
 }

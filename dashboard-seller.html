@@ -317,7 +317,20 @@
       .f2col { grid-template-columns: 1fr; }
       .tbl th:nth-child(4), .tbl td:nth-child(4) { display: none; }
     }
+
+    /* ── Image Unavailable Placeholder ── */
+    .img-unavailable {
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      background: var(--bg3); border-radius: inherit;
+      color: var(--muted); gap: 0.5rem;
+      font-size: 0.78rem; text-align: center; padding: 1rem;
+    }
+    .img-unavailable i { font-size: 2rem; color: var(--dim); }
+    .img-unavailable span { font-size: 0.72rem; color: var(--dim); }
   </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
 
@@ -332,7 +345,7 @@
   <span class="nav-label">Seller Dashboard</span>
   <div class="nav-right">
     <button class="btn-new" onclick="openModal()">+ New Listing</button>
-    <div class="notif-btn" id="notif-btn"><span>🔔</span><div class="ndot" id="ndot" style="display:none"></div></div>
+    <div class="notif-btn" id="notif-btn"><span><i class="fas fa-bell"></i></span><div class="ndot" id="ndot" style="display:none"></div></div>
     <div class="nav-av" id="nav-av">S</div>
   </div>
 </nav>
@@ -340,20 +353,20 @@
 <!-- SIDEBAR -->
 <aside id="sb">
   <div class="ns">Main</div>
-  <div class="ni on" data-p="overview">  <span class="ic">📊</span><span class="lb">Overview</span></div>
-  <div class="ni" data-p="listings">     <span class="ic">📋</span><span class="lb">My Listings</span></div>
-  <div class="ni" data-p="orders">       <span class="ic">🛒</span><span class="lb">Orders</span><span class="bd" id="ord-badge">0</span></div>
-  <div class="ni" data-p="messages">     <span class="ic">💬</span><span class="lb">Messages</span><span class="bd red" id="msg-badge">0</span></div>
-  <div class="ni" data-p="analytics">    <span class="ic">📈</span><span class="lb">Analytics</span></div>
-  <div class="ni" data-p="earnings">     <span class="ic">💰</span><span class="lb">Earnings</span></div>
-  <div class="ni" data-p="notifications"><span class="ic">🔔</span><span class="lb">Notifications</span><span class="bd red" id="notif-badge" style="display:none">0</span></div>
+  <div class="ni on" data-p="overview">  <span class="ic"><i class="fas fa-chart-bar"></i></span><span class="lb">Overview</span></div>
+  <div class="ni" data-p="listings">     <span class="ic"><i class="fas fa-clipboard-list"></i></span><span class="lb">My Listings</span></div>
+  <div class="ni" data-p="orders">       <span class="ic"><i class="fas fa-shopping-cart"></i></span><span class="lb">Orders</span><span class="bd" id="ord-badge">0</span></div>
+  <div class="ni" data-p="messages">     <span class="ic"><i class="fas fa-comment-dots"></i></span><span class="lb">Messages</span><span class="bd red" id="msg-badge">0</span></div>
+  <div class="ni" data-p="analytics">    <span class="ic"><i class="fas fa-chart-line"></i></span><span class="lb">Analytics</span></div>
+  <div class="ni" data-p="earnings">     <span class="ic"><i class="fas fa-sack-dollar"></i></span><span class="lb">Earnings</span></div>
+  <div class="ni" data-p="notifications"><span class="ic"><i class="fas fa-bell"></i></span><span class="lb">Notifications</span><span class="bd red" id="notif-badge" style="display:none">0</span></div>
   <div class="ns">Account</div>
-  <div class="ni" data-p="profile">      <span class="ic">👤</span><span class="lb">Profile</span></div>
-  <div class="ni" data-p="settings">     <span class="ic">⚙️</span><span class="lb">Settings</span></div>
+  <div class="ni" data-p="profile">      <span class="ic"><i class="fas fa-user"></i></span><span class="lb">Profile</span></div>
+  <div class="ni" data-p="settings">     <span class="ic"><i class="fas fa-gear"></i></span><span class="lb">Settings</span></div>
   <div class="sb-bot">
-    <div class="ni" onclick="window.location.href='browse.html'"><span class="ic">🏪</span><span class="lb">View Marketplace</span></div>
-    <div class="ni" onclick="window.location.href='dashboard-buyer.html'"><span class="ic">🛍️</span><span class="lb">Buyer Dashboard</span></div>
-    <div class="ni" onclick="DB.logout()" style="color:var(--error)"><span class="ic">🚪</span><span class="lb">Log Out</span></div>
+    <div class="ni" onclick="window.location.href='browse.html'"><span class="ic"><i class="fas fa-store"></i></span><span class="lb">View Marketplace</span></div>
+    <div class="ni" onclick="window.location.href='dashboard-buyer.html'"><span class="ic"><i class="fas fa-bag-shopping"></i></span><span class="lb">Buyer Dashboard</span></div>
+    <div class="ni" onclick="DB.logout()" style="color:var(--error)"><span class="ic"><i class="fas fa-right-from-bracket"></i></span><span class="lb">Log Out</span></div>
   </div>
 </aside>
 
@@ -362,11 +375,11 @@
 
   <!-- OVERVIEW -->
   <div class="panel on" id="panel-overview">
-    <div class="ph"><div><h1>Good day, <span id="sname">Seller</span> 👋</h1><p>Here's your store at a glance.</p></div></div>
+    <div class="ph"><div><h1>Good day, <span id="sname">Seller</span> <i class="fas fa-hand-wave"></i></h1><p>Here's your store at a glance.</p></div></div>
     <div class="sg">
-      <div class="sc"><div class="sc-lbl">💰 Total Earnings</div><div class="sc-val a" id="s-earn">$0</div><div class="sc-note" id="s-earn-n">after platform fees</div></div>
-      <div class="sc"><div class="sc-lbl">🛒 Active Orders</div><div class="sc-val" id="s-ords">0</div><div class="sc-note" id="s-ords-n">pending + in escrow</div></div>
-      <div class="sc"><div class="sc-lbl">📋 Listings</div><div class="sc-val" id="s-list">0</div><div class="sc-note" id="s-list-n">active</div></div>
+      <div class="sc"><div class="sc-lbl"><i class="fas fa-sack-dollar"></i> Total Earnings</div><div class="sc-val a" id="s-earn">$0</div><div class="sc-note" id="s-earn-n">after platform fees</div></div>
+      <div class="sc"><div class="sc-lbl"><i class="fas fa-shopping-cart"></i> Active Orders</div><div class="sc-val" id="s-ords">0</div><div class="sc-note" id="s-ords-n">pending + in escrow</div></div>
+      <div class="sc"><div class="sc-lbl"><i class="fas fa-clipboard-list"></i> Listings</div><div class="sc-val" id="s-list">0</div><div class="sc-note" id="s-list-n">active</div></div>
       <div class="sc"><div class="sc-lbl">⭐ Avg Rating</div><div class="sc-val a" id="s-rate">—</div><div class="sc-note" id="s-rate-n">from reviews</div></div>
     </div>
     <div class="cr">
@@ -418,7 +431,7 @@
         <div class="ml-search"><input type="text" id="cv-search" placeholder="Search..." /></div>
         <div class="ml-convs" id="cv-list"></div>
       </div>
-      <div class="mw" id="mw"><div class="mw-empty"><span style="font-size:2rem">💬</span><span>Select a conversation</span></div></div>
+      <div class="mw" id="mw"><div class="mw-empty"><span style="font-size:2rem"><i class="fas fa-comment-dots"></i></span><span>Select a conversation</span></div></div>
     </div>
   </div>
 
@@ -500,9 +513,9 @@
       <div class="pcard">
         <h3>Security</h3>
         <div style="display:flex;flex-direction:column;gap:0.5rem">
-          <button id="change-pw-btn" style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.7rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem;transition:color 0.2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.45)'">🔑 Change Password</button>
-          <button onclick="window.location.href='tradex-auth.html#2fa'" style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.7rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem;transition:color 0.2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.45)'">🛡️ Two-Factor Authentication</button>
-          <button onclick="confirmDelete()" style="background:transparent;border:1px solid rgba(239,68,68,0.2);color:#F87171;padding:0.7rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem">🗑️ Delete Account</button>
+          <button id="change-pw-btn" style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.7rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem;transition:color 0.2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.45)'"><i class="fas fa-key"></i> Change Password</button>
+          <button onclick="window.location.href='tradex-auth.html#2fa'" style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.7rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem;transition:color 0.2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.45)'"><i class="fas fa-shield-halved"></i> Two-Factor Authentication</button>
+          <button onclick="confirmDelete()" style="background:transparent;border:1px solid rgba(239,68,68,0.2);color:#F87171;padding:0.7rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem"><i class="fas fa-trash"></i> Delete Account</button>
         </div>
       </div>
     </div>
@@ -511,7 +524,7 @@
   <!-- CHANGE PASSWORD MODAL -->
   <div class="mo" id="pw-modal">
     <div class="mbox" style="max-width:420px">
-      <button class="mc" onclick="$('pw-modal').classList.remove('open')">✕</button>
+      <button class="mc" onclick="$('pw-modal').classList.remove('open')"><i class="fas fa-xmark"></i></button>
       <h2>Change Password</h2>
       <p class="msub">Enter a new password for your account.</p>
       <div class="frow"><label>New Password *</label><input class="finp" id="pw-new" type="password" placeholder="Min. 8 characters" autocomplete="new-password" /></div>
@@ -528,8 +541,8 @@
   <div class="panel" id="panel-analytics">
     <div class="ph"><div><h1>Analytics</h1><p>Track how your listings are performing.</p></div></div>
     <div class="sg" style="grid-template-columns:repeat(3,1fr)">
-      <div class="sc"><div class="sc-lbl">👁 Total Views</div><div class="sc-val" id="a-views">0</div><div class="sc-note">all listings, all time</div></div>
-      <div class="sc"><div class="sc-lbl">🔄 Conversion Rate</div><div class="sc-val a" id="a-conv">0%</div><div class="sc-note">views → orders</div></div>
+      <div class="sc"><div class="sc-lbl"><i class="fas fa-eye"></i> Total Views</div><div class="sc-val" id="a-views">0</div><div class="sc-note">all listings, all time</div></div>
+      <div class="sc"><div class="sc-lbl"><i class="fas fa-rotate"></i> Conversion Rate</div><div class="sc-val a" id="a-conv">0%</div><div class="sc-note">views → orders</div></div>
       <div class="sc"><div class="sc-lbl">⭐ Avg Rating</div><div class="sc-val a" id="a-rate">—</div><div class="sc-note">across all listings</div></div>
     </div>
     <div class="sh" style="margin-top:1rem"><h2>Listing Performance</h2></div>
@@ -553,15 +566,15 @@
 <!-- LISTING MODAL -->
 <div class="mo" id="mo">
   <div class="mbox">
-    <button class="mc" onclick="closeModal()">✕</button>
+    <button class="mc" onclick="closeModal()"><i class="fas fa-xmark"></i></button>
     <h2 id="m-title">New Listing</h2>
     <p class="msub" id="m-sub">Fill in the details to publish on Tradex.</p>
-    <div class="mal err" id="m-err"><span>⚠️</span><span id="m-err-t"></span></div>
-    <div class="mal ok"  id="m-ok"><span>✅</span><span id="m-ok-t"></span></div>
+    <div class="mal err" id="m-err"><span><i class="fas fa-triangle-exclamation"></i></span><span id="m-err-t"></span></div>
+    <div class="mal ok"  id="m-ok"><span><i class="fas fa-circle-check"></i></span><span id="m-ok-t"></span></div>
     <input type="hidden" id="eid" />
     <div class="frow"><label>Title *</label><input class="finp" id="f-tit" placeholder="e.g. Professional Logo Design" maxlength="100" /><div class="ferr" id="e-tit">Required.</div></div>
     <div class="f2col">
-      <div class="frow"><label>Category *</label><select class="finp" id="f-cat"><option value="">Select category</option><option value="physical">📦 Physical Goods</option><option value="digital">💾 Digital Products</option><option value="freelance">🛠️ Freelance Skills</option><option value="experience">🎓 Experiences</option></select><div class="ferr" id="e-cat">Required.</div></div>
+      <div class="frow"><label>Category *</label><select class="finp" id="f-cat"><option value="">Select category</option><option value="physical"><i class="fas fa-box"></i> Physical Goods</option><option value="digital"><i class="fas fa-floppy-disk"></i> Digital Products</option><option value="freelance"><i class="fas fa-screwdriver-wrench"></i> Freelance Skills</option><option value="experience"><i class="fas fa-graduation-cap"></i> Experiences</option></select><div class="ferr" id="e-cat">Required.</div></div>
       <div class="frow"><label>Price ($) *</label><input class="finp" id="f-prc" type="number" min="1" placeholder="e.g. 50" /><div class="ferr" id="e-prc">Enter valid price.</div></div>
     </div>
     <div class="frow"><label>Description *</label><textarea class="finp" id="f-dsc" rows="4" placeholder="Describe your listing..."></textarea><div class="ferr" id="e-dsc">Required.</div></div>
@@ -573,7 +586,7 @@
     <div class="frow">
       <label>Images</label>
       <div class="upa" id="upa" onclick="document.getElementById('fimg').click()">
-        <div class="upa-icon">📸</div>
+        <div class="upa-icon"><i class="fas fa-camera"></i></div>
         <div class="upa-txt">Click to upload or <strong>drag & drop</strong></div>
         <div class="upa-hint">JPG, PNG, WebP — max 5MB each, up to 5 images</div>
       </div>
@@ -664,15 +677,15 @@ async function loadNotifications() {
 function renderNotifList(notifs) {
   const el = $('notif-list');
   if (!notifs.length) {
-    el.innerHTML = `<div style="text-align:center;padding:3rem 0;color:var(--muted)"><div style="font-size:2.5rem;margin-bottom:0.75rem">🔔</div><p>No notifications yet.</p></div>`;
+    el.innerHTML = `<div style="text-align:center;padding:3rem 0;color:var(--muted)"><div style="font-size:2.5rem;margin-bottom:0.75rem"><i class="fas fa-bell"></i></div><p>No notifications yet.</p></div>`;
     return;
   }
-  const icons = { order_placed:'🛒', order_delivered:'📦', message:'💬', review:'⭐', payout:'💰', dispute:'⚠️', system:'ℹ️' };
+  const icons = { order_placed:'<i class="fas fa-shopping-cart"></i>', order_delivered:'<i class="fas fa-box"></i>', message:'<i class="fas fa-comment-dots"></i>', review:'⭐', payout:'<i class="fas fa-sack-dollar"></i>', dispute:'<i class="fas fa-triangle-exclamation"></i>', system:'ℹ️' };
   el.innerHTML = notifs.map(n => `
     <div style="display:flex;gap:0.85rem;padding:1rem;background:${n.read?'transparent':'rgba(245,158,11,0.04)'};border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.2s"
          onclick="clickNotif('${n.id}','${n.link||''}')"
          onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='${n.read?'transparent':'rgba(245,158,11,0.04)'}'">
-      <div style="width:36px;height:36px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">${icons[n.type]||'🔔'}</div>
+      <div style="width:36px;height:36px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">${icons[n.type]||'<i class="fas fa-bell"></i>'}</div>
       <div style="flex:1;min-width:0">
         <div style="font-size:0.85rem;font-weight:${n.read?'400':'600'};margin-bottom:0.18rem">${n.title}</div>
         <div style="font-size:0.78rem;color:var(--muted);line-height:1.4">${n.body||''}</div>
@@ -720,28 +733,28 @@ function renderListings() {
   });
 
   if (!list.length) {
-    $('listings-wrap').innerHTML = `<div class="empty"><div class="ei">${myListings.length?'🔍':'📋'}</div><h3>${myListings.length?'No results':'No listings yet'}</h3><p>${myListings.length?'Adjust your search.':'Create your first listing to start selling.'}</p>${!myListings.length?'<button class="btn-add" onclick="openModal()">+ Create First Listing</button>':''}</div>`;
+    $('listings-wrap').innerHTML = `<div class="empty"><div class="ei">${myListings.length?'<i class="fas fa-magnifying-glass"></i>':'<i class="fas fa-clipboard-list"></i>'}</div><h3>${myListings.length?'No results':'No listings yet'}</h3><p>${myListings.length?'Adjust your search.':'Create your first listing to start selling.'}</p>${!myListings.length?'<button class="btn-add" onclick="openModal()">+ Create First Listing</button>':''}</div>`;
     return;
   }
   $('listings-wrap').innerHTML = `<div class="lg">${list.map(l => {
     const img = l.images?.[0];
     return `<div class="lcard">
       <div class="lcard-img">
-        ${img?`<img src="${img}" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" /><div class="lcard-img-ph" style="display:none">${Listings.getCatEmoji(l.category)}</div>`:`<div class="lcard-img-ph">${Listings.getCatEmoji(l.category)}</div>`}
-        <div style="position:absolute;top:7px;left:7px"><span class="sp ${l.status==='active'?'sp-a':'sp-c'}">${l.status==='active'?'● Active':'⏸ Paused'}</span></div>
+        ${img?`<img src="${img}" alt="" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.insertAdjacentHTML('afterend','<div class=\'img-unavailable\'><i class=\'fas fa-image\'></i><span>Image Unavailable</span></div>')" /><div class="lcard-img-ph" style="display:none">${Listings.getCatEmoji(l.category)}</div>`:`<div class="lcard-img-ph">${Listings.getCatEmoji(l.category)}</div>`}
+        <div style="position:absolute;top:7px;left:7px"><span class="sp ${l.status==='active'?'sp-a':'sp-c'}">${l.status==='active'?'● Active':'<i class="fas fa-pause"></i> Paused'}</span></div>
       </div>
       <div class="lcard-body">
         <div class="lcard-title">${l.title}</div>
         <div class="lcard-price">$${l.price}</div>
         <div class="lcard-stats">
           <div class="lst"><span>★</span><span>${l.rating||'—'}</span></div>
-          <div class="lst">🛒<span>${l.order_count||0}</span></div>
-          <div class="lst">💬<span>${l.review_count||0}</span></div>
+          <div class="lst"><i class="fas fa-shopping-cart"></i><span>${l.order_count||0}</span></div>
+          <div class="lst"><i class="fas fa-comment-dots"></i><span>${l.review_count||0}</span></div>
         </div>
         <div class="lcard-acts">
-          <button class="ba ba-edit" onclick="editListing(${l.id})">✏️ Edit</button>
-          <button class="ba ba-pause" onclick="toggleStatus(${l.id},'${l.status}')">${l.status==='active'?'⏸':'▶'}</button>
-          <button class="ba ba-del" onclick="deleteListing(${l.id})">🗑️</button>
+          <button class="ba ba-edit" onclick="editListing(${l.id})"><i class="fas fa-pen"></i> Edit</button>
+          <button class="ba ba-pause" onclick="toggleStatus(${l.id},'${l.status}')">${l.status==='active'?'<i class="fas fa-pause"></i>':'▶'}</button>
+          <button class="ba ba-del" onclick="deleteListing(${l.id})"><i class="fas fa-trash"></i></button>
         </div>
       </div>
     </div>`;
@@ -807,7 +820,7 @@ async function markDelivered(id, status) {
   if (status !== 'escrowed') return;
   const { error } = await DB.updateOrderStatus(id, 'delivered', U.id, 'seller');
   if (error) { toast('Failed to update order.','err'); return; }
-  toast('Order marked as delivered. ✅','ok');
+  toast('Order marked as delivered. <i class="fas fa-circle-check"></i>','ok');
   await loadOrders();
 }
 
@@ -904,7 +917,7 @@ function renderMsgWindow(conv, msgs) {
       <div class="mi-wrap">
         <textarea id="msg-ta" placeholder="Type a message..." rows="1"></textarea>
       </div>
-      <button class="btn-send" id="msg-send">➤</button>
+      <button class="btn-send" id="msg-send"><i class="fas fa-paper-plane"></i></button>
     </div>`;
   const body = $('mw-body');
   body.scrollTop = body.scrollHeight;
@@ -992,7 +1005,7 @@ function editListing(id) {
 function renderTags() {
   const wrap=$('tiw'), input=$('ti');
   wrap.querySelectorAll('.tc').forEach(c=>c.remove());
-  fTags.forEach((t,i)=>{ const c=document.createElement('div'); c.className='tc'; c.innerHTML=`${t}<button onclick="rmTag(${i})">✕</button>`; wrap.insertBefore(c,input); });
+  fTags.forEach((t,i)=>{ const c=document.createElement('div'); c.className='tc'; c.innerHTML=`${t}<button onclick="rmTag(${i})"><i class="fas fa-xmark"></i></button>`; wrap.insertBefore(c,input); });
 }
 function rmTag(i){fTags.splice(i,1);renderTags();}
 $('ti').addEventListener('keydown',e=>{
@@ -1017,7 +1030,7 @@ function handleFiles(files){
 }
 function rmImg(i){fImgs.splice(i,1);renderPreviews();}
 function renderPreviews(){
-  $('ip').innerHTML=fImgs.map((img,i)=>`<div class="ipv"><img src="${img.preview}" /><button class="rm-i" onclick="rmImg(${i})">✕</button></div>`).join('');
+  $('ip').innerHTML=fImgs.map((img,i)=>`<div class="ipv"><img src="${img.preview}" /><button class="rm-i" onclick="rmImg(${i})"><i class="fas fa-xmark"></i></button></div>`).join('');
 }
 
 $('m-save').addEventListener('click', async ()=>{
@@ -1063,7 +1076,7 @@ $('save-pf').addEventListener('click',async()=>{
   $('nav-av').textContent=(name||'S')[0].toUpperCase();
   $('pav').textContent=(name||'S')[0].toUpperCase();
   $('pav-name').textContent=name;
-  toast('Profile saved! ✅','ok');
+  toast('Profile saved! <i class="fas fa-circle-check"></i>','ok');
 });
 
 $('payout-btn').addEventListener('click', async () => {
@@ -1078,7 +1091,7 @@ $('payout-btn').addEventListener('click', async () => {
   if (!account) return;
   const { error } = await DB.requestPayout(U.id, myEarnings.available, resolvedMethod, account);
   if (error) { toast('Payout request failed: ' + error.message, 'err'); return; }
-  toast('Payout of $' + fmt(myEarnings.available) + ' requested! Processing in 1-3 days. ✅', 'ok');
+  toast('Payout of $' + fmt(myEarnings.available) + ' requested! Processing in 1-3 days. <i class="fas fa-circle-check"></i>', 'ok');
   await DB.createNotification(U.id, 'payout', 'Payout Requested',
     '$' + fmt(myEarnings.available) + ' via ' + resolvedMethod + ' — processing in 1-3 business days.');
   loadEarnings();
@@ -1099,7 +1112,7 @@ $('pw-save-btn')?.addEventListener('click', async () => {
   if (error) { errEl.textContent=error.message; errEl.style.display='block'; return; }
   $('pw-modal').classList.remove('open');
   $('pw-new').value=''; $('pw-confirm').value='';
-  toast('Password updated! ✅', 'ok');
+  toast('Password updated! <i class="fas fa-circle-check"></i>', 'ok');
 });
 
 /* ══ PAYOUT METHOD SETTINGS ══ */
@@ -1109,7 +1122,7 @@ $('save-payout-btn')?.addEventListener('click', async () => {
   if (!account) { toast('Please enter your account details.', 'err'); return; }
   const { error } = await DB.savePayoutMethod(U.id, method, account);
   if (error) { toast('Failed: ' + error.message, 'err'); return; }
-  toast('Payout method saved! ✅', 'ok');
+  toast('Payout method saved! <i class="fas fa-circle-check"></i>', 'ok');
 });
 
 async function loadPayoutMethod() {
@@ -1141,7 +1154,7 @@ $('sbo').addEventListener('click',()=>{$('hbg').classList.remove('open');$('sb')
 
 /* ══ TOAST ══ */
 function toast(msg,type='ok'){
-  const icons={ok:'✅',err:'⚠️',inf:'ℹ️'};
+  const icons={ok:'<i class="fas fa-circle-check"></i>',err:'<i class="fas fa-triangle-exclamation"></i>',inf:'ℹ️'};
   const el=document.createElement('div'); el.className=`ti ${type}`; el.innerHTML=`<span>${icons[type]||'ℹ️'}</span><span>${msg}</span>`;
   $('toast').appendChild(el); setTimeout(()=>el.remove(),3500);
 }

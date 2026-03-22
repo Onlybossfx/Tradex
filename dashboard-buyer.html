@@ -274,7 +274,20 @@
     @media (max-width: 360px) {
       .sg2 { grid-template-columns: 1fr; }
     }
+
+    /* ── Image Unavailable Placeholder ── */
+    .img-unavailable {
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      background: var(--bg3); border-radius: inherit;
+      color: var(--muted); gap: 0.5rem;
+      font-size: 0.78rem; text-align: center; padding: 1rem;
+    }
+    .img-unavailable i { font-size: 2rem; color: var(--dim); }
+    .img-unavailable span { font-size: 0.72rem; color: var(--dim); }
   </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
 
@@ -289,7 +302,7 @@
   <span class="nav-label">My Account</span>
   <div class="nav-right">
     <button class="btn-browse" onclick="window.location.href='browse.html'">Browse Listings</button>
-    <div class="notif-btn"><span>🔔</span><div class="ndot" id="ndot" style="display:none"></div></div>
+    <div class="notif-btn"><span><i class="fas fa-bell"></i></span><div class="ndot" id="ndot" style="display:none"></div></div>
     <div class="nav-av" id="nav-av">B</div>
   </div>
 </nav>
@@ -297,19 +310,19 @@
 <!-- SIDEBAR -->
 <aside id="sb">
   <div class="ns">Account</div>
-  <div class="ni on" data-p="overview">      <span class="ic">🏠</span><span class="lb">Overview</span></div>
-  <div class="ni" data-p="orders">           <span class="ic">🛒</span><span class="lb">My Orders</span><span class="bd" id="ord-badge">0</span></div>
-  <div class="ni" data-p="saved">            <span class="ic">❤️</span><span class="lb">Saved</span><span class="bd" id="saved-badge">0</span></div>
-  <div class="ni" data-p="messages">         <span class="ic">💬</span><span class="lb">Messages</span><span class="bd red" id="msg-badge">0</span></div>
-  <div class="ni" data-p="notifications">    <span class="ic">🔔</span><span class="lb">Notifications</span><span class="bd red" id="notif-badge" style="display:none">0</span></div>
-  <div class="ni" data-p="addresses">        <span class="ic">📍</span><span class="lb">Addresses</span></div>
-  <div class="ni" data-p="disputes">         <span class="ic">⚖️</span><span class="lb">Disputes</span><span class="bd red" id="disp-badge" style="display:none">0</span></div>
-  <div class="ni" data-p="profile">          <span class="ic">👤</span><span class="lb">Profile</span></div>
-  <div class="ni" data-p="settings">         <span class="ic">⚙️</span><span class="lb">Settings</span></div>
+  <div class="ni on" data-p="overview">      <span class="ic"><i class="fas fa-house"></i></span><span class="lb">Overview</span></div>
+  <div class="ni" data-p="orders">           <span class="ic"><i class="fas fa-shopping-cart"></i></span><span class="lb">My Orders</span><span class="bd" id="ord-badge">0</span></div>
+  <div class="ni" data-p="saved">            <span class="ic"><i class="fas fa-heart"></i></span><span class="lb">Saved</span><span class="bd" id="saved-badge">0</span></div>
+  <div class="ni" data-p="messages">         <span class="ic"><i class="fas fa-comment-dots"></i></span><span class="lb">Messages</span><span class="bd red" id="msg-badge">0</span></div>
+  <div class="ni" data-p="notifications">    <span class="ic"><i class="fas fa-bell"></i></span><span class="lb">Notifications</span><span class="bd red" id="notif-badge" style="display:none">0</span></div>
+  <div class="ni" data-p="addresses">        <span class="ic"><i class="fas fa-location-dot"></i></span><span class="lb">Addresses</span></div>
+  <div class="ni" data-p="disputes">         <span class="ic"><i class="fas fa-scale-balanced"></i></span><span class="lb">Disputes</span><span class="bd red" id="disp-badge" style="display:none">0</span></div>
+  <div class="ni" data-p="profile">          <span class="ic"><i class="fas fa-user"></i></span><span class="lb">Profile</span></div>
+  <div class="ni" data-p="settings">         <span class="ic"><i class="fas fa-gear"></i></span><span class="lb">Settings</span></div>
   <div class="sb-bot">
-    <div class="ni" onclick="window.location.href='browse.html'"><span class="ic">🏪</span><span class="lb">Browse Marketplace</span></div>
-    <div class="ni" onclick="window.location.href='dashboard-seller.html'"><span class="ic">🏪</span><span class="lb">Seller Dashboard</span></div>
-    <div class="ni" onclick="DB.logout()" style="color:var(--error)"><span class="ic">🚪</span><span class="lb">Log Out</span></div>
+    <div class="ni" onclick="window.location.href='browse.html'"><span class="ic"><i class="fas fa-store"></i></span><span class="lb">Browse Marketplace</span></div>
+    <div class="ni" onclick="window.location.href='dashboard-seller.html'"><span class="ic"><i class="fas fa-store"></i></span><span class="lb">Seller Dashboard</span></div>
+    <div class="ni" onclick="DB.logout()" style="color:var(--error)"><span class="ic"><i class="fas fa-right-from-bracket"></i></span><span class="lb">Log Out</span></div>
   </div>
 </aside>
 
@@ -318,11 +331,11 @@
 
   <!-- OVERVIEW -->
   <div class="panel on" id="panel-overview">
-    <div class="ph"><div><h1>Welcome back, <span id="bname">there</span> 👋</h1><p>Here's your Tradex activity at a glance.</p></div></div>
+    <div class="ph"><div><h1>Welcome back, <span id="bname">there</span> <i class="fas fa-hand-wave"></i></h1><p>Here's your Tradex activity at a glance.</p></div></div>
     <div class="sg">
-      <div class="sc"><div class="sc-lbl">🛒 Total Orders</div><div class="sc-val" id="ov-ords">0</div><div class="sc-note" id="ov-ords-n">all time</div></div>
-      <div class="sc"><div class="sc-lbl">💰 Total Spent</div><div class="sc-val a" id="ov-spent">$0</div><div class="sc-note">across all orders</div></div>
-      <div class="sc"><div class="sc-lbl">❤️ Saved Items</div><div class="sc-val" id="ov-saved">0</div><div class="sc-note">in your wishlist</div></div>
+      <div class="sc"><div class="sc-lbl"><i class="fas fa-shopping-cart"></i> Total Orders</div><div class="sc-val" id="ov-ords">0</div><div class="sc-note" id="ov-ords-n">all time</div></div>
+      <div class="sc"><div class="sc-lbl"><i class="fas fa-sack-dollar"></i> Total Spent</div><div class="sc-val a" id="ov-spent">$0</div><div class="sc-note">across all orders</div></div>
+      <div class="sc"><div class="sc-lbl"><i class="fas fa-heart"></i> Saved Items</div><div class="sc-val" id="ov-saved">0</div><div class="sc-note">in your wishlist</div></div>
       <div class="sc"><div class="sc-lbl">⭐ Reviews Left</div><div class="sc-val" id="ov-rvs">0</div><div class="sc-note">keep it up!</div></div>
     </div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.85rem">
@@ -366,7 +379,7 @@
         <div class="ml-search"><input type="text" id="cv-search" placeholder="Search..." /></div>
         <div class="ml-convs" id="cv-list"></div>
       </div>
-      <div class="mw" id="mw"><div class="mw-empty"><span style="font-size:2rem">💬</span><span>Select a conversation</span></div></div>
+      <div class="mw" id="mw"><div class="mw-empty"><span style="font-size:2rem"><i class="fas fa-comment-dots"></i></span><span>Select a conversation</span></div></div>
     </div>
   </div>
 
@@ -419,10 +432,10 @@
       <div class="pcard">
         <h3>Account</h3>
         <div style="display:flex;flex-direction:column;gap:0.48rem">
-          <button style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.68rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem;transition:color 0.18s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.45)'" id="buyer-change-pw-btn">🔑 Change Password</button>
-          <button style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.68rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem;transition:color 0.18s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.45)'">🛡️ Two-Factor Authentication</button>
-          <button onclick="window.location.href='dashboard-seller.html'" style="background:var(--amber-dim);border:1px solid rgba(245,158,11,0.2);color:var(--amber);padding:0.68rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem">🏪 Switch to Seller Dashboard</button>
-          <button style="background:transparent;border:1px solid rgba(239,68,68,0.2);color:#F87171;padding:0.68rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem" onclick="if(confirm('Delete your account?'))toast('Contact support@tradex.com','inf')">🗑️ Delete Account</button>
+          <button style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.68rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem;transition:color 0.18s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.45)'" id="buyer-change-pw-btn"><i class="fas fa-key"></i> Change Password</button>
+          <button style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.68rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem;transition:color 0.18s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.45)'"><i class="fas fa-shield-halved"></i> Two-Factor Authentication</button>
+          <button onclick="window.location.href='dashboard-seller.html'" style="background:var(--amber-dim);border:1px solid rgba(245,158,11,0.2);color:var(--amber);padding:0.68rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem"><i class="fas fa-store"></i> Switch to Seller Dashboard</button>
+          <button style="background:transparent;border:1px solid rgba(239,68,68,0.2);color:#F87171;padding:0.68rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem" onclick="if(confirm('Delete your account?'))toast('Contact support@tradex.com','inf')"><i class="fas fa-trash"></i> Delete Account</button>
         </div>
       </div>
     </div>
@@ -457,7 +470,7 @@
 <!-- ADDRESS MODAL -->
 <div class="mo" id="addr-modal">
   <div class="mbox" style="max-width:480px">
-    <button class="mc" onclick="closeAddrModal()">✕</button>
+    <button class="mc" onclick="closeAddrModal()"><i class="fas fa-xmark"></i></button>
     <h2 id="addr-modal-title">Add Address</h2>
     <p class="msub">Used for delivery and checkout pre-fill.</p>
     <input type="hidden" id="addr-id" />
@@ -492,7 +505,7 @@
 <!-- DISPUTE MODAL -->
 <div class="mo" id="disp-modal">
   <div class="mbox" style="max-width:480px">
-    <button class="mc" onclick="$('disp-modal').classList.remove('open')">✕</button>
+    <button class="mc" onclick="$('disp-modal').classList.remove('open')"><i class="fas fa-xmark"></i></button>
     <h2>Open a Dispute</h2>
     <p class="msub" id="disp-order-name">For your order</p>
     <input type="hidden" id="disp-order-id" />
@@ -514,7 +527,7 @@
       <textarea class="finp" id="disp-desc" rows="4" placeholder="Please describe the issue in detail..."></textarea>
     </div>
     <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:10px;padding:0.85rem;font-size:0.78rem;color:rgba(255,255,255,0.6);line-height:1.6;margin-bottom:0.5rem">
-      ⚠️ Opening a dispute will pause the order and notify the seller. Our team will review within 24 hours.
+      <i class="fas fa-triangle-exclamation"></i> Opening a dispute will pause the order and notify the seller. Our team will review within 24 hours.
     </div>
     <div class="mfoot">
       <button class="btn-cancel" onclick="$('disp-modal').classList.remove('open')">Cancel</button>
@@ -524,7 +537,7 @@
 </div>
 <div class="mo" id="rv-modal">
   <div class="mbox">
-    <button class="mc" onclick="closeRv()">✕</button>
+    <button class="mc" onclick="closeRv()"><i class="fas fa-xmark"></i></button>
     <h2>Leave a Review</h2>
     <p class="msub" id="rv-title">Share your experience.</p>
     <div class="stars" id="star-row">
@@ -617,7 +630,7 @@ function renderAll() {
 function renderRecentOrders() {
   const el = $('ov-recent');
   if (!myOrders.length) {
-    el.innerHTML = `<div class="empty"><div class="ei">🛒</div><h3>No orders yet</h3><p>Browse the marketplace to find something you love.</p><button class="btn-sv" onclick="window.location.href='browse.html'">Browse Now</button></div>`;
+    el.innerHTML = `<div class="empty"><div class="ei"><i class="fas fa-shopping-cart"></i></div><h3>No orders yet</h3><p>Browse the marketplace to find something you love.</p><button class="btn-sv" onclick="window.location.href='browse.html'">Browse Now</button></div>`;
     return;
   }
   el.innerHTML = myOrders.slice(0,3).map(o => orderCard(o)).join('');
@@ -630,7 +643,7 @@ function orderCard(o) {
   let dots='',lines='',lbls='';
   steps.forEach((s,i)=>{
     const done=i+1<step, act=i+1===step;
-    dots  +=`<div class="pdot ${done?'done':act?'act':''}">${done?'✓':i+1}</div>`;
+    dots  +=`<div class="pdot ${done?'done':act?'act':''}">${done?'<i class="fas fa-check"></i>':i+1}</div>`;
     if(i<3) lines+=`<div class="pline ${done?'done':''}"></div>`;
     lbls  +=`<span class="plbl ${done?'done':act?'act':''}">${s}</span>`;
   });
@@ -638,15 +651,15 @@ function orderCard(o) {
   return `<div class="oc">
     <div class="oc-top">
       <div class="oc-img">
-        ${img?`<img src="${img}" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" /><div class="oc-img-ph" style="display:none">📦</div>`:`<div class="oc-img-ph">📦</div>`}
+        ${img?`<img src="${img}" alt="" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.insertAdjacentHTML('afterend','<div class=\'img-unavailable\'><i class=\'fas fa-image\'></i><span>Image Unavailable</span></div>')" /><div class="oc-img-ph" style="display:none"><i class="fas fa-box"></i></div>`:`<div class="oc-img-ph"><i class="fas fa-box"></i></div>`}
       </div>
       <div class="oc-info">
         <div class="oc-title">${o.listing_title||'Order #'+o.id}</div>
         <div class="oc-seller">by ${o.seller_name||'Seller'}</div>
         <div class="oc-meta">
-          <div class="ocm">🗓 ${fmtD(o.created_at)}</div>
-          <div class="ocm">📋 #${o.id}</div>
-          ${o.package_label?`<div class="ocm">📦 ${o.package_label}</div>`:''}
+          <div class="ocm"><i class="fas fa-calendar-days"></i> ${fmtD(o.created_at)}</div>
+          <div class="ocm"><i class="fas fa-clipboard-list"></i> #${o.id}</div>
+          ${o.package_label?`<div class="ocm"><i class="fas fa-box"></i> ${o.package_label}</div>`:''}
         </div>
       </div>
       <div class="oc-right">
@@ -665,10 +678,10 @@ function orderCard(o) {
 function orderActions(o) {
   const btns=[];
   if(o.listing_id) btns.push(`<button class="ba" onclick="window.location.href='listing.html?id=${o.listing_id}'">View Listing</button>`);
-  btns.push(`<button class="ba" onclick="openMsgForOrder(${o.id})">💬 Message Seller</button>`);
-  if(o.status==='delivered') btns.push(`<button class="ba pri" onclick="confirmDelivery(${o.id})">✅ Confirm Delivery</button>`);
+  btns.push(`<button class="ba" onclick="openMsgForOrder(${o.id})"><i class="fas fa-comment-dots"></i> Message Seller</button>`);
+  if(o.status==='delivered') btns.push(`<button class="ba pri" onclick="confirmDelivery(${o.id})"><i class="fas fa-circle-check"></i> Confirm Delivery</button>`);
   if(o.status==='complete')  btns.push(`<button class="ba" onclick="openRv(${o.id},'${(o.listing_title||'').replace(/'/g,'`')}',${o.listing_id||0},'${o.seller_id||''}')">⭐ Leave Review</button>`);
-  if(['pending','escrowed'].includes(o.status)) btns.push(`<button class="ba dan" onclick="raiseDispute({id:${o.id},listing_title:'${(o.listing_title||'').replace(/'/g,'`')}',seller_id:'${o.seller_id||''}'})">⚠️ Dispute</button>`);
+  if(['pending','escrowed'].includes(o.status)) btns.push(`<button class="ba dan" onclick="raiseDispute({id:${o.id},listing_title:'${(o.listing_title||'').replace(/'/g,'`')}',seller_id:'${o.seller_id||''}'})"><i class="fas fa-triangle-exclamation"></i> Dispute</button>`);
   return btns.join('');
 }
 
@@ -676,7 +689,7 @@ function renderOrdersList(filter) {
   const filtered = filter==='all' ? myOrders : myOrders.filter(o=>o.status===filter);
   $('orders-list').innerHTML = filtered.length
     ? filtered.map(o=>orderCard(o)).join('')
-    : `<div class="empty"><div class="ei">${filter==='all'?'🛒':'🔍'}</div><h3>${filter==='all'?'No orders yet':'No '+filter+' orders'}</h3><p>${filter==='all'?'Your purchases will appear here.':'Try a different filter.'}</p>${filter==='all'?`<button class="btn-sv" onclick="window.location.href='browse.html'">Browse Now</button>`:''}</div>`;
+    : `<div class="empty"><div class="ei">${filter==='all'?'<i class="fas fa-shopping-cart"></i>':'<i class="fas fa-magnifying-glass"></i>'}</div><h3>${filter==='all'?'No orders yet':'No '+filter+' orders'}</h3><p>${filter==='all'?'Your purchases will appear here.':'Try a different filter.'}</p>${filter==='all'?`<button class="btn-sv" onclick="window.location.href='browse.html'">Browse Now</button>`:''}</div>`;
 }
 
 $('of').addEventListener('click',e=>{
@@ -692,8 +705,8 @@ async function confirmDelivery(id) {
   if(error){toast('Failed to confirm.','err');return;}
   const o=myOrders.find(x=>x.id===id); if(o){ o.status='complete'; }
   /* notify seller */
-  if(o?.seller_id) await DB.createNotification(o.seller_id,'order_delivered','Order Confirmed ✅',`${U.user_metadata?.full_name||'Buyer'} confirmed delivery of "${o.listing_title||'your order'}". Payment released!`);
-  toast('Delivery confirmed! Payment released to seller. ✅','ok');
+  if(o?.seller_id) await DB.createNotification(o.seller_id,'order_delivered','Order Confirmed <i class="fas fa-circle-check"></i>',`${U.user_metadata?.full_name||'Buyer'} confirmed delivery of "${o.listing_title||'your order'}". Payment released!`);
+  toast('Delivery confirmed! Payment released to seller. <i class="fas fa-circle-check"></i>','ok');
   renderAll();
 }
 
@@ -705,16 +718,16 @@ function raiseDispute(o) {
 function renderSaved() {
   const grid=$('saved-grid');
   if(!savedItems.length){
-    grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="ei">❤️</div><h3>Nothing saved yet</h3><p>Tap the heart on any listing to save it here.</p><button class="btn-sv" onclick="window.location.href='browse.html'">Browse Listings</button></div>`;
+    grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="ei"><i class="fas fa-heart"></i></div><h3>Nothing saved yet</h3><p>Tap the heart on any listing to save it here.</p><button class="btn-sv" onclick="window.location.href='browse.html'">Browse Listings</button></div>`;
     return;
   }
   grid.innerHTML=savedItems.map(l=>{
     const img=Listings.getImage(l,0);
     return `<a class="scard" href="listing.html?id=${l.id}">
       <div class="scard-img">
-        <img src="${img}" alt="${l.title}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+        <img src="${img}" alt="${l.title}" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.insertAdjacentHTML('afterend','<div class=\'img-unavailable\'><i class=\'fas fa-image\'></i><span>Image Unavailable</span></div>')" />
         <div class="scard-img-ph" style="display:none">${Listings.getCatEmoji(l.category)}</div>
-        <button class="sc-unsave" onclick="unsave(event,${l.id})">🗑️</button>
+        <button class="sc-unsave" onclick="unsave(event,${l.id})"><i class="fas fa-trash"></i></button>
       </div>
       <div class="scard-body">
         <div class="sc-cat">${Listings.getCatEmoji(l.category)} ${Listings.getCatName(l.category)}</div>
@@ -743,7 +756,7 @@ async function loadRecommended(){
   $('recommended').innerHTML=data.map(l=>{
     const img=Listings.getImage(l,0);
     return `<a class="scard" href="listing.html?id=${l.id}">
-      <div class="scard-img"><img src="${img}" alt="${l.title}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" /><div class="scard-img-ph" style="display:none">${Listings.getCatEmoji(l.category)}</div></div>
+      <div class="scard-img"><img src="${img}" alt="${l.title}" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.insertAdjacentHTML('afterend','<div class=\'img-unavailable\'><i class=\'fas fa-image\'></i><span>Image Unavailable</span></div>')" /><div class="scard-img-ph" style="display:none">${Listings.getCatEmoji(l.category)}</div></div>
       <div class="scard-body"><div class="sc-cat">${Listings.getCatEmoji(l.category)} ${Listings.getCatName(l.category)}</div><div class="sc-title">${l.title}</div><div class="sc-foot"><div class="sc-rating"><span>★</span>${l.rating} (${l.review_count})</div><div class="sc-price">$${l.price}</div></div></div>
     </a>`;
   }).join('');
@@ -786,15 +799,15 @@ async function loadNotifPanel(){
   const {data} = await DB.getNotifications(U.id);
   const el = $('notif-list');
   if(!data?.length){
-    el.innerHTML=`<div style="text-align:center;padding:3rem 0;color:var(--muted)"><div style="font-size:2.5rem;margin-bottom:0.75rem">🔔</div><p>No notifications yet.</p></div>`;
+    el.innerHTML=`<div style="text-align:center;padding:3rem 0;color:var(--muted)"><div style="font-size:2.5rem;margin-bottom:0.75rem"><i class="fas fa-bell"></i></div><p>No notifications yet.</p></div>`;
     return;
   }
-  const icons={order_placed:'🛒',order_delivered:'📦',message:'💬',review:'⭐',payout:'💰',dispute:'⚠️',system:'ℹ️'};
+  const icons={order_placed:'<i class="fas fa-shopping-cart"></i>',order_delivered:'<i class="fas fa-box"></i>',message:'<i class="fas fa-comment-dots"></i>',review:'⭐',payout:'<i class="fas fa-sack-dollar"></i>',dispute:'<i class="fas fa-triangle-exclamation"></i>',system:'ℹ️'};
   el.innerHTML = data.map(n=>`
     <div style="display:flex;gap:0.85rem;padding:1rem;background:${n.read?'transparent':'rgba(245,158,11,0.04)'};border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.2s"
          onclick="clickNotif('${n.id}','${n.link||''}')"
          onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='${n.read?'transparent':'rgba(245,158,11,0.04)'}'">
-      <div style="width:36px;height:36px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">${icons[n.type]||'🔔'}</div>
+      <div style="width:36px;height:36px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">${icons[n.type]||'<i class="fas fa-bell"></i>'}</div>
       <div style="flex:1;min-width:0">
         <div style="font-size:0.85rem;font-weight:${n.read?'400':'600'};margin-bottom:0.18rem">${n.title}</div>
         <div style="font-size:0.78rem;color:var(--muted);line-height:1.4">${n.body||''}</div>
@@ -813,13 +826,13 @@ async function loadAddresses(){
   myAddresses = data||[];
   const el = $('addr-list');
   if(!myAddresses.length){
-    el.innerHTML=`<div style="text-align:center;padding:3rem 0;color:var(--muted)"><div style="font-size:2.5rem;margin-bottom:0.75rem">📍</div><h3 style="font-family:var(--serif);font-size:1.1rem;margin-bottom:0.4rem">No addresses saved</h3><p style="font-size:0.85rem">Add a delivery address to speed up checkout.</p></div>`;
+    el.innerHTML=`<div style="text-align:center;padding:3rem 0;color:var(--muted)"><div style="font-size:2.5rem;margin-bottom:0.75rem"><i class="fas fa-location-dot"></i></div><h3 style="font-family:var(--serif);font-size:1.1rem;margin-bottom:0.4rem">No addresses saved</h3><p style="font-size:0.85rem">Add a delivery address to speed up checkout.</p></div>`;
     return;
   }
   const countryNames={'NG':'Nigeria','GH':'Ghana','KE':'Kenya','ZA':'South Africa','GB':'United Kingdom','US':'United States','DE':'Germany','FR':'France'};
   el.innerHTML = myAddresses.map(a=>`
     <div style="background:var(--bg2);border:1px solid ${a.is_default?'rgba(245,158,11,0.3)':'var(--border)'};border-radius:13px;padding:1.25rem;margin-bottom:0.85rem;display:flex;align-items:flex-start;gap:1rem">
-      <div style="width:38px;height:38px;border-radius:50%;background:${a.is_default?'var(--amber)':'var(--bg3)'};border:1px solid ${a.is_default?'var(--amber)':'var(--border)'};display:flex;align-items:center;justify-content:center;font-size:0.95rem;flex-shrink:0">${a.label==='Home'?'🏠':a.label==='Work'?'💼':'📍'}</div>
+      <div style="width:38px;height:38px;border-radius:50%;background:${a.is_default?'var(--amber)':'var(--bg3)'};border:1px solid ${a.is_default?'var(--amber)':'var(--border)'};display:flex;align-items:center;justify-content:center;font-size:0.95rem;flex-shrink:0">${a.label==='Home'?'<i class="fas fa-house"></i>':a.label==='Work'?'<i class="fas fa-briefcase"></i>':'<i class="fas fa-location-dot"></i>'}</div>
       <div style="flex:1;min-width:0">
         <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.3rem">
           <span style="font-size:0.88rem;font-weight:600">${a.label} — ${a.full_name}</span>
@@ -873,7 +886,7 @@ $('addr-save-btn').addEventListener('click', async ()=>{
   };
   const {error} = await DB.saveAddress(U.id, payload);
   if(error){ toast('Failed to save address: '+error.message,'err'); return; }
-  toast('Address saved! ✅','ok'); closeAddrModal(); loadAddresses();
+  toast('Address saved! <i class="fas fa-circle-check"></i>','ok'); closeAddrModal(); loadAddresses();
 });
 
 /* ══ DISPUTES ══ */
@@ -881,7 +894,7 @@ async function loadDisputes(){
   const {data} = await DB.getDisputes(U.id, 'buyer');
   const el = $('disp-list');
   if(!data?.length){
-    el.innerHTML=`<div style="text-align:center;padding:3rem 0;color:var(--muted)"><div style="font-size:2.5rem;margin-bottom:0.75rem">⚖️</div><h3 style="font-family:var(--serif);font-size:1.1rem;margin-bottom:0.4rem">No disputes</h3><p style="font-size:0.85rem">Your dispute history will appear here.</p></div>`;
+    el.innerHTML=`<div style="text-align:center;padding:3rem 0;color:var(--muted)"><div style="font-size:2.5rem;margin-bottom:0.75rem"><i class="fas fa-scale-balanced"></i></div><h3 style="font-family:var(--serif);font-size:1.1rem;margin-bottom:0.4rem">No disputes</h3><p style="font-size:0.85rem">Your dispute history will appear here.</p></div>`;
     return;
   }
   const statusCls={open:'s-pending',under_review:'s-escrowed',resolved_buyer:'s-delivered',resolved_seller:'s-complete',closed:'s-complete'};
@@ -898,7 +911,7 @@ async function loadDisputes(){
         </div>
       </div>
       <div style="font-size:0.82rem;color:var(--muted);line-height:1.55;background:var(--bg3);border-radius:9px;padding:0.75rem">${d.description||'No description.'}</div>
-      ${d.resolution?`<div style="margin-top:0.75rem;font-size:0.82rem;color:rgba(16,185,129,0.9);background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15);border-radius:9px;padding:0.75rem">✅ Resolution: ${d.resolution}</div>`:''}
+      ${d.resolution?`<div style="margin-top:0.75rem;font-size:0.82rem;color:rgba(16,185,129,0.9);background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15);border-radius:9px;padding:0.75rem"><i class="fas fa-circle-check"></i> Resolution: ${d.resolution}</div>`:''}
     </div>`).join('');
 }
 
@@ -923,7 +936,7 @@ $('disp-submit').addEventListener('click', async ()=>{
   btn.classList.remove('ld'); btn.disabled=false;
   if(error){ toast('Failed to open dispute: '+error.message,'err'); return; }
   $('disp-modal').classList.remove('open');
-  toast('Dispute opened. Our team will review within 24 hours. ⚖️','ok');
+  toast('Dispute opened. Our team will review within 24 hours. <i class="fas fa-scale-balanced"></i>','ok');
   await loadOrders(); renderAll(); loadDisputes(); updateMsgBadge();
   /* notify seller */
   if(sellerId) await DB.createNotification(sellerId,'dispute','Dispute Opened',`A buyer opened a dispute on order: ${$('disp-order-name').textContent}`);
@@ -963,7 +976,7 @@ function renderMsgWindow(conv,msgs){
     </div>
     <div class="mw-input">
       <div class="mi-wrap"><textarea id="msg-ta" placeholder="Type a message..." rows="1"></textarea></div>
-      <button class="btn-send" id="msg-send">➤</button>
+      <button class="btn-send" id="msg-send"><i class="fas fa-paper-plane"></i></button>
     </div>`;
   const b=$('mw-body'); b.scrollTop=b.scrollHeight;
   $('msg-send').addEventListener('click',doSend);
@@ -1036,7 +1049,7 @@ $('save-pf').addEventListener('click',async()=>{
   $('nav-av').textContent=(name||'B')[0].toUpperCase();
   $('pav').textContent=(name||'B')[0].toUpperCase();
   $('pav-name').textContent=name;
-  toast('Profile saved! ✅','ok');
+  toast('Profile saved! <i class="fas fa-circle-check"></i>','ok');
 });
 
 /* ══ NAVIGATION ══ */
@@ -1057,7 +1070,7 @@ $('sbo').addEventListener('click',()=>{$('hbg').classList.remove('open');$('sb')
 
 /* ══ TOAST ══ */
 function toast(msg,type='ok'){
-  const icons={ok:'✅',err:'⚠️',inf:'ℹ️'};
+  const icons={ok:'<i class="fas fa-circle-check"></i>',err:'<i class="fas fa-triangle-exclamation"></i>',inf:'ℹ️'};
   const el=document.createElement('div'); el.className=`ti ${type}`; el.innerHTML=`<span>${icons[type]||'ℹ️'}</span><span>${msg}</span>`;
   $('toast').appendChild(el); setTimeout(()=>el.remove(),3500);
 }
@@ -1081,7 +1094,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('buyer-pw-modal').classList.remove('open');
     document.getElementById('buyer-pw-new').value = '';
     document.getElementById('buyer-pw-confirm').value = '';
-    toast('Password updated! ✅', 'ok');
+    toast('Password updated! <i class="fas fa-circle-check"></i>', 'ok');
   });
 });
 
@@ -1092,7 +1105,7 @@ init();
 <!-- CHANGE PASSWORD MODAL -->
 <div class="mo" id="buyer-pw-modal">
   <div class="mbox" style="max-width:420px">
-    <button class="mc" onclick="$('buyer-pw-modal').classList.remove('open')">✕</button>
+    <button class="mc" onclick="$('buyer-pw-modal').classList.remove('open')"><i class="fas fa-xmark"></i></button>
     <h2>Change Password</h2>
     <p class="msub">Enter a new password for your account.</p>
     <div class="frow"><label>New Password *</label><input class="finp" id="buyer-pw-new" type="password" placeholder="Min. 8 characters" autocomplete="new-password" /></div>

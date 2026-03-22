@@ -111,6 +111,7 @@
       .card { padding: 2rem 1.25rem; border-radius: 16px; border: none; background: transparent; }
     }
   </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
 <div class="card">
@@ -129,17 +130,17 @@
   <!-- ══ STEP 1: Request reset ══ -->
   <div class="panel active" id="p1">
     <div class="head">
-      <div class="icon-wrap">🔑</div>
+      <div class="icon-wrap"><i class="fas fa-key"></i></div>
       <h1>Forgot password?</h1>
       <p>No worries — enter your email and we'll send you a reset link.</p>
     </div>
 
-    <div class="alert err" id="r-err"><span>⚠️</span><span id="r-err-msg"></span></div>
+    <div class="alert err" id="r-err"><span><i class="fas fa-triangle-exclamation"></i></span><span id="r-err-msg"></span></div>
 
     <div class="field">
       <label for="r-email">Email address</label>
       <div class="wrap">
-        <span class="ico">✉</span>
+        <span class="ico"><i class="fas fa-envelope"></i></span>
         <input type="email" id="r-email" placeholder="you@example.com" autocomplete="email" />
       </div>
       <div class="ferr" id="re-err">Please enter a valid email.</div>
@@ -152,7 +153,7 @@
   <!-- ══ STEP 2: Check email ══ -->
   <div class="panel" id="p2">
     <div class="success-card">
-      <span class="success-icon">📬</span>
+      <span class="success-icon"><i class="fas fa-inbox"></i></span>
       <h2>Check your inbox</h2>
       <p>We sent a reset link to <strong id="sent-email"></strong>. Click it to set a new password.<br><br>Can't find it? Check your spam folder.</p>
       <button class="btn-primary" id="resend-link-btn"><span class="lbl">Resend email</span></button>
@@ -165,20 +166,20 @@
   <!-- Supabase appends #access_token=... to the URL automatically -->
   <div class="panel" id="p3">
     <div class="head">
-      <div class="icon-wrap">🛡️</div>
+      <div class="icon-wrap"><i class="fas fa-shield-halved"></i></div>
       <h1>Set new password</h1>
       <p>Choose a strong password for your Tradex account.</p>
     </div>
 
-    <div class="alert err" id="np-err"><span>⚠️</span><span id="np-err-msg"></span></div>
-    <div class="alert ok"  id="np-ok"><span>✅</span><span>Password updated! Redirecting to login...</span></div>
+    <div class="alert err" id="np-err"><span><i class="fas fa-triangle-exclamation"></i></span><span id="np-err-msg"></span></div>
+    <div class="alert ok"  id="np-ok"><span><i class="fas fa-circle-check"></i></span><span>Password updated! Redirecting to login...</span></div>
 
     <div class="field">
       <label for="new-pw">New password</label>
       <div class="wrap">
-        <span class="ico">🔑</span>
+        <span class="ico"><i class="fas fa-key"></i></span>
         <input type="password" id="new-pw" placeholder="Min. 8 characters" autocomplete="new-password" />
-        <button class="eye" data-t="new-pw">👁</button>
+        <button class="eye" data-t="new-pw"><i class="fas fa-eye"></i></button>
       </div>
       <div class="pw-bars"><div class="pw-bar" id="pb1"></div><div class="pw-bar" id="pb2"></div><div class="pw-bar" id="pb3"></div><div class="pw-bar" id="pb4"></div></div>
       <div class="pw-lbl" id="pw-lbl">Enter a password</div>
@@ -195,9 +196,9 @@
     <div class="field">
       <label for="confirm-pw">Confirm password</label>
       <div class="wrap">
-        <span class="ico">🔑</span>
+        <span class="ico"><i class="fas fa-key"></i></span>
         <input type="password" id="confirm-pw" placeholder="Repeat your password" autocomplete="new-password" />
-        <button class="eye" data-t="confirm-pw">👁</button>
+        <button class="eye" data-t="confirm-pw"><i class="fas fa-eye"></i></button>
       </div>
       <div class="ferr" id="cpw-err">Passwords do not match.</div>
     </div>
@@ -253,7 +254,7 @@ function goStep(n) {
   [1,2,3].forEach(i => {
     const d = $(`d${i}`);
     d.classList.remove('active','done');
-    if (i < n)      { d.classList.add('done'); d.textContent = '✓'; }
+    if (i < n)      { d.classList.add('done'); d.textContent = '<i class="fas fa-check"></i>'; }
     else if (i ===n){ d.classList.add('active'); d.textContent = i; }
     else              d.textContent = i;
     if (i <= 2) $(`ln${i}`).classList.toggle('done', i < n);
@@ -301,7 +302,7 @@ document.querySelectorAll('.eye').forEach(b =>
   b.addEventListener('click', () => {
     const i = $(b.dataset.t);
     i.type = i.type === 'password' ? 'text' : 'password';
-    b.textContent = i.type === 'password' ? '👁' : '🙈';
+    b.textContent = i.type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
   })
 );
 

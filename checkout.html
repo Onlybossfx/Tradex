@@ -87,7 +87,7 @@
     .pay-method.selected .pm-desc { color: var(--amber); }
     .pm-check { position: absolute; top: 0.75rem; right: 0.75rem; width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border); transition: all 0.2s; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; }
     .pay-method.selected .pm-check { background: var(--amber); border-color: var(--amber); color: #0a0a0a; }
-    .pay-method.selected .pm-check::after { content: '✓'; font-weight: 700; }
+    .pay-method.selected .pm-check::after { content: '<i class="fas fa-check"></i>'; font-weight: 700; }
 
     /* ── CARD INPUT VISUAL ── */
     .card-visual { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.25rem; position: relative; overflow: hidden; min-height: 130px; }
@@ -185,6 +185,7 @@
       .fw-methods { grid-template-columns: 1fr 1fr; }
     }
   </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
 
@@ -193,13 +194,13 @@
   <a href="index.html" class="nav-logo"><span>Tradex</span><i></i></a>
   <div class="nav-sep"></div>
   <span class="nav-step">Secure Checkout</span>
-  <div class="nav-secure">🔒 SSL Encrypted</div>
+  <div class="nav-secure"><i class="fas fa-lock"></i> SSL Encrypted</div>
 </nav>
 
 <!-- PROGRESS -->
 <div class="progress">
   <div class="prog-steps">
-    <div class="ps done"    id="ps1"><div class="dot">✓</div><span>Review</span></div>
+    <div class="ps done"    id="ps1"><div class="dot"><i class="fas fa-check"></i></div><span>Review</span></div>
     <div class="ps-line"    id="pl1"></div>
     <div class="ps active"  id="ps2"><div class="dot">2</div><span>Payment</span></div>
     <div class="ps-line"    id="pl2"></div>
@@ -282,7 +283,7 @@
         </div>
       </div>
 
-      <div class="alert err"  id="step1-err"><span>⚠️</span><span id="step1-err-msg"></span></div>
+      <div class="alert err"  id="step1-err"><span><i class="fas fa-triangle-exclamation"></i></span><span id="step1-err-msg"></span></div>
 
       <div class="btn-row">
         <button class="btn-back" onclick="history.back()">← Back</button>
@@ -297,8 +298,8 @@
 
         <!-- Region tabs -->
         <div class="region-tabs" id="region-tabs">
-          <button class="rtab on" data-region="global">🌍 Global (Card)</button>
-          <button class="rtab" data-region="africa">🌍 Africa (Local)</button>
+          <button class="rtab on" data-region="global"><i class="fas fa-earth-africa"></i> Global (Card)</button>
+          <button class="rtab" data-region="africa"><i class="fas fa-earth-africa"></i> Africa (Local)</button>
         </div>
 
         <!-- Global: Stripe card -->
@@ -316,7 +317,7 @@
                 <div class="cv-val" id="cv-exp">MM / YY</div>
               </div>
             </div>
-            <div class="cv-network">💳</div>
+            <div class="cv-network"><i class="fas fa-credit-card"></i></div>
           </div>
 
           <div class="frow">
@@ -351,10 +352,10 @@
         <!-- Africa: Flutterwave -->
         <div id="africa-payment" style="display:none">
           <div class="fw-methods" id="fw-methods">
-            <div class="fw-method on" data-fw="card">       <div class="fw-icon">💳</div><div class="fw-lbl">Card</div></div>
-            <div class="fw-method" data-fw="mobile_money">  <div class="fw-icon">📱</div><div class="fw-lbl">Mobile Money</div></div>
-            <div class="fw-method" data-fw="bank_transfer"> <div class="fw-icon">🏦</div><div class="fw-lbl">Bank Transfer</div></div>
-            <div class="fw-method" data-fw="ussd">          <div class="fw-icon">📲</div><div class="fw-lbl">USSD</div></div>
+            <div class="fw-method on" data-fw="card">       <div class="fw-icon"><i class="fas fa-credit-card"></i></div><div class="fw-lbl">Card</div></div>
+            <div class="fw-method" data-fw="mobile_money">  <div class="fw-icon"><i class="fas fa-mobile-screen"></i></div><div class="fw-lbl">Mobile Money</div></div>
+            <div class="fw-method" data-fw="bank_transfer"> <div class="fw-icon"><i class="fas fa-building-columns"></i></div><div class="fw-lbl">Bank Transfer</div></div>
+            <div class="fw-method" data-fw="ussd">          <div class="fw-icon"><i class="fas fa-mobile-screen"></i></div><div class="fw-lbl">USSD</div></div>
           </div>
 
           <!-- FW Card -->
@@ -412,7 +413,7 @@
         </div>
       </div>
 
-      <div class="alert err"  id="step2-err"><span>⚠️</span><span id="step2-err-msg"></span></div>
+      <div class="alert err"  id="step2-err"><span><i class="fas fa-triangle-exclamation"></i></span><span id="step2-err-msg"></span></div>
       <div class="alert info" id="step2-info"><span>ℹ️</span><span id="step2-info-msg"></span></div>
 
       <div class="btn-row">
@@ -430,7 +431,7 @@
 
       <div class="scard" style="background:rgba(16,185,129,0.05);border-color:rgba(16,185,129,0.15)">
         <div style="display:flex;gap:0.75rem;align-items:flex-start">
-          <span style="font-size:1.4rem;flex-shrink:0">🔒</span>
+          <span style="font-size:1.4rem;flex-shrink:0"><i class="fas fa-lock"></i></span>
           <div>
             <div style="font-size:0.88rem;font-weight:600;margin-bottom:0.3rem;color:var(--success)">Escrow Protection Active</div>
             <div style="font-size:0.8rem;color:rgba(255,255,255,0.55);line-height:1.6">Your payment is held securely in escrow. Funds are only released to the seller once you confirm delivery. If anything goes wrong, you're covered by Tradex Buyer Protection.</div>
@@ -438,7 +439,7 @@
         </div>
       </div>
 
-      <div class="alert err" id="step3-err"><span>⚠️</span><span id="step3-err-msg"></span></div>
+      <div class="alert err" id="step3-err"><span><i class="fas fa-triangle-exclamation"></i></span><span id="step3-err-msg"></span></div>
 
       <div class="btn-row">
         <button class="btn-back" onclick="goStep(2)">← Back</button>
@@ -448,7 +449,7 @@
 
     <!-- SUCCESS -->
     <div class="step-panel" id="step-success">
-      <div class="success-icon">🎉</div>
+      <div class="success-icon"><i class="fas fa-champagne-glasses"></i></div>
       <div class="success-title">Order Placed!</div>
       <div class="success-sub">
         Your payment is held in escrow and your order has been sent to <strong id="success-seller">the seller</strong>.<br><br>
@@ -472,7 +473,7 @@
 
     <div class="sum-listing">
       <div class="sum-img" id="sum-img">
-        <div class="sum-img-ph">📦</div>
+        <div class="sum-img-ph"><i class="fas fa-box"></i></div>
       </div>
       <div class="sum-info">
         <div class="sum-title" id="sum-title">Loading...</div>
@@ -488,13 +489,13 @@
     <div class="sum-total"><span class="lbl">Total</span><span class="val" id="sum-total">$0</span></div>
 
     <div class="escrow-note">
-      <p>🔒 <strong>Escrow protected</strong> — your money is held safely until you confirm delivery.</p>
+      <p><i class="fas fa-lock"></i> <strong>Escrow protected</strong> — your money is held safely until you confirm delivery.</p>
     </div>
 
     <div class="trust-row">
-      <div class="ti"><div class="ti-icon">🛡️</div><div class="ti-lbl">Buyer<br>Protection</div></div>
+      <div class="ti"><div class="ti-icon"><i class="fas fa-shield-halved"></i></div><div class="ti-lbl">Buyer<br>Protection</div></div>
       <div class="ti"><div class="ti-icon">↩️</div><div class="ti-lbl">Refund<br>Policy</div></div>
-      <div class="ti"><div class="ti-icon">💬</div><div class="ti-lbl">24/7<br>Support</div></div>
+      <div class="ti"><div class="ti-icon"><i class="fas fa-comment-dots"></i></div><div class="ti-lbl">24/7<br>Support</div></div>
     </div>
   </div>
 
@@ -618,14 +619,14 @@ function renderReviewDetail() {
   const c = checkout;
   const fee   = c.price * 0.08;
   const total = c.price + fee;
-  const catIcons = {physical:'📦',digital:'💾',freelance:'🛠️',experience:'🎓'};
+  const catIcons = {physical:'<i class="fas fa-box"></i>',digital:'<i class="fas fa-floppy-disk"></i>',freelance:'<i class="fas fa-screwdriver-wrench"></i>',experience:'<i class="fas fa-graduation-cap"></i>'};
 
   $('review-detail').innerHTML = `
     <div style="display:flex;gap:1rem;padding-bottom:1rem;border-bottom:1px solid var(--border);margin-bottom:1rem">
       <div style="width:80px;height:80px;border-radius:10px;overflow:hidden;background:var(--bg3);flex-shrink:0">
         ${c.listing_image
           ? `<img src="${c.listing_image}" alt="" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.style.display='none'" />`
-          : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem">${catIcons[c.category]||'📦'}</div>`}
+          : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem">${catIcons[c.category]||'<i class="fas fa-box"></i>'}</div>`}
       </div>
       <div style="flex:1;min-width:0">
         <div style="font-weight:600;font-size:0.92rem;margin-bottom:0.25rem;line-height:1.35">${c.listing_title}</div>
@@ -648,11 +649,11 @@ function renderConfirmDetail() {
   const fee   = c.price * 0.08;
   const total = c.price + fee;
   const methodLabel = region === 'global'
-    ? `💳 Card ending ····${($('card-num').value.replace(/\s/g,'')).slice(-4) || '••••'}`
-    : fwMethod === 'card'         ? `💳 Card (Flutterwave)`
-    : fwMethod === 'mobile_money' ? `📱 Mobile Money — ${$('fw-network').value||'—'}`
-    : fwMethod === 'bank_transfer'? `🏦 Bank Transfer`
-    : `📲 USSD — ${$('fw-bank').value||'—'}`;
+    ? `<i class="fas fa-credit-card"></i> Card ending ····${($('card-num').value.replace(/\s/g,'')).slice(-4) || '••••'}`
+    : fwMethod === 'card'         ? `<i class="fas fa-credit-card"></i> Card (Flutterwave)`
+    : fwMethod === 'mobile_money' ? `<i class="fas fa-mobile-screen"></i> Mobile Money — ${$('fw-network').value||'—'}`
+    : fwMethod === 'bank_transfer'? `<i class="fas fa-building-columns"></i> Bank Transfer`
+    : `<i class="fas fa-mobile-screen"></i> USSD — ${$('fw-bank').value||'—'}`;
 
   $('confirm-detail').innerHTML = `
     <div style="display:flex;flex-direction:column;gap:0.7rem">
@@ -881,7 +882,7 @@ function showAlert(id, msg) {
 function showGlobalError(msg) {
   document.querySelector('.page').innerHTML = `
     <div style="grid-column:1/-1;text-align:center;padding:4rem 1rem">
-      <div style="font-size:3rem;margin-bottom:1rem">⚠️</div>
+      <div style="font-size:3rem;margin-bottom:1rem"><i class="fas fa-triangle-exclamation"></i></div>
       <h2 style="font-family:var(--serif);font-size:1.4rem;margin-bottom:0.75rem">Something went wrong</h2>
       <p style="color:var(--muted);margin-bottom:1.5rem">${msg}</p>
       <button onclick="history.back()" style="background:var(--amber);border:none;color:#0a0a0a;padding:0.75rem 2rem;border-radius:9px;font-size:0.9rem;font-weight:700;cursor:pointer">← Go Back</button>

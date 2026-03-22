@@ -181,6 +181,7 @@
       .sg { grid-template-columns: repeat(2,1fr); }
     }
   </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
 <div id="toast"></div>
@@ -202,16 +203,16 @@
 <!-- SIDEBAR -->
 <aside id="sb">
   <div class="ns">Overview</div>
-  <div class="ni on" data-p="overview">  <span class="ic">📊</span><span class="lb">Overview</span></div>
+  <div class="ni on" data-p="overview">  <span class="ic"><i class="fas fa-chart-bar"></i></span><span class="lb">Overview</span></div>
   <div class="ns">Manage</div>
-  <div class="ni" data-p="users">        <span class="ic">👥</span><span class="lb">Users</span></div>
-  <div class="ni" data-p="listings">     <span class="ic">📋</span><span class="lb">Listings</span></div>
-  <div class="ni" data-p="orders">       <span class="ic">🛒</span><span class="lb">Orders</span></div>
-  <div class="ni" data-p="disputes">     <span class="ic">⚖️</span><span class="lb">Disputes</span><span class="bd" id="disp-badge">0</span></div>
-  <div class="ni" data-p="payouts">      <span class="ic">💸</span><span class="lb">Payouts</span><span class="bd" id="pay-badge">0</span></div>
-  <div class="ni" data-p="notify">       <span class="ic">🔔</span><span class="lb">Send Notification</span></div>
+  <div class="ni" data-p="users">        <span class="ic"><i class="fas fa-users"></i></span><span class="lb">Users</span></div>
+  <div class="ni" data-p="listings">     <span class="ic"><i class="fas fa-clipboard-list"></i></span><span class="lb">Listings</span></div>
+  <div class="ni" data-p="orders">       <span class="ic"><i class="fas fa-shopping-cart"></i></span><span class="lb">Orders</span></div>
+  <div class="ni" data-p="disputes">     <span class="ic"><i class="fas fa-scale-balanced"></i></span><span class="lb">Disputes</span><span class="bd" id="disp-badge">0</span></div>
+  <div class="ni" data-p="payouts">      <span class="ic"><i class="fas fa-money-bill-transfer"></i></span><span class="lb">Payouts</span><span class="bd" id="pay-badge">0</span></div>
+  <div class="ni" data-p="notify">       <span class="ic"><i class="fas fa-bell"></i></span><span class="lb">Send Notification</span></div>
   <div class="sb-bot">
-    <div class="ni" onclick="window.location.href='index.html'"><span class="ic">🏪</span><span class="lb">View Site</span></div>
+    <div class="ni" onclick="window.location.href='index.html'"><span class="ic"><i class="fas fa-store"></i></span><span class="lb">View Site</span></div>
   </div>
 </aside>
 
@@ -222,12 +223,12 @@
   <div class="panel on" id="panel-overview">
     <div class="ph"><div><h1>Admin Overview</h1><p>Full platform health at a glance.</p></div><div style="font-size:0.8rem;color:var(--dim)" id="last-updated"></div></div>
     <div class="sg">
-      <div class="sc"><div class="sc-lbl">👥 Total Users</div><div class="sc-val" id="st-users">—</div><div class="sc-note">registered accounts</div></div>
-      <div class="sc"><div class="sc-lbl">📋 Listings</div><div class="sc-val" id="st-lists">—</div><div class="sc-note">active listings</div></div>
-      <div class="sc"><div class="sc-lbl">🛒 Total Orders</div><div class="sc-val" id="st-orders">—</div><div class="sc-note">all time</div></div>
-      <div class="sc"><div class="sc-lbl">💰 GMV</div><div class="sc-val a" id="st-gmv">—</div><div class="sc-note">gross merchandise value</div></div>
-      <div class="sc"><div class="sc-lbl">💸 Platform Fees</div><div class="sc-val g" id="st-fees">—</div><div class="sc-note">8% of GMV</div></div>
-      <div class="sc"><div class="sc-lbl">⚖️ Open Disputes</div><div class="sc-val r" id="st-disps">—</div><div class="sc-note">needs attention</div></div>
+      <div class="sc"><div class="sc-lbl"><i class="fas fa-users"></i> Total Users</div><div class="sc-val" id="st-users">—</div><div class="sc-note">registered accounts</div></div>
+      <div class="sc"><div class="sc-lbl"><i class="fas fa-clipboard-list"></i> Listings</div><div class="sc-val" id="st-lists">—</div><div class="sc-note">active listings</div></div>
+      <div class="sc"><div class="sc-lbl"><i class="fas fa-shopping-cart"></i> Total Orders</div><div class="sc-val" id="st-orders">—</div><div class="sc-note">all time</div></div>
+      <div class="sc"><div class="sc-lbl"><i class="fas fa-sack-dollar"></i> GMV</div><div class="sc-val a" id="st-gmv">—</div><div class="sc-note">gross merchandise value</div></div>
+      <div class="sc"><div class="sc-lbl"><i class="fas fa-money-bill-transfer"></i> Platform Fees</div><div class="sc-val g" id="st-fees">—</div><div class="sc-note">8% of GMV</div></div>
+      <div class="sc"><div class="sc-lbl"><i class="fas fa-scale-balanced"></i> Open Disputes</div><div class="sc-val r" id="st-disps">—</div><div class="sc-note">needs attention</div></div>
     </div>
     <div class="chart-row">
       <div class="cc">
@@ -238,10 +239,10 @@
       <div class="cc">
         <h3>Quick Actions</h3>
         <div style="display:flex;flex-direction:column;gap:0.6rem;margin-top:0.5rem">
-          <button onclick="switchP('disputes')" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#F87171;padding:0.75rem 1rem;border-radius:9px;text-align:left;font-size:0.83rem;cursor:pointer">⚖️ Review Open Disputes</button>
-          <button onclick="switchP('payouts')"  style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);color:var(--amber);padding:0.75rem 1rem;border-radius:9px;text-align:left;font-size:0.83rem;cursor:pointer">💸 Process Pending Payouts</button>
-          <button onclick="switchP('notify')"   style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);color:#60A5FA;padding:0.75rem 1rem;border-radius:9px;text-align:left;font-size:0.83rem;cursor:pointer">🔔 Send Notification</button>
-          <button onclick="switchP('users')"    style="background:var(--bg3);border:1px solid var(--border-md);color:var(--muted);padding:0.75rem 1rem;border-radius:9px;text-align:left;font-size:0.83rem;cursor:pointer">👥 Manage Users</button>
+          <button onclick="switchP('disputes')" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#F87171;padding:0.75rem 1rem;border-radius:9px;text-align:left;font-size:0.83rem;cursor:pointer"><i class="fas fa-scale-balanced"></i> Review Open Disputes</button>
+          <button onclick="switchP('payouts')"  style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);color:var(--amber);padding:0.75rem 1rem;border-radius:9px;text-align:left;font-size:0.83rem;cursor:pointer"><i class="fas fa-money-bill-transfer"></i> Process Pending Payouts</button>
+          <button onclick="switchP('notify')"   style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);color:#60A5FA;padding:0.75rem 1rem;border-radius:9px;text-align:left;font-size:0.83rem;cursor:pointer"><i class="fas fa-bell"></i> Send Notification</button>
+          <button onclick="switchP('users')"    style="background:var(--bg3);border:1px solid var(--border-md);color:var(--muted);padding:0.75rem 1rem;border-radius:9px;text-align:left;font-size:0.83rem;cursor:pointer"><i class="fas fa-users"></i> Manage Users</button>
         </div>
       </div>
     </div>
@@ -343,10 +344,10 @@
       <div class="frow">
         <label>Type</label>
         <select class="finp" id="n-type">
-          <option value="system">📢 Announcement</option>
-          <option value="payout">💰 Payout Update</option>
-          <option value="dispute">⚖️ Dispute Update</option>
-          <option value="order_placed">🛒 Order Update</option>
+          <option value="system"><i class="fas fa-bullhorn"></i> Announcement</option>
+          <option value="payout"><i class="fas fa-sack-dollar"></i> Payout Update</option>
+          <option value="dispute"><i class="fas fa-scale-balanced"></i> Dispute Update</option>
+          <option value="order_placed"><i class="fas fa-shopping-cart"></i> Order Update</option>
         </select>
       </div>
       <div class="frow">
@@ -376,15 +377,15 @@
 <!-- RESOLVE DISPUTE MODAL -->
 <div class="mo" id="resolve-mo">
   <div class="mbox">
-    <button class="mc" onclick="$('resolve-mo').classList.remove('open')">✕</button>
+    <button class="mc" onclick="$('resolve-mo').classList.remove('open')"><i class="fas fa-xmark"></i></button>
     <h2>Resolve Dispute</h2>
     <p class="msub" id="resolve-desc">Review the dispute and make a ruling.</p>
     <input type="hidden" id="resolve-id" />
     <div class="frow">
       <label>Rule in favour of</label>
       <select class="finp" id="resolve-winner">
-        <option value="buyer">🛒 Buyer (issue refund)</option>
-        <option value="seller">🏪 Seller (release payment)</option>
+        <option value="buyer"><i class="fas fa-shopping-cart"></i> Buyer (issue refund)</option>
+        <option value="seller"><i class="fas fa-store"></i> Seller (release payment)</option>
       </select>
     </div>
     <div class="frow">
@@ -419,7 +420,7 @@ async function init() {
   const isAdmin = await DB.admin.isAdmin();
   if (!isAdmin) {
     document.body.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:1rem;font-family:sans-serif;color:#fff;background:#0a0a0a;text-align:center;padding:2rem">
-      <div style="font-size:3rem">🚫</div>
+      <div style="font-size:3rem"><i class="fas fa-ban"></i></div>
       <h2 style="font-family:serif;font-size:1.5rem">Access Denied</h2>
       <p style="color:rgba(255,255,255,0.45)">You don't have admin privileges.</p>
       <a href="index.html" style="color:#F59E0B">← Back to Tradex</a>
@@ -465,12 +466,12 @@ async function loadUsers() {
     </div></td>
     <td><span class="sp ${spCls[u.role]||'sp-c'}">${u.role||'—'}</span></td>
     <td style="color:var(--dim);font-size:0.77rem">${fmtD(u.created_at)}</td>
-    <td>${u.verified?'✅':'—'}</td>
+    <td>${u.verified?'<i class="fas fa-circle-check"></i>':'—'}</td>
     <td>${u.is_admin?'<span style="color:var(--error);font-size:0.75rem;font-weight:600">ADMIN</span>':'—'}</td>
     <td><div class="acts">
       <button class="btn-act amber" onclick="toggleVerify('${u.id}',${!u.verified})">${u.verified?'Unverify':'Verify'}</button>
-      <button class="btn-act" onclick="sendNotifToUser('${u.id}','${(u.full_name||u.email||'').replace(/'/g,'')}')" >📢 Notify</button>
-      <a href="mailto:${u.email}" class="btn-act" style="display:inline-flex;align-items:center">✉️ Email</a>
+      <button class="btn-act" onclick="sendNotifToUser('${u.id}','${(u.full_name||u.email||'').replace(/'/g,'')}')" ><i class="fas fa-bullhorn"></i> Notify</button>
+      <a href="mailto:${u.email}" class="btn-act" style="display:inline-flex;align-items:center"><i class="fas fa-envelope"></i> Email</a>
     </div></td>
   </tr>`).join('') || `<tr><td colspan="6" style="color:var(--dim);text-align:center;padding:1.5rem 0">No users found.</td></tr>`;
   renderPag('u', count, uPage, p => { uPage=p; loadUsers(); });
@@ -541,7 +542,7 @@ async function loadDisputes() {
   const { data } = await DB.admin.getDisputes({ status });
   const el = $('disputes-list');
   if (!data?.length) {
-    el.innerHTML = `<div style="text-align:center;padding:3rem 0;color:var(--muted)"><div style="font-size:2.5rem;margin-bottom:0.75rem">⚖️</div><p>${status?'No '+status+' disputes.':'No disputes found.'}</p></div>`;
+    el.innerHTML = `<div style="text-align:center;padding:3rem 0;color:var(--muted)"><div style="font-size:2.5rem;margin-bottom:0.75rem"><i class="fas fa-scale-balanced"></i></div><p>${status?'No '+status+' disputes.':'No disputes found.'}</p></div>`;
     return;
   }
   el.innerHTML = data.map(d => `
@@ -569,11 +570,11 @@ async function loadDisputes() {
         </div>
       </div>
       <div style="font-size:0.82rem;color:var(--muted);background:var(--bg3);border-radius:9px;padding:0.75rem;margin-bottom:0.85rem;line-height:1.55">${d.description||'No description.'}</div>
-      ${d.resolution?`<div style="font-size:0.82rem;color:rgba(16,185,129,0.9);background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15);border-radius:9px;padding:0.75rem;margin-bottom:0.85rem">✅ Resolution: ${d.resolution}</div>`:''}
+      ${d.resolution?`<div style="font-size:0.82rem;color:rgba(16,185,129,0.9);background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15);border-radius:9px;padding:0.75rem;margin-bottom:0.85rem"><i class="fas fa-circle-check"></i> Resolution: ${d.resolution}</div>`:''}
       ${d.status==='open'||d.status==='under_review'?`<div style="display:flex;gap:0.5rem">
-        <button class="btn-act amber" onclick="openResolve('${d.id}','${(d.orders?.listing_title||'').replace(/'/g,'`')}')">⚖️ Resolve Dispute</button>
-        <button class="btn-act" onclick="markUnderReview('${d.id}')">🔍 Mark Under Review</button>
-        <button class="btn-act" onclick="notifyParties('${d.buyer_id}','${d.seller_id}')">📢 Notify Both Parties</button>
+        <button class="btn-act amber" onclick="openResolve('${d.id}','${(d.orders?.listing_title||'').replace(/'/g,'`')}')"><i class="fas fa-scale-balanced"></i> Resolve Dispute</button>
+        <button class="btn-act" onclick="markUnderReview('${d.id}')"><i class="fas fa-magnifying-glass"></i> Mark Under Review</button>
+        <button class="btn-act" onclick="notifyParties('${d.buyer_id}','${d.seller_id}')"><i class="fas fa-bullhorn"></i> Notify Both Parties</button>
       </div>`:''}</div>`).join('');
 }
 function openResolve(id, title) {
@@ -594,7 +595,7 @@ async function notifyParties(buyerId, sellerId) {
     DB.createNotification(buyerId, 'dispute', 'Dispute Update', 'Your dispute is being reviewed by the Tradex team. We will notify you of the resolution shortly.'),
     DB.createNotification(sellerId, 'dispute', 'Dispute Notification', 'A dispute has been raised on one of your orders. The Tradex team is reviewing the case.'),
   ]);
-  toast('Both parties notified. ✅', 'ok');
+  toast('Both parties notified. <i class="fas fa-circle-check"></i>', 'ok');
 }
 $('resolve-btn').addEventListener('click', async () => {
   const id       = $('resolve-id').value;
@@ -606,7 +607,7 @@ $('resolve-btn').addEventListener('click', async () => {
   btn.classList.remove('ld'); btn.disabled = false;
   if (error) { toast('Failed: ' + error.message, 'err'); return; }
   $('resolve-mo').classList.remove('open');
-  toast(`Dispute resolved — ruled in favour of ${winner}. ✅`, 'ok');
+  toast(`Dispute resolved — ruled in favour of ${winner}. <i class="fas fa-circle-check"></i>`, 'ok');
   loadDisputes(); loadOverview();
 });
 
@@ -624,12 +625,12 @@ async function loadPayouts() {
     <td style="color:var(--dim);font-size:0.76rem">${fmtD(p.created_at)}</td>
     <td><div class="acts">
       ${p.status==='pending'?`
-        <button class="btn-act success" onclick="processPayout('${p.id}','paid')">✅ Mark Paid</button>
-        <button class="btn-act amber"   onclick="processPayout('${p.id}','processing')">🔄 Processing</button>
-        <button class="btn-act danger"  onclick="processPayout('${p.id}','failed')">✗ Fail</button>
+        <button class="btn-act success" onclick="processPayout('${p.id}','paid')"><i class="fas fa-circle-check"></i> Mark Paid</button>
+        <button class="btn-act amber"   onclick="processPayout('${p.id}','processing')"><i class="fas fa-rotate"></i> Processing</button>
+        <button class="btn-act danger"  onclick="processPayout('${p.id}','failed')"><i class="fas fa-xmark"></i> Fail</button>
       `:p.status==='processing'?`
-        <button class="btn-act success" onclick="processPayout('${p.id}','paid')">✅ Mark Paid</button>
-        <button class="btn-act danger"  onclick="processPayout('${p.id}','failed')">✗ Fail</button>
+        <button class="btn-act success" onclick="processPayout('${p.id}','paid')"><i class="fas fa-circle-check"></i> Mark Paid</button>
+        <button class="btn-act danger"  onclick="processPayout('${p.id}','failed')"><i class="fas fa-xmark"></i> Fail</button>
       `:'—'}
     </div></td>
   </tr>`).join('') || `<tr><td colspan="7" style="color:var(--dim);text-align:center;padding:1.5rem 0">No payout requests.</td></tr>`;
@@ -638,7 +639,7 @@ async function processPayout(id, status) {
   const ref = status === 'paid' ? prompt('Enter payment reference / transaction ID:') || '' : '';
   const { error } = await DB.admin.processPayout(id, status, ref);
   if (error) { toast('Failed: ' + error.message, 'err'); return; }
-  toast(`Payout marked as ${status}. ✅`, 'ok');
+  toast(`Payout marked as ${status}. <i class="fas fa-circle-check"></i>`, 'ok');
   loadPayouts();
 }
 
@@ -680,7 +681,7 @@ $('send-notif-btn').addEventListener('click', async () => {
 
   btn.classList.remove('ld'); btn.disabled = false;
   $('n-result').style.display = '';
-  $('n-result').textContent = `✅ Sent to ${sent} user${sent!==1?'s':''}`;
+  $('n-result').textContent = `<i class="fas fa-circle-check"></i> Sent to ${sent} user${sent!==1?'s':''}`;
   toast(`Notification sent to ${sent} user${sent!==1?'s':''}.`, 'ok');
   setTimeout(() => { $('n-result').style.display = 'none'; }, 4000);
 });
@@ -724,7 +725,7 @@ document.querySelectorAll('[data-p]').forEach(el => el.addEventListener('click',
 
 /* ══ TOAST ══ */
 function toast(msg, type = 'ok') {
-  const icons = { ok:'✅', err:'⚠️', inf:'ℹ️' };
+  const icons = { ok:'<i class="fas fa-circle-check"></i>', err:'<i class="fas fa-triangle-exclamation"></i>', inf:'ℹ️' };
   const el = document.createElement('div'); el.className = `ti ${type}`;
   el.innerHTML = `<span>${icons[type]||'ℹ️'}</span><span>${msg}</span>`;
   $('toast').appendChild(el); setTimeout(() => el.remove(), 3500);

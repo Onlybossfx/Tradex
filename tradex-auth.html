@@ -180,6 +180,7 @@
     }
     @media (min-width: 769px) { .mob-logo { display: none; } }
   </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
 <div class="page">
@@ -192,10 +193,10 @@
       <h2>Trade with<br><em>confidence.</em><br>Grow with trust.</h2>
       <p>Join a marketplace built for buyers and sellers across Africa, Europe and the Americas — with escrow protection on every transaction.</p>
       <div class="trust-list">
-        <div class="trust-item"><div class="trust-dot">🔒</div><span>Escrow payments — funds released only on delivery</span></div>
-        <div class="trust-item"><div class="trust-dot">✅</div><span>Verified seller badges for trusted storefronts</span></div>
-        <div class="trust-item"><div class="trust-dot">🌍</div><span>Stripe & Flutterwave — pay in your local currency</span></div>
-        <div class="trust-item"><div class="trust-dot">🛡️</div><span>2FA security on every account by default</span></div>
+        <div class="trust-item"><div class="trust-dot"><i class="fas fa-lock"></i></div><span>Escrow payments — funds released only on delivery</span></div>
+        <div class="trust-item"><div class="trust-dot"><i class="fas fa-circle-check"></i></div><span>Verified seller badges for trusted storefronts</span></div>
+        <div class="trust-item"><div class="trust-dot"><i class="fas fa-earth-africa"></i></div><span>Stripe & Flutterwave — pay in your local currency</span></div>
+        <div class="trust-item"><div class="trust-dot"><i class="fas fa-shield-halved"></i></div><span>2FA security on every account by default</span></div>
       </div>
     </div>
     <div class="left-foot">© 2026 Tradex · <a href="#">Terms</a> · <a href="#">Privacy</a></div>
@@ -217,12 +218,12 @@
         <h1 class="title">Welcome back</h1>
         <p class="subtitle">Sign in to your Tradex account</p>
 
-        <div class="alert err" id="l-err"><span>⚠️</span><span id="l-err-msg"></span></div>
-        <div class="alert ok"  id="l-ok"><span>✅</span><span id="l-ok-msg"></span></div>
+        <div class="alert err" id="l-err"><span><i class="fas fa-triangle-exclamation"></i></span><span id="l-err-msg"></span></div>
+        <div class="alert ok"  id="l-ok"><span><i class="fas fa-circle-check"></i></span><span id="l-ok-msg"></span></div>
 
         <div class="field">
           <label for="l-email">Email address</label>
-          <div class="wrap"><span class="ico">✉</span>
+          <div class="wrap"><span class="ico"><i class="fas fa-envelope"></i></span>
             <input type="email" id="l-email" placeholder="you@example.com" autocomplete="email" />
           </div>
           <div class="ferr" id="l-email-err">Please enter a valid email.</div>
@@ -230,9 +231,9 @@
 
         <div class="field">
           <label for="l-pw">Password</label>
-          <div class="wrap"><span class="ico">🔑</span>
+          <div class="wrap"><span class="ico"><i class="fas fa-key"></i></span>
             <input type="password" id="l-pw" placeholder="Your password" autocomplete="current-password" />
-            <button class="eye" data-t="l-pw">👁</button>
+            <button class="eye" data-t="l-pw"><i class="fas fa-eye"></i></button>
           </div>
           <div class="ferr" id="l-pw-err">Please enter your password.</div>
         </div>
@@ -266,12 +267,12 @@
           <h1 class="title">Create account</h1>
           <p class="subtitle">First, how will you use Tradex?</p>
           <div class="roles">
-            <button class="role" data-role="buyer"><span class="ri">🛍️</span><span class="rl">Buyer</span></button>
-            <button class="role" data-role="seller"><span class="ri">🏪</span><span class="rl">Seller</span></button>
-            <button class="role" data-role="both"><span class="ri">⚡</span><span class="rl">Both</span></button>
+            <button class="role" data-role="buyer"><span class="ri"><i class="fas fa-bag-shopping"></i></span><span class="rl">Buyer</span></button>
+            <button class="role" data-role="seller"><span class="ri"><i class="fas fa-store"></i></span><span class="rl">Seller</span></button>
+            <button class="role" data-role="both"><span class="ri"><i class="fas fa-bolt"></i></span><span class="rl">Both</span></button>
           </div>
           <p class="role-note">You can change this anytime in settings</p>
-          <div class="alert err" id="role-err"><span>⚠️</span><span>Please select a role to continue.</span></div>
+          <div class="alert err" id="role-err"><span><i class="fas fa-triangle-exclamation"></i></span><span>Please select a role to continue.</span></div>
           <button class="btn-primary" id="s1-next"><span class="lbl">Continue →</span></button>
           <div class="divider"><span>or sign up with</span></div>
           <div class="social" style="grid-template-columns:1fr">
@@ -289,29 +290,29 @@
           <button class="back" id="s2-back">← Back</button>
           <h1 class="title">Your details</h1>
           <p class="subtitle">Set up your Tradex profile</p>
-          <div class="alert err" id="s2-err"><span>⚠️</span><span id="s2-err-msg"></span></div>
+          <div class="alert err" id="s2-err"><span><i class="fas fa-triangle-exclamation"></i></span><span id="s2-err-msg"></span></div>
           <div class="name-row">
             <div class="field">
               <label for="s-fname">First name</label>
-              <div class="wrap"><span class="ico">👤</span><input type="text" id="s-fname" placeholder="Ada" autocomplete="given-name" /></div>
+              <div class="wrap"><span class="ico"><i class="fas fa-user"></i></span><input type="text" id="s-fname" placeholder="Ada" autocomplete="given-name" /></div>
               <div class="ferr" id="fn-err">Required.</div>
             </div>
             <div class="field">
               <label for="s-lname">Last name</label>
-              <div class="wrap"><span class="ico">👤</span><input type="text" id="s-lname" placeholder="Okonkwo" autocomplete="family-name" /></div>
+              <div class="wrap"><span class="ico"><i class="fas fa-user"></i></span><input type="text" id="s-lname" placeholder="Okonkwo" autocomplete="family-name" /></div>
               <div class="ferr" id="ln-err">Required.</div>
             </div>
           </div>
           <div class="field">
             <label for="s-email">Email address</label>
-            <div class="wrap"><span class="ico">✉</span><input type="email" id="s-email" placeholder="you@example.com" autocomplete="email" /></div>
+            <div class="wrap"><span class="ico"><i class="fas fa-envelope"></i></span><input type="email" id="s-email" placeholder="you@example.com" autocomplete="email" /></div>
             <div class="ferr" id="se-err">Please enter a valid email.</div>
           </div>
           <div class="field">
             <label for="s-pw">Password</label>
-            <div class="wrap"><span class="ico">🔑</span>
+            <div class="wrap"><span class="ico"><i class="fas fa-key"></i></span>
               <input type="password" id="s-pw" placeholder="Min. 8 characters" autocomplete="new-password" />
-              <button class="eye" data-t="s-pw">👁</button>
+              <button class="eye" data-t="s-pw"><i class="fas fa-eye"></i></button>
             </div>
             <div class="pw-bars"><div class="pw-bar" id="pb1"></div><div class="pw-bar" id="pb2"></div><div class="pw-bar" id="pb3"></div><div class="pw-bar" id="pb4"></div></div>
             <div class="pw-lbl" id="pw-lbl">Enter a password</div>
@@ -327,13 +328,13 @@
         <!-- STEP 3: 2FA Setup -->
         <div id="s3" style="display:none">
           <div class="twofa-head">
-            <div class="twofa-icon">🛡️</div>
+            <div class="twofa-icon"><i class="fas fa-shield-halved"></i></div>
             <h2>Secure your account</h2>
             <p>Enable two-factor authentication to protect your account and transactions.</p>
           </div>
           <div class="method-grid">
-            <div class="method on" data-m="email"><div class="mi">✉️</div><div class="ml">Email OTP</div></div>
-            <div class="method" data-m="sms"><div class="mi">📱</div><div class="ml">SMS OTP</div></div>
+            <div class="method on" data-m="email"><div class="mi"><i class="fas fa-envelope"></i></div><div class="ml">Email OTP</div></div>
+            <div class="method" data-m="sms"><div class="mi"><i class="fas fa-mobile-screen"></i></div><div class="ml">SMS OTP</div></div>
           </div>
           <button class="btn-primary" id="s3-enable"><span class="lbl">Enable 2FA & Continue</span></button>
           <button class="btn-ghost"   id="s3-skip">Skip for now</button>
@@ -398,7 +399,7 @@ document.querySelectorAll('.eye').forEach(b =>
   b.addEventListener('click', () => {
     const i = $(b.dataset.t);
     i.type = i.type === 'password' ? 'text' : 'password';
-    b.textContent = i.type === 'password' ? '👁' : '🙈';
+    b.textContent = i.type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
   })
 );
 
@@ -429,7 +430,7 @@ function goStep(n) {
   [1,2,3].forEach(i => {
     const d = $(`d${i}`);
     d.classList.remove('active','done');
-    if (i < n) { d.classList.add('done'); d.textContent = '✓'; }
+    if (i < n) { d.classList.add('done'); d.textContent = '<i class="fas fa-check"></i>'; }
     else if (i === n) { d.classList.add('active'); d.textContent = i; }
     else d.textContent = i;
     if (i <= 2) $(`ln${i}`).classList.toggle('done', i < n);
@@ -477,7 +478,7 @@ $('s2-next').addEventListener('click', async () => {
   /* Insert confirmation screen after the form */
   const confirmHTML = `
     <div id="email-confirm-screen" style="text-align:center;padding:2rem 1rem">
-      <div style="font-size:3.5rem;margin-bottom:1rem">📧</div>
+      <div style="font-size:3.5rem;margin-bottom:1rem"><i class="fas fa-envelope"></i></div>
       <h2 style="font-family:var(--serif);font-size:1.5rem;font-weight:700;margin-bottom:0.75rem;color:#fff">Check your email!</h2>
       <p style="color:rgba(255,255,255,0.55);font-size:0.88rem;line-height:1.8;margin-bottom:1.5rem">
         We sent a confirmation link to<br>
@@ -486,7 +487,7 @@ $('s2-next').addEventListener('click', async () => {
         Then come back here to log in.
       </p>
       <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:10px;padding:0.85rem;font-size:0.8rem;color:rgba(255,255,255,0.45);margin-bottom:1.25rem">
-        💡 Check your spam folder if you don't see it within 1 minute.
+        <i class="fas fa-lightbulb"></i> Check your spam folder if you don't see it within 1 minute.
       </div>
       <button onclick="resendConfirmation('${email}')" style="background:transparent;border:1px solid rgba(245,158,11,0.3);color:#F59E0B;padding:0.6rem 1.25rem;border-radius:8px;font-size:0.82rem;cursor:pointer;font-family:inherit">
         Resend confirmation email
@@ -590,7 +591,7 @@ if (window.location.search.includes('confirmed=1')) {
   /* Show a success message */
   const alert = document.createElement('div');
   alert.style.cssText = 'background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);color:#6EE7B7;padding:0.75rem 1rem;border-radius:10px;font-size:0.85rem;margin-bottom:1rem;text-align:center';
-  alert.textContent = '✅ Email confirmed! Please log in to continue.';
+  alert.textContent = '<i class="fas fa-circle-check"></i> Email confirmed! Please log in to continue.';
   const loginForm = document.querySelector('.login-form, #login-form, form');
   if (loginForm) loginForm.prepend(alert);
   else document.querySelector('.wrap, .card, .auth-card')?.prepend(alert);

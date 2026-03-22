@@ -101,7 +101,7 @@ window.DB = {
       const orderRef = `#TRX-${String(data.id).padStart(6,'0')}`;
       /* notify seller in-app */
       await DB.createNotification(
-        data.seller_id, 'order_placed', 'New Order Received 🛒',
+        data.seller_id, 'order_placed', 'New Order Received <i class="fas fa-shopping-cart"></i>',
         `${data.buyer_name} ordered "${data.listing_title}" — ${orderRef}`,
         'dashboard-seller.html'
       );
@@ -139,7 +139,7 @@ window.DB = {
       if (status === 'delivered') {
         /* seller marked delivered — notify buyer */
         await DB.createNotification(order.buyer_id, 'order_delivered',
-          'Delivery Update 📦', `"${order.listing_title}" has been marked as delivered. Please confirm receipt.`,
+          'Delivery Update <i class="fas fa-box"></i>', `"${order.listing_title}" has been marked as delivered. Please confirm receipt.`,
           'dashboard-buyer.html');
         const { data: buyer } = await _dbSb.from('users').select('email,full_name').eq('id', order.buyer_id).single();
         if (buyer) await DB.sendEmail('order_delivered', buyer.email, {
@@ -151,7 +151,7 @@ window.DB = {
       if (status === 'complete') {
         /* buyer confirmed — notify seller payout released */
         await DB.createNotification(order.seller_id, 'order_delivered',
-          'Payment Released 💰', `${order.buyer_name} confirmed delivery of "${order.listing_title}". Your payout is queued.`,
+          'Payment Released <i class="fas fa-sack-dollar"></i>', `${order.buyer_name} confirmed delivery of "${order.listing_title}". Your payout is queued.`,
           'dashboard-seller.html');
         const { data: seller } = await _dbSb.from('users').select('email,full_name').eq('id', order.seller_id).single();
         if (seller) await DB.sendEmail('order_delivered', seller.email, {
@@ -402,7 +402,7 @@ window.DB = {
       const {data:buyer}=await _dbSb.from('users').select('full_name').eq('id',buyerId).single();
       const {data:sellerUser}=await _dbSb.from('users').select('email,full_name').eq('id',sellerId).single();
       const orderRef=`#TRX-${String(orderId).padStart(6,'0')}`;
-      await DB.createNotification(sellerId,'dispute','Dispute Opened ⚠️',
+      await DB.createNotification(sellerId,'dispute','Dispute Opened <i class="fas fa-triangle-exclamation"></i>',
         `${buyer?.full_name||'A buyer'} opened a dispute on "${order?.listing_title||'your order'}"`,
         'dashboard-seller.html');
       if (sellerUser) await DB.sendEmail('dispute_opened',sellerUser.email,{
@@ -493,7 +493,7 @@ window.DB = {
       const orderRef=`#TRX-${String(dispute?.order_id||0).padStart(6,'0')}`;
       /* notify + email both parties */
       if (dispute?.buyer_id) {
-        await DB.createNotification(dispute.buyer_id,'dispute','Dispute Resolved ✅',`Resolution: ${resolution}`,'dashboard-buyer.html');
+        await DB.createNotification(dispute.buyer_id,'dispute','Dispute Resolved <i class="fas fa-circle-check"></i>',`Resolution: ${resolution}`,'dashboard-buyer.html');
         if (dispute?.buyer?.email) await DB.sendEmail('dispute_resolved',dispute.buyer.email,{
           toName:dispute.buyer.full_name, orderRef,
           listingTitle:dispute?.orders?.listing_title||'your order', resolution,
@@ -501,7 +501,7 @@ window.DB = {
         });
       }
       if (dispute?.seller_id) {
-        await DB.createNotification(dispute.seller_id,'dispute','Dispute Resolved ✅',`Resolution: ${resolution}`,'dashboard-seller.html');
+        await DB.createNotification(dispute.seller_id,'dispute','Dispute Resolved <i class="fas fa-circle-check"></i>',`Resolution: ${resolution}`,'dashboard-seller.html');
         if (dispute?.seller?.email) await DB.sendEmail('dispute_resolved',dispute.seller.email,{
           toName:dispute.seller.full_name, orderRef,
           listingTitle:dispute?.orders?.listing_title||'your order', resolution,
@@ -531,7 +531,7 @@ window.DB = {
       }).eq('id',payoutId);
       if (!error && payout?.seller?.email) {
         await DB.createNotification(payout.seller_id,'payout',
-          status==='paid'?'Payout Sent 💰':'Payout Update',
+          status==='paid'?'Payout Sent <i class="fas fa-sack-dollar"></i>':'Payout Update',
           `$${_fmt(payout.amount)} via ${payout.method} — ${status}`,
           'dashboard-seller.html');
         await DB.sendEmail('payout_processed',payout.seller.email,{

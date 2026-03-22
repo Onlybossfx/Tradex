@@ -251,7 +251,7 @@ window.Listings = {
   },
 
   /* ── HELPERS ── */
-  getCatEmoji:   (cat)    => ({ physical: '📦', digital: '💾', freelance: '🛠️', experience: '🌟' }[cat] || '🏷️'),
+  getCatEmoji:   (cat)    => ({ physical: '<i class="fas fa-box"></i>', digital: '<i class="fas fa-floppy-disk"></i>', freelance: '<i class="fas fa-screwdriver-wrench"></i>', experience: '<i class="fas fa-star"></i>' }[cat] || '<i class="fas fa-tag"></i>'),
   getCatName:    (cat)    => ({ physical: 'Physical Goods', digital: 'Digital Products', freelance: 'Freelance Skills', experience: 'Experiences' }[cat] || cat || 'Other'),
   getImage:      (l, i=0) => l?.images?.[i] || '',
   getBadgeLabel: (badge)  => ({ featured: 'Featured', top_rated: 'Top Rated', new: 'New', trending: 'Trending' }[badge] || ''),

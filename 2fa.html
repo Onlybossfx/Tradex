@@ -96,6 +96,7 @@
       .otp { width: 44px; height: 52px; font-size: 1.25rem; }
     }
   </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
   <div class="card">
@@ -104,20 +105,20 @@
     <a href="tradex-auth.html" class="logo"><span>Tradex</span><i></i></a>
 
     <div class="head">
-      <div class="icon-wrap">🔐</div>
+      <div class="icon-wrap"><i class="fas fa-lock"></i></div>
       <h1>Verify it's you</h1>
       <p>Enter the 6-digit code sent to<br><strong id="target-display">your email</strong></p>
     </div>
 
     <!-- Method switch -->
     <div class="methods">
-      <div class="method on" data-method="email"><div class="mi">✉️</div><div class="ml">Email</div></div>
-      <div class="method"    data-method="sms">  <div class="mi">📱</div><div class="ml">SMS</div></div>
+      <div class="method on" data-method="email"><div class="mi"><i class="fas fa-envelope"></i></div><div class="ml">Email</div></div>
+      <div class="method"    data-method="sms">  <div class="mi"><i class="fas fa-mobile-screen"></i></div><div class="ml">SMS</div></div>
     </div>
 
     <!-- Alerts -->
-    <div class="alert err"  id="otp-err"><span>⚠️</span><span id="otp-err-msg"></span></div>
-    <div class="alert ok"   id="otp-ok"><span>✅</span><span>Verified! Redirecting...</span></div>
+    <div class="alert err"  id="otp-err"><span><i class="fas fa-triangle-exclamation"></i></span><span id="otp-err-msg"></span></div>
+    <div class="alert ok"   id="otp-ok"><span><i class="fas fa-circle-check"></i></span><span>Verified! Redirecting...</span></div>
     <div class="alert info" id="otp-info"><span>ℹ️</span><span id="otp-info-msg"></span></div>
 
     <!-- OTP inputs -->
