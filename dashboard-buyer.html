@@ -419,14 +419,41 @@
       <div class="pcard">
         <h3>Notifications</h3>
         <div style="display:flex;flex-direction:column;gap:0.68rem">
-          ${['Order status updates','New message from seller','Promotions & deals','Price drops on saved items','Weekly digest'].map(n=>`
           <div style="display:flex;align-items:center;justify-content:space-between">
-            <span style="font-size:0.83rem;color:var(--muted)">${n}</span>
+            <span style="font-size:0.83rem;color:var(--muted)">Order status updates</span>
             <label style="position:relative;display:inline-block;width:34px;height:19px;cursor:pointer">
               <input type="checkbox" checked style="opacity:0;width:0;height:0">
               <span style="position:absolute;inset:0;background:var(--amber);border-radius:19px;transition:0.3s"></span>
             </label>
-          </div>`).join('')}
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:0.83rem;color:var(--muted)">New message from seller</span>
+            <label style="position:relative;display:inline-block;width:34px;height:19px;cursor:pointer">
+              <input type="checkbox" checked style="opacity:0;width:0;height:0">
+              <span style="position:absolute;inset:0;background:var(--amber);border-radius:19px;transition:0.3s"></span>
+            </label>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:0.83rem;color:var(--muted)">Promotions & deals</span>
+            <label style="position:relative;display:inline-block;width:34px;height:19px;cursor:pointer">
+              <input type="checkbox" checked style="opacity:0;width:0;height:0">
+              <span style="position:absolute;inset:0;background:var(--amber);border-radius:19px;transition:0.3s"></span>
+            </label>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:0.83rem;color:var(--muted)">Price drops on saved items</span>
+            <label style="position:relative;display:inline-block;width:34px;height:19px;cursor:pointer">
+              <input type="checkbox" checked style="opacity:0;width:0;height:0">
+              <span style="position:absolute;inset:0;background:var(--amber);border-radius:19px;transition:0.3s"></span>
+            </label>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:0.83rem;color:var(--muted)">Weekly digest</span>
+            <label style="position:relative;display:inline-block;width:34px;height:19px;cursor:pointer">
+              <input type="checkbox" checked style="opacity:0;width:0;height:0">
+              <span style="position:absolute;inset:0;background:var(--amber);border-radius:19px;transition:0.3s"></span>
+            </label>
+          </div>
         </div>
       </div>
       <div class="pcard">

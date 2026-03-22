@@ -302,7 +302,7 @@ document.querySelectorAll('.eye').forEach(b =>
   b.addEventListener('click', () => {
     const i = $(b.dataset.t);
     i.type = i.type === 'password' ? 'text' : 'password';
-    b.textContent = i.type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+    b.innerHTML = i.type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
   })
 );
 
