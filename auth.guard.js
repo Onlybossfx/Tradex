@@ -1,6 +1,6 @@
 /*
   ============================================================
-  auth.guard.js — TRADEX SESSION GUARD
+  auth.guard.js — VENDIO SESSION GUARD
   Include on EVERY page. Handles:
 
   1. HARD GUARD  — page requires login (dashboards, checkout)
@@ -59,8 +59,8 @@ if (!window._gSb) {
     const user = await getUser();
     if (!user) {
       const dest = returnTo || window.location.pathname + window.location.search;
-      sessionStorage.setItem('tradex_return_to', dest);
-      window.location.replace('tradex-auth.html');
+      sessionStorage.setItem('vendio_return_to', dest);
+      window.location.replace('vendio-auth.html');
       return null;
     }
 
@@ -79,7 +79,7 @@ if (!window._gSb) {
 
     /* save where to return after login */
     const dest = returnTo || window.location.href;
-    sessionStorage.setItem('tradex_return_to', dest);
+    sessionStorage.setItem('vendio_return_to', dest);
 
     showAuthPrompt(label);
   }
@@ -130,7 +130,7 @@ if (!window._gSb) {
           line-height:1.65;margin-bottom:1.75rem;
           font-family:'DM Sans',system-ui,sans-serif;
         ">
-          You need a free Tradex account to continue.<br>
+          You need a free Vendio account to continue.<br>
           It only takes 30 seconds to sign up.
         </p>
 
@@ -166,10 +166,10 @@ if (!window._gSb) {
     document.getElementById('_ag_close').onclick  = () => overlay.remove();
     overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
     document.getElementById('_ag_signup').onclick = () => {
-      window.location.href = 'tradex-auth.html#signup';
+      window.location.href = 'vendio-auth.html#signup';
     };
     document.getElementById('_ag_login').onclick = () => {
-      window.location.href = 'tradex-auth.html';
+      window.location.href = 'vendio-auth.html';
     };
     document.getElementById('_ag_signup').onmouseover = function() { this.style.background='#FBBF24'; };
     document.getElementById('_ag_signup').onmouseout  = function() { this.style.background='#F59E0B'; };

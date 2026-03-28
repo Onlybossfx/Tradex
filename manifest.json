@@ -1,6 +1,6 @@
 {
-  "name": "Tradex — One Marketplace. Every Kind of Trade.",
-  "short_name": "Tradex",
+  "name": "Vendio — One Marketplace. Every Kind of Trade.",
+  "short_name": "Vendio",
   "description": "Buy and sell physical goods, digital products, freelance skills and experiences with escrow protection.",
   "start_url": "/index.html",
   "display": "standalone",
@@ -89,7 +89,7 @@
       "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "Tradex Home"
+      "label": "Vendio Home"
     },
     {
       "src": "screenshots/browse.png",

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tradex — Admin</title>
+  <title>Vendio — Admin</title>
   <meta name="robots" content="noindex, nofollow" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F59E0B" />
@@ -14,28 +14,55 @@
   <script src="dashboard.backend.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --amber: #F59E0B; --amber-light: #FBBF24; --amber-dim: rgba(245,158,11,0.1);
-      --bg: #0a0a0a; --bg2: #0f0f0f; --bg3: #141414; --bg4: #181818;
-      --border: rgba(255,255,255,0.07); --border-md: rgba(255,255,255,0.11);
-      --text: #fff; --muted: rgba(255,255,255,0.45); --dim: rgba(255,255,255,0.22);
-      --error: #EF4444; --success: #10B981; --info: #3B82F6;
+        /* ── LIGHT MODE (default) ── */
+    :root, [data-theme="light"] {
+      --amber: #D97706;
+      --amber-light: #F59E0B;
+      --amber-dim: rgba(217,119,6,0.1);
+      --bg: #F9F7F4;
+      --bg2: #EEE9E2;
+      --bg3: #E4DDD4;
+      --bg4: #D9D0C5;
+      --border: rgba(0,0,0,0.09);
+      --border-md: rgba(0,0,0,0.14);
+      --text: #1A1714;
+      --muted: rgba(26,23,20,0.5);
+      --dim: rgba(26,23,20,0.32);
+      --error: #DC2626;
+      --success: #059669;
       --serif: 'Playfair Display', Georgia, serif;
       --sans: 'DM Sans', system-ui, sans-serif;
-      --sw: 230px; --nh: 60px;
+      --sw: 240px; --nh: 62px;
+    }
+    /* ── DARK MODE ── */
+    [data-theme="dark"] {
+      --amber: #F59E0B;
+      --amber-light: #FBBF24;
+      --amber-dim: rgba(245,158,11,0.1);
+      --bg: #0a0a0a;
+      --bg2: #0f0f0f;
+      --bg3: #141414;
+      --bg4: #181818;
+      --border: rgba(255,255,255,0.07);
+      --border-md: rgba(255,255,255,0.11);
+      --text: #ffffff;
+      --muted: rgba(255,255,255,0.45);
+      --dim: rgba(255,255,255,0.22);
+      --error: #EF4444;
+      --success: #10B981;
     }
     html { overflow-x: hidden; }
-    body { background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+    body { background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; transition: background 0.25s, color 0.25s; }
     a { text-decoration: none; color: inherit; }
     button { cursor: pointer; font-family: var(--sans); }
     input, select, textarea { font-family: var(--sans); }
 
     /* NAV */
-    #nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: var(--nh); padding: 0 1.25rem; background: rgba(10,10,10,0.97); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.85rem; }
+    #nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: var(--nh); padding: 0 1.25rem; background: var(--bg2); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.85rem; }
     .nav-logo { display: flex; align-items: center; gap: 6px; text-decoration: none; }
     .nav-logo span { font-family: var(--serif); font-size: 1.2rem; font-weight: 700; }
     .nav-logo i { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); display: inline-block; }
-    .admin-badge { background: var(--error); color: #fff; font-size: 0.65rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 100px; letter-spacing: 0.04em; }
+    .admin-badge { background: var(--error); color: var(--text); font-size: 0.65rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 100px; letter-spacing: 0.04em; }
     .nav-right { margin-left: auto; display: flex; align-items: center; gap: 0.65rem; }
     .nav-av { width: 30px; height: 30px; border-radius: 50%; background: var(--amber-dim); border: 1px solid rgba(245,158,11,0.3); display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 700; color: var(--amber); }
     .btn-sm-out { background: transparent; border: 1px solid var(--border-md); color: var(--muted); padding: 0.35rem 0.75rem; border-radius: 7px; font-size: 0.78rem; transition: all 0.2s; }
@@ -52,7 +79,7 @@
     .ni.on { background: var(--amber-dim); border-color: rgba(245,158,11,0.2); color: var(--amber); }
     .ni .ic { font-size: 0.92rem; flex-shrink: 0; width: 18px; text-align: center; }
     .ni .lb { flex: 1; }
-    .ni .bd { background: var(--error); color: #fff; font-size: 0.58rem; font-weight: 700; padding: 0.08rem 0.36rem; border-radius: 100px; }
+    .ni .bd { background: var(--error); color: var(--text); font-size: 0.58rem; font-weight: 700; padding: 0.08rem 0.36rem; border-radius: 100px; }
     .sb-bot { margin-top: auto; padding-top: 0.85rem; border-top: 1px solid var(--border); }
 
     /* MAIN */
@@ -88,7 +115,7 @@
     .tbl th { font-size: 0.67rem; font-weight: 600; color: var(--dim); text-transform: uppercase; letter-spacing: 0.06em; padding: 0 0 0.65rem; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
     .tbl td { padding: 0.78rem 0; border-bottom: 1px solid rgba(255,255,255,0.032); font-size: 0.82rem; vertical-align: middle; }
     .tbl tr:last-child td { border-bottom: none; }
-    .tbl tr:hover td { background: rgba(255,255,255,0.012); }
+    .tbl tr:hover td { background: var(--bg3); }
     .cell-main { font-weight: 500; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .cell-sub { font-size: 0.73rem; color: var(--muted); margin-top: 1px; }
     .av { width: 30px; height: 30px; border-radius: 50%; background: var(--amber-dim); border: 1px solid rgba(245,158,11,0.2); display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; color: var(--amber); flex-shrink: 0; }
@@ -99,13 +126,13 @@
     .sp-a  { background: rgba(16,185,129,0.12);  color: #34D399; border: 1px solid rgba(16,185,129,0.2); }
     .sp-p  { background: rgba(245,158,11,0.12);  color: var(--amber); border: 1px solid rgba(245,158,11,0.2); }
     .sp-e  { background: rgba(59,130,246,0.12);  color: #60A5FA; border: 1px solid rgba(59,130,246,0.2); }
-    .sp-c  { background: rgba(255,255,255,0.06); color: var(--muted); border: 1px solid var(--border); }
+    .sp-c  { background: var(--bg3); color: var(--muted); border: 1px solid var(--border); }
     .sp-r  { background: rgba(239,68,68,0.12);   color: #F87171; border: 1px solid rgba(239,68,68,0.2); }
     .sp-b  { background: rgba(59,130,246,0.12);  color: #93C5FD; border: 1px solid rgba(59,130,246,0.2); }
 
     /* ACTION BUTTONS */
     .btn-act { padding: 0.3rem 0.65rem; border-radius: 6px; font-size: 0.74rem; font-weight: 500; border: 1px solid var(--border-md); background: transparent; color: var(--muted); transition: all 0.18s; cursor: pointer; }
-    .btn-act:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+    .btn-act:hover { color: var(--text); border-color: var(--border-md); }
     .btn-act.danger { border-color: rgba(239,68,68,0.2); color: #F87171; }
     .btn-act.danger:hover { background: rgba(239,68,68,0.08); }
     .btn-act.success { border-color: rgba(16,185,129,0.2); color: #34D399; }
@@ -142,7 +169,7 @@
     .mbox h2 { font-family: var(--serif); font-size: 1.25rem; font-weight: 700; margin-bottom: 0.25rem; }
     .msub { color: var(--muted); font-size: 0.82rem; margin-bottom: 1.25rem; }
     .frow { margin-bottom: 0.9rem; }
-    .frow label { display: block; font-size: 0.76rem; font-weight: 600; color: rgba(255,255,255,0.65); margin-bottom: 0.35rem; }
+    .frow label { display: block; font-size: 0.76rem; font-weight: 600; color: var(--muted); margin-bottom: 0.35rem; }
     .finp { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 0.65rem 0.85rem; color: var(--text); font-size: 0.85rem; outline: none; transition: border-color 0.2s; }
     .finp:focus { border-color: rgba(245,158,11,0.4); }
     textarea.finp { resize: vertical; min-height: 80px; line-height: 1.55; }
@@ -180,6 +207,15 @@
     @media (max-width: 520px) {
       .sg { grid-template-columns: repeat(2,1fr); }
     }
+
+    /* ── THEME TOGGLE ── */
+    .theme-toggle {
+      width: 30px; height: 30px; border-radius: 7px;
+      background: transparent; border: 1px solid var(--border-md);
+      color: var(--muted); display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+    }
+    .theme-toggle:hover { color: var(--text); border-color: var(--amber); background: var(--amber-dim); }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
@@ -189,7 +225,7 @@
 
 <!-- NAV -->
 <nav id="nav">
-  <a href="index.html" class="nav-logo"><span>Tradex</span><i></i></a>
+  <a href="index.html" class="nav-logo"><span>Vendio</span><i></i></a>
   <span class="admin-badge">ADMIN</span>
   <div class="hbg" id="hbg" onclick="toggleSidebar()"><span></span><span></span><span></span></div>
   <div class="nav-right">
@@ -422,8 +458,8 @@ async function init() {
     document.body.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:1rem;font-family:sans-serif;color:#fff;background:#0a0a0a;text-align:center;padding:2rem">
       <div style="font-size:3rem"><i class="fas fa-ban"></i></div>
       <h2 style="font-family:serif;font-size:1.5rem">Access Denied</h2>
-      <p style="color:rgba(255,255,255,0.45)">You don't have admin privileges.</p>
-      <a href="index.html" style="color:#F59E0B">← Back to Tradex</a>
+      <p style="color:var(--muted)">You don't have admin privileges.</p>
+      <a href="index.html" style="color:#F59E0B">← Back to Vendio</a>
     </div>`;
     return;
   }
@@ -486,7 +522,7 @@ function sendNotifToUser(id, name) {
   $('n-target').value = 'specific';
   $('n-userid').value = id;
   $('n-userid-row').style.display = '';
-  $('n-title').value = `Message from Tradex Admin`;
+  $('n-title').value = `Message from Vendio Admin`;
   switchP('notify');
 }
 
@@ -592,8 +628,8 @@ async function markUnderReview(id) {
 }
 async function notifyParties(buyerId, sellerId) {
   await Promise.all([
-    DB.createNotification(buyerId, 'dispute', 'Dispute Update', 'Your dispute is being reviewed by the Tradex team. We will notify you of the resolution shortly.'),
-    DB.createNotification(sellerId, 'dispute', 'Dispute Notification', 'A dispute has been raised on one of your orders. The Tradex team is reviewing the case.'),
+    DB.createNotification(buyerId, 'dispute', 'Dispute Update', 'Your dispute is being reviewed by the Vendio team. We will notify you of the resolution shortly.'),
+    DB.createNotification(sellerId, 'dispute', 'Dispute Notification', 'A dispute has been raised on one of your orders. The Vendio team is reviewing the case.'),
   ]);
   toast('Both parties notified. <i class="fas fa-circle-check"></i>', 'ok');
 }
@@ -734,5 +770,29 @@ function toast(msg, type = 'ok') {
 /* ══ INIT ══ */
 init();
 </script>
+<script>
+  /* ── THEME ── */
+  (function(){
+    var t=localStorage.getItem('vendio-theme')||'light';
+    document.documentElement.setAttribute('data-theme',t);
+  })();
+  function _applyTheme(m){
+    document.documentElement.setAttribute('data-theme',m);
+    localStorage.setItem('vendio-theme',m);
+    document.querySelectorAll('.theme-toggle').forEach(function(b){
+      b.innerHTML=m==='dark'?'<i class="fas fa-sun"></i>':'<i class="fas fa-moon"></i>';
+      b.title=m==='dark'?'Light mode':'Dark mode';
+    });
+  }
+  function _toggleTheme(){
+    _applyTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');
+  }
+  document.addEventListener('DOMContentLoaded',function(){
+    _applyTheme(localStorage.getItem('vendio-theme')||'light');
+    document.querySelectorAll('.theme-toggle').forEach(function(b){
+      b.addEventListener('click',_toggleTheme);
+    });
+  });
+  </script>
 </body>
 </html>

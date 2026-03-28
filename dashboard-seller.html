@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tradex — Seller Dashboard</title>
+  <title>Vendio — Seller Dashboard</title>
   <meta name="robots" content="noindex, nofollow" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F59E0B" />
@@ -15,24 +15,51 @@
   <script src="dashboard.backend.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --amber: #F59E0B; --amber-light: #FBBF24; --amber-dim: rgba(245,158,11,0.1);
-      --bg: #0a0a0a; --bg2: #0f0f0f; --bg3: #141414; --bg4: #181818;
-      --border: rgba(255,255,255,0.07); --border-md: rgba(255,255,255,0.11);
-      --text: #fff; --muted: rgba(255,255,255,0.45); --dim: rgba(255,255,255,0.22);
-      --error: #EF4444; --success: #10B981;
+        /* ── LIGHT MODE (default) ── */
+    :root, [data-theme="light"] {
+      --amber: #D97706;
+      --amber-light: #F59E0B;
+      --amber-dim: rgba(217,119,6,0.1);
+      --bg: #F9F7F4;
+      --bg2: #EEE9E2;
+      --bg3: #E4DDD4;
+      --bg4: #D9D0C5;
+      --border: rgba(0,0,0,0.09);
+      --border-md: rgba(0,0,0,0.14);
+      --text: #1A1714;
+      --muted: rgba(26,23,20,0.5);
+      --dim: rgba(26,23,20,0.32);
+      --error: #DC2626;
+      --success: #059669;
       --serif: 'Playfair Display', Georgia, serif;
       --sans: 'DM Sans', system-ui, sans-serif;
       --sw: 240px; --nh: 62px;
     }
-    html { overflow-x: hidden; }
-    body { background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    /* ── DARK MODE ── */
+    [data-theme="dark"] {
+      --amber: #F59E0B;
+      --amber-light: #FBBF24;
+      --amber-dim: rgba(245,158,11,0.1);
+      --bg: #0a0a0a;
+      --bg2: #0f0f0f;
+      --bg3: #141414;
+      --bg4: #181818;
+      --border: rgba(255,255,255,0.07);
+      --border-md: rgba(255,255,255,0.11);
+      --text: #ffffff;
+      --muted: rgba(255,255,255,0.45);
+      --dim: rgba(255,255,255,0.22);
+      --error: #EF4444;
+      --success: #10B981;
+    }
+    html, body { height: 100%; overflow: hidden; }
+    body { background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; transition: background 0.25s, color 0.25s; overflow-x: hidden; }
     a { text-decoration: none; color: inherit; }
     button { cursor: pointer; font-family: var(--sans); }
     input, select, textarea { font-family: var(--sans); }
 
     /* NAV */
-    #nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: var(--nh); padding: 0 1.25rem; background: rgba(10,10,10,0.97); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.85rem; }
+    #nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: var(--nh); padding: 0 1.25rem; background: var(--bg2); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.85rem; }
     .nav-logo { display: flex; align-items: center; gap: 6px; text-decoration: none; flex-shrink: 0; }
     .nav-logo span { font-family: var(--serif); font-size: 1.2rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
     .nav-logo i { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); display: inline-block; }
@@ -51,10 +78,10 @@
     .ndot { position: absolute; top: 4px; right: 4px; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); border: 1px solid var(--bg); }
 
     /* LAYOUT */
-    .shell { display: grid; grid-template-columns: var(--sw) 1fr; min-height: 100vh; padding-top: var(--nh); }
+    .shell { display: grid; grid-template-columns: var(--sw) 1fr; height: calc(100vh - var(--nh)); margin-top: var(--nh); overflow: hidden; }
 
     /* SIDEBAR */
-    #sb { background: var(--bg2); border-right: 1px solid var(--border); padding: 1.25rem 0.65rem; position: sticky; top: var(--nh); height: calc(100vh - var(--nh)); overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border) transparent; display: flex; flex-direction: column; gap: 0.2rem; }
+    #sb { background: var(--bg2); border-right: 1px solid var(--border); padding: 1.25rem 0.65rem; position: relative; height: 100%; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border) transparent; display: flex; flex-direction: column; gap: 0.2rem; }
     .ns { font-size: 0.64rem; font-weight: 700; color: var(--dim); letter-spacing: 0.1em; text-transform: uppercase; padding: 0.7rem 0.7rem 0.35rem; }
     .ni { display: flex; align-items: center; gap: 0.65rem; padding: 0.58rem 0.7rem; border-radius: 9px; cursor: pointer; transition: all 0.18s; border: 1px solid transparent; font-size: 0.84rem; color: var(--muted); }
     .ni:hover { background: var(--bg3); color: var(--text); }
@@ -62,13 +89,13 @@
     .ni .ic { font-size: 0.95rem; flex-shrink: 0; width: 18px; text-align: center; }
     .ni .lb { flex: 1; }
     .ni .bd { background: var(--amber); color: #0a0a0a; font-size: 0.58rem; font-weight: 700; padding: 0.08rem 0.38rem; border-radius: 100px; min-width: 16px; text-align: center; }
-    .ni .bd.red { background: var(--error); color: #fff; }
+    .ni .bd.red { background: var(--error); color: var(--text); }
     .sb-bot { margin-top: auto; padding-top: 0.85rem; border-top: 1px solid var(--border); }
     .sb-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 149; }
     .sb-overlay.show { display: block; }
 
     /* MAIN */
-    #main { padding: 1.5rem; min-height: calc(100vh - var(--nh)); }
+    #main { padding: 1.5rem; height: 100%; overflow-y: auto; }
     .panel { display: none; animation: fi 0.22s ease; }
     .panel.on { display: block; }
     @keyframes fi { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
@@ -118,7 +145,7 @@
     .sp-p { background: rgba(245,158,11,0.12); color: var(--amber); border: 1px solid rgba(245,158,11,0.2); }
     .sp-e { background: rgba(59,130,246,0.12); color: #60A5FA; border: 1px solid rgba(59,130,246,0.2); }
     .sp-d { background: rgba(16,185,129,0.12); color: #34D399; border: 1px solid rgba(16,185,129,0.2); }
-    .sp-c { background: rgba(255,255,255,0.06); color: var(--muted); border: 1px solid var(--border); }
+    .sp-c { background: var(--bg3); color: var(--muted); border: 1px solid var(--border); }
     .sp-x { background: rgba(239,68,68,0.12); color: #F87171; border: 1px solid rgba(239,68,68,0.2); }
     .sp-a { background: rgba(16,185,129,0.1); color: #34D399; border: 1px solid rgba(16,185,129,0.2); }
     .amt { font-family: var(--serif); font-weight: 700; color: var(--amber); }
@@ -146,7 +173,7 @@
     .lst span { color: var(--text); font-weight: 500; }
     .lcard-acts { display: flex; gap: 0.42rem; }
     .ba { flex: 1; padding: 0.4rem; border-radius: 7px; font-size: 0.76rem; font-weight: 500; transition: all 0.18s; text-align: center; }
-    .ba-edit { background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--muted); }
+    .ba-edit { background: var(--bg2); border: 1px solid var(--border); color: var(--muted); }
     .ba-edit:hover { color: var(--text); border-color: var(--border-md); }
     .ba-pause { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.15); color: var(--amber); }
     .ba-pause:hover { background: rgba(245,158,11,0.12); }
@@ -165,7 +192,7 @@
     .ml-search input { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 7px; padding: 0.45rem 0.75rem; color: var(--text); font-size: 0.8rem; outline: none; }
     .ml-search input::placeholder { color: var(--dim); }
     .ml-convs { flex: 1; overflow-y: auto; }
-    .cv { display: flex; align-items: center; gap: 0.65rem; padding: 0.8rem 1rem; cursor: pointer; transition: background 0.15s; border-bottom: 1px solid rgba(255,255,255,0.025); }
+    .cv { display: flex; align-items: center; gap: 0.65rem; padding: 0.8rem 1rem; cursor: pointer; transition: background 0.15s; border-bottom: 1px solid var(--border); }
     .cv:hover { background: var(--bg3); }
     .cv.on { background: var(--amber-dim); }
     .cv-av { width: 36px; height: 36px; border-radius: 50%; background: var(--bg3); border: 1px solid var(--border-md); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700; color: var(--amber); flex-shrink: 0; }
@@ -185,7 +212,7 @@
     .msg-row { display: flex; gap: 0.5rem; align-items: flex-end; }
     .msg-row.me { flex-direction: row-reverse; }
     .msg-av2 { width: 26px; height: 26px; border-radius: 50%; background: var(--bg3); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; color: var(--muted); flex-shrink: 0; }
-    .msg-bub { max-width: 68%; background: var(--bg3); border: 1px solid var(--border); border-radius: 11px 11px 11px 3px; padding: 0.6rem 0.85rem; font-size: 0.83rem; line-height: 1.55; color: rgba(255,255,255,0.85); }
+    .msg-bub { max-width: 68%; background: var(--bg3); border: 1px solid var(--border); border-radius: 11px 11px 11px 3px; padding: 0.6rem 0.85rem; font-size: 0.83rem; line-height: 1.55; color: var(--text); }
     .msg-row.me .msg-bub { background: var(--amber-dim); border-color: rgba(245,158,11,0.22); border-radius: 11px 11px 3px 11px; }
     .msg-t { font-size: 0.65rem; color: var(--dim); margin-top: 0.25rem; }
     .msg-row.me .msg-t { text-align: left; }
@@ -223,7 +250,7 @@
     .av-row { display: flex; align-items: center; gap: 0.9rem; margin-bottom: 1.1rem; }
     .av-c { width: 58px; height: 58px; border-radius: 50%; background: var(--amber-dim); border: 2px solid rgba(245,158,11,0.3); display: flex; align-items: center; justify-content: center; font-size: 1.35rem; font-weight: 700; color: var(--amber); flex-shrink: 0; }
     .frow { margin-bottom: 0.9rem; }
-    .frow label { display: block; font-size: 0.77rem; font-weight: 600; color: rgba(255,255,255,0.68); margin-bottom: 0.38rem; }
+    .frow label { display: block; font-size: 0.77rem; font-weight: 600; color: var(--muted); margin-bottom: 0.38rem; }
     .finp { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 0.68rem 0.85rem; color: var(--text); font-size: 0.86rem; outline: none; transition: border-color 0.2s; }
     .finp:focus { border-color: rgba(245,158,11,0.4); }
     .finp::placeholder { color: var(--dim); }
@@ -272,7 +299,7 @@
     .ip { display: flex; gap: 0.45rem; flex-wrap: wrap; margin-top: 0.65rem; }
     .ipv { width: 64px; height: 64px; border-radius: 7px; overflow: hidden; position: relative; border: 1px solid var(--border); }
     .ipv img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .rm-i { position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,0.72); border: none; color: #fff; width: 16px; height: 16px; border-radius: 3px; font-size: 0.58rem; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .rm-i { position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,0.72); border: none; color: var(--text); width: 16px; height: 16px; border-radius: 3px; font-size: 0.58rem; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
     /* TAGS */
     .tiw { display: flex; flex-wrap: wrap; gap: 0.35rem; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 0.45rem 0.7rem; min-height: 40px; cursor: text; transition: border-color 0.18s; }
@@ -329,6 +356,15 @@
     }
     .img-unavailable i { font-size: 2rem; color: var(--dim); }
     .img-unavailable span { font-size: 0.72rem; color: var(--dim); }
+
+    /* ── THEME TOGGLE ── */
+    .theme-toggle {
+      width: 30px; height: 30px; border-radius: 7px;
+      background: transparent; border: 1px solid var(--border-md);
+      color: var(--muted); display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+    }
+    .theme-toggle:hover { color: var(--text); border-color: var(--amber); background: var(--amber-dim); }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
@@ -340,11 +376,12 @@
 <!-- NAV -->
 <nav id="nav">
   <button class="hbg" id="hbg"><span></span><span></span><span></span></button>
-  <a href="index.html" class="nav-logo"><span>Tradex</span><i></i></a>
+  <a href="index.html" class="nav-logo"><span>Vendio</span><i></i></a>
   <div class="nav-sep"></div>
   <span class="nav-label">Seller Dashboard</span>
   <div class="nav-right">
     <button class="btn-new" onclick="openModal()">+ New Listing</button>
+    <button class="theme-toggle" title="Dark mode"><i class="fas fa-moon"></i></button>
     <div class="notif-btn" id="notif-btn"><span><i class="fas fa-bell"></i></span><div class="ndot" id="ndot" style="display:none"></div></div>
     <div class="nav-av" id="nav-av">S</div>
   </div>
@@ -453,7 +490,7 @@
 
   <!-- PROFILE -->
   <div class="panel" id="panel-profile">
-    <div class="ph"><div><h1>Profile</h1><p>How buyers see you on Tradex.</p></div></div>
+    <div class="ph"><div><h1>Profile</h1><p>How buyers see you on Vendio.</p></div></div>
     <div class="pgrid">
       <div class="pcard">
         <h3>Personal Info</h3>
@@ -540,8 +577,8 @@
       <div class="pcard">
         <h3>Security</h3>
         <div style="display:flex;flex-direction:column;gap:0.5rem">
-          <button id="change-pw-btn" style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.7rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem;transition:color 0.2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.45)'"><i class="fas fa-key"></i> Change Password</button>
-          <button onclick="window.location.href='tradex-auth.html#2fa'" style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.7rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem;transition:color 0.2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.45)'"><i class="fas fa-shield-halved"></i> Two-Factor Authentication</button>
+          <button id="change-pw-btn" style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.7rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem;transition:color 0.2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'"><i class="fas fa-key"></i> Change Password</button>
+          <button onclick="window.location.href='vendio-auth.html#2fa'" style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.7rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem;transition:color 0.2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'"><i class="fas fa-shield-halved"></i> Two-Factor Authentication</button>
           <button onclick="confirmDelete()" style="background:transparent;border:1px solid rgba(239,68,68,0.2);color:#F87171;padding:0.7rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem"><i class="fas fa-trash"></i> Delete Account</button>
         </div>
       </div>
@@ -585,7 +622,7 @@
   <div class="panel" id="panel-notifications">
     <div class="ph">
       <div><h1>Notifications</h1><p>Stay on top of orders, messages and payouts.</p></div>
-      <button onclick="markAllNotifsRead()" style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.45rem 1rem;border-radius:8px;font-size:0.8rem;cursor:pointer;transition:all 0.2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.45)'">Mark all read</button>
+      <button onclick="markAllNotifsRead()" style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.45rem 1rem;border-radius:8px;font-size:0.8rem;cursor:pointer;transition:all 0.2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Mark all read</button>
     </div>
     <div id="notif-list"><div style="color:var(--dim);text-align:center;padding:3rem 0">Loading notifications...</div></div>
   </div>
@@ -595,7 +632,7 @@
   <div class="mbox">
     <button class="mc" onclick="closeModal()"><i class="fas fa-xmark"></i></button>
     <h2 id="m-title">New Listing</h2>
-    <p class="msub" id="m-sub">Fill in the details to publish on Tradex.</p>
+    <p class="msub" id="m-sub">Fill in the details to publish on Vendio.</p>
     <div class="mal err" id="m-err"><span><i class="fas fa-triangle-exclamation"></i></span><span id="m-err-t"></span></div>
     <div class="mal ok"  id="m-ok"><span><i class="fas fa-circle-check"></i></span><span id="m-ok-t"></span></div>
     <input type="hidden" id="eid" />
@@ -1160,7 +1197,7 @@ async function loadPayoutMethod() {
 
 function confirmDelete() {
   if (confirm('Delete your account? This cannot be undone.')) {
-    toast('Please contact support@tradex.com to delete your account.', 'inf');
+    toast('Please contact support@vendio.com to delete your account.', 'inf');
   }
 }
 
@@ -1189,5 +1226,29 @@ function toast(msg,type='ok'){
 /* ══ INIT ══ */
 init();
 </script>
+<script>
+  /* ── THEME ── */
+  (function(){
+    var t=localStorage.getItem('vendio-theme')||'light';
+    document.documentElement.setAttribute('data-theme',t);
+  })();
+  function _applyTheme(m){
+    document.documentElement.setAttribute('data-theme',m);
+    localStorage.setItem('vendio-theme',m);
+    document.querySelectorAll('.theme-toggle').forEach(function(b){
+      b.innerHTML=m==='dark'?'<i class="fas fa-sun"></i>':'<i class="fas fa-moon"></i>';
+      b.title=m==='dark'?'Light mode':'Dark mode';
+    });
+  }
+  function _toggleTheme(){
+    _applyTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');
+  }
+  document.addEventListener('DOMContentLoaded',function(){
+    _applyTheme(localStorage.getItem('vendio-theme')||'light');
+    document.querySelectorAll('.theme-toggle').forEach(function(b){
+      b.addEventListener('click',_toggleTheme);
+    });
+  });
+  </script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tradex — Buyer Dashboard</title>
+  <title>Vendio — Buyer Dashboard</title>
   <meta name="robots" content="noindex, nofollow" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F59E0B" />
@@ -15,24 +15,51 @@
   <script src="dashboard.backend.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --amber: #F59E0B; --amber-light: #FBBF24; --amber-dim: rgba(245,158,11,0.1);
-      --bg: #0a0a0a; --bg2: #0f0f0f; --bg3: #141414; --bg4: #181818;
-      --border: rgba(255,255,255,0.07); --border-md: rgba(255,255,255,0.11);
-      --text: #fff; --muted: rgba(255,255,255,0.45); --dim: rgba(255,255,255,0.22);
-      --error: #EF4444; --success: #10B981;
+        /* ── LIGHT MODE (default) ── */
+    :root, [data-theme="light"] {
+      --amber: #D97706;
+      --amber-light: #F59E0B;
+      --amber-dim: rgba(217,119,6,0.1);
+      --bg: #F9F7F4;
+      --bg2: #EEE9E2;
+      --bg3: #E4DDD4;
+      --bg4: #D9D0C5;
+      --border: rgba(0,0,0,0.09);
+      --border-md: rgba(0,0,0,0.14);
+      --text: #1A1714;
+      --muted: rgba(26,23,20,0.5);
+      --dim: rgba(26,23,20,0.32);
+      --error: #DC2626;
+      --success: #059669;
       --serif: 'Playfair Display', Georgia, serif;
       --sans: 'DM Sans', system-ui, sans-serif;
       --sw: 240px; --nh: 62px;
     }
-    html { overflow-x: hidden; }
-    body { background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    /* ── DARK MODE ── */
+    [data-theme="dark"] {
+      --amber: #F59E0B;
+      --amber-light: #FBBF24;
+      --amber-dim: rgba(245,158,11,0.1);
+      --bg: #0a0a0a;
+      --bg2: #0f0f0f;
+      --bg3: #141414;
+      --bg4: #181818;
+      --border: rgba(255,255,255,0.07);
+      --border-md: rgba(255,255,255,0.11);
+      --text: #ffffff;
+      --muted: rgba(255,255,255,0.45);
+      --dim: rgba(255,255,255,0.22);
+      --error: #EF4444;
+      --success: #10B981;
+    }
+    html, body { height: 100%; overflow: hidden; }
+    body { background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; transition: background 0.25s, color 0.25s; overflow-x: hidden; }
     a { text-decoration: none; color: inherit; }
     button { cursor: pointer; font-family: var(--sans); }
     input, select, textarea { font-family: var(--sans); }
 
     /* NAV */
-    #nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: var(--nh); padding: 0 1.25rem; background: rgba(10,10,10,0.97); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.85rem; }
+    #nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: var(--nh); padding: 0 1.25rem; background: var(--bg2); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.85rem; }
     .nav-logo { display: flex; align-items: center; gap: 6px; text-decoration: none; flex-shrink: 0; }
     .nav-logo span { font-family: var(--serif); font-size: 1.2rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
     .nav-logo i { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); display: inline-block; }
@@ -51,10 +78,10 @@
     .ndot { position: absolute; top: 4px; right: 4px; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); border: 1px solid var(--bg); }
 
     /* LAYOUT */
-    .shell { display: grid; grid-template-columns: var(--sw) 1fr; min-height: 100vh; padding-top: var(--nh); }
+    .shell { display: grid; grid-template-columns: var(--sw) 1fr; height: calc(100vh - var(--nh)); margin-top: var(--nh); overflow: hidden; }
 
     /* SIDEBAR */
-    #sb { background: var(--bg2); border-right: 1px solid var(--border); padding: 1.25rem 0.65rem; position: sticky; top: var(--nh); height: calc(100vh - var(--nh)); overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border) transparent; display: flex; flex-direction: column; gap: 0.2rem; }
+    #sb { background: var(--bg2); border-right: 1px solid var(--border); padding: 1.25rem 0.65rem; position: relative; height: 100%; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border) transparent; display: flex; flex-direction: column; gap: 0.2rem; }
     .ns { font-size: 0.64rem; font-weight: 700; color: var(--dim); letter-spacing: 0.1em; text-transform: uppercase; padding: 0.7rem 0.7rem 0.35rem; }
     .ni { display: flex; align-items: center; gap: 0.65rem; padding: 0.58rem 0.7rem; border-radius: 9px; cursor: pointer; transition: all 0.18s; border: 1px solid transparent; font-size: 0.84rem; color: var(--muted); }
     .ni:hover { background: var(--bg3); color: var(--text); }
@@ -62,13 +89,13 @@
     .ni .ic { font-size: 0.95rem; flex-shrink: 0; width: 18px; text-align: center; }
     .ni .lb { flex: 1; }
     .ni .bd { background: var(--amber); color: #0a0a0a; font-size: 0.58rem; font-weight: 700; padding: 0.08rem 0.38rem; border-radius: 100px; min-width: 16px; text-align: center; }
-    .ni .bd.red { background: var(--error); color: #fff; }
+    .ni .bd.red { background: var(--error); color: var(--text); }
     .sb-bot { margin-top: auto; padding-top: 0.85rem; border-top: 1px solid var(--border); }
     .sb-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 149; }
     .sb-overlay.show { display: block; }
 
     /* MAIN */
-    #main { padding: 1.5rem; min-height: calc(100vh - var(--nh)); }
+    #main { padding: 1.5rem; height: 100%; overflow-y: auto; }
     .panel { display: none; animation: fi 0.22s ease; }
     .panel.on { display: block; }
     @keyframes fi { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
@@ -90,7 +117,7 @@
     .sp-p { background: rgba(245,158,11,0.12); color: var(--amber);  border: 1px solid rgba(245,158,11,0.2); }
     .sp-e { background: rgba(59,130,246,0.12);  color: #60A5FA;      border: 1px solid rgba(59,130,246,0.2); }
     .sp-d { background: rgba(16,185,129,0.12);  color: #34D399;      border: 1px solid rgba(16,185,129,0.2); }
-    .sp-c { background: rgba(255,255,255,0.06); color: var(--muted); border: 1px solid var(--border); }
+    .sp-c { background: var(--bg3); color: var(--muted); border: 1px solid var(--border); }
     .sp-x { background: rgba(239,68,68,0.12);   color: #F87171;      border: 1px solid rgba(239,68,68,0.2); }
 
     /* ORDER CARDS */
@@ -116,7 +143,7 @@
     .oprog { margin-bottom: 0.9rem; }
     .psteps { display: flex; align-items: center; }
     .pdot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.58rem; color: var(--dim); flex-shrink: 0; transition: all 0.3s; }
-    .pdot.done { background: var(--success); border-color: var(--success); color: #fff; }
+    .pdot.done { background: var(--success); border-color: var(--success); color: var(--text); }
     .pdot.act  { border-color: var(--amber); color: var(--amber); }
     .pline { flex: 1; height: 2px; background: var(--border); transition: background 0.3s; }
     .pline.done { background: var(--success); }
@@ -128,7 +155,7 @@
     .plbl.done { color: var(--success); }
     .oc-acts { display: flex; gap: 0.5rem; flex-wrap: wrap; }
     .ba { padding: 0.4rem 0.85rem; border-radius: 8px; font-size: 0.78rem; font-weight: 500; transition: all 0.18s; border: 1px solid var(--border-md); background: transparent; color: var(--muted); }
-    .ba:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+    .ba:hover { color: var(--text); border-color: var(--border-md); }
     .ba.pri { background: var(--amber); border-color: var(--amber); color: #0a0a0a; font-weight: 600; }
     .ba.pri:hover { background: var(--amber-light); }
     .ba.dan { border-color: rgba(239,68,68,0.2); color: #F87171; }
@@ -142,7 +169,7 @@
     .scard-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s; }
     .scard:hover .scard-img img { transform: scale(1.04); }
     .scard-img-ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; }
-    .sc-unsave { position: absolute; top: 7px; right: 7px; width: 26px; height: 26px; border-radius: 6px; background: rgba(10,10,10,0.72); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; cursor: pointer; backdrop-filter: blur(4px); transition: all 0.18s; }
+    .sc-unsave { position: absolute; top: 7px; right: 7px; width: 26px; height: 26px; border-radius: 6px; background: rgba(0,0,0,0.45); border: 1px solid var(--border-md); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; cursor: pointer; backdrop-filter: blur(4px); transition: all 0.18s; }
     .sc-unsave:hover { background: rgba(239,68,68,0.2); border-color: rgba(239,68,68,0.3); }
     .scard-body { padding: 0.8rem; }
     .sc-cat { font-size: 0.67rem; color: var(--amber); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.25rem; }
@@ -160,7 +187,7 @@
     .ml-search input { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 7px; padding: 0.42rem 0.72rem; color: var(--text); font-size: 0.8rem; outline: none; }
     .ml-search input::placeholder { color: var(--dim); }
     .ml-convs { flex: 1; overflow-y: auto; }
-    .cv { display: flex; align-items: center; gap: 0.62rem; padding: 0.78rem 0.95rem; cursor: pointer; transition: background 0.15s; border-bottom: 1px solid rgba(255,255,255,0.025); }
+    .cv { display: flex; align-items: center; gap: 0.62rem; padding: 0.78rem 0.95rem; cursor: pointer; transition: background 0.15s; border-bottom: 1px solid var(--border); }
     .cv:hover { background: var(--bg3); }
     .cv.on { background: var(--amber-dim); }
     .cv-av { width: 36px; height: 36px; border-radius: 50%; background: var(--bg3); border: 1px solid var(--border-md); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700; color: var(--amber); flex-shrink: 0; }
@@ -180,7 +207,7 @@
     .msg-row { display: flex; gap: 0.48rem; align-items: flex-end; }
     .msg-row.me { flex-direction: row-reverse; }
     .msg-av2 { width: 25px; height: 25px; border-radius: 50%; background: var(--bg3); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.62rem; font-weight: 700; color: var(--muted); flex-shrink: 0; }
-    .msg-bub { max-width: 68%; background: var(--bg3); border: 1px solid var(--border); border-radius: 11px 11px 11px 3px; padding: 0.58rem 0.82rem; font-size: 0.83rem; line-height: 1.55; color: rgba(255,255,255,0.85); }
+    .msg-bub { max-width: 68%; background: var(--bg3); border: 1px solid var(--border); border-radius: 11px 11px 11px 3px; padding: 0.58rem 0.82rem; font-size: 0.83rem; line-height: 1.55; color: var(--text); }
     .msg-row.me .msg-bub { background: var(--amber-dim); border-color: rgba(245,158,11,0.22); border-radius: 11px 11px 3px 11px; }
     .msg-t { font-size: 0.65rem; color: var(--dim); margin-top: 0.22rem; }
     .mw-input { padding: 0.82rem 1rem; border-top: 1px solid var(--border); background: var(--bg2); display: flex; gap: 0.48rem; align-items: flex-end; }
@@ -200,7 +227,7 @@
     .av-c { width: 56px; height: 56px; border-radius: 50%; background: var(--amber-dim); border: 2px solid rgba(245,158,11,0.3); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 700; color: var(--amber); flex-shrink: 0; }
     .frow { margin-bottom: 0.88rem; }
     .f2col { display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; }
-    .frow label { display: block; font-size: 0.77rem; font-weight: 600; color: rgba(255,255,255,0.68); margin-bottom: 0.36rem; }
+    .frow label { display: block; font-size: 0.77rem; font-weight: 600; color: var(--muted); margin-bottom: 0.36rem; }
     .finp { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 0.66rem 0.85rem; color: var(--text); font-size: 0.86rem; outline: none; transition: border-color 0.18s; }
     .finp:focus { border-color: rgba(245,158,11,0.4); }
     .finp::placeholder { color: var(--dim); }
@@ -286,6 +313,15 @@
     }
     .img-unavailable i { font-size: 2rem; color: var(--dim); }
     .img-unavailable span { font-size: 0.72rem; color: var(--dim); }
+
+    /* ── THEME TOGGLE ── */
+    .theme-toggle {
+      width: 30px; height: 30px; border-radius: 7px;
+      background: transparent; border: 1px solid var(--border-md);
+      color: var(--muted); display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+    }
+    .theme-toggle:hover { color: var(--text); border-color: var(--amber); background: var(--amber-dim); }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
@@ -297,11 +333,12 @@
 <!-- NAV -->
 <nav id="nav">
   <button class="hbg" id="hbg"><span></span><span></span><span></span></button>
-  <a href="index.html" class="nav-logo"><span>Tradex</span><i></i></a>
+  <a href="index.html" class="nav-logo"><span>Vendio</span><i></i></a>
   <div class="nav-sep"></div>
   <span class="nav-label">My Account</span>
   <div class="nav-right">
     <button class="btn-browse" onclick="window.location.href='browse.html'">Browse Listings</button>
+    <button class="theme-toggle" title="Dark mode"><i class="fas fa-moon"></i></button>
     <div class="notif-btn"><span><i class="fas fa-bell"></i></span><div class="ndot" id="ndot" style="display:none"></div></div>
     <div class="nav-av" id="nav-av">B</div>
   </div>
@@ -331,7 +368,7 @@
 
   <!-- OVERVIEW -->
   <div class="panel on" id="panel-overview">
-    <div class="ph"><div><h1>Welcome back, <span id="bname">there</span> <i class="fas fa-hand-wave"></i></h1><p>Here's your Tradex activity at a glance.</p></div></div>
+    <div class="ph"><div><h1>Welcome back, <span id="bname">there</span> <i class="fas fa-hand-wave"></i></h1><p>Here's your Vendio activity at a glance.</p></div></div>
     <div class="sg">
       <div class="sc"><div class="sc-lbl"><i class="fas fa-shopping-cart"></i> Total Orders</div><div class="sc-val" id="ov-ords">0</div><div class="sc-note" id="ov-ords-n">all time</div></div>
       <div class="sc"><div class="sc-lbl"><i class="fas fa-sack-dollar"></i> Total Spent</div><div class="sc-val a" id="ov-spent">$0</div><div class="sc-note">across all orders</div></div>
@@ -459,10 +496,10 @@
       <div class="pcard">
         <h3>Account</h3>
         <div style="display:flex;flex-direction:column;gap:0.48rem">
-          <button style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.68rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem;transition:color 0.18s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.45)'" id="buyer-change-pw-btn"><i class="fas fa-key"></i> Change Password</button>
-          <button style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.68rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem;transition:color 0.18s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.45)'"><i class="fas fa-shield-halved"></i> Two-Factor Authentication</button>
+          <button style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.68rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem;transition:color 0.18s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'" id="buyer-change-pw-btn"><i class="fas fa-key"></i> Change Password</button>
+          <button style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.68rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem;transition:color 0.18s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'"><i class="fas fa-shield-halved"></i> Two-Factor Authentication</button>
           <button onclick="window.location.href='dashboard-seller.html'" style="background:var(--amber-dim);border:1px solid rgba(245,158,11,0.2);color:var(--amber);padding:0.68rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem"><i class="fas fa-store"></i> Switch to Seller Dashboard</button>
-          <button style="background:transparent;border:1px solid rgba(239,68,68,0.2);color:#F87171;padding:0.68rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem" onclick="if(confirm('Delete your account?'))toast('Contact support@tradex.com','inf')"><i class="fas fa-trash"></i> Delete Account</button>
+          <button style="background:transparent;border:1px solid rgba(239,68,68,0.2);color:#F87171;padding:0.68rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem" onclick="if(confirm('Delete your account?'))toast('Contact support@vendio.com','inf')"><i class="fas fa-trash"></i> Delete Account</button>
         </div>
       </div>
     </div>
@@ -472,7 +509,7 @@
   <div class="panel" id="panel-notifications">
     <div class="ph">
       <div><h1>Notifications</h1><p>Order updates, messages and more.</p></div>
-      <button onclick="markAllRead()" style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.45rem 1rem;border-radius:8px;font-size:0.8rem;cursor:pointer;transition:color 0.2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.45)'">Mark all read</button>
+      <button onclick="markAllRead()" style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.45rem 1rem;border-radius:8px;font-size:0.8rem;cursor:pointer;transition:color 0.2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Mark all read</button>
     </div>
     <div id="notif-list"></div>
   </div>
@@ -869,7 +906,7 @@ async function loadAddresses(){
         ${a.phone?`<div style="font-size:0.78rem;color:var(--dim);margin-top:0.2rem">${a.phone}</div>`:''}
       </div>
       <div style="display:flex;gap:0.4rem;flex-shrink:0">
-        <button onclick="editAddr(${a.id})" style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.35rem 0.7rem;border-radius:7px;font-size:0.76rem;cursor:pointer;transition:color 0.2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.45)'">Edit</button>
+        <button onclick="editAddr(${a.id})" style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.35rem 0.7rem;border-radius:7px;font-size:0.76rem;cursor:pointer;transition:color 0.2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Edit</button>
         <button onclick="deleteAddr(${a.id})" style="background:transparent;border:1px solid rgba(239,68,68,0.2);color:#F87171;padding:0.35rem 0.7rem;border-radius:7px;font-size:0.76rem;cursor:pointer">Delete</button>
       </div>
     </div>`).join('');
@@ -1145,5 +1182,29 @@ init();
   </div>
 </div>
 
+<script>
+  /* ── THEME ── */
+  (function(){
+    var t=localStorage.getItem('vendio-theme')||'light';
+    document.documentElement.setAttribute('data-theme',t);
+  })();
+  function _applyTheme(m){
+    document.documentElement.setAttribute('data-theme',m);
+    localStorage.setItem('vendio-theme',m);
+    document.querySelectorAll('.theme-toggle').forEach(function(b){
+      b.innerHTML=m==='dark'?'<i class="fas fa-sun"></i>':'<i class="fas fa-moon"></i>';
+      b.title=m==='dark'?'Light mode':'Dark mode';
+    });
+  }
+  function _toggleTheme(){
+    _applyTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');
+  }
+  document.addEventListener('DOMContentLoaded',function(){
+    _applyTheme(localStorage.getItem('vendio-theme')||'light');
+    document.querySelectorAll('.theme-toggle').forEach(function(b){
+      b.addEventListener('click',_toggleTheme);
+    });
+  });
+  </script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 /*
   ============================================================
-  dashboard.backend.js — TRADEX SHARED BACKEND v2
+  dashboard.backend.js — VENDIO SHARED BACKEND v2
   All key events fire emails + in-app notifications.
   ============================================================
 */
@@ -27,7 +27,7 @@ window.DB = {
 
   /* ══ AUTH ══ */
   getUser: async () => { const { data: { user } } = await _dbSb.auth.getUser(); return user; },
-  logout: async () => { await _dbSb.auth.signOut(); window.location.href = 'tradex-auth.html'; },
+  logout: async () => { await _dbSb.auth.signOut(); window.location.href = 'vendio-auth.html'; },
   updateProfile: async (meta) => {
     const { error } = await _dbSb.auth.updateUser({ data: meta });
     if (!error) {

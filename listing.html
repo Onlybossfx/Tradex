@@ -3,22 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tradex — Listing</title>
-  <meta name="description"        content="Find the best products, services and skills on Tradex marketplace." />
+  <title>Vendio — Listing</title>
+  <meta name="description"        content="Find the best products, services and skills on Vendio marketplace." />
   <meta name="robots"             content="index, follow" />
   <meta property="og:type"        content="product" />
-  <meta property="og:site_name"   content="Tradex" />
-  <meta property="og:url"         id="og-url"   content="https://tradex.market/listing.html" />
-  <meta property="og:title"       id="og-title" content="Tradex Listing" />
-  <meta property="og:description" id="og-desc"  content="Find the best products and services on Tradex." />
-  <meta property="og:image"       id="og-img"   content="https://tradex.market/og-image.png" />
+  <meta property="og:site_name"   content="Vendio" />
+  <meta property="og:url"         id="og-url"   content="https://vendio.market/listing.html" />
+  <meta property="og:title"       id="og-title" content="Vendio Listing" />
+  <meta property="og:description" id="og-desc"  content="Find the best products and services on Vendio." />
+  <meta property="og:image"       id="og-img"   content="https://vendio.market/og-image.png" />
   <meta property="og:price:amount"       id="og-price"    content="" />
   <meta property="og:price:currency"     content="USD" />
   <meta name="twitter:card"       content="summary_large_image" />
-  <meta name="twitter:title"      id="tw-title" content="Tradex Listing" />
-  <meta name="twitter:description" id="tw-desc" content="Find the best products and services on Tradex." />
-  <meta name="twitter:image"      id="tw-img"   content="https://tradex.market/og-image.png" />
-  <link rel="canonical"           id="canonical" href="https://tradex.market/listing.html" />
+  <meta name="twitter:title"      id="tw-title" content="Vendio Listing" />
+  <meta name="twitter:description" id="tw-desc" content="Find the best products and services on Vendio." />
+  <meta name="twitter:image"      id="tw-img"   content="https://vendio.market/og-image.png" />
+  <link rel="canonical"           id="canonical" href="https://vendio.market/listing.html" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F59E0B" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -29,18 +29,45 @@
   <script src="listings.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --amber: #F59E0B; --amber-light: #FBBF24; --amber-dim: rgba(245,158,11,0.1);
-      --bg: #0a0a0a; --bg2: #0f0f0f; --bg3: #141414; --bg4: #181818;
-      --border: rgba(255,255,255,0.07); --border-md: rgba(255,255,255,0.11);
-      --text: #fff; --muted: rgba(255,255,255,0.45); --dim: rgba(255,255,255,0.22);
-      --error: #EF4444; --success: #10B981;
+        /* ── LIGHT MODE (default) ── */
+    :root, [data-theme="light"] {
+      --amber: #D97706;
+      --amber-light: #F59E0B;
+      --amber-dim: rgba(217,119,6,0.1);
+      --bg: #F9F7F4;
+      --bg2: #EEE9E2;
+      --bg3: #E4DDD4;
+      --bg4: #D9D0C5;
+      --border: rgba(0,0,0,0.09);
+      --border-md: rgba(0,0,0,0.14);
+      --text: #1A1714;
+      --muted: rgba(26,23,20,0.5);
+      --dim: rgba(26,23,20,0.32);
+      --error: #DC2626;
+      --success: #059669;
       --serif: 'Playfair Display', Georgia, serif;
       --sans: 'DM Sans', system-ui, sans-serif;
-      --nav-h: 62px;
+      --sw: 240px; --nh: 62px;
+    }
+    /* ── DARK MODE ── */
+    [data-theme="dark"] {
+      --amber: #F59E0B;
+      --amber-light: #FBBF24;
+      --amber-dim: rgba(245,158,11,0.1);
+      --bg: #0a0a0a;
+      --bg2: #0f0f0f;
+      --bg3: #141414;
+      --bg4: #181818;
+      --border: rgba(255,255,255,0.07);
+      --border-md: rgba(255,255,255,0.11);
+      --text: #ffffff;
+      --muted: rgba(255,255,255,0.45);
+      --dim: rgba(255,255,255,0.22);
+      --error: #EF4444;
+      --success: #10B981;
     }
     html { overflow-x: hidden; scroll-behavior: smooth; }
-    body { background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    body { background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; transition: background 0.25s, color 0.25s; overflow-x: hidden; }
     a { text-decoration: none; color: inherit; }
     button { cursor: pointer; font-family: var(--sans); }
 
@@ -85,9 +112,9 @@
     .cat-pill { background: var(--amber-dim); border: 1px solid rgba(245,158,11,0.2); color: var(--amber); font-size: 0.72rem; font-weight: 600; padding: 0.2rem 0.65rem; border-radius: 100px; }
     .l-badge { font-size: 0.68rem; font-weight: 700; padding: 0.18rem 0.55rem; border-radius: 100px; }
     .badge-top  { background: var(--amber); color: #0a0a0a; }
-    .badge-best { background: #6366F1; color: #fff; }
-    .badge-new  { background: var(--success); color: #fff; }
-    .badge-ver  { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid var(--border-md); }
+    .badge-best { background: #6366F1; color: var(--text); }
+    .badge-new  { background: var(--success); color: var(--text); }
+    .badge-ver  { background: rgba(255,255,255,0.1); color: var(--text); border: 1px solid var(--border-md); }
     .listing-title { font-family: var(--serif); font-size: clamp(1.3rem,5vw,2rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 0.85rem; }
     .listing-stats { display: flex; gap: 1rem; flex-wrap: wrap; }
     .stat-item { display: flex; align-items: center; gap: 0.35rem; font-size: 0.82rem; }
@@ -113,7 +140,7 @@
     .pkg-price { font-family: var(--serif); font-size: 1.8rem; font-weight: 700; color: var(--amber); margin-bottom: 0.25rem; }
     .pkg-note { font-size: 0.78rem; color: var(--muted); margin-bottom: 0.75rem; }
     .pkg-feats { display: flex; flex-direction: column; gap: 0.42rem; margin-bottom: 0.85rem; }
-    .pkg-feat { display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; color: rgba(255,255,255,0.65); }
+    .pkg-feat { display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; color: var(--muted); }
     .pf-check { color: var(--success); font-size: 0.78rem; flex-shrink: 0; }
     .pkg-del { display: flex; align-items: center; gap: 0.5rem; background: var(--bg3); border-radius: 8px; padding: 0.55rem 0.8rem; font-size: 0.82rem; }
     .pkg-del strong { color: var(--text); }
@@ -136,7 +163,7 @@
     @keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
 
     /* description */
-    .desc-body { color: rgba(255,255,255,0.7); font-size: 0.9rem; line-height: 1.8; }
+    .desc-body { color: var(--muted); font-size: 0.9rem; line-height: 1.8; }
     .desc-body p { margin-bottom: 0.85rem; }
     .desc-body ul { padding-left: 1.25rem; margin-bottom: 0.85rem; }
     .desc-body li { margin-bottom: 0.35rem; }
@@ -167,7 +194,7 @@
     .rv-name { font-size: 0.85rem; font-weight: 600; }
     .rv-date { font-size: 0.72rem; color: var(--dim); }
     .rv-rating { color: var(--amber); font-size: 0.8rem; flex-shrink: 0; }
-    .rv-text { color: rgba(255,255,255,0.65); font-size: 0.83rem; line-height: 1.65; }
+    .rv-text { color: var(--muted); font-size: 0.83rem; line-height: 1.65; }
     .no-reviews { color: var(--muted); font-size: 0.88rem; text-align: center; padding: 2rem 0; }
 
     /* seller tab */
@@ -180,7 +207,7 @@
     .sf-stat { text-align: center; background: var(--bg3); border-radius: 10px; padding: 0.6rem 0.4rem; }
     .ss-val { font-family: var(--serif); font-size: 1.05rem; font-weight: 700; color: var(--amber); }
     .ss-lbl { font-size: 0.68rem; color: var(--muted); margin-top: 0.12rem; }
-    .sf-bio { color: rgba(255,255,255,0.6); font-size: 0.83rem; line-height: 1.65; margin-bottom: 1rem; }
+    .sf-bio { color: var(--muted); font-size: 0.83rem; line-height: 1.65; margin-bottom: 1rem; }
     .sf-pills { display: flex; gap: 0.4rem; flex-wrap: wrap; }
     .sf-pill { background: var(--bg3); border: 1px solid var(--border-md); color: var(--muted); font-size: 0.73rem; padding: 0.2rem 0.55rem; border-radius: 100px; }
 
@@ -253,6 +280,15 @@
     }
     .img-unavailable i { font-size: 2rem; color: var(--dim); }
     .img-unavailable span { font-size: 0.72rem; color: var(--dim); }
+
+    /* ── THEME TOGGLE ── */
+    .theme-toggle {
+      width: 30px; height: 30px; border-radius: 7px;
+      background: transparent; border: 1px solid var(--border-md);
+      color: var(--muted); display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+    }
+    .theme-toggle:hover { color: var(--text); border-color: var(--amber); background: var(--amber-dim); }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
@@ -261,10 +297,10 @@
 <!-- NAV -->
 <nav id="nav">
   <button class="nav-back" onclick="history.back()">←</button>
-  <a href="index.html" class="nav-logo"><span>Tradex</span><i></i></a>
+  <a href="index.html" class="nav-logo"><span>Vendio</span><i></i></a>
   <div class="nav-right">
-    <button class="btn-sm"       id="nav-login"  onclick="window.location.href='tradex-auth.html'" style="display:none">Log In</button>
-    <button class="btn-amber-sm" id="nav-signup" onclick="window.location.href='tradex-auth.html#signup'" style="display:none">Sign Up</button>
+    <button class="btn-sm"       id="nav-login"  onclick="window.location.href='vendio-auth.html'" style="display:none">Log In</button>
+    <button class="btn-amber-sm" id="nav-signup" onclick="window.location.href='vendio-auth.html#signup'" style="display:none">Sign Up</button>
     <div id="nav-avatar" style="display:none;width:30px;height:30px;border-radius:50%;background:var(--amber-dim);border:1px solid rgba(245,158,11,0.3);align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;color:var(--amber);cursor:pointer;flex-shrink:0"></div>
   </div>
 </nav>
@@ -466,7 +502,7 @@ function showError(msg) {
 /* ── Render everything ── */
 function renderAll() {
   const l = listing;
-  document.title = `Tradex — ${l.title}`;
+  document.title = `Vendio — ${l.title}`;
 
   /* breadcrumb */
   $('bc-cat').textContent   = Listings.getCatName(l.category);
@@ -535,16 +571,16 @@ function renderAll() {
   /* reviews + seller loaded async via loadReviews() and loadSellerProfile() */
 
   /* ── Dynamic SEO / OG tags ── */
-  document.title = `${l.title} — Tradex`;
+  document.title = `${l.title} — Vendio`;
   const _setMeta = (id, val) => { const el=document.getElementById(id); if(el) el.setAttribute('content', val); };
   const _desc = (l.description||'').replace(/<[^>]+>/g,'').slice(0,160);
   const _img  = l.images?.[0] || '';
-  _setMeta('og-title',  `${l.title} — Tradex`);
+  _setMeta('og-title',  `${l.title} — Vendio`);
   _setMeta('og-desc',   _desc);
   _setMeta('og-img',    _img);
   _setMeta('og-url',    window.location.href);
   _setMeta('og-price',  String(l.price));
-  _setMeta('tw-title',  `${l.title} — Tradex`);
+  _setMeta('tw-title',  `${l.title} — Vendio`);
   _setMeta('tw-desc',   _desc);
   _setMeta('tw-img',    _img);
   const _can = document.getElementById('canonical');
@@ -675,7 +711,7 @@ async function loadSellerProfile() {
 
   const name     = seller?.full_name || l.seller_name || 'Unknown Seller';
   const location = seller?.location  || l.seller_location || '';
-  const bio      = seller?.bio       || `Seller on Tradex${location ? ' based in ' + location : ''}.`;
+  const bio      = seller?.bio       || `Seller on Vendio${location ? ' based in ' + location : ''}.`;
   const verified = seller?.verified  || l.seller_verified;
   const orders   = seller?.totalOrders   ?? l.order_count   ?? 0;
   const rating   = seller?.avgRating     ?? l.rating        ?? '—';
@@ -766,7 +802,7 @@ async function doBuy(btn) {
   if (!listing) return;
   const pkg = getPackages(listing)[selPkgIdx];
   /* save checkout data first — survives login redirect */
-  sessionStorage.setItem('tradex_checkout', JSON.stringify({
+  sessionStorage.setItem('vendio_checkout', JSON.stringify({
     listing_id:    listing.id,
     listing_title: listing.title,
     listing_image: listing.images?.[0] || '',
@@ -829,5 +865,29 @@ function clearAlerts() { ['a-err','a-ok','a-info'].forEach(i => $(i).classList.r
 /* ── Init ── */
 loadListing();
 </script>
+<script>
+  /* ── THEME ── */
+  (function(){
+    var t=localStorage.getItem('vendio-theme')||'light';
+    document.documentElement.setAttribute('data-theme',t);
+  })();
+  function _applyTheme(m){
+    document.documentElement.setAttribute('data-theme',m);
+    localStorage.setItem('vendio-theme',m);
+    document.querySelectorAll('.theme-toggle').forEach(function(b){
+      b.innerHTML=m==='dark'?'<i class="fas fa-sun"></i>':'<i class="fas fa-moon"></i>';
+      b.title=m==='dark'?'Light mode':'Dark mode';
+    });
+  }
+  function _toggleTheme(){
+    _applyTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');
+  }
+  document.addEventListener('DOMContentLoaded',function(){
+    _applyTheme(localStorage.getItem('vendio-theme')||'light');
+    document.querySelectorAll('.theme-toggle').forEach(function(b){
+      b.addEventListener('click',_toggleTheme);
+    });
+  });
+  </script>
 </body>
 </html>

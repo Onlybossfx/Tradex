@@ -3,24 +3,52 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tradex — Two-Factor Verification</title>
+  <title>Vendio — Two-Factor Verification</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="auth.backend.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --amber: #F59E0B; --amber-light: #FBBF24; --amber-dim: rgba(245,158,11,0.12);
-      --bg: #0a0a0a; --bg2: #0f0f0f; --bg3: #141414;
-      --border: rgba(255,255,255,0.08); --border-focus: rgba(245,158,11,0.5);
-      --text: #fff; --muted: rgba(255,255,255,0.45); --dim: rgba(255,255,255,0.25);
-      --error: #EF4444; --success: #10B981;
+        /* ── LIGHT MODE (default) ── */
+    :root, [data-theme="light"] {
+      --amber: #D97706;
+      --amber-light: #F59E0B;
+      --amber-dim: rgba(217,119,6,0.1);
+      --bg: #F9F7F4;
+      --bg2: #EEE9E2;
+      --bg3: #E4DDD4;
+      --bg4: #D9D0C5;
+      --border: rgba(0,0,0,0.09);
+      --border-md: rgba(0,0,0,0.14);
+      --text: #1A1714;
+      --muted: rgba(26,23,20,0.5);
+      --dim: rgba(26,23,20,0.32);
+      --error: #DC2626;
+      --success: #059669;
       --serif: 'Playfair Display', Georgia, serif;
       --sans: 'DM Sans', system-ui, sans-serif;
+      --sw: 240px; --nh: 62px;
+    }
+    /* ── DARK MODE ── */
+    [data-theme="dark"] {
+      --amber: #F59E0B;
+      --amber-light: #FBBF24;
+      --amber-dim: rgba(245,158,11,0.1);
+      --bg: #0a0a0a;
+      --bg2: #0f0f0f;
+      --bg3: #141414;
+      --bg4: #181818;
+      --border: rgba(255,255,255,0.07);
+      --border-md: rgba(255,255,255,0.11);
+      --text: #ffffff;
+      --muted: rgba(255,255,255,0.45);
+      --dim: rgba(255,255,255,0.22);
+      --error: #EF4444;
+      --success: #10B981;
     }
     html, body { height: 100%; overflow-x: hidden; }
-    body { background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem 1.25rem; }
+    body { background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; transition: background 0.25s, color 0.25s; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem 1.25rem; }
 
     /* ── CARD ── */
     .card {
@@ -95,6 +123,15 @@
       .card { padding: 2rem 1.25rem; border-radius: 16px; border: none; background: transparent; }
       .otp { width: 44px; height: 52px; font-size: 1.25rem; }
     }
+
+    /* ── THEME TOGGLE ── */
+    .theme-toggle {
+      width: 30px; height: 30px; border-radius: 7px;
+      background: transparent; border: 1px solid var(--border-md);
+      color: var(--muted); display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+    }
+    .theme-toggle:hover { color: var(--text); border-color: var(--amber); background: var(--amber-dim); }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
@@ -102,7 +139,7 @@
   <div class="card">
     <div class="card-glow"></div>
 
-    <a href="tradex-auth.html" class="logo"><span>Tradex</span><i></i></a>
+    <a href="vendio-auth.html" class="logo"><span>Vendio</span><i></i></a>
 
     <div class="head">
       <div class="icon-wrap"><i class="fas fa-lock"></i></div>
@@ -139,16 +176,16 @@
     </div>
 
     <button class="btn-primary" id="verify-btn"><span class="lbl">Verify & Continue</span></button>
-    <button class="back" onclick="window.location.href='tradex-auth.html'">← Back to login</button>
+    <button class="back" onclick="window.location.href='vendio-auth.html'">← Back to login</button>
   </div>
 
 <script>
 /*
   ============================================================
   2fa.html — FRONTEND ONLY
-  Reads context from sessionStorage set by tradex-auth.html:
-    tradex_2fa_email   — user's email address
-    tradex_2fa_context — 'login' | 'signup'
+  Reads context from sessionStorage set by vendio-auth.html:
+    vendio_2fa_email   — user's email address
+    vendio_2fa_context — 'login' | 'signup'
 
   Backend hooks via window.Auth (auth.backend.js):
     Auth.verifyOtp(email, token)  → { error }
@@ -158,8 +195,8 @@
 */
 
 /* ── Read context from previous page ── */
-const email   = sessionStorage.getItem('tradex_2fa_email')   || '';
-const context = sessionStorage.getItem('tradex_2fa_context') || 'login';
+const email   = sessionStorage.getItem('vendio_2fa_email')   || '';
+const context = sessionStorage.getItem('vendio_2fa_context') || 'login';
 
 /* ── Show email in header ── */
 document.getElementById('target-display').textContent = email || 'your email';
@@ -248,8 +285,8 @@ async function verify() {
   }
 
   showAlert('otp-ok', null, 'ok');
-  sessionStorage.removeItem('tradex_2fa_email');
-  sessionStorage.removeItem('tradex_2fa_context');
+  sessionStorage.removeItem('vendio_2fa_email');
+  sessionStorage.removeItem('vendio_2fa_context');
 
   /* ── BACKEND HOOK: onSuccess ── */
   setTimeout(() => api('onSuccess', { context }), 1200);
@@ -283,5 +320,29 @@ $('resend-btn').addEventListener('click', async () => {
 startTimer();
 if (otpInputs[0]) otpInputs[0].focus();
 </script>
+<script>
+  /* ── THEME ── */
+  (function(){
+    var t=localStorage.getItem('vendio-theme')||'light';
+    document.documentElement.setAttribute('data-theme',t);
+  })();
+  function _applyTheme(m){
+    document.documentElement.setAttribute('data-theme',m);
+    localStorage.setItem('vendio-theme',m);
+    document.querySelectorAll('.theme-toggle').forEach(function(b){
+      b.innerHTML=m==='dark'?'<i class="fas fa-sun"></i>':'<i class="fas fa-moon"></i>';
+      b.title=m==='dark'?'Light mode':'Dark mode';
+    });
+  }
+  function _toggleTheme(){
+    _applyTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');
+  }
+  document.addEventListener('DOMContentLoaded',function(){
+    _applyTheme(localStorage.getItem('vendio-theme')||'light');
+    document.querySelectorAll('.theme-toggle').forEach(function(b){
+      b.addEventListener('click',_toggleTheme);
+    });
+  });
+  </script>
 </body>
 </html>
