@@ -1,6 +1,6 @@
 /*
   ============================================================
-  auth.backend.js — VENDIO AUTH BACKEND
+  auth.backend.js — TRADEX AUTH BACKEND
   Supabase implementation for all 3 auth pages.
 
   SETUP:
@@ -12,7 +12,7 @@
      Find them at: https://app.supabase.com → Settings → API
 
   PAGES THAT USE THIS FILE:
-    vendio-auth.html      → login, signup, OAuth
+    tradex-auth.html      → login, signup, OAuth
     2fa.html              → verifyOtp, resendOtp
     account-recovery.html → forgotPassword, updatePassword
   ============================================================
@@ -42,7 +42,7 @@ window.Auth = {
 
   /* ─────────────────────────────────────────────
      LOGIN
-     Called by: vendio-auth.html
+     Called by: tradex-auth.html
      On success → frontend redirects to 2fa.html
   ───────────────────────────────────────────── */
   login: async (email, password) => {
@@ -52,7 +52,7 @@ window.Auth = {
 
   /* ─────────────────────────────────────────────
      SIGNUP
-     Called by: vendio-auth.html (step 2)
+     Called by: tradex-auth.html (step 2)
      Saves role + name to users table.
      On success → frontend moves to step 3 (2FA setup)
   ───────────────────────────────────────────── */
@@ -62,7 +62,7 @@ window.Auth = {
       password,
       options: {
         data: meta,
-        emailRedirectTo: `${BASE_URL}/vendio-auth.html?confirmed=1`,
+        emailRedirectTo: `${BASE_URL}/tradex-auth.html?confirmed=1`,
       },
     });
 
@@ -95,14 +95,14 @@ window.Auth = {
 
   /* ─────────────────────────────────────────────
      OAUTH LOGIN
-     Called by: vendio-auth.html
+     Called by: tradex-auth.html
      Supabase handles the redirect automatically.
   ───────────────────────────────────────────── */
   loginWithOAuth: async (provider) => {
     await sb.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${BASE_URL}/vendio-auth.html?oauth=1`,
+        redirectTo: `${BASE_URL}/tradex-auth.html?oauth=1`,
       },
     });
   },
@@ -168,15 +168,15 @@ window.Auth = {
   ───────────────────────────────────────────── */
   onSuccess: async ({ context, role }) => {
     /* ── Always check for a pending return destination first ── */
-    const returnTo = sessionStorage.getItem('vendio_return_to');
+    const returnTo = sessionStorage.getItem('tradex_return_to');
     if (returnTo) {
-      sessionStorage.removeItem('vendio_return_to');
+      sessionStorage.removeItem('tradex_return_to');
       window.location.href = returnTo;
       return;
     }
 
     /* Also handle legacy checkout redirect */
-    if (sessionStorage.getItem('vendio_checkout') && context === 'login') {
+    if (sessionStorage.getItem('tradex_checkout') && context === 'login') {
       window.location.href = 'checkout.html';
       return;
     }

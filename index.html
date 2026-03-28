@@ -3,23 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vendio — One Marketplace. Every Kind of Trade.</title>
+  <title>Tradex — One Marketplace. Every Kind of Trade.</title>
   <meta name="description" content="Buy and sell physical goods, digital products, freelance skills and experiences — all in one trusted marketplace with escrow payments and verified sellers." />
   <meta name="keywords" content="marketplace, buy, sell, freelance, digital products, escrow, Africa, Nigeria, Ghana, Kenya" />
   <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://vendio.market/" />
+  <link rel="canonical" href="https://tradex.market/" />
   <!-- Open Graph -->
   <meta property="og:type"        content="website" />
-  <meta property="og:url"         content="https://vendio.market/" />
-  <meta property="og:title"       content="Vendio — One Marketplace. Every Kind of Trade." />
+  <meta property="og:url"         content="https://tradex.market/" />
+  <meta property="og:title"       content="Tradex — One Marketplace. Every Kind of Trade." />
   <meta property="og:description" content="Buy and sell physical goods, digital products, freelance skills and experiences — all in one trusted marketplace with escrow payments and verified sellers." />
-  <meta property="og:image"       content="https://vendio.market/og-image.png" />
-  <meta property="og:site_name"   content="Vendio" />
+  <meta property="og:image"       content="https://tradex.market/og-image.png" />
+  <meta property="og:site_name"   content="Tradex" />
   <!-- Twitter -->
   <meta name="twitter:card"        content="summary_large_image" />
-  <meta name="twitter:title"       content="Vendio — One Marketplace. Every Kind of Trade." />
+  <meta name="twitter:title"       content="Tradex — One Marketplace. Every Kind of Trade." />
   <meta name="twitter:description" content="Buy, sell, and trade anything — escrow-protected marketplace for Africa, Europe and beyond." />
-  <meta name="twitter:image"       content="https://vendio.market/og-image.png" />
+  <meta name="twitter:image"       content="https://tradex.market/og-image.png" />
   <!-- PWA -->
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F59E0B" />
@@ -28,22 +28,7 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ── LIGHT MODE (default) ── */
-    :root, [data-theme="light"] {
-      --amber: #D97706;
-      --amber-light: #F59E0B;
-      --bg: #F9F7F4;
-      --bg2: #F0EDE8;
-      --border: rgba(0,0,0,0.08);
-      --border-bright: rgba(0,0,0,0.13);
-      --text: #1A1714;
-      --text-muted: rgba(26,23,20,0.5);
-      --text-dim: rgba(26,23,20,0.32);
-      --serif: 'Playfair Display', Georgia, serif;
-      --sans: 'DM Sans', system-ui, sans-serif;
-    }
-    /* ── DARK MODE ── */
-    [data-theme="dark"] {
+    :root {
       --amber: #F59E0B;
       --amber-light: #FBBF24;
       --bg: #0a0a0a;
@@ -53,10 +38,12 @@
       --text: #ffffff;
       --text-muted: rgba(255,255,255,0.45);
       --text-dim: rgba(255,255,255,0.28);
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans: 'DM Sans', system-ui, sans-serif;
     }
 
     html { overflow-x: hidden; scroll-behavior: smooth; }
-    body { background: var(--bg); color: var(--text); font-family: var(--sans); overflow-x: hidden; -webkit-font-smoothing: antialiased; transition: background 0.25s, color 0.25s; transition: background 0.25s, color 0.25s; }
+    body { background: var(--bg); color: var(--text); font-family: var(--sans); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
 
     a { text-decoration: none; color: inherit; }
     button { cursor: pointer; font-family: var(--sans); }
@@ -75,35 +62,22 @@
       border-bottom: 1px solid transparent;
     }
     #nav.scrolled {
-      background: rgba(249,247,244,0.94);
+      background: rgba(10,10,10,0.94);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       border-color: var(--border);
     }
-    [data-theme="dark"] #nav.scrolled { background: rgba(10,10,10,0.94); }
-    [data-theme="dark"] #nav.scrolled {
-      background: rgba(10,10,10,0.94);
-    }
-
-    /* ── THEME TOGGLE BUTTON ── */
-    .theme-toggle {
-      width: 32px; height: 32px; border-radius: 8px;
-      background: transparent; border: 1px solid var(--border-bright);
-      color: var(--text-muted); display: flex; align-items: center; justify-content: center;
-      font-size: 0.82rem; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
-    }
-    .theme-toggle:hover { color: var(--text); border-color: var(--amber); }
     .nav-logo { display: flex; align-items: center; gap: 6px; }
     .nav-logo span { font-family: var(--serif); font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; }
     .nav-logo i { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); display: inline-block; margin-bottom: 2px; }
     .nav-links { display: flex; align-items: center; gap: 1.75rem; }
-    .nav-links a { color: var(--text-muted); font-size: 0.875rem; transition: color 0.2s; }
-    .nav-links a:hover { color: var(--text); }
+    .nav-links a { color: rgba(255,255,255,0.65); font-size: 0.875rem; transition: color 0.2s; }
+    .nav-links a:hover { color: #fff; }
     .btn-outline {
-      background: transparent; border: 1px solid var(--border-bright); color: var(--text);
+      background: transparent; border: 1px solid rgba(255,255,255,0.25); color: #fff;
       padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.85rem; transition: background 0.2s;
     }
-    .btn-outline:hover { background: rgba(0,0,0,0.06); }
+    .btn-outline:hover { background: rgba(255,255,255,0.08); }
     .btn-amber {
       background: var(--amber); border: none; color: #0a0a0a;
       padding: 0.4rem 1.1rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600; transition: background 0.2s;
@@ -112,7 +86,7 @@
 
     /* hamburger */
     .hamburger { display: none; flex-direction: column; gap: 5px; background: transparent; border: none; padding: 6px; }
-    .hamburger span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 2px; transition: transform 0.25s, opacity 0.25s; }
+    .hamburger span { display: block; width: 22px; height: 2px; background: #fff; border-radius: 2px; transition: transform 0.25s, opacity 0.25s; }
     .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
     .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
     .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
@@ -120,12 +94,12 @@
     /* mobile menu */
     #mobile-menu {
       display: none; position: fixed; top: 62px; left: 0; right: 0; z-index: 99;
-      background: var(--bg); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      background: rgba(10,10,10,0.97); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
       border-bottom: 1px solid var(--border); padding: 1.5rem;
       flex-direction: column; gap: 0;
     }
     #mobile-menu.open { display: flex; }
-    #mobile-menu a { color: var(--text-muted); font-size: 1.05rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border); }
+    #mobile-menu a { color: rgba(255,255,255,0.7); font-size: 1.05rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border); }
     .mobile-btns { display: flex; gap: 0.75rem; margin-top: 1rem; }
     .mobile-btns button { flex: 1; padding: 0.7rem; border-radius: 8px; font-size: 0.9rem; }
 
@@ -144,8 +118,8 @@
     }
     .hero-grid {
       position: absolute; inset: 0;
-      background-image: linear-gradient(rgba(0,0,0,0.045) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(0,0,0,0.045) 1px, transparent 1px);
+      background-image: linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
       background-size: 52px 52px; pointer-events: none;
     }
     .hero-inner { position: relative; z-index: 2; max-width: 720px; width: 100%; }
@@ -161,23 +135,23 @@
       font-weight: 700; line-height: 1.1; margin-bottom: 1.25rem; letter-spacing: -0.03em;
     }
     #hero h1 em { color: var(--amber); font-style: normal; }
-    #hero p { color: var(--text-muted); font-size: clamp(0.92rem, 2.5vw, 1.1rem); line-height: 1.7; max-width: 480px; margin: 0 auto 2.25rem; }
+    #hero p { color: rgba(255,255,255,0.52); font-size: clamp(0.92rem, 2.5vw, 1.1rem); line-height: 1.7; max-width: 480px; margin: 0 auto 2.25rem; }
 
     .search-bar {
-      display: flex; background: var(--bg2); border: 1px solid var(--border-bright);
+      display: flex; background: rgba(255,255,255,0.05); border: 1px solid var(--border-bright);
       border-radius: 12px; overflow: hidden; max-width: 520px; margin: 0 auto 1.5rem; width: 100%;
     }
     .search-bar input {
       flex: 1; background: transparent; border: none; outline: none;
-      padding: 0.9rem 1rem; color: var(--text); font-size: 0.9rem; font-family: var(--sans); min-width: 0;
+      padding: 0.9rem 1rem; color: #fff; font-size: 0.9rem; font-family: var(--sans); min-width: 0;
     }
     .search-bar input::placeholder { color: var(--text-muted); }
     .search-bar button { background: var(--amber); border: none; color: #0a0a0a; padding: 0 1.2rem; font-size: 0.88rem; font-weight: 600; white-space: nowrap; flex-shrink: 0; transition: background 0.2s; }
     .search-bar button:hover { background: var(--amber-light); }
 
     .tags { display: flex; gap: 0.5rem; justify-content: center; align-items: center; }
-    .tags .label { color: var(--text-dim); font-size: 0.78rem; flex-shrink: 0; }
-    .tag { background: var(--bg2); border: 1px solid var(--border-bright); color: var(--text-muted); padding: 0.28rem 0.75rem; border-radius: 100px; font-size: 0.78rem; white-space: nowrap; flex-shrink: 0; transition: all 0.2s; }
+    .tags .label { color: rgba(255,255,255,0.35); font-size: 0.78rem; flex-shrink: 0; }
+    .tag { background: rgba(255,255,255,0.05); border: 1px solid var(--border-bright); color: rgba(255,255,255,0.6); padding: 0.28rem 0.75rem; border-radius: 100px; font-size: 0.78rem; white-space: nowrap; flex-shrink: 0; transition: all 0.2s; }
     .tag:hover { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.3); color: var(--amber); }
 
     /* ══════════════════ STATS ══════════════════ */
@@ -201,7 +175,7 @@
     #categories { background: var(--bg); }
     .cat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; }
     .cat-card {
-      background: var(--bg2); border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
       border-radius: 14px; padding: 1.75rem 1.5rem; cursor: pointer; transition: all 0.3s;
     }
     .cat-card:hover { background: rgba(245,158,11,0.06); border-color: rgba(245,158,11,0.25); transform: translateY(-4px); }
@@ -214,19 +188,19 @@
     #listings { background: var(--bg2); }
     .filter-row { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
     .filter-btn {
-      background: var(--bg2); border: 1px solid var(--border-bright);
-      color: var(--text-muted); padding: 0.38rem 0.95rem; border-radius: 100px;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border-bright);
+      color: rgba(255,255,255,0.6); padding: 0.38rem 0.95rem; border-radius: 100px;
       font-size: 0.8rem; white-space: nowrap; flex-shrink: 0; transition: all 0.2s;
     }
     .filter-btn.active { background: var(--amber); border-color: var(--amber); color: #0a0a0a; font-weight: 600; }
     .listings-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
     .listing-card {
-      background: var(--bg2); border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
       border-radius: 14px; overflow: hidden; cursor: pointer; transition: all 0.3s;
     }
     .listing-card:hover { border-color: rgba(245,158,11,0.2); transform: translateY(-3px); }
     .listing-thumb {
-      height: 110px; background: var(--bg2);
+      height: 110px; background: rgba(255,255,255,0.04);
       display: flex; align-items: center; justify-content: center;
       font-size: 3rem; position: relative;
     }
@@ -235,19 +209,19 @@
       font-size: 0.65rem; padding: 0.18rem 0.55rem; border-radius: 100px; font-weight: 600;
     }
     .badge-top { background: var(--amber); color: #0a0a0a; }
-    .badge-best { background: #6366F1; color: var(--text); }
-    .badge-other { background: var(--border-bright); color: var(--text); }
+    .badge-best { background: #6366F1; color: #fff; }
+    .badge-other { background: rgba(255,255,255,0.12); color: #fff; }
     .listing-body { padding: 1rem; }
     .listing-title { font-size: 0.88rem; font-weight: 600; margin-bottom: 0.28rem; line-height: 1.35; }
-    .listing-seller { color: var(--text-muted); font-size: 0.77rem; margin-bottom: 0.6rem; }
+    .listing-seller { color: rgba(255,255,255,0.38); font-size: 0.77rem; margin-bottom: 0.6rem; }
     .listing-foot { display: flex; justify-content: space-between; align-items: center; }
     .listing-rating { display: flex; align-items: center; gap: 4px; }
     .listing-rating .star { color: var(--amber); font-size: 0.8rem; }
-    .listing-rating .rv { color: var(--text); font-size: 0.8rem; font-weight: 500; }
-    .listing-rating .rc { color: var(--text-dim); font-size: 0.74rem; }
+    .listing-rating .rv { color: #fff; font-size: 0.8rem; font-weight: 500; }
+    .listing-rating .rc { color: rgba(255,255,255,0.3); font-size: 0.74rem; }
     .listing-price { font-family: var(--serif); font-size: 0.98rem; font-weight: 700; color: var(--amber); }
     .browse-more { text-align: center; margin-top: 2.5rem; }
-    .btn-ghost { background: transparent; border: 1px solid var(--border-md); color: var(--text); padding: 0.75rem 2rem; border-radius: 8px; font-size: 0.88rem; transition: all 0.2s; }
+    .btn-ghost { background: transparent; border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 0.75rem 2rem; border-radius: 8px; font-size: 0.88rem; transition: all 0.2s; }
     .btn-ghost:hover { border-color: var(--amber); color: var(--amber); }
 
     /* ══════════════════ HOW IT WORKS ══════════════════ */
@@ -264,18 +238,18 @@
     .step-desc { color: var(--text-muted); font-size: 0.79rem; line-height: 1.6; }
 
     /* ══════════════════ TRUST ══════════════════ */
-    #trust { background: var(--bg2); border-top: 1px solid var(--border); }
+    #trust { background: var(--bg2); border-top: 1px solid rgba(255,255,255,0.05); }
     .trust-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; }
-    .trust-card { text-align: center; padding: 1.25rem 0.75rem; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; }
+    .trust-card { text-align: center; padding: 1.25rem 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; }
     .trust-icon { font-size: 1.75rem; margin-bottom: 0.6rem; }
     .trust-title { font-weight: 600; font-size: 0.88rem; margin-bottom: 0.35rem; }
     .trust-desc { color: var(--text-muted); font-size: 0.76rem; line-height: 1.5; }
 
     /* ══════════════════ PRICING ══════════════════ */
-    #pricing { background: var(--bg); border-top: 1px solid var(--border); }
+    #pricing { background: var(--bg); border-top: 1px solid rgba(255,255,255,0.05); }
     .pricing-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
     .plan-card {
-      background: var(--bg2); border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
       border-radius: 16px; padding: 1.75rem 1.5rem; position: relative;
     }
     .plan-card.highlight { background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.35); }
@@ -285,32 +259,32 @@
       padding: 0.22rem 0.9rem; border-radius: 100px; white-space: nowrap; letter-spacing: 0.05em;
     }
     .plan-name { font-weight: 700; font-size: 1rem; margin-bottom: 0.3rem; }
-    .plan-desc { color: var(--text-muted); font-size: 0.8rem; margin-bottom: 1.25rem; }
+    .plan-desc { color: rgba(255,255,255,0.38); font-size: 0.8rem; margin-bottom: 1.25rem; }
     .plan-price { margin-bottom: 1.5rem; }
     .plan-price strong { font-family: var(--serif); font-size: 2.2rem; font-weight: 700; }
     .plan-card.highlight .plan-price strong { color: var(--amber); }
-    .plan-price span { color: var(--text-dim); font-size: 0.78rem; margin-left: 4px; }
+    .plan-price span { color: rgba(255,255,255,0.3); font-size: 0.78rem; margin-left: 4px; }
     .plan-features { margin-bottom: 1.75rem; display: flex; flex-direction: column; gap: 0.6rem; }
     .plan-feature { display: flex; align-items: center; gap: 0.55rem; }
     .plan-feature .check { color: var(--amber); font-size: 0.8rem; flex-shrink: 0; }
-    .plan-feature span { color: var(--muted); font-size: 0.82rem; }
+    .plan-feature span { color: rgba(255,255,255,0.58); font-size: 0.82rem; }
     .plan-btn { width: 100%; padding: 0.78rem; border-radius: 8px; font-size: 0.88rem; font-weight: 600; transition: opacity 0.2s; }
     .plan-btn:hover { opacity: 0.85; }
     .plan-btn.primary { background: var(--amber); border: none; color: #0a0a0a; }
-    .plan-btn.secondary { background: var(--bg3); border: 1px solid var(--border-bright); color: var(--text); }
+    .plan-btn.secondary { background: rgba(255,255,255,0.06); border: 1px solid var(--border-bright); color: #fff; }
     .pricing-note { text-align: center; color: var(--text-dim); font-size: 0.78rem; margin-top: 1.75rem; }
 
     /* ══════════════════ CTA ══════════════════ */
-    #cta { background: var(--bg2); border-top: 1px solid var(--border); position: relative; overflow: hidden; }
+    #cta { background: var(--bg2); border-top: 1px solid rgba(255,255,255,0.05); position: relative; overflow: hidden; }
     .cta-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: min(500px,100vw); height: 280px; background: radial-gradient(ellipse,rgba(245,158,11,0.1) 0%,transparent 70%); pointer-events: none; }
     .cta-inner { max-width: 580px; margin: 0 auto; text-align: center; position: relative; z-index: 1; }
     #cta h2 { font-family: var(--serif); font-size: clamp(1.9rem,6vw,3.2rem); font-weight: 700; margin-bottom: 1rem; letter-spacing: -0.03em; }
-    #cta p { color: var(--text-muted); font-size: 0.98rem; line-height: 1.7; margin-bottom: 2.25rem; }
+    #cta p { color: rgba(255,255,255,0.48); font-size: 0.98rem; line-height: 1.7; margin-bottom: 2.25rem; }
     .cta-btns { display: flex; gap: 0.85rem; justify-content: center; flex-wrap: wrap; }
     .btn-amber-lg { background: var(--amber); border: none; color: #0a0a0a; padding: 0.85rem 2.25rem; border-radius: 8px; font-size: 0.95rem; font-weight: 700; transition: background 0.2s; }
     .btn-amber-lg:hover { background: var(--amber-light); }
-    .btn-outline-lg { background: transparent; border: 1px solid var(--border-md); color: var(--text); padding: 0.85rem 2.25rem; border-radius: 8px; font-size: 0.95rem; transition: border-color 0.2s; }
-    .btn-outline-lg:hover { border-color: var(--muted); }
+    .btn-outline-lg { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 0.85rem 2.25rem; border-radius: 8px; font-size: 0.95rem; transition: border-color 0.2s; }
+    .btn-outline-lg:hover { border-color: rgba(255,255,255,0.5); }
 
     /* ══════════════════ FOOTER ══════════════════ */
     footer { background: var(--bg); border-top: 1px solid var(--border); padding: 2.5rem 1.5rem; }
@@ -319,8 +293,8 @@
     .footer-logo span { font-family: var(--serif); font-weight: 700; font-size: 1.15rem; }
     .footer-logo i { width: 5px; height: 5px; border-radius: 50%; background: var(--amber); display: inline-block; }
     .footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
-    .footer-links a { color: var(--text-dim); font-size: 0.8rem; transition: color 0.2s; }
-    .footer-links a:hover { color: var(--text-muted); }
+    .footer-links a { color: rgba(255,255,255,0.33); font-size: 0.8rem; transition: color 0.2s; }
+    .footer-links a:hover { color: rgba(255,255,255,0.7); }
     .footer-copy { color: var(--text-dim); font-size: 0.75rem; }
 
     /* ══════════════════ FADE-IN ANIMATION ══════════════════ */
@@ -343,7 +317,7 @@
       .steps-grid { grid-template-columns: 1fr; gap: 0.85rem; }
       .step-card {
         display: flex; align-items: flex-start; gap: 1rem;
-        text-align: left; background: var(--bg2);
+        text-align: left; background: rgba(255,255,255,0.03);
         border: 1px solid var(--border); border-radius: 12px; padding: 1rem;
       }
       .step-num { margin: 0; flex-shrink: 0; }
@@ -383,17 +357,16 @@
 <!-- ══════════ NAV ══════════ -->
 <nav id="nav">
   <div class="nav-logo">
-    <span>Vendio</span>
+    <span>Tradex</span>
     <i></i>
   </div>
   <div class="nav-links">
     <a href="browse.html">Browse</a>
     <a href="dashboard-seller.html">Sell</a>
     <a href="#pricing">Pricing</a>
-    <button class="btn-outline" onclick="window.location.href='vendio-auth.html'">Log In</button>
-    <button class="btn-amber" onclick="window.location.href='vendio-auth.html#signup'">Sign Up Free</button>
+    <button class="btn-outline" onclick="window.location.href='tradex-auth.html'">Log In</button>
+    <button class="btn-amber" onclick="window.location.href='tradex-auth.html#signup'">Sign Up Free</button>
   </div>
-  <button class="theme-toggle" title="Dark mode"><i class="fas fa-moon"></i></button>
   <button class="hamburger" id="hamburger" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
@@ -404,8 +377,8 @@
   <a href="#listings">Sell</a>
   <a href="#pricing">Pricing</a>
   <div class="mobile-btns">
-    <button class="btn-outline" style="flex:1;padding:.7rem;border-radius:8px;font-size:.9rem;" onclick="window.location.href='vendio-auth.html'">Log In</button>
-    <button class="btn-amber" style="flex:1;padding:.7rem;border-radius:8px;font-size:.9rem;font-weight:600;" onclick="window.location.href='vendio-auth.html#signup'">Sign Up Free</button>
+    <button class="btn-outline" style="flex:1;padding:.7rem;border-radius:8px;font-size:.9rem;" onclick="window.location.href='tradex-auth.html'">Log In</button>
+    <button class="btn-amber" style="flex:1;padding:.7rem;border-radius:8px;font-size:.9rem;font-weight:600;" onclick="window.location.href='tradex-auth.html#signup'">Sign Up Free</button>
   </div>
 </div>
 
@@ -505,7 +478,7 @@
   <div class="container-sm">
     <div class="section-head">
       <p class="section-tag">SIMPLE PROCESS</p>
-      <h2 class="section-title">How Vendio works</h2>
+      <h2 class="section-title">How Tradex works</h2>
     </div>
     <div class="steps-grid">
       <div class="step-card fade-up">
@@ -602,7 +575,7 @@
     <h2>Ready to start trading?</h2>
     <p>Join thousands of buyers and sellers. Free to start, no credit card needed.</p>
     <div class="cta-btns">
-      <button class="btn-amber-lg"   onclick="window.location.href='vendio-auth.html#signup'">Create Free Account</button>
+      <button class="btn-amber-lg"   onclick="window.location.href='tradex-auth.html#signup'">Create Free Account</button>
       <button class="btn-outline-lg" onclick="window.location.href='browse.html'">Browse Listings</button>
     </div>
   </div>
@@ -611,11 +584,11 @@
 <!-- ══════════ FOOTER ══════════ -->
 <footer>
   <div class="footer-inner">
-    <div class="footer-logo"><span>Vendio</span><i></i></div>
+    <div class="footer-logo"><span>Tradex</span><i></i></div>
     <div class="footer-links">
       <a href="#">About</a><a href="#">Terms</a><a href="#">Privacy</a><a href="#">Support</a><a href="#">Blog</a>
     </div>
-    <div class="footer-copy">© 2026 Vendio. All rights reserved.</div>
+    <div class="footer-copy">© 2026 Tradex. All rights reserved.</div>
   </div>
 </footer>
 
@@ -733,29 +706,5 @@
   } catch(e) {}
 })();
 </script>
-<script>
-  /* ── THEME ── */
-  (function(){
-    var t=localStorage.getItem('vendio-theme')||'light';
-    document.documentElement.setAttribute('data-theme',t);
-  })();
-  function _applyTheme(m){
-    document.documentElement.setAttribute('data-theme',m);
-    localStorage.setItem('vendio-theme',m);
-    document.querySelectorAll('.theme-toggle').forEach(function(b){
-      b.innerHTML=m==='dark'?'<i class="fas fa-sun"></i>':'<i class="fas fa-moon"></i>';
-      b.title=m==='dark'?'Light mode':'Dark mode';
-    });
-  }
-  function _toggleTheme(){
-    _applyTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');
-  }
-  document.addEventListener('DOMContentLoaded',function(){
-    _applyTheme(localStorage.getItem('vendio-theme')||'light');
-    document.querySelectorAll('.theme-toggle').forEach(function(b){
-      b.addEventListener('click',_toggleTheme);
-    });
-  });
-  </script>
 </body>
 </html>

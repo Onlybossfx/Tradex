@@ -1,6 +1,6 @@
 /*
   ============================================================
-  VENDIO EMAIL NOTIFICATIONS — Supabase Edge Function
+  TRADEX EMAIL NOTIFICATIONS — Supabase Edge Function
   
   SETUP INSTRUCTIONS:
   ─────────────────────────────────────────────────────────────
@@ -61,7 +61,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY') ?? '';
-const FROM_EMAIL     = 'Vendio <notifications@yourdomain.com>';
+const FROM_EMAIL     = 'Tradex <notifications@yourdomain.com>';
 const BRAND_COLOR    = '#F59E0B';
 const BRAND_DARK     = '#0a0a0a';
 const SITE_URL       = 'https://yourdomain.com';
@@ -100,7 +100,7 @@ const templates: Record<string, (data: any) => { subject: string; html: string }
         ['Payout', d.amount],
       ])}
       ${cta('View Earnings', d.link || SITE_URL + '/dashboard-seller.html')}
-      <p style="color:#666;font-size:13px">Thank you for your great service on Vendio!</p>
+      <p style="color:#666;font-size:13px">Thank you for your great service on Tradex!</p>
     `),
   }),
 
@@ -118,7 +118,7 @@ const templates: Record<string, (data: any) => { subject: string; html: string }
         ['Estimated delivery', d.deliveryDays ? `${d.deliveryDays} day(s)` : '—'],
       ])}
       ${cta('Track Order', d.link || SITE_URL + '/dashboard-buyer.html')}
-      <p style="color:#666;font-size:13px">Your money is safe in escrow until you confirm delivery. If anything goes wrong, you're covered by Vendio Buyer Protection.</p>
+      <p style="color:#666;font-size:13px">Your money is safe in escrow until you confirm delivery. If anything goes wrong, you're covered by Tradex Buyer Protection.</p>
     `),
   }),
 
@@ -157,7 +157,7 @@ const templates: Record<string, (data: any) => { subject: string; html: string }
     html: layout(`
       <h2>Your dispute has been resolved</h2>
       <p>Hi <strong>${d.toName}</strong>,</p>
-      <p>The Vendio team has reviewed your dispute for order <strong>${d.orderRef}</strong> and made a ruling.</p>
+      <p>The Tradex team has reviewed your dispute for order <strong>${d.orderRef}</strong> and made a ruling.</p>
       <div style="background:#f0fdf4;border:1px solid #bbf7d0;padding:1rem 1.25rem;margin:1.25rem 0;border-radius:8px;font-size:15px;color:#166534">
         <strong>Resolution:</strong> ${d.resolution}
       </div>
@@ -200,9 +200,9 @@ const templates: Record<string, (data: any) => { subject: string; html: string }
   }),
 
   welcome: (d) => ({
-    subject: `👋 Welcome to Vendio, ${d.toName}!`,
+    subject: `👋 Welcome to Tradex, ${d.toName}!`,
     html: layout(`
-      <h2>Welcome to Vendio! 🎉</h2>
+      <h2>Welcome to Tradex! 🎉</h2>
       <p>Hi <strong>${d.toName}</strong>,</p>
       <p>Your account is set up and ready to go. Here's what you can do:</p>
       <div style="display:grid;gap:12px;margin:1.5rem 0">
@@ -210,7 +210,7 @@ const templates: Record<string, (data: any) => { subject: string; html: string }
         <div style="background:#fafafa;border:1px solid #e5e7eb;border-radius:10px;padding:1rem">🏪 <strong>Start selling</strong> — list your products or services in minutes</div>
         <div style="background:#fafafa;border:1px solid #e5e7eb;border-radius:10px;padding:1rem">🔒 <strong>Escrow protection</strong> — every transaction is secured</div>
       </div>
-      ${cta('Explore Vendio', SITE_URL + '/browse.html')}
+      ${cta('Explore Tradex', SITE_URL + '/browse.html')}
     `),
   }),
 };
@@ -222,13 +222,13 @@ function layout(content: string): string {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Vendio</title>
+  <title>Tradex</title>
 </head>
 <body style="margin:0;padding:0;background:#f3f4f6;font-family:'Segoe UI',system-ui,sans-serif;-webkit-font-smoothing:antialiased">
   <div style="max-width:600px;margin:32px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08)">
     <!-- Header -->
     <div style="background:${BRAND_DARK};padding:24px 32px;display:flex;align-items:center;gap:8px">
-      <span style="font-size:22px;font-weight:700;color:#fff;font-family:Georgia,serif;letter-spacing:-0.02em">Vendio</span>
+      <span style="font-size:22px;font-weight:700;color:#fff;font-family:Georgia,serif;letter-spacing:-0.02em">Tradex</span>
       <span style="width:7px;height:7px;border-radius:50%;background:${BRAND_COLOR};display:inline-block"></span>
     </div>
     <!-- Content -->
@@ -243,10 +243,10 @@ function layout(content: string): string {
     <!-- Footer -->
     <div style="background:#f9fafb;border-top:1px solid #e5e7eb;padding:20px 32px;text-align:center">
       <p style="font-size:12px;color:#9ca3af;margin:0 0 6px">
-        You're receiving this because you have a Vendio account.
+        You're receiving this because you have a Tradex account.
       </p>
       <p style="font-size:12px;color:#9ca3af;margin:0">
-        <a href="${SITE_URL}" style="color:${BRAND_COLOR};text-decoration:none">vendio.com</a>
+        <a href="${SITE_URL}" style="color:${BRAND_COLOR};text-decoration:none">tradex.com</a>
         &nbsp;·&nbsp;
         <a href="${SITE_URL}/account-recovery.html" style="color:#9ca3af;text-decoration:none">Unsubscribe</a>
       </p>

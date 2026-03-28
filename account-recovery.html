@@ -3,52 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vendio — Account Recovery</title>
+  <title>Tradex — Account Recovery</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="auth.backend.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        /* ── LIGHT MODE (default) ── */
-    :root, [data-theme="light"] {
-      --amber: #D97706;
-      --amber-light: #F59E0B;
-      --amber-dim: rgba(217,119,6,0.1);
-      --bg: #F9F7F4;
-      --bg2: #EEE9E2;
-      --bg3: #E4DDD4;
-      --bg4: #D9D0C5;
-      --border: rgba(0,0,0,0.09);
-      --border-md: rgba(0,0,0,0.14);
-      --text: #1A1714;
-      --muted: rgba(26,23,20,0.5);
-      --dim: rgba(26,23,20,0.32);
-      --error: #DC2626;
-      --success: #059669;
+    :root {
+      --amber: #F59E0B; --amber-light: #FBBF24; --amber-dim: rgba(245,158,11,0.12);
+      --bg: #0a0a0a; --bg2: #0f0f0f; --bg3: #141414;
+      --border: rgba(255,255,255,0.08); --border-focus: rgba(245,158,11,0.5);
+      --text: #fff; --muted: rgba(255,255,255,0.45); --dim: rgba(255,255,255,0.25);
+      --error: #EF4444; --success: #10B981;
       --serif: 'Playfair Display', Georgia, serif;
       --sans: 'DM Sans', system-ui, sans-serif;
-      --sw: 240px; --nh: 62px;
-    }
-    /* ── DARK MODE ── */
-    [data-theme="dark"] {
-      --amber: #F59E0B;
-      --amber-light: #FBBF24;
-      --amber-dim: rgba(245,158,11,0.1);
-      --bg: #0a0a0a;
-      --bg2: #0f0f0f;
-      --bg3: #141414;
-      --bg4: #181818;
-      --border: rgba(255,255,255,0.07);
-      --border-md: rgba(255,255,255,0.11);
-      --text: #ffffff;
-      --muted: rgba(255,255,255,0.45);
-      --dim: rgba(255,255,255,0.22);
-      --error: #EF4444;
-      --success: #10B981;
     }
     html, body { height: 100%; overflow-x: hidden; }
-    body { background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; transition: background 0.25s, color 0.25s; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem 1.25rem; }
+    body { background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem 1.25rem; }
 
     /* ── CARD ── */
     .card { width: 100%; max-width: 440px; background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 2.5rem 2rem; position: relative; overflow: hidden; }
@@ -81,7 +53,7 @@
 
     /* ── FIELDS ── */
     .field { margin-bottom: 1.1rem; }
-    .field label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--muted); margin-bottom: 0.45rem; }
+    .field label { display: block; font-size: 0.8rem; font-weight: 600; color: rgba(255,255,255,0.7); margin-bottom: 0.45rem; }
     .wrap { position: relative; }
     .wrap .ico { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--dim); font-size: 1rem; pointer-events: none; }
     .wrap input { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 0.78rem 1rem 0.78rem 2.6rem; color: var(--text); font-size: 0.9rem; font-family: var(--sans); outline: none; transition: border-color 0.2s, background 0.2s; }
@@ -138,33 +110,13 @@
       body { padding: 1.25rem; align-items: flex-start; padding-top: 2rem; }
       .card { padding: 2rem 1.25rem; border-radius: 16px; border: none; background: transparent; }
     }
-
-    /* ── THEME TOGGLE ── */
-    .theme-toggle {
-      width: 30px; height: 30px; border-radius: 7px;
-      background: transparent; border: 1px solid var(--border-md);
-      color: var(--muted); display: flex; align-items: center; justify-content: center;
-      font-size: 0.8rem; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
-    }
-    .theme-toggle:hover { color: var(--text); border-color: var(--amber); background: var(--amber-dim); }
-
-    /* floating theme toggle */
-    .float-theme-toggle {
-      position: fixed; top: 1rem; right: 1rem; z-index: 200;
-      width: 34px; height: 34px; border-radius: 8px;
-      background: var(--bg2); border: 1px solid var(--border-md);
-      color: var(--muted); display: flex; align-items: center; justify-content: center;
-      font-size: 0.82rem; cursor: pointer; transition: all 0.2s;
-    }
-    .float-theme-toggle:hover { color: var(--text); border-color: var(--amber); }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
-<button class="float-theme-toggle theme-toggle" title="Dark mode"><i class="fas fa-moon"></i></button>
 <div class="card">
   <div class="card-glow"></div>
-  <a href="vendio-auth.html" class="logo"><span>Vendio</span><i></i></a>
+  <a href="tradex-auth.html" class="logo"><span>Tradex</span><i></i></a>
 
   <!-- Step bar -->
   <div class="step-bar">
@@ -195,7 +147,7 @@
     </div>
 
     <button class="btn-primary" id="r-btn"><span class="lbl">Send Reset Link</span></button>
-    <a href="vendio-auth.html" class="btn-link">← Back to login</a>
+    <a href="tradex-auth.html" class="btn-link">← Back to login</a>
   </div>
 
   <!-- ══ STEP 2: Check email ══ -->
@@ -216,7 +168,7 @@
     <div class="head">
       <div class="icon-wrap"><i class="fas fa-shield-halved"></i></div>
       <h1>Set new password</h1>
-      <p>Choose a strong password for your Vendio account.</p>
+      <p>Choose a strong password for your Tradex account.</p>
     </div>
 
     <div class="alert err" id="np-err"><span><i class="fas fa-triangle-exclamation"></i></span><span id="np-err-msg"></span></div>
@@ -252,7 +204,7 @@
     </div>
 
     <button class="btn-primary" id="np-btn"><span class="lbl">Update Password</span></button>
-    <a href="vendio-auth.html" class="btn-link">← Back to login</a>
+    <a href="tradex-auth.html" class="btn-link">← Back to login</a>
   </div>
 
 </div>
@@ -412,29 +364,5 @@ if (hasResetToken()) {
   goStep(1);
 }
 </script>
-<script>
-  /* ── THEME ── */
-  (function(){
-    var t=localStorage.getItem('vendio-theme')||'light';
-    document.documentElement.setAttribute('data-theme',t);
-  })();
-  function _applyTheme(m){
-    document.documentElement.setAttribute('data-theme',m);
-    localStorage.setItem('vendio-theme',m);
-    document.querySelectorAll('.theme-toggle').forEach(function(b){
-      b.innerHTML=m==='dark'?'<i class="fas fa-sun"></i>':'<i class="fas fa-moon"></i>';
-      b.title=m==='dark'?'Light mode':'Dark mode';
-    });
-  }
-  function _toggleTheme(){
-    _applyTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');
-  }
-  document.addEventListener('DOMContentLoaded',function(){
-    _applyTheme(localStorage.getItem('vendio-theme')||'light');
-    document.querySelectorAll('.theme-toggle').forEach(function(b){
-      b.addEventListener('click',_toggleTheme);
-    });
-  });
-  </script>
 </body>
 </html>

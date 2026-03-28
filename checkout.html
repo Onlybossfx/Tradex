@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vendio — Checkout</title>
+  <title>Tradex — Checkout</title>
   <meta name="robots" content="noindex, nofollow" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F59E0B" />
@@ -14,45 +14,18 @@
   <script src="dashboard.backend.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        /* ── LIGHT MODE (default) ── */
-    :root, [data-theme="light"] {
-      --amber: #D97706;
-      --amber-light: #F59E0B;
-      --amber-dim: rgba(217,119,6,0.1);
-      --bg: #F9F7F4;
-      --bg2: #EEE9E2;
-      --bg3: #E4DDD4;
-      --bg4: #D9D0C5;
-      --border: rgba(0,0,0,0.09);
-      --border-md: rgba(0,0,0,0.14);
-      --text: #1A1714;
-      --muted: rgba(26,23,20,0.5);
-      --dim: rgba(26,23,20,0.32);
-      --error: #DC2626;
-      --success: #059669;
+    :root {
+      --amber: #F59E0B; --amber-light: #FBBF24; --amber-dim: rgba(245,158,11,0.1);
+      --bg: #0a0a0a; --bg2: #0f0f0f; --bg3: #141414; --bg4: #181818;
+      --border: rgba(255,255,255,0.07); --border-md: rgba(255,255,255,0.11);
+      --text: #fff; --muted: rgba(255,255,255,0.45); --dim: rgba(255,255,255,0.22);
+      --error: #EF4444; --success: #10B981;
       --serif: 'Playfair Display', Georgia, serif;
       --sans: 'DM Sans', system-ui, sans-serif;
-      --sw: 240px; --nh: 62px;
-    }
-    /* ── DARK MODE ── */
-    [data-theme="dark"] {
-      --amber: #F59E0B;
-      --amber-light: #FBBF24;
-      --amber-dim: rgba(245,158,11,0.1);
-      --bg: #0a0a0a;
-      --bg2: #0f0f0f;
-      --bg3: #141414;
-      --bg4: #181818;
-      --border: rgba(255,255,255,0.07);
-      --border-md: rgba(255,255,255,0.11);
-      --text: #ffffff;
-      --muted: rgba(255,255,255,0.45);
-      --dim: rgba(255,255,255,0.22);
-      --error: #EF4444;
-      --success: #10B981;
+      --nav-h: 62px;
     }
     html { overflow-x: hidden; scroll-behavior: smooth; }
-    body { background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; transition: background 0.25s, color 0.25s; }
+    body { background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
     a { text-decoration: none; color: inherit; }
     button { cursor: pointer; font-family: var(--sans); }
     input, select { font-family: var(--sans); }
@@ -71,7 +44,7 @@
     .prog-steps { display: flex; align-items: center; margin-bottom: 2rem; }
     .ps { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--dim); flex-shrink: 0; }
     .ps .dot { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; transition: all 0.3s; }
-    .ps.done .dot { background: var(--success); border-color: var(--success); color: var(--text); }
+    .ps.done .dot { background: var(--success); border-color: var(--success); color: #fff; }
     .ps.active .dot { border-color: var(--amber); color: var(--amber); }
     .ps.active { color: var(--text); font-weight: 500; }
     .ps-line { flex: 1; height: 2px; background: var(--border); margin: 0 0.5rem; transition: background 0.3s; }
@@ -91,7 +64,7 @@
 
     /* ── FORM FIELDS ── */
     .frow { margin-bottom: 1rem; }
-    .frow label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--muted); margin-bottom: 0.38rem; }
+    .frow label { display: block; font-size: 0.78rem; font-weight: 600; color: rgba(255,255,255,0.65); margin-bottom: 0.38rem; }
     .finp { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 9px; padding: 0.7rem 0.9rem; color: var(--text); font-size: 0.88rem; outline: none; transition: border-color 0.2s; }
     .finp:focus { border-color: rgba(245,158,11,0.4); }
     .finp::placeholder { color: var(--dim); }
@@ -121,10 +94,10 @@
     .card-visual::before { content: ''; position: absolute; top: -30px; right: -30px; width: 120px; height: 120px; border-radius: 50%; background: rgba(245,158,11,0.08); }
     .card-visual::after  { content: ''; position: absolute; bottom: -40px; left: -20px; width: 140px; height: 140px; border-radius: 50%; background: rgba(99,102,241,0.08); }
     .cv-chip { width: 32px; height: 24px; background: linear-gradient(135deg, #d4a853, #f0c040); border-radius: 4px; margin-bottom: 0.85rem; }
-    .cv-num  { font-size: 1.05rem; letter-spacing: 0.18em; color: var(--text); margin-bottom: 0.75rem; font-family: 'Courier New', monospace; }
+    .cv-num  { font-size: 1.05rem; letter-spacing: 0.18em; color: rgba(255,255,255,0.85); margin-bottom: 0.75rem; font-family: 'Courier New', monospace; }
     .cv-bot  { display: flex; justify-content: space-between; align-items: flex-end; }
-    .cv-label { font-size: 0.6rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.2rem; }
-    .cv-val   { font-size: 0.82rem; color: var(--text); }
+    .cv-label { font-size: 0.6rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.2rem; }
+    .cv-val   { font-size: 0.82rem; color: rgba(255,255,255,0.85); }
     .cv-network { font-size: 1.5rem; position: absolute; bottom: 1rem; right: 1rem; }
 
     /* ── FLUTTERWAVE PANEL ── */
@@ -156,7 +129,7 @@
     .btn-primary.ld::after { content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:18px; height:18px; border:2px solid rgba(10,10,10,0.3); border-top-color:#0a0a0a; border-radius:50%; animation:spin 0.7s linear infinite; }
     @keyframes spin { to{transform:translate(-50%,-50%) rotate(360deg)} }
     .btn-back { background: transparent; border: 1px solid var(--border-md); color: var(--muted); padding: 0.7rem 1.5rem; border-radius: 10px; font-size: 0.88rem; transition: all 0.2s; }
-    .btn-back:hover { color: var(--text); border-color: var(--border-md); }
+    .btn-back:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
     .btn-row { display: flex; gap: 0.75rem; align-items: center; margin-top: 1.25rem; }
     .btn-row .btn-primary { flex: 1; }
 
@@ -195,7 +168,7 @@
     .success-sub strong { color: var(--text); }
     .success-actions { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
     .btn-outline { background: transparent; border: 1px solid var(--border-md); color: var(--text); padding: 0.75rem 1.75rem; border-radius: 10px; font-size: 0.9rem; transition: all 0.2s; }
-    .btn-outline:hover { border-color: var(--border-md); }
+    .btn-outline:hover { border-color: rgba(255,255,255,0.2); }
     .order-id-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.25rem; margin: 1.25rem auto; max-width: 360px; }
     .oid-label { font-size: 0.72rem; color: var(--dim); margin-bottom: 0.25rem; }
     .oid-val { font-size: 1rem; font-weight: 600; color: var(--amber); letter-spacing: 0.05em; }
@@ -211,15 +184,6 @@
     @media (max-width: 400px) {
       .fw-methods { grid-template-columns: 1fr 1fr; }
     }
-
-    /* ── THEME TOGGLE ── */
-    .theme-toggle {
-      width: 30px; height: 30px; border-radius: 7px;
-      background: transparent; border: 1px solid var(--border-md);
-      color: var(--muted); display: flex; align-items: center; justify-content: center;
-      font-size: 0.8rem; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
-    }
-    .theme-toggle:hover { color: var(--text); border-color: var(--amber); background: var(--amber-dim); }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
@@ -227,11 +191,10 @@
 
 <!-- NAV -->
 <nav id="nav">
-  <a href="index.html" class="nav-logo"><span>Vendio</span><i></i></a>
+  <a href="index.html" class="nav-logo"><span>Tradex</span><i></i></a>
   <div class="nav-sep"></div>
   <span class="nav-step">Secure Checkout</span>
   <div class="nav-secure"><i class="fas fa-lock"></i> SSL Encrypted</div>
-  <button class="theme-toggle" title="Dark mode"><i class="fas fa-moon"></i></button>
 </nav>
 
 <!-- PROGRESS -->
@@ -264,7 +227,7 @@
           <label>Full Name *</label>
           <!-- Saved address selector -->
           <div id="saved-addr-wrap" style="display:none;margin-bottom:1rem">
-            <label style="display:block;font-size:0.78rem;font-weight:600;color:var(--muted);margin-bottom:0.38rem">Use a saved address</label>
+            <label style="display:block;font-size:0.78rem;font-weight:600;color:rgba(255,255,255,0.65);margin-bottom:0.38rem">Use a saved address</label>
             <select class="finp" id="saved-addr-sel" onchange="applyAddr(this.value)">
               <option value="">— Select saved address —</option>
             </select>
@@ -471,7 +434,7 @@
           <span style="font-size:1.4rem;flex-shrink:0"><i class="fas fa-lock"></i></span>
           <div>
             <div style="font-size:0.88rem;font-weight:600;margin-bottom:0.3rem;color:var(--success)">Escrow Protection Active</div>
-            <div style="font-size:0.8rem;color:var(--muted);line-height:1.6">Your payment is held securely in escrow. Funds are only released to the seller once you confirm delivery. If anything goes wrong, you're covered by Vendio Buyer Protection.</div>
+            <div style="font-size:0.8rem;color:rgba(255,255,255,0.55);line-height:1.6">Your payment is held securely in escrow. Funds are only released to the seller once you confirm delivery. If anything goes wrong, you're covered by Tradex Buyer Protection.</div>
           </div>
         </div>
       </div>
@@ -541,7 +504,7 @@
 <script>
 /*
   ============================================================
-  checkout.html — VENDIO CHECKOUT
+  checkout.html — TRADEX CHECKOUT
   
   Reads order data from sessionStorage (set by listing.html)
   Creates order in Supabase on confirmation
@@ -597,7 +560,7 @@ async function init() {
   if (!user) return;
 
   /* Load checkout data from sessionStorage */
-  const raw = sessionStorage.getItem('vendio_checkout');
+  const raw = sessionStorage.getItem('tradex_checkout');
   if (!raw) {
     showGlobalError('No order data found. Please go back and select a package.');
     return;
@@ -904,7 +867,7 @@ $('place-order-btn').addEventListener('click', async () => {
   }
 
   /* Clear checkout data */
-  sessionStorage.removeItem('vendio_checkout');
+  sessionStorage.removeItem('tradex_checkout');
 
   /* Show success */
   $('success-order-id').textContent = `#TRX-${String(order.id).padStart(6,'0')}`;
@@ -930,29 +893,5 @@ function showGlobalError(msg) {
 /* ── Init ── */
 init();
 </script>
-<script>
-  /* ── THEME ── */
-  (function(){
-    var t=localStorage.getItem('vendio-theme')||'light';
-    document.documentElement.setAttribute('data-theme',t);
-  })();
-  function _applyTheme(m){
-    document.documentElement.setAttribute('data-theme',m);
-    localStorage.setItem('vendio-theme',m);
-    document.querySelectorAll('.theme-toggle').forEach(function(b){
-      b.innerHTML=m==='dark'?'<i class="fas fa-sun"></i>':'<i class="fas fa-moon"></i>';
-      b.title=m==='dark'?'Light mode':'Dark mode';
-    });
-  }
-  function _toggleTheme(){
-    _applyTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');
-  }
-  document.addEventListener('DOMContentLoaded',function(){
-    _applyTheme(localStorage.getItem('vendio-theme')||'light');
-    document.querySelectorAll('.theme-toggle').forEach(function(b){
-      b.addEventListener('click',_toggleTheme);
-    });
-  });
-  </script>
 </body>
 </html>
