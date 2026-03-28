@@ -147,10 +147,21 @@
       font-size: 0.8rem; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
     }
     .theme-toggle:hover { color: var(--text); border-color: var(--amber); background: var(--amber-dim); }
+
+    /* floating theme toggle */
+    .float-theme-toggle {
+      position: fixed; top: 1rem; right: 1rem; z-index: 200;
+      width: 34px; height: 34px; border-radius: 8px;
+      background: var(--bg2); border: 1px solid var(--border-md);
+      color: var(--muted); display: flex; align-items: center; justify-content: center;
+      font-size: 0.82rem; cursor: pointer; transition: all 0.2s;
+    }
+    .float-theme-toggle:hover { color: var(--text); border-color: var(--amber); }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
+<button class="float-theme-toggle theme-toggle" title="Dark mode"><i class="fas fa-moon"></i></button>
 <div class="card">
   <div class="card-glow"></div>
   <a href="vendio-auth.html" class="logo"><span>Vendio</span><i></i></a>

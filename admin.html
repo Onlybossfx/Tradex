@@ -51,7 +51,7 @@
       --error: #EF4444;
       --success: #10B981;
     }
-    html { overflow-x: hidden; }
+    html, body { height: 100%; overflow: hidden; }
     body { background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; transition: background 0.25s, color 0.25s; }
     a { text-decoration: none; color: inherit; }
     button { cursor: pointer; font-family: var(--sans); }
@@ -69,10 +69,10 @@
     .btn-sm-out:hover { color: var(--text); }
 
     /* LAYOUT */
-    .shell { display: grid; grid-template-columns: var(--sw) 1fr; min-height: 100vh; padding-top: var(--nh); }
+    .shell { display: grid; grid-template-columns: var(--sw) 1fr; height: calc(100vh - var(--nh)); margin-top: var(--nh); overflow: hidden; }
 
     /* SIDEBAR */
-    #sb { background: var(--bg2); border-right: 1px solid var(--border); padding: 1.25rem 0.6rem; position: sticky; top: var(--nh); height: calc(100vh - var(--nh)); overflow-y: auto; display: flex; flex-direction: column; gap: 0.2rem; }
+    #sb { background: var(--bg2); border-right: 1px solid var(--border); padding: 1.25rem 0.6rem; position: relative; height: 100%; overflow-y: auto; display: flex; flex-direction: column; gap: 0.2rem; }
     .ns { font-size: 0.62rem; font-weight: 700; color: var(--dim); letter-spacing: 0.1em; text-transform: uppercase; padding: 0.65rem 0.65rem 0.32rem; }
     .ni { display: flex; align-items: center; gap: 0.6rem; padding: 0.55rem 0.65rem; border-radius: 9px; cursor: pointer; transition: all 0.18s; border: 1px solid transparent; font-size: 0.83rem; color: var(--muted); }
     .ni:hover { background: var(--bg3); color: var(--text); }
@@ -83,7 +83,7 @@
     .sb-bot { margin-top: auto; padding-top: 0.85rem; border-top: 1px solid var(--border); }
 
     /* MAIN */
-    #main { padding: 1.5rem; }
+    #main { padding: 1.5rem; height: 100%; overflow-y: auto; }
     .panel { display: none; animation: fi 0.22s ease; }
     .panel.on { display: block; }
     @keyframes fi { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
@@ -229,6 +229,7 @@
   <span class="admin-badge">ADMIN</span>
   <div class="hbg" id="hbg" onclick="toggleSidebar()"><span></span><span></span><span></span></div>
   <div class="nav-right">
+    <button class="theme-toggle" title="Dark mode"><i class="fas fa-moon"></i></button>
     <div class="nav-av" id="nav-av">A</div>
     <button class="btn-sm-out" onclick="window.location.href='dashboard-seller.html'">← Dashboard</button>
     <button class="btn-sm-out" onclick="DB.logout()">Log Out</button>
@@ -455,7 +456,7 @@ async function init() {
   /* Admin check */
   const isAdmin = await DB.admin.isAdmin();
   if (!isAdmin) {
-    document.body.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:1rem;font-family:sans-serif;color:#fff;background:#0a0a0a;text-align:center;padding:2rem">
+    document.body.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:1rem;font-family:sans-serif;color:var(--text);background:var(--bg);text-align:center;padding:2rem">
       <div style="font-size:3rem"><i class="fas fa-ban"></i></div>
       <h2 style="font-family:serif;font-size:1.5rem">Access Denied</h2>
       <p style="color:var(--muted)">You don't have admin privileges.</p>

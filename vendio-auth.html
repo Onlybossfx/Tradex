@@ -216,10 +216,21 @@
       font-size: 0.8rem; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
     }
     .theme-toggle:hover { color: var(--text); border-color: var(--amber); background: var(--amber-dim); }
+
+    /* floating theme toggle for auth page */
+    .auth-theme-toggle {
+      position: fixed; top: 1rem; right: 1rem; z-index: 200;
+      width: 34px; height: 34px; border-radius: 8px;
+      background: var(--bg3); border: 1px solid var(--border-md);
+      color: var(--muted); display: flex; align-items: center; justify-content: center;
+      font-size: 0.82rem; cursor: pointer; transition: all 0.2s;
+    }
+    .auth-theme-toggle:hover { color: var(--text); border-color: var(--amber); }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
+<button class="auth-theme-toggle theme-toggle" title="Dark mode"><i class="fas fa-moon"></i></button>
 <div class="page">
 
   <!-- LEFT -->
@@ -516,10 +527,10 @@ $('s2-next').addEventListener('click', async () => {
   const confirmHTML = `
     <div id="email-confirm-screen" style="text-align:center;padding:2rem 1rem">
       <div style="font-size:3.5rem;margin-bottom:1rem"><i class="fas fa-envelope"></i></div>
-      <h2 style="font-family:var(--serif);font-size:1.5rem;font-weight:700;margin-bottom:0.75rem;color:#fff">Check your email!</h2>
+      <h2 style="font-family:var(--serif);font-size:1.5rem;font-weight:700;margin-bottom:0.75rem;color:var(--text)">Check your email!</h2>
       <p style="color:var(--muted);font-size:0.88rem;line-height:1.8;margin-bottom:1.5rem">
         We sent a confirmation link to<br>
-        <strong style="color:#fff">${email}</strong><br><br>
+        <strong style="color:var(--text)">${email}</strong><br><br>
         Click the link in your email to activate your account.<br>
         Then come back here to log in.
       </p>
@@ -530,7 +541,7 @@ $('s2-next').addEventListener('click', async () => {
         Resend confirmation email
       </button>
       <br><br>
-      <a href="vendio-auth.html" style="color:rgba(255,255,255,0.35);font-size:0.78rem">← Back to login</a>
+      <a href="vendio-auth.html" style="color:var(--dim);font-size:0.78rem">← Back to login</a>
     </div>`;
 
   /* Find the card/form element and replace its content */
