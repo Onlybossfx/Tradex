@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tradex — Two-Factor Verification</title>
+  <title>Vendio — Two-Factor Verification</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -102,7 +102,7 @@
   <div class="card">
     <div class="card-glow"></div>
 
-    <a href="tradex-auth.html" class="logo"><span>Tradex</span><i></i></a>
+    <a href="vendio-auth.html" class="logo"><span>Vendio</span><i></i></a>
 
     <div class="head">
       <div class="icon-wrap"><i class="fas fa-lock"></i></div>
@@ -139,16 +139,16 @@
     </div>
 
     <button class="btn-primary" id="verify-btn"><span class="lbl">Verify & Continue</span></button>
-    <button class="back" onclick="window.location.href='tradex-auth.html'">← Back to login</button>
+    <button class="back" onclick="window.location.href='vendio-auth.html'">← Back to login</button>
   </div>
 
 <script>
 /*
   ============================================================
   2fa.html — FRONTEND ONLY
-  Reads context from sessionStorage set by tradex-auth.html:
-    tradex_2fa_email   — user's email address
-    tradex_2fa_context — 'login' | 'signup'
+  Reads context from sessionStorage set by vendio-auth.html:
+    vendio_2fa_email   — user's email address
+    vendio_2fa_context — 'login' | 'signup'
 
   Backend hooks via window.Auth (auth.backend.js):
     Auth.verifyOtp(email, token)  → { error }
@@ -158,8 +158,8 @@
 */
 
 /* ── Read context from previous page ── */
-const email   = sessionStorage.getItem('tradex_2fa_email')   || '';
-const context = sessionStorage.getItem('tradex_2fa_context') || 'login';
+const email   = sessionStorage.getItem('vendio_2fa_email')   || '';
+const context = sessionStorage.getItem('vendio_2fa_context') || 'login';
 
 /* ── Show email in header ── */
 document.getElementById('target-display').textContent = email || 'your email';
@@ -248,8 +248,8 @@ async function verify() {
   }
 
   showAlert('otp-ok', null, 'ok');
-  sessionStorage.removeItem('tradex_2fa_email');
-  sessionStorage.removeItem('tradex_2fa_context');
+  sessionStorage.removeItem('vendio_2fa_email');
+  sessionStorage.removeItem('vendio_2fa_context');
 
   /* ── BACKEND HOOK: onSuccess ── */
   setTimeout(() => api('onSuccess', { context }), 1200);

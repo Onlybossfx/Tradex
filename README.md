@@ -1,4 +1,4 @@
-# Tradex Marketplace
+# Vendio Marketplace
 
 A full-stack marketplace supporting physical goods, digital products, freelance skills, and experiences — with escrow payments, buyer/seller dashboards, real-time messaging, and an admin panel.
 
@@ -7,13 +7,13 @@ A full-stack marketplace supporting physical goods, digital products, freelance 
 ## 📁 Folder Structure
 
 ```
-tradex/
+vendio/
 ├── pages/                      # All HTML pages
-│   ├── tradex.html             # Landing page (public showcase)
+│   ├── vendio.html             # Landing page (public showcase)
 │   ├── browse.html             # Browse & search listings
 │   ├── listing.html            # Listing detail page
 │   ├── checkout.html           # 3-step checkout (Stripe + Flutterwave)
-│   ├── tradex-auth.html        # Login / Signup (3-step)
+│   ├── vendio-auth.html        # Login / Signup (3-step)
 │   ├── 2fa.html                # OTP verification
 │   ├── account-recovery.html   # Password reset
 │   ├── dashboard-seller.html   # Seller dashboard
@@ -73,7 +73,7 @@ Tables required:
 ### 2. Serve locally
 ```bash
 python -m http.server 3000
-# Open http://localhost:3000/pages/tradex.html
+# Open http://localhost:3000/pages/vendio.html
 ```
 
 ### 3. Deploy email Edge Function
@@ -152,4 +152,4 @@ Remaining: Real payment processing (Stripe/Flutterwave Edge Functions).
 
 ---
 
-Built with Claude · Tradex © 2026
+Built with Claude · Vendio © 2026

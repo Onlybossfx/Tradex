@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tradex — Seller Dashboard</title>
+  <title>Vendio — Seller Dashboard</title>
   <meta name="robots" content="noindex, nofollow" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F59E0B" />
@@ -340,7 +340,7 @@
 <!-- NAV -->
 <nav id="nav">
   <button class="hbg" id="hbg"><span></span><span></span><span></span></button>
-  <a href="index.html" class="nav-logo"><span>Tradex</span><i></i></a>
+  <a href="index.html" class="nav-logo"><span>Vendio</span><i></i></a>
   <div class="nav-sep"></div>
   <span class="nav-label">Seller Dashboard</span>
   <div class="nav-right">
@@ -453,7 +453,7 @@
 
   <!-- PROFILE -->
   <div class="panel" id="panel-profile">
-    <div class="ph"><div><h1>Profile</h1><p>How buyers see you on Tradex.</p></div></div>
+    <div class="ph"><div><h1>Profile</h1><p>How buyers see you on Vendio.</p></div></div>
     <div class="pgrid">
       <div class="pcard">
         <h3>Personal Info</h3>
@@ -541,7 +541,7 @@
         <h3>Security</h3>
         <div style="display:flex;flex-direction:column;gap:0.5rem">
           <button id="change-pw-btn" style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.7rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem;transition:color 0.2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.45)'"><i class="fas fa-key"></i> Change Password</button>
-          <button onclick="window.location.href='tradex-auth.html#2fa'" style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.7rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem;transition:color 0.2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.45)'"><i class="fas fa-shield-halved"></i> Two-Factor Authentication</button>
+          <button onclick="window.location.href='vendio-auth.html#2fa'" style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.7rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem;transition:color 0.2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.45)'"><i class="fas fa-shield-halved"></i> Two-Factor Authentication</button>
           <button onclick="confirmDelete()" style="background:transparent;border:1px solid rgba(239,68,68,0.2);color:#F87171;padding:0.7rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem"><i class="fas fa-trash"></i> Delete Account</button>
         </div>
       </div>
@@ -595,7 +595,7 @@
   <div class="mbox">
     <button class="mc" onclick="closeModal()"><i class="fas fa-xmark"></i></button>
     <h2 id="m-title">New Listing</h2>
-    <p class="msub" id="m-sub">Fill in the details to publish on Tradex.</p>
+    <p class="msub" id="m-sub">Fill in the details to publish on Vendio.</p>
     <div class="mal err" id="m-err"><span><i class="fas fa-triangle-exclamation"></i></span><span id="m-err-t"></span></div>
     <div class="mal ok"  id="m-ok"><span><i class="fas fa-circle-check"></i></span><span id="m-ok-t"></span></div>
     <input type="hidden" id="eid" />
@@ -1160,7 +1160,7 @@ async function loadPayoutMethod() {
 
 function confirmDelete() {
   if (confirm('Delete your account? This cannot be undone.')) {
-    toast('Please contact support@tradex.com to delete your account.', 'inf');
+    toast('Please contact support@vendio.com to delete your account.', 'inf');
   }
 }
 

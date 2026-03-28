@@ -3,22 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tradex — Listing</title>
-  <meta name="description"        content="Find the best products, services and skills on Tradex marketplace." />
+  <title>Vendio — Listing</title>
+  <meta name="description"        content="Find the best products, services and skills on Vendio marketplace." />
   <meta name="robots"             content="index, follow" />
   <meta property="og:type"        content="product" />
-  <meta property="og:site_name"   content="Tradex" />
-  <meta property="og:url"         id="og-url"   content="https://tradex.market/listing.html" />
-  <meta property="og:title"       id="og-title" content="Tradex Listing" />
-  <meta property="og:description" id="og-desc"  content="Find the best products and services on Tradex." />
-  <meta property="og:image"       id="og-img"   content="https://tradex.market/og-image.png" />
+  <meta property="og:site_name"   content="Vendio" />
+  <meta property="og:url"         id="og-url"   content="https://vendio.market/listing.html" />
+  <meta property="og:title"       id="og-title" content="Vendio Listing" />
+  <meta property="og:description" id="og-desc"  content="Find the best products and services on Vendio." />
+  <meta property="og:image"       id="og-img"   content="https://vendio.market/og-image.png" />
   <meta property="og:price:amount"       id="og-price"    content="" />
   <meta property="og:price:currency"     content="USD" />
   <meta name="twitter:card"       content="summary_large_image" />
-  <meta name="twitter:title"      id="tw-title" content="Tradex Listing" />
-  <meta name="twitter:description" id="tw-desc" content="Find the best products and services on Tradex." />
-  <meta name="twitter:image"      id="tw-img"   content="https://tradex.market/og-image.png" />
-  <link rel="canonical"           id="canonical" href="https://tradex.market/listing.html" />
+  <meta name="twitter:title"      id="tw-title" content="Vendio Listing" />
+  <meta name="twitter:description" id="tw-desc" content="Find the best products and services on Vendio." />
+  <meta name="twitter:image"      id="tw-img"   content="https://vendio.market/og-image.png" />
+  <link rel="canonical"           id="canonical" href="https://vendio.market/listing.html" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F59E0B" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -261,10 +261,10 @@
 <!-- NAV -->
 <nav id="nav">
   <button class="nav-back" onclick="history.back()">←</button>
-  <a href="index.html" class="nav-logo"><span>Tradex</span><i></i></a>
+  <a href="index.html" class="nav-logo"><span>Vendio</span><i></i></a>
   <div class="nav-right">
-    <button class="btn-sm"       id="nav-login"  onclick="window.location.href='tradex-auth.html'" style="display:none">Log In</button>
-    <button class="btn-amber-sm" id="nav-signup" onclick="window.location.href='tradex-auth.html#signup'" style="display:none">Sign Up</button>
+    <button class="btn-sm"       id="nav-login"  onclick="window.location.href='vendio-auth.html'" style="display:none">Log In</button>
+    <button class="btn-amber-sm" id="nav-signup" onclick="window.location.href='vendio-auth.html#signup'" style="display:none">Sign Up</button>
     <div id="nav-avatar" style="display:none;width:30px;height:30px;border-radius:50%;background:var(--amber-dim);border:1px solid rgba(245,158,11,0.3);align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;color:var(--amber);cursor:pointer;flex-shrink:0"></div>
   </div>
 </nav>
@@ -466,7 +466,7 @@ function showError(msg) {
 /* ── Render everything ── */
 function renderAll() {
   const l = listing;
-  document.title = `Tradex — ${l.title}`;
+  document.title = `Vendio — ${l.title}`;
 
   /* breadcrumb */
   $('bc-cat').textContent   = Listings.getCatName(l.category);
@@ -535,16 +535,16 @@ function renderAll() {
   /* reviews + seller loaded async via loadReviews() and loadSellerProfile() */
 
   /* ── Dynamic SEO / OG tags ── */
-  document.title = `${l.title} — Tradex`;
+  document.title = `${l.title} — Vendio`;
   const _setMeta = (id, val) => { const el=document.getElementById(id); if(el) el.setAttribute('content', val); };
   const _desc = (l.description||'').replace(/<[^>]+>/g,'').slice(0,160);
   const _img  = l.images?.[0] || '';
-  _setMeta('og-title',  `${l.title} — Tradex`);
+  _setMeta('og-title',  `${l.title} — Vendio`);
   _setMeta('og-desc',   _desc);
   _setMeta('og-img',    _img);
   _setMeta('og-url',    window.location.href);
   _setMeta('og-price',  String(l.price));
-  _setMeta('tw-title',  `${l.title} — Tradex`);
+  _setMeta('tw-title',  `${l.title} — Vendio`);
   _setMeta('tw-desc',   _desc);
   _setMeta('tw-img',    _img);
   const _can = document.getElementById('canonical');
@@ -675,7 +675,7 @@ async function loadSellerProfile() {
 
   const name     = seller?.full_name || l.seller_name || 'Unknown Seller';
   const location = seller?.location  || l.seller_location || '';
-  const bio      = seller?.bio       || `Seller on Tradex${location ? ' based in ' + location : ''}.`;
+  const bio      = seller?.bio       || `Seller on Vendio${location ? ' based in ' + location : ''}.`;
   const verified = seller?.verified  || l.seller_verified;
   const orders   = seller?.totalOrders   ?? l.order_count   ?? 0;
   const rating   = seller?.avgRating     ?? l.rating        ?? '—';
@@ -766,7 +766,7 @@ async function doBuy(btn) {
   if (!listing) return;
   const pkg = getPackages(listing)[selPkgIdx];
   /* save checkout data first — survives login redirect */
-  sessionStorage.setItem('tradex_checkout', JSON.stringify({
+  sessionStorage.setItem('vendio_checkout', JSON.stringify({
     listing_id:    listing.id,
     listing_title: listing.title,
     listing_image: listing.images?.[0] || '',

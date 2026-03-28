@@ -11,7 +11,7 @@ Disallow: /dashboard-seller.html
 Disallow: /dashboard-buyer.html
 Disallow: /checkout.html
 Disallow: /admin.html
-Disallow: /tradex-auth.html
+Disallow: /vendio-auth.html
 Disallow: /2fa.html
 Disallow: /account-recovery.html
 
@@ -20,7 +20,7 @@ Disallow: /browse.html?page=*
 Disallow: /browse.html?sort=*
 
 # Sitemap location
-Sitemap: https://tradex.market/sitemap.xml
+Sitemap: https://vendio.market/sitemap.xml
 
 # Crawl delay (be polite to servers)
 Crawl-delay: 1

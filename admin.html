@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tradex — Admin</title>
+  <title>Vendio — Admin</title>
   <meta name="robots" content="noindex, nofollow" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F59E0B" />
@@ -189,7 +189,7 @@
 
 <!-- NAV -->
 <nav id="nav">
-  <a href="index.html" class="nav-logo"><span>Tradex</span><i></i></a>
+  <a href="index.html" class="nav-logo"><span>Vendio</span><i></i></a>
   <span class="admin-badge">ADMIN</span>
   <div class="hbg" id="hbg" onclick="toggleSidebar()"><span></span><span></span><span></span></div>
   <div class="nav-right">
@@ -423,7 +423,7 @@ async function init() {
       <div style="font-size:3rem"><i class="fas fa-ban"></i></div>
       <h2 style="font-family:serif;font-size:1.5rem">Access Denied</h2>
       <p style="color:rgba(255,255,255,0.45)">You don't have admin privileges.</p>
-      <a href="index.html" style="color:#F59E0B">← Back to Tradex</a>
+      <a href="index.html" style="color:#F59E0B">← Back to Vendio</a>
     </div>`;
     return;
   }
@@ -486,7 +486,7 @@ function sendNotifToUser(id, name) {
   $('n-target').value = 'specific';
   $('n-userid').value = id;
   $('n-userid-row').style.display = '';
-  $('n-title').value = `Message from Tradex Admin`;
+  $('n-title').value = `Message from Vendio Admin`;
   switchP('notify');
 }
 
@@ -592,8 +592,8 @@ async function markUnderReview(id) {
 }
 async function notifyParties(buyerId, sellerId) {
   await Promise.all([
-    DB.createNotification(buyerId, 'dispute', 'Dispute Update', 'Your dispute is being reviewed by the Tradex team. We will notify you of the resolution shortly.'),
-    DB.createNotification(sellerId, 'dispute', 'Dispute Notification', 'A dispute has been raised on one of your orders. The Tradex team is reviewing the case.'),
+    DB.createNotification(buyerId, 'dispute', 'Dispute Update', 'Your dispute is being reviewed by the Vendio team. We will notify you of the resolution shortly.'),
+    DB.createNotification(sellerId, 'dispute', 'Dispute Notification', 'A dispute has been raised on one of your orders. The Vendio team is reviewing the case.'),
   ]);
   toast('Both parties notified. <i class="fas fa-circle-check"></i>', 'ok');
 }

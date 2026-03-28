@@ -1,5 +1,5 @@
 /*
-  listings.js — TRADEX DATA LAYER
+  listings.js — VENDIO DATA LAYER
   Uses window pattern to avoid duplicate const errors
 */
 if (!window._lSb) {
