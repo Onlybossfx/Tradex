@@ -11,23 +11,15 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --amber: #B45309; --amber-light: #D97706; --amber-dim: rgba(180,83,9,0.08);
-      --bg: #FFFBF4; --bg2: #FFFFFF; --bg3: #F5F0E8;
-      --border: #FFCE88; --border-focus: rgba(180,83,9,0.4);
-      --text: #1C1208; --muted: rgba(28,18,8,0.55); --dim: rgba(28,18,8,0.35);
-      --error: #DC2626; --success: #16A34A;
-      --serif: 'Playfair Display', Georgia, serif;
-      --sans: 'DM Sans', system-ui, sans-serif;
-    }
-    html, body { height: 100%; overflow-x: hidden; }
-
-    [data-theme="dark"] {
       --amber: #F59E0B; --amber-light: #FBBF24; --amber-dim: rgba(245,158,11,0.12);
       --bg: #0a0a0a; --bg2: #0f0f0f; --bg3: #141414;
       --border: rgba(255,255,255,0.08); --border-focus: rgba(245,158,11,0.5);
       --text: #fff; --muted: rgba(255,255,255,0.45); --dim: rgba(255,255,255,0.25);
       --error: #EF4444; --success: #10B981;
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans: 'DM Sans', system-ui, sans-serif;
     }
+    html, body { height: 100%; overflow-x: hidden; }
     body { background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem 1.25rem; }
 
     /* ── CARD ── */
@@ -103,21 +95,10 @@
       .card { padding: 2rem 1.25rem; border-radius: 16px; border: none; background: transparent; }
       .otp { width: 44px; height: 52px; font-size: 1.25rem; }
     }
-
-    [data-theme="light"] .card, [data-theme="light"] .pcard, [data-theme="light"] .listing-card,
-    [data-theme="light"] .mo .mbox, [data-theme="light"] .order-card, [data-theme="light"] .sc,
-    [data-theme="light"] .stat-card, [data-theme="light"] .sg-card { 
-      border: 1.5px solid #FFCE88 !important; 
-      box-shadow: 0 2px 12px rgba(180,83,9,0.06);
-    }
-
-    .theme-toggle-btn { width:34px; height:34px; border-radius:50%; border:1px solid var(--border-md); background:var(--bg3); color:var(--muted); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:0.85rem; transition:all 0.2s; flex-shrink:0; }
-    .theme-toggle-btn:hover { color:var(--text); border-color:var(--amber); }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
-<div style="position:fixed;top:1rem;right:1rem;z-index:999"><button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle dark/light mode"><i id="theme-icon" class="fas fa-moon"></i></button></div>
   <div class="card">
     <div class="card-glow"></div>
 
@@ -302,26 +283,5 @@ $('resend-btn').addEventListener('click', async () => {
 startTimer();
 if (otpInputs[0]) otpInputs[0].focus();
 </script>
-<script>
-    /* ── Theme System ── */
-    (function() {
-      const saved = localStorage.getItem('vendio_theme') || 'light';
-      document.documentElement.setAttribute('data-theme', saved);
-    })();
-    function toggleTheme() {
-      const cur = document.documentElement.getAttribute('data-theme') || 'light';
-      const next = cur === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('vendio_theme', next);
-      /* Update toggle icon */
-      const icon = document.getElementById('theme-icon');
-      if (icon) icon.className = next === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-    }
-    /* Apply on load */
-    document.addEventListener('DOMContentLoaded', () => {
-      const theme = localStorage.getItem('vendio_theme') || 'light';
-      const icon = document.getElementById('theme-icon');
-      if (icon) icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-    });</script>
 </body>
 </html>

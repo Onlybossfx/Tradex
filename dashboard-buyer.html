@@ -16,25 +16,15 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --amber: #B45309; --amber-light: #D97706; --amber-dim: rgba(180,83,9,0.08);
-      --bg: #FFFBF4; --bg2: #FFFFFF; --bg3: #F5F0E8; --bg4: #EDE8DC;
-      --border: #FFCE88; --border-md: #F5B94E;
-      --text: #1C1208; --muted: rgba(28,18,8,0.55); --dim: rgba(28,18,8,0.35);
+      --amber: #F59E0B; --amber-light: #FBBF24; --amber-dim: rgba(245,158,11,0.1);
+      --bg: #0a0a0a; --bg2: #0f0f0f; --bg3: #141414; --bg4: #181818;
+      --border: rgba(255,255,255,0.07); --border-md: rgba(255,255,255,0.11);
+      --text: #fff; --muted: rgba(255,255,255,0.45); --dim: rgba(255,255,255,0.22);
       --error: #EF4444; --success: #10B981;
       --serif: 'Playfair Display', Georgia, serif;
       --sans: 'DM Sans', system-ui, sans-serif;
       --sw: 240px; --nh: 62px;
     }
-
-    /* ── Dark Mode Override ── */
-    [data-theme="dark"] {
-      --amber: #F59E0B; --amber-light: #FBBF24; --amber-dim: rgba(245,158,11,0.1);
-      --bg: #0a0a0a; --bg2: #0f0f0f; --bg3: #141414; --bg4: #181818;
-      --border: rgba(255,255,255,0.07); --border-md: rgba(255,255,255,0.11);
-      --text: #fff; --muted: rgba(255,255,255,0.45); --dim: rgba(255,255,255,0.22);
-    }
-
-    [data-theme="light"] #nav { background: rgba(255,251,244,0.97); }
     html { overflow-x: hidden; }
     body { background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
     a { text-decoration: none; color: inherit; }
@@ -296,16 +286,6 @@
     }
     .img-unavailable i { font-size: 2rem; color: var(--dim); }
     .img-unavailable span { font-size: 0.72rem; color: var(--dim); }
-
-    [data-theme="light"] .card, [data-theme="light"] .pcard, [data-theme="light"] .listing-card,
-    [data-theme="light"] .mo .mbox, [data-theme="light"] .order-card, [data-theme="light"] .sc,
-    [data-theme="light"] .stat-card, [data-theme="light"] .sg-card { 
-      border: 1.5px solid #FFCE88 !important; 
-      box-shadow: 0 2px 12px rgba(180,83,9,0.06);
-    }
-
-    .theme-toggle-btn { width:34px; height:34px; border-radius:50%; border:1px solid var(--border-md); background:var(--bg3); color:var(--muted); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:0.85rem; transition:all 0.2s; flex-shrink:0; }
-    .theme-toggle-btn:hover { color:var(--text); border-color:var(--amber); }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
@@ -320,7 +300,6 @@
   <a href="index.html" class="nav-logo"><span>Vendio</span><i></i></a>
   <div class="nav-sep"></div>
   <span class="nav-label">My Account</span>
-  <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle dark/light mode"><i id="theme-icon" class="fas fa-moon"></i></button>
   <div class="nav-right">
     <button class="btn-browse" onclick="window.location.href='browse.html'">Browse Listings</button>
     <div class="notif-btn"><span><i class="fas fa-bell"></i></span><div class="ndot" id="ndot" style="display:none"></div></div>
@@ -438,18 +417,6 @@
     <div class="ph"><div><h1>Settings</h1><p>Manage your account preferences.</p></div></div>
     <div style="max-width:500px;display:flex;flex-direction:column;gap:1rem">
       <div class="pcard">
-          <!-- Dark Mode Toggle -->
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:0.75rem 0;border-bottom:1px solid var(--border)">
-            <div>
-              <div style="font-size:0.88rem;font-weight:600;color:var(--text)"><i class="fas fa-moon" style="margin-right:0.5rem;color:var(--amber)"></i>Dark Mode</div>
-              <div style="font-size:0.75rem;color:var(--muted);margin-top:2px">Switch between light and dark theme</div>
-            </div>
-            <label style="position:relative;display:inline-block;width:44px;height:24px;cursor:pointer">
-              <input type="checkbox" id="dark-mode-toggle" style="opacity:0;width:0;height:0" onchange="toggleTheme();this.checked=document.documentElement.getAttribute('data-theme')==='dark'">
-              <span id="dark-mode-track" style="position:absolute;inset:0;background:var(--bg4);border:1px solid var(--border-md);border-radius:24px;transition:0.3s"></span>
-              <span id="dark-mode-thumb" style="position:absolute;top:3px;left:3px;width:18px;height:18px;background:var(--amber);border-radius:50%;transition:0.3s"></span>
-            </label>
-          </div>
         <h3>Notifications</h3>
         <div style="display:flex;flex-direction:column;gap:0.68rem">
           <div style="display:flex;align-items:center;justify-content:space-between">
@@ -1178,40 +1145,5 @@ init();
   </div>
 </div>
 
-<script>
-    /* ── Theme System ── */
-    (function() {
-      const saved = localStorage.getItem('vendio_theme') || 'light';
-      document.documentElement.setAttribute('data-theme', saved);
-    })();
-    function toggleTheme() {
-      const cur = document.documentElement.getAttribute('data-theme') || 'light';
-      const next = cur === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('vendio_theme', next);
-      /* Update toggle icon */
-      const icon = document.getElementById('theme-icon');
-      if (icon) icon.className = next === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-    }
-    /* Apply on load */
-    document.addEventListener('DOMContentLoaded', () => {
-      const theme = localStorage.getItem('vendio_theme') || 'light';
-      const icon = document.getElementById('theme-icon');
-      if (icon) icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-    });</script>
-<script>
-    /* ── Sync dark mode toggle on load ── */
-    document.addEventListener('DOMContentLoaded', () => {
-      const toggle = document.getElementById('dark-mode-toggle');
-      const thumb  = document.getElementById('dark-mode-thumb');
-      const track  = document.getElementById('dark-mode-track');
-      function syncToggle() {
-        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        if (toggle) toggle.checked = isDark;
-        if (thumb)  thumb.style.transform = isDark ? 'translateX(20px)' : 'translateX(0)';
-        if (track)  track.style.background = isDark ? 'var(--amber-dim)' : 'var(--bg4)';
-      }
-      syncToggle();
-    });</script>
 </body>
 </html>

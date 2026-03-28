@@ -29,26 +29,19 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --amber: #B45309;
-      --amber-light: #D97706;
-      --bg: #FFFBF4;
-      --bg2: #FFFFFF;
-      --border: #FFCE88;
-      --border-bright: #F5B94E;
-      --text: #1C1208;
-      --text-muted: rgba(28,18,8,0.55);
-      --text-dim: rgba(28,18,8,0.35);
+      --amber: #F59E0B;
+      --amber-light: #FBBF24;
+      --bg: #0a0a0a;
+      --bg2: #0f0f0f;
+      --border: rgba(255,255,255,0.07);
+      --border-bright: rgba(255,255,255,0.12);
+      --text: #ffffff;
+      --text-muted: rgba(255,255,255,0.45);
+      --text-dim: rgba(255,255,255,0.28);
       --serif: 'Playfair Display', Georgia, serif;
       --sans: 'DM Sans', system-ui, sans-serif;
     }
 
-
-    [data-theme="dark"] {
-      --amber: #F59E0B; --amber-light: #FBBF24;
-      --bg: #0a0a0a; --bg2: #0f0f0f;
-      --border: rgba(255,255,255,0.07); --border-bright: rgba(255,255,255,0.12);
-      --text: #ffffff; --text-muted: rgba(255,255,255,0.45); --text-dim: rgba(255,255,255,0.28);
-    }
     html { overflow-x: hidden; scroll-behavior: smooth; }
     body { background: var(--bg); color: var(--text); font-family: var(--sans); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
 
@@ -356,18 +349,6 @@
     }
     .img-unavailable i { font-size: 2rem; color: var(--dim); }
     .img-unavailable span { font-size: 0.72rem; color: var(--dim); }
-
-    .theme-toggle-btn { width:34px; height:34px; border-radius:50%; border:1px solid var(--border); background:rgba(0,0,0,0.06); color:var(--muted); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; font-size:0.85rem; transition:all 0.2s; }
-    .theme-toggle-btn:hover { color:var(--text); border-color:var(--amber); }
-
-    [data-theme="light"] #nav { background: rgba(255,251,244,0.97) !important; border-bottom-color: #FFCE88 !important; }
-    [data-theme="light"] .nav-logo span, [data-theme="light"] .nav-logo { color: var(--text) !important; }
-    [data-theme="light"] .sidebar, [data-theme="light"] #sb, [data-theme="light"] aside { background: #FFFFFF !important; border-right: 1px solid #FFCE88; }
-    [data-theme="light"] .ni { color: var(--muted) !important; }
-    [data-theme="light"] .ni.on { color: var(--amber) !important; background: var(--amber-dim) !important; }
-    [data-theme="light"] input, [data-theme="light"] select, [data-theme="light"] textarea { background: #FFFFFF !important; border-color: #FFCE88 !important; color: var(--text) !important; }
-    [data-theme="light"] .btn-primary { background: var(--amber) !important; color: #fff !important; }
-    [data-theme="light"] .mo .mbox { background: #FFFFFF !important; border: 1.5px solid #FFCE88 !important; }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
@@ -386,8 +367,7 @@
     <button class="btn-outline" onclick="window.location.href='vendio-auth.html'">Log In</button>
     <button class="btn-amber" onclick="window.location.href='vendio-auth.html#signup'">Sign Up Free</button>
   </div>
-  <button class="hamburger" <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle dark/light mode"><i id="theme-icon" class="fas fa-moon"></i></button>
-  id="hamburger" aria-label="Menu">
+  <button class="hamburger" id="hamburger" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
 </nav>
@@ -726,23 +706,5 @@
   } catch(e) {}
 })();
 </script>
-<script>
-    (function() {
-      const saved = localStorage.getItem('vendio_theme') || 'light';
-      document.documentElement.setAttribute('data-theme', saved);
-    })();
-    function toggleTheme() {
-      const cur = document.documentElement.getAttribute('data-theme') || 'light';
-      const next = cur === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('vendio_theme', next);
-      const icon = document.getElementById('theme-icon');
-      if (icon) icon.className = next === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-    }
-    document.addEventListener('DOMContentLoaded', () => {
-      const theme = localStorage.getItem('vendio_theme') || 'light';
-      const icon = document.getElementById('theme-icon');
-      if (icon) icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-    });</script>
 </body>
 </html>
