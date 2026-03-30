@@ -151,7 +151,7 @@
 
     .tags { display: flex; gap: 0.5rem; justify-content: center; align-items: center; }
     .tags .label { color: var(--muted); font-size: 0.78rem; flex-shrink: 0; }
-    .tag { background: rgba(255,255,255,0.05); border: 1px solid var(--border-bright); color: rgba(255,255,255,0.6); padding: 0.28rem 0.75rem; border-radius: 100px; font-size: 0.78rem; white-space: nowrap; flex-shrink: 0; transition: all 0.2s; }
+    .tag { background: var(--bg3); border: 1px solid var(--border); color: var(--muted); padding: 0.28rem 0.75rem; border-radius: 100px; font-size: 0.78rem; white-space: nowrap; flex-shrink: 0; transition: all 0.2s; }
     .tag:hover { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.3); color: var(--amber); }
 
     /* ══════════════════ STATS ══════════════════ */
@@ -175,7 +175,7 @@
     #categories { background: var(--bg); }
     .cat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; }
     .cat-card {
-      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      background: var(--bg2); border: 1px solid var(--border);
       border-radius: 14px; padding: 1.75rem 1.5rem; cursor: pointer; transition: all 0.3s;
     }
     .cat-card:hover { background: rgba(245,158,11,0.06); border-color: rgba(245,158,11,0.25); transform: translateY(-4px); }
@@ -188,14 +188,14 @@
     #listings { background: var(--bg2); }
     .filter-row { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
     .filter-btn {
-      background: rgba(255,255,255,0.05); border: 1px solid var(--border-bright);
-      color: rgba(255,255,255,0.6); padding: 0.38rem 0.95rem; border-radius: 100px;
+      background: var(--bg3); border: 1px solid var(--border);
+      color: var(--muted); padding: 0.38rem 0.95rem; border-radius: 100px;
       font-size: 0.8rem; white-space: nowrap; flex-shrink: 0; transition: all 0.2s;
     }
     .filter-btn.active { background: var(--amber); border-color: var(--amber); color: #0a0a0a; font-weight: 600; }
     .listings-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
     .listing-card {
-      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      background: var(--bg2); border: 1px solid var(--border);
       border-radius: 14px; overflow: hidden; cursor: pointer; transition: all 0.3s;
     }
     .listing-card:hover { border-color: rgba(245,158,11,0.2); transform: translateY(-3px); }
@@ -240,7 +240,7 @@
     /* ══════════════════ TRUST ══════════════════ */
     #trust { background: var(--bg2); border-top: 1px solid rgba(255,255,255,0.05); }
     .trust-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; }
-    .trust-card { text-align: center; padding: 1.25rem 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; }
+    .trust-card { text-align: center; padding: 1.25rem 0.75rem; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; }
     .trust-icon { font-size: 1.75rem; margin-bottom: 0.6rem; }
     .trust-title { font-weight: 600; font-size: 0.88rem; margin-bottom: 0.35rem; }
     .trust-desc { color: var(--text-muted); font-size: 0.76rem; line-height: 1.5; }
@@ -249,7 +249,7 @@
     #pricing { background: var(--bg); border-top: 1px solid rgba(255,255,255,0.05); }
     .pricing-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
     .plan-card {
-      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      background: var(--bg2); border: 1px solid var(--border);
       border-radius: 16px; padding: 1.75rem 1.5rem; position: relative;
     }
     .plan-card.highlight { background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.35); }
@@ -447,7 +447,7 @@
     [data-theme="dark"] #cta p { color: rgba(255,255,255,0.48) !important; }
     [data-theme="dark"] .plan-feature span { color: rgba(255,255,255,0.58) !important; }
     [data-theme="dark"] .tags .label { color: rgba(255,255,255,0.35) !important; }
-    [data-theme="dark"] .filter-btn { color: rgba(255,255,255,0.55) !important; }
+    [data-theme="dark"] .filter-btn { background: rgba(255,255,255,0.05) !important; color: rgba(255,255,255,0.6) !important; border-color: rgba(255,255,255,0.12) !important; }
     [data-theme="dark"] #mobile-menu { background: rgba(10,10,10,0.98) !important; border-top-color: rgba(255,255,255,0.07) !important; }
     [data-theme="dark"] #mobile-menu a { color: rgba(255,255,255,0.7) !important; }
     [data-theme="dark"] .hamburger span { background: #fff !important; }
