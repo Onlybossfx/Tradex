@@ -86,7 +86,7 @@
 
     /* hamburger */
     .hamburger { display: none; flex-direction: column; gap: 5px; background: transparent; border: none; padding: 6px; }
-    .hamburger span { display: block; width: 22px; height: 2px; background: #fff; border-radius: 2px; transition: transform 0.25s, opacity 0.25s; }
+    .hamburger span { display: block; width: 22px; height: 2px; background: var(--nav-text, #1C1208); border-radius: 2px; transition: transform 0.25s, opacity 0.25s; }
     .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
     .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
     .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
@@ -94,12 +94,12 @@
     /* mobile menu */
     #mobile-menu {
       display: none; position: fixed; top: 62px; left: 0; right: 0; z-index: 99;
-      background: rgba(10,10,10,0.97); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      background: rgba(var(--bg-rgb,255,248,240),0.97); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
       border-bottom: 1px solid var(--border); padding: 1.5rem;
       flex-direction: column; gap: 0;
     }
     #mobile-menu.open { display: flex; }
-    #mobile-menu a { color: rgba(255,255,255,0.7); font-size: 1.05rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border); }
+    #mobile-menu a { color: var(--text); font-size: 1.05rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border); }
     .mobile-btns { display: flex; gap: 0.75rem; margin-top: 1rem; }
     .mobile-btns button { flex: 1; padding: 0.7rem; border-radius: 8px; font-size: 0.9rem; }
 
@@ -135,7 +135,7 @@
       font-weight: 700; line-height: 1.1; margin-bottom: 1.25rem; letter-spacing: -0.03em;
     }
     #hero h1 em { color: var(--amber); font-style: normal; }
-    #hero p { color: rgba(255,255,255,0.52); font-size: clamp(0.92rem, 2.5vw, 1.1rem); line-height: 1.7; max-width: 480px; margin: 0 auto 2.25rem; }
+    #hero p { color: var(--muted); font-size: clamp(0.92rem, 2.5vw, 1.1rem); line-height: 1.7; max-width: 480px; margin: 0 auto 2.25rem; }
 
     .search-bar {
       display: flex; background: rgba(255,255,255,0.05); border: 1px solid var(--border-bright);
@@ -150,7 +150,7 @@
     .search-bar button:hover { background: var(--amber-light); }
 
     .tags { display: flex; gap: 0.5rem; justify-content: center; align-items: center; }
-    .tags .label { color: rgba(255,255,255,0.35); font-size: 0.78rem; flex-shrink: 0; }
+    .tags .label { color: var(--muted); font-size: 0.78rem; flex-shrink: 0; }
     .tag { background: rgba(255,255,255,0.05); border: 1px solid var(--border-bright); color: rgba(255,255,255,0.6); padding: 0.28rem 0.75rem; border-radius: 100px; font-size: 0.78rem; white-space: nowrap; flex-shrink: 0; transition: all 0.2s; }
     .tag:hover { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.3); color: var(--amber); }
 
@@ -267,7 +267,7 @@
     .plan-features { margin-bottom: 1.75rem; display: flex; flex-direction: column; gap: 0.6rem; }
     .plan-feature { display: flex; align-items: center; gap: 0.55rem; }
     .plan-feature .check { color: var(--amber); font-size: 0.8rem; flex-shrink: 0; }
-    .plan-feature span { color: rgba(255,255,255,0.58); font-size: 0.82rem; }
+    .plan-feature span { color: var(--muted); font-size: 0.82rem; }
     .plan-btn { width: 100%; padding: 0.78rem; border-radius: 8px; font-size: 0.88rem; font-weight: 600; transition: opacity 0.2s; }
     .plan-btn:hover { opacity: 0.85; }
     .plan-btn.primary { background: var(--amber); border: none; color: #0a0a0a; }
@@ -275,11 +275,11 @@
     .pricing-note { text-align: center; color: var(--text-dim); font-size: 0.78rem; margin-top: 1.75rem; }
 
     /* ══════════════════ CTA ══════════════════ */
-    #cta { background: var(--bg2); border-top: 1px solid rgba(255,255,255,0.05); position: relative; overflow: hidden; }
+    #cta { background: var(--bg2); border-top: 1px solid var(--border); position: relative; overflow: hidden; }
     .cta-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: min(500px,100vw); height: 280px; background: radial-gradient(ellipse,rgba(245,158,11,0.1) 0%,transparent 70%); pointer-events: none; }
     .cta-inner { max-width: 580px; margin: 0 auto; text-align: center; position: relative; z-index: 1; }
     #cta h2 { font-family: var(--serif); font-size: clamp(1.9rem,6vw,3.2rem); font-weight: 700; margin-bottom: 1rem; letter-spacing: -0.03em; }
-    #cta p { color: rgba(255,255,255,0.48); font-size: 0.98rem; line-height: 1.7; margin-bottom: 2.25rem; }
+    #cta p { color: var(--muted); font-size: 0.98rem; line-height: 1.7; margin-bottom: 2.25rem; }
     .cta-btns { display: flex; gap: 0.85rem; justify-content: center; flex-wrap: wrap; }
     .btn-amber-lg { background: var(--amber); border: none; color: #0a0a0a; padding: 0.85rem 2.25rem; border-radius: 8px; font-size: 0.95rem; font-weight: 700; transition: background 0.2s; }
     .btn-amber-lg:hover { background: var(--amber-light); }
@@ -442,6 +442,15 @@
     [data-theme="dark"] .ni.on .lb { color: var(--amber) !important; }
     [data-theme="dark"] .tbl th { background: var(--bg3) !important; color: var(--muted) !important; }
     [data-theme="dark"] .filter-label { color: var(--muted) !important; }
+
+    [data-theme="dark"] #hero p { color: rgba(255,255,255,0.52) !important; }
+    [data-theme="dark"] #cta p { color: rgba(255,255,255,0.48) !important; }
+    [data-theme="dark"] .plan-feature span { color: rgba(255,255,255,0.58) !important; }
+    [data-theme="dark"] .tags .label { color: rgba(255,255,255,0.35) !important; }
+    [data-theme="dark"] .filter-btn { color: rgba(255,255,255,0.55) !important; }
+    [data-theme="dark"] #mobile-menu { background: rgba(10,10,10,0.98) !important; border-top-color: rgba(255,255,255,0.07) !important; }
+    [data-theme="dark"] #mobile-menu a { color: rgba(255,255,255,0.7) !important; }
+    [data-theme="dark"] .hamburger span { background: #fff !important; }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
