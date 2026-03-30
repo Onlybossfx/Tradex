@@ -62,7 +62,7 @@
     .ni .ic { font-size: 0.95rem; flex-shrink: 0; width: 18px; text-align: center; }
     .ni .lb { flex: 1; }
     .ni .bd { background: var(--amber); color: #0a0a0a; font-size: 0.58rem; font-weight: 700; padding: 0.08rem 0.38rem; border-radius: 100px; min-width: 16px; text-align: center; }
-    .ni .bd.red { background: var(--error); color: #fff; }
+    .ni .bd.red { background: var(--error); color: var(--text); }
     .sb-bot { margin-top: auto; padding-top: 0.85rem; border-top: 1px solid var(--border); }
     .sb-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 149; }
     .sb-overlay.show { display: block; }
@@ -272,7 +272,7 @@
     .ip { display: flex; gap: 0.45rem; flex-wrap: wrap; margin-top: 0.65rem; }
     .ipv { width: 64px; height: 64px; border-radius: 7px; overflow: hidden; position: relative; border: 1px solid var(--border); }
     .ipv img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .rm-i { position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,0.72); border: none; color: #fff; width: 16px; height: 16px; border-radius: 3px; font-size: 0.58rem; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .rm-i { position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,0.72); border: none; color: var(--text); width: 16px; height: 16px; border-radius: 3px; font-size: 0.58rem; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
     /* TAGS */
     .tiw { display: flex; flex-wrap: wrap; gap: 0.35rem; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 0.45rem 0.7rem; min-height: 40px; cursor: text; transition: border-color 0.18s; }
@@ -377,6 +377,51 @@
     .btn-primary, .btn-new { background: #C2690A !important; color: #fff !important; }
     .btn-primary:hover, .btn-new:hover { background: #D97706 !important; }
     .btn-ghost { border-color: rgba(194,105,10,0.4) !important; color: #C2690A !important; }
+
+    /* ── Light Mode Text Fixes ── */
+    .muted, .text-muted, .dim { color: var(--muted) !important; }
+    .nav-label { color: rgba(28,18,8,0.75) !important; }
+    .ni .lb, .ns { color: var(--muted) !important; }
+    .ni.on .lb { color: var(--amber) !important; }
+    .ph h1, .ph p { color: var(--text) !important; }
+    .panel h1, .panel h2, .panel h3 { color: var(--text) !important; }
+    .stat-val, .stat-label { color: var(--text) !important; }
+    .tbl th { color: var(--muted) !important; background: var(--bg3) !important; }
+    .tbl td { color: var(--text) !important; border-color: var(--border) !important; }
+    .card-title, .card-price { color: var(--text) !important; }
+    .card-cat, .card-seller, .seller-name { color: var(--muted) !important; }
+    .listing-title { color: var(--text) !important; }
+    .listing-price { color: var(--amber) !important; }
+    .section-title, .section-tag { color: var(--text) !important; }
+    .plan-name, .plan-price strong { color: var(--text) !important; }
+    .plan-desc, .plan-price span { color: var(--muted) !important; }
+    .plan-features li { color: var(--muted) !important; }
+    .cat-name { color: var(--text) !important; }
+    .cat-desc { color: var(--muted) !important; }
+    .how-num { color: var(--amber) !important; }
+    .how-title { color: var(--text) !important; }
+    .how-desc { color: var(--muted) !important; }
+    .footer-col h4 { color: var(--text) !important; }
+    .footer-col a { color: var(--muted) !important; }
+    .filter-label { color: var(--text) !important; }
+    .filter-item.active .filter-label { color: var(--amber) !important; }
+    .stars-display { color: var(--amber) !important; }
+    .section-label { color: var(--muted) !important; }
+    .empty h3 { color: var(--text) !important; }
+    .empty p { color: var(--muted) !important; }
+    .badge, .sp { color: var(--text) !important; }
+    .sm-name { color: var(--text) !important; }
+    .sm-tag { color: var(--muted) !important; }
+    .tab { color: var(--muted) !important; }
+    .tab.active { color: var(--text) !important; }
+    label { color: var(--text) !important; }
+    .frow label { color: var(--muted) !important; }
+    .listing-seller { color: var(--muted) !important; }
+    [data-theme="dark"] .nav-label { color: rgba(255,255,255,0.6) !important; }
+    [data-theme="dark"] .ni .lb { color: rgba(255,255,255,0.5) !important; }
+    [data-theme="dark"] .ni.on .lb { color: var(--amber) !important; }
+    [data-theme="dark"] .tbl th { background: var(--bg3) !important; color: var(--muted) !important; }
+    [data-theme="dark"] .filter-label { color: var(--muted) !important; }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
@@ -603,8 +648,8 @@
       <div class="pcard">
         <h3>Security</h3>
         <div style="display:flex;flex-direction:column;gap:0.5rem">
-          <button id="change-pw-btn" style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.7rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem;transition:color 0.2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.45)'"><i class="fas fa-key"></i> Change Password</button>
-          <button onclick="window.location.href='vendio-auth.html#2fa'" style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.7rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem;transition:color 0.2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.45)'"><i class="fas fa-shield-halved"></i> Two-Factor Authentication</button>
+          <button id="change-pw-btn" style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.7rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem;transition:color 0.2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'"><i class="fas fa-key"></i> Change Password</button>
+          <button onclick="window.location.href='vendio-auth.html#2fa'" style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.7rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem;transition:color 0.2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'"><i class="fas fa-shield-halved"></i> Two-Factor Authentication</button>
           <button onclick="confirmDelete()" style="background:transparent;border:1px solid rgba(239,68,68,0.2);color:#F87171;padding:0.7rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem"><i class="fas fa-trash"></i> Delete Account</button>
         </div>
       </div>
@@ -648,7 +693,7 @@
   <div class="panel" id="panel-notifications">
     <div class="ph">
       <div><h1>Notifications</h1><p>Stay on top of orders, messages and payouts.</p></div>
-      <button onclick="markAllNotifsRead()" style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.45rem 1rem;border-radius:8px;font-size:0.8rem;cursor:pointer;transition:all 0.2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.45)'">Mark all read</button>
+      <button onclick="markAllNotifsRead()" style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.45rem 1rem;border-radius:8px;font-size:0.8rem;cursor:pointer;transition:all 0.2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Mark all read</button>
     </div>
     <div id="notif-list"><div style="color:var(--dim);text-align:center;padding:3rem 0">Loading notifications...</div></div>
   </div>

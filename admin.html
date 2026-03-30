@@ -35,7 +35,7 @@
     .nav-logo { display: flex; align-items: center; gap: 6px; text-decoration: none; }
     .nav-logo span { font-family: var(--serif); font-size: 1.2rem; font-weight: 700; }
     .nav-logo i { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); display: inline-block; }
-    .admin-badge { background: var(--error); color: #fff; font-size: 0.65rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 100px; letter-spacing: 0.04em; }
+    .admin-badge { background: var(--error); color: var(--text); font-size: 0.65rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 100px; letter-spacing: 0.04em; }
     .nav-right { margin-left: auto; display: flex; align-items: center; gap: 0.65rem; }
     .nav-av { width: 30px; height: 30px; border-radius: 50%; background: var(--amber-dim); border: 1px solid rgba(245,158,11,0.3); display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 700; color: var(--amber); }
     .btn-sm-out { background: transparent; border: 1px solid var(--border-md); color: var(--muted); padding: 0.35rem 0.75rem; border-radius: 7px; font-size: 0.78rem; transition: all 0.2s; }
@@ -52,7 +52,7 @@
     .ni.on { background: var(--amber-dim); border-color: rgba(245,158,11,0.2); color: var(--amber); }
     .ni .ic { font-size: 0.92rem; flex-shrink: 0; width: 18px; text-align: center; }
     .ni .lb { flex: 1; }
-    .ni .bd { background: var(--error); color: #fff; font-size: 0.58rem; font-weight: 700; padding: 0.08rem 0.36rem; border-radius: 100px; }
+    .ni .bd { background: var(--error); color: var(--text); font-size: 0.58rem; font-weight: 700; padding: 0.08rem 0.36rem; border-radius: 100px; }
     .sb-bot { margin-top: auto; padding-top: 0.85rem; border-top: 1px solid var(--border); }
 
     /* MAIN */
@@ -228,6 +228,51 @@
     .btn-primary, .btn-new { background: #C2690A !important; color: #fff !important; }
     .btn-primary:hover, .btn-new:hover { background: #D97706 !important; }
     .btn-ghost { border-color: rgba(194,105,10,0.4) !important; color: #C2690A !important; }
+
+    /* ── Light Mode Text Fixes ── */
+    .muted, .text-muted, .dim { color: var(--muted) !important; }
+    .nav-label { color: rgba(28,18,8,0.75) !important; }
+    .ni .lb, .ns { color: var(--muted) !important; }
+    .ni.on .lb { color: var(--amber) !important; }
+    .ph h1, .ph p { color: var(--text) !important; }
+    .panel h1, .panel h2, .panel h3 { color: var(--text) !important; }
+    .stat-val, .stat-label { color: var(--text) !important; }
+    .tbl th { color: var(--muted) !important; background: var(--bg3) !important; }
+    .tbl td { color: var(--text) !important; border-color: var(--border) !important; }
+    .card-title, .card-price { color: var(--text) !important; }
+    .card-cat, .card-seller, .seller-name { color: var(--muted) !important; }
+    .listing-title { color: var(--text) !important; }
+    .listing-price { color: var(--amber) !important; }
+    .section-title, .section-tag { color: var(--text) !important; }
+    .plan-name, .plan-price strong { color: var(--text) !important; }
+    .plan-desc, .plan-price span { color: var(--muted) !important; }
+    .plan-features li { color: var(--muted) !important; }
+    .cat-name { color: var(--text) !important; }
+    .cat-desc { color: var(--muted) !important; }
+    .how-num { color: var(--amber) !important; }
+    .how-title { color: var(--text) !important; }
+    .how-desc { color: var(--muted) !important; }
+    .footer-col h4 { color: var(--text) !important; }
+    .footer-col a { color: var(--muted) !important; }
+    .filter-label { color: var(--text) !important; }
+    .filter-item.active .filter-label { color: var(--amber) !important; }
+    .stars-display { color: var(--amber) !important; }
+    .section-label { color: var(--muted) !important; }
+    .empty h3 { color: var(--text) !important; }
+    .empty p { color: var(--muted) !important; }
+    .badge, .sp { color: var(--text) !important; }
+    .sm-name { color: var(--text) !important; }
+    .sm-tag { color: var(--muted) !important; }
+    .tab { color: var(--muted) !important; }
+    .tab.active { color: var(--text) !important; }
+    label { color: var(--text) !important; }
+    .frow label { color: var(--muted) !important; }
+    .listing-seller { color: var(--muted) !important; }
+    [data-theme="dark"] .nav-label { color: rgba(255,255,255,0.6) !important; }
+    [data-theme="dark"] .ni .lb { color: rgba(255,255,255,0.5) !important; }
+    [data-theme="dark"] .ni.on .lb { color: var(--amber) !important; }
+    [data-theme="dark"] .tbl th { background: var(--bg3) !important; color: var(--muted) !important; }
+    [data-theme="dark"] .filter-label { color: var(--muted) !important; }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
@@ -467,7 +512,7 @@ async function init() {
   /* Admin check */
   const isAdmin = await DB.admin.isAdmin();
   if (!isAdmin) {
-    document.body.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:1rem;font-family:sans-serif;color:#fff;background:#0a0a0a;text-align:center;padding:2rem">
+    document.body.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:1rem;font-family:sans-serif;color:var(--text);background:var(--bg2);text-align:center;padding:2rem">
       <div style="font-size:3rem"><i class="fas fa-ban"></i></div>
       <h2 style="font-family:serif;font-size:1.5rem">Access Denied</h2>
       <p style="color:rgba(255,255,255,0.45)">You don't have admin privileges.</p>

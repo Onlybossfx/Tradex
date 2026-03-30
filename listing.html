@@ -85,9 +85,9 @@
     .cat-pill { background: var(--amber-dim); border: 1px solid rgba(245,158,11,0.2); color: var(--amber); font-size: 0.72rem; font-weight: 600; padding: 0.2rem 0.65rem; border-radius: 100px; }
     .l-badge { font-size: 0.68rem; font-weight: 700; padding: 0.18rem 0.55rem; border-radius: 100px; }
     .badge-top  { background: var(--amber); color: #0a0a0a; }
-    .badge-best { background: #6366F1; color: #fff; }
-    .badge-new  { background: var(--success); color: #fff; }
-    .badge-ver  { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid var(--border-md); }
+    .badge-best { background: #6366F1; color: var(--text); }
+    .badge-new  { background: var(--success); color: var(--text); }
+    .badge-ver  { background: rgba(255,255,255,0.1); color: var(--text); border: 1px solid var(--border-md); }
     .listing-title { font-family: var(--serif); font-size: clamp(1.3rem,5vw,2rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 0.85rem; }
     .listing-stats { display: flex; gap: 1rem; flex-wrap: wrap; }
     .stat-item { display: flex; align-items: center; gap: 0.35rem; font-size: 0.82rem; }
@@ -301,6 +301,51 @@
     .btn-primary, .btn-new { background: #C2690A !important; color: #fff !important; }
     .btn-primary:hover, .btn-new:hover { background: #D97706 !important; }
     .btn-ghost { border-color: rgba(194,105,10,0.4) !important; color: #C2690A !important; }
+
+    /* ── Light Mode Text Fixes ── */
+    .muted, .text-muted, .dim { color: var(--muted) !important; }
+    .nav-label { color: rgba(28,18,8,0.75) !important; }
+    .ni .lb, .ns { color: var(--muted) !important; }
+    .ni.on .lb { color: var(--amber) !important; }
+    .ph h1, .ph p { color: var(--text) !important; }
+    .panel h1, .panel h2, .panel h3 { color: var(--text) !important; }
+    .stat-val, .stat-label { color: var(--text) !important; }
+    .tbl th { color: var(--muted) !important; background: var(--bg3) !important; }
+    .tbl td { color: var(--text) !important; border-color: var(--border) !important; }
+    .card-title, .card-price { color: var(--text) !important; }
+    .card-cat, .card-seller, .seller-name { color: var(--muted) !important; }
+    .listing-title { color: var(--text) !important; }
+    .listing-price { color: var(--amber) !important; }
+    .section-title, .section-tag { color: var(--text) !important; }
+    .plan-name, .plan-price strong { color: var(--text) !important; }
+    .plan-desc, .plan-price span { color: var(--muted) !important; }
+    .plan-features li { color: var(--muted) !important; }
+    .cat-name { color: var(--text) !important; }
+    .cat-desc { color: var(--muted) !important; }
+    .how-num { color: var(--amber) !important; }
+    .how-title { color: var(--text) !important; }
+    .how-desc { color: var(--muted) !important; }
+    .footer-col h4 { color: var(--text) !important; }
+    .footer-col a { color: var(--muted) !important; }
+    .filter-label { color: var(--text) !important; }
+    .filter-item.active .filter-label { color: var(--amber) !important; }
+    .stars-display { color: var(--amber) !important; }
+    .section-label { color: var(--muted) !important; }
+    .empty h3 { color: var(--text) !important; }
+    .empty p { color: var(--muted) !important; }
+    .badge, .sp { color: var(--text) !important; }
+    .sm-name { color: var(--text) !important; }
+    .sm-tag { color: var(--muted) !important; }
+    .tab { color: var(--muted) !important; }
+    .tab.active { color: var(--text) !important; }
+    label { color: var(--text) !important; }
+    .frow label { color: var(--muted) !important; }
+    .listing-seller { color: var(--muted) !important; }
+    [data-theme="dark"] .nav-label { color: rgba(255,255,255,0.6) !important; }
+    [data-theme="dark"] .ni .lb { color: rgba(255,255,255,0.5) !important; }
+    [data-theme="dark"] .ni.on .lb { color: var(--amber) !important; }
+    [data-theme="dark"] .tbl th { background: var(--bg3) !important; color: var(--muted) !important; }
+    [data-theme="dark"] .filter-label { color: var(--muted) !important; }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
