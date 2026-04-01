@@ -512,6 +512,12 @@ window.DB = {
     },
     updateUserStatus: async (userId, updates) => {
       const {error}=await _dbSb.from('users').update(updates).eq('id',userId);
+      if (!error && 'verified' in updates) {
+        /* Also update seller_verified on all their listings */
+        await _dbSb.from('listings')
+          .update({ seller_verified: updates.verified })
+          .eq('seller_id', userId);
+      }
       return {error};
     },
     updateListingStatus: async (listingId, status) => {
