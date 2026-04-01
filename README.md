@@ -1,4 +1,4 @@
-# Vendio Marketplace
+# TraydR Marketplace
 
 A full-stack marketplace supporting physical goods, digital products, freelance skills, and experiences — with escrow payments, buyer/seller dashboards, real-time messaging, and an admin panel.
 
@@ -7,13 +7,13 @@ A full-stack marketplace supporting physical goods, digital products, freelance 
 ## 📁 Folder Structure
 
 ```
-vendio/
+traydr/
 ├── pages/                      # All HTML pages
-│   ├── vendio.html             # Landing page (public showcase)
+│   ├── traydr.html             # Landing page (public showcase)
 │   ├── browse.html             # Browse & search listings
 │   ├── listing.html            # Listing detail page
 │   ├── checkout.html           # 3-step checkout (Stripe + Flutterwave)
-│   ├── vendio-auth.html        # Login / Signup (3-step)
+│   ├── traydr-auth.html        # Login / Signup (3-step)
 │   ├── 2fa.html                # OTP verification
 │   ├── account-recovery.html   # Password reset
 │   ├── dashboard-seller.html   # Seller dashboard
@@ -73,7 +73,7 @@ Tables required:
 ### 2. Serve locally
 ```bash
 python -m http.server 3000
-# Open http://localhost:3000/pages/vendio.html
+# Open http://localhost:3000/pages/traydr.html
 ```
 
 ### 3. Deploy email Edge Function
@@ -152,4 +152,4 @@ Remaining: Real payment processing (Stripe/Flutterwave Edge Functions).
 
 ---
 
-Built with Claude · Vendio © 2026
+Built with Claude · TraydR © 2026

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vendio — Admin</title>
+  <title>TraydR — Admin</title>
   <meta name="robots" content="noindex, nofollow" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F59E0B" />
@@ -282,7 +282,7 @@
 
 <!-- NAV -->
 <nav id="nav">
-  <a href="index.html" class="nav-logo"><span>Vendio</span><i></i></a>
+  <a href="index.html" class="nav-logo"><span>TraydR</span><i></i></a>
   <span class="admin-badge">ADMIN</span>
   <div class="hbg" id="hbg" onclick="toggleSidebar()"><span></span><span></span><span></span></div>
   <div class="nav-right">
@@ -516,7 +516,7 @@ async function init() {
       <div style="font-size:3rem"><i class="fas fa-ban"></i></div>
       <h2 style="font-family:serif;font-size:1.5rem">Access Denied</h2>
       <p style="color:var(--muted)">You don't have admin privileges.</p>
-      <a href="index.html" style="color:#F59E0B">← Back to Vendio</a>
+      <a href="index.html" style="color:#F59E0B">← Back to TraydR</a>
     </div>`;
     return;
   }
@@ -579,7 +579,7 @@ function sendNotifToUser(id, name) {
   $('n-target').value = 'specific';
   $('n-userid').value = id;
   $('n-userid-row').style.display = '';
-  $('n-title').value = `Message from Vendio Admin`;
+  $('n-title').value = `Message from TraydR Admin`;
   switchP('notify');
 }
 
@@ -685,8 +685,8 @@ async function markUnderReview(id) {
 }
 async function notifyParties(buyerId, sellerId) {
   await Promise.all([
-    DB.createNotification(buyerId, 'dispute', 'Dispute Update', 'Your dispute is being reviewed by the Vendio team. We will notify you of the resolution shortly.'),
-    DB.createNotification(sellerId, 'dispute', 'Dispute Notification', 'A dispute has been raised on one of your orders. The Vendio team is reviewing the case.'),
+    DB.createNotification(buyerId, 'dispute', 'Dispute Update', 'Your dispute is being reviewed by the TraydR team. We will notify you of the resolution shortly.'),
+    DB.createNotification(sellerId, 'dispute', 'Dispute Notification', 'A dispute has been raised on one of your orders. The TraydR team is reviewing the case.'),
   ]);
   toast('Both parties notified. <i class="fas fa-circle-check"></i>', 'ok');
 }
@@ -829,14 +829,14 @@ init();
 </script>
 <script>
   (function() {
-    var t = localStorage.getItem('vendio_theme') || 'light';
+    var t = localStorage.getItem('traydr_theme') || 'light';
     document.documentElement.setAttribute('data-theme', t);
   })();
   function toggleTheme() {
     var cur  = document.documentElement.getAttribute('data-theme') || 'light';
     var next = cur === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem('vendio_theme', next);
+    localStorage.setItem('traydr_theme', next);
     var tog   = document.getElementById('dark-mode-toggle');
     var thumb = document.getElementById('dark-mode-thumb');
     if (tog)   tog.checked = next === 'dark';

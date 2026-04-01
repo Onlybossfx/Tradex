@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vendio — Account Recovery</title>
+  <title>TraydR — Account Recovery</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -209,7 +209,7 @@
 <body>
 <div class="card">
   <div class="card-glow"></div>
-  <a href="vendio-auth.html" class="logo"><span>Vendio</span><i></i></a>
+  <a href="traydr-auth.html" class="logo"><span>TraydR</span><i></i></a>
 
   <!-- Step bar -->
   <div class="step-bar">
@@ -240,7 +240,7 @@
     </div>
 
     <button class="btn-primary" id="r-btn"><span class="lbl">Send Reset Link</span></button>
-    <a href="vendio-auth.html" class="btn-link">← Back to login</a>
+    <a href="traydr-auth.html" class="btn-link">← Back to login</a>
   </div>
 
   <!-- ══ STEP 2: Check email ══ -->
@@ -261,7 +261,7 @@
     <div class="head">
       <div class="icon-wrap"><i class="fas fa-shield-halved"></i></div>
       <h1>Set new password</h1>
-      <p>Choose a strong password for your Vendio account.</p>
+      <p>Choose a strong password for your TraydR account.</p>
     </div>
 
     <div class="alert err" id="np-err"><span><i class="fas fa-triangle-exclamation"></i></span><span id="np-err-msg"></span></div>
@@ -297,7 +297,7 @@
     </div>
 
     <button class="btn-primary" id="np-btn"><span class="lbl">Update Password</span></button>
-    <a href="vendio-auth.html" class="btn-link">← Back to login</a>
+    <a href="traydr-auth.html" class="btn-link">← Back to login</a>
   </div>
 
 </div>
@@ -459,14 +459,14 @@ if (hasResetToken()) {
 </script>
 <script>
   (function() {
-    var t = localStorage.getItem('vendio_theme') || 'light';
+    var t = localStorage.getItem('traydr_theme') || 'light';
     document.documentElement.setAttribute('data-theme', t);
   })();
   function toggleTheme() {
     var cur  = document.documentElement.getAttribute('data-theme') || 'light';
     var next = cur === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem('vendio_theme', next);
+    localStorage.setItem('traydr_theme', next);
     var tog   = document.getElementById('dark-mode-toggle');
     var thumb = document.getElementById('dark-mode-thumb');
     if (tog)   tog.checked = next === 'dark';

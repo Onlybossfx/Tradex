@@ -1,14 +1,14 @@
-/* ── Vendio Theme Manager ── */
+/* ── TraydR Theme Manager ── */
 (function(){
   // Apply theme immediately (before paint) to avoid flash
-  const saved = localStorage.getItem('vendio-theme') || 'light';
+  const saved = localStorage.getItem('traydr-theme') || 'light';
   document.documentElement.setAttribute('data-theme', saved);
 
-  window.VendioTheme = {
+  window.TraydRTheme = {
     current: () => document.documentElement.getAttribute('data-theme') || 'light',
     set: function(mode) {
       document.documentElement.setAttribute('data-theme', mode);
-      localStorage.setItem('vendio-theme', mode);
+      localStorage.setItem('traydr-theme', mode);
       // Update all toggle buttons/icons if present
       document.querySelectorAll('[data-theme-toggle]').forEach(btn => {
         const isDark = mode === 'dark';
@@ -33,5 +33,5 @@
     }
   };
 
-  VendioTheme.init();
+  TraydRTheme.init();
 })();

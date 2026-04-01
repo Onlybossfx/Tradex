@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vendio — Checkout</title>
+  <title>TraydR — Checkout</title>
   <meta name="robots" content="noindex, nofollow" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F59E0B" />
@@ -284,7 +284,7 @@
 
 <!-- NAV -->
 <nav id="nav">
-  <a href="index.html" class="nav-logo"><span>Vendio</span><i></i></a>
+  <a href="index.html" class="nav-logo"><span>TraydR</span><i></i></a>
   <div class="nav-sep"></div>
   <span class="nav-step">Secure Checkout</span>
   <div class="nav-secure"><i class="fas fa-lock"></i> SSL Encrypted</div>
@@ -527,7 +527,7 @@
           <span style="font-size:1.4rem;flex-shrink:0"><i class="fas fa-lock"></i></span>
           <div>
             <div style="font-size:0.88rem;font-weight:600;margin-bottom:0.3rem;color:var(--success)">Escrow Protection Active</div>
-            <div style="font-size:0.8rem;color:var(--muted);line-height:1.6">Your payment is held securely in escrow. Funds are only released to the seller once you confirm delivery. If anything goes wrong, you're covered by Vendio Buyer Protection.</div>
+            <div style="font-size:0.8rem;color:var(--muted);line-height:1.6">Your payment is held securely in escrow. Funds are only released to the seller once you confirm delivery. If anything goes wrong, you're covered by TraydR Buyer Protection.</div>
           </div>
         </div>
       </div>
@@ -597,7 +597,7 @@
 <script>
 /*
   ============================================================
-  checkout.html — VENDIO CHECKOUT
+  checkout.html — TraydR CHECKOUT
   
   Reads order data from sessionStorage (set by listing.html)
   Creates order in Supabase on confirmation
@@ -653,7 +653,7 @@ async function init() {
   if (!user) return;
 
   /* Load checkout data from sessionStorage */
-  const raw = sessionStorage.getItem('vendio_checkout');
+  const raw = sessionStorage.getItem('traydr_checkout');
   if (!raw) {
     showGlobalError('No order data found. Please go back and select a package.');
     return;
@@ -960,7 +960,7 @@ $('place-order-btn').addEventListener('click', async () => {
   }
 
   /* Clear checkout data */
-  sessionStorage.removeItem('vendio_checkout');
+  sessionStorage.removeItem('traydr_checkout');
 
   /* Show success */
   $('success-order-id').textContent = `#TRX-${String(order.id).padStart(6,'0')}`;
@@ -988,14 +988,14 @@ init();
 </script>
 <script>
   (function() {
-    var t = localStorage.getItem('vendio_theme') || 'light';
+    var t = localStorage.getItem('traydr_theme') || 'light';
     document.documentElement.setAttribute('data-theme', t);
   })();
   function toggleTheme() {
     var cur  = document.documentElement.getAttribute('data-theme') || 'light';
     var next = cur === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem('vendio_theme', next);
+    localStorage.setItem('traydr_theme', next);
     var tog   = document.getElementById('dark-mode-toggle');
     var thumb = document.getElementById('dark-mode-thumb');
     if (tog)   tog.checked = next === 'dark';
