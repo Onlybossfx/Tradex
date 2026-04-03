@@ -348,13 +348,14 @@
     [data-theme="dark"] .filter-label { color: var(--muted) !important; }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="icon" type="image/png" href="logo.png">
 </head>
 <body>
 
 <!-- NAV -->
 <nav id="nav">
   <button class="nav-back" onclick="history.back()">←</button>
-  <a href="index.html" class="nav-logo"><span>TraydR</span><i></i></a>
+  <a href="index.html" class="nav-logo"><img src="logo.png" alt="TraydR" style="height:64px;width:auto;display:block;object-fit:contain"></a>
   <div class="nav-right">
     <button class="btn-sm"       id="nav-login"  onclick="window.location.href='traydr-auth.html'" style="display:none">Log In</button>
     <button class="btn-amber-sm" id="nav-signup" onclick="window.location.href='traydr-auth.html#signup'" style="display:none">Sign Up</button>
