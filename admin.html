@@ -775,7 +775,7 @@ $('send-notif-btn').addEventListener('click', async () => {
 
   btn.classList.remove('ld'); btn.disabled = false;
   $('n-result').style.display = '';
-  $('n-result').textContent = `<i class="fas fa-circle-check"></i> Sent to ${sent} user${sent!==1?'s':''}`;
+  $('n-result').innerHTML = `<i class="fas fa-circle-check"></i> Sent to ${sent} user${sent!==1?'s':''}`;
   toast(`Notification sent to ${sent} user${sent!==1?'s':''}.`, 'ok');
   setTimeout(() => { $('n-result').style.display = 'none'; }, 4000);
 });

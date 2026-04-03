@@ -503,7 +503,7 @@ function goStep(n) {
   [1,2,3].forEach(i => {
     const d = $(`d${i}`);
     d.classList.remove('active','done');
-    if (i < n) { d.classList.add('done'); d.textContent = '<i class="fas fa-check"></i>'; }
+    if (i < n) { d.classList.add('done'); d.innerHTML = '<i class="fas fa-check"></i>'; }
     else if (i === n) { d.classList.add('active'); d.textContent = i; }
     else d.textContent = i;
     if (i <= 2) $(`ln${i}`).classList.toggle('done', i < n);
@@ -664,7 +664,7 @@ if (window.location.search.includes('confirmed=1')) {
   /* Show a success message */
   const alert = document.createElement('div');
   alert.style.cssText = 'background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);color:#6EE7B7;padding:0.75rem 1rem;border-radius:10px;font-size:0.85rem;margin-bottom:1rem;text-align:center';
-  alert.textContent = '<i class="fas fa-circle-check"></i> Email confirmed! Please log in to continue.';
+  alert.innerHTML = '<i class="fas fa-circle-check"></i> Email confirmed! Please log in to continue.';
   const loginForm = document.querySelector('.login-form, #login-form, form');
   if (loginForm) loginForm.prepend(alert);
   else document.querySelector('.wrap, .card, .auth-card')?.prepend(alert);

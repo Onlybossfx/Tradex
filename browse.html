@@ -755,7 +755,7 @@ async function toggleSave(e, id) {
     if (saved.has(id)) { saved.delete(id); await Listings.unsave(id); }
     else               { saved.add(id);    await Listings.save(id);   }
     const btn = e.currentTarget;
-    btn.textContent = saved.has(id) ? '<i class="fas fa-heart"></i>' : '<i class="far fa-heart"></i>';
+    btn.innerHTML = saved.has(id) ? '<i class="fas fa-heart"></i>' : '<i class="far fa-heart"></i>';
     btn.classList.toggle('saved', saved.has(id));
   }, { label: 'save listings' });
 }

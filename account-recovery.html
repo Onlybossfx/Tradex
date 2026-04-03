@@ -348,7 +348,7 @@ function goStep(n) {
   [1,2,3].forEach(i => {
     const d = $(`d${i}`);
     d.classList.remove('active','done');
-    if (i < n)      { d.classList.add('done'); d.textContent = '<i class="fas fa-check"></i>'; }
+    if (i < n)      { d.classList.add('done'); d.innerHTML = '<i class="fas fa-check"></i>'; }
     else if (i ===n){ d.classList.add('active'); d.textContent = i; }
     else              d.textContent = i;
     if (i <= 2) $(`ln${i}`).classList.toggle('done', i < n);
