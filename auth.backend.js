@@ -68,14 +68,15 @@ window.Auth = {
 
     if (error || !data.user) return { error };
 
-    const { error: dbError } = await sb
+    /* Insert user profile — use upsert to handle edge cases gracefully */
+    await sb
       .from('users')
-      .insert({
+      .upsert({
         id:        data.user.id,
         email:     data.user.email,
         full_name: meta.full_name,
         role:      meta.role,
-      });
+      }, { onConflict: 'id', ignoreDuplicates: true });
 
     /* Welcome email — fire and forget */
     try {
@@ -90,7 +91,7 @@ window.Auth = {
       });
     } catch(e) {}
 
-    return { error: dbError };
+    return { error: null };
   },
 
   /* ─────────────────────────────────────────────

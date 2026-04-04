@@ -541,7 +541,21 @@ $('s2-next').addEventListener('click', async () => {
   const { error } = await api('signup', email, pw, { full_name:`${fname} ${lname}`, role: st.role });
   setLoad(btn, false);
 
-  if (error) { alert$('s2-err', error.message); return; }
+  if (error) {
+    const msg = error.message || '';
+    if (msg.includes('users_pkey') || msg.includes('duplicate') || msg.includes('already registered') || msg.includes('already exists')) {
+      alert$('s2-err', 'Please check your email for a confirmation link.');
+    } else if (msg.includes('password') || msg.includes('weak')) {
+      alert$('s2-err', 'Password is too weak. Please use at least 8 characters with letters and numbers.');
+    } else if (msg.includes('email')) {
+      alert$('s2-err', 'Please enter a valid email address.');
+    } else if (msg.includes('rate') || msg.includes('too many')) {
+      alert$('s2-err', 'Too many attempts. Please wait a few minutes and try again.');
+    } else {
+      alert$('s2-err', 'Something went wrong. Please try again or contact support.');
+    }
+    return;
+  }
   st.email = email;
 
   /* ── Show "Check your email" screen ── */
@@ -605,7 +619,19 @@ $('l-btn').addEventListener('click', async () => {
   const { error } = await api('login', email, pw);
   setLoad(btn, false);
 
-  if (error) { alert$('l-err', error.message); return; }
+  if (error) {
+    const msg = error.message || '';
+    if (msg.includes('Invalid login') || msg.includes('invalid') || msg.includes('credentials') || msg.includes('password')) {
+      alert$('l-err', 'Incorrect email or password. Please try again.');
+    } else if (msg.includes('Email not confirmed') || msg.includes('not confirmed')) {
+      alert$('l-err', 'Please confirm your email first. Check your inbox for a verification link.');
+    } else if (msg.includes('rate') || msg.includes('too many')) {
+      alert$('l-err', 'Too many attempts. Please wait a few minutes and try again.');
+    } else {
+      alert$('l-err', 'Unable to log in. Please try again.');
+    }
+    return;
+  }
 
   /* Login successful — go straight to dashboard */
   await api('onSuccess', { context: 'login' });
@@ -619,7 +645,7 @@ document.querySelectorAll('[data-provider]').forEach(b =>
 /* ── Resend confirmation ── */
 async function resendConfirmation(email) {
   const { error } = await api('resendOtp', email, 'signup');
-  if (error) { alert('Failed to resend: ' + error.message); return; }
+  if (error) { alert$('s2-err', 'Failed to resend email. Please try again in a few minutes.'); return; }
   alert('Confirmation email resent! Check your inbox.');
 }
 
