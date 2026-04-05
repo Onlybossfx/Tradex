@@ -1096,7 +1096,12 @@ async function openMsgForOrder(orderId){
   await renderMessages();
   const conv=myConvs.find(c=>c.order_id===orderId);
   if(conv){switchP('messages');setTimeout(()=>openConv(conv),100);}
-  else toast('No conversation found for this order yet.','inf');
+  else {
+      /* Order exists but no messages yet — open a new conversation */
+      const conv = { order_id: orderId, other_id: null, other_name: 'Seller', listing_title: '', unread: 0, last_message: '' };
+      switchP('messages');
+      setTimeout(() => openConv(conv), 100);
+    }
 }
 
 function renderMsgWindow(conv,msgs){

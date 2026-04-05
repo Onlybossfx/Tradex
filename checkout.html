@@ -665,6 +665,36 @@ async function init() {
   $('d-name').value  = user.user_metadata?.full_name || '';
   $('d-email').value = user.email || '';
 
+  /* ── Handle Flutterwave return ── */
+  const urlP = new URLSearchParams(window.location.search);
+  if (urlP.get('flw') === 'success') {
+    const transaction_id = urlP.get('transaction_id');
+    const tx_ref         = urlP.get('tx_ref');
+    const order_id       = urlP.get('order_id') || sessionStorage.getItem('traydr_pending_order');
+    if (transaction_id && order_id) {
+      try {
+        const vRes = await fetch(
+          'https://rtwbrcbifnowrqpgivma.supabase.co/functions/v1/flutterwave-charge',
+          {
+            method:  'POST',
+            headers: {
+              'Content-Type':  'application/json',
+              'Authorization': 'Bearer sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7',
+            },
+            body: JSON.stringify({ action: 'verify', transaction_id, tx_ref, order_id }),
+          }
+        );
+        const vData = await vRes.json();
+        if (vData.success) {
+          sessionStorage.removeItem('traydr_pending_order');
+          goStep(4);
+          $('success-order-id').textContent = `#TRX-${String(order_id).padStart(6,'0')}`;
+          return;
+        }
+      } catch(e) { console.error('Verify error:', e); }
+    }
+  }
+
   /* Load saved addresses */
   try {
     const { data: addrs } = await DB.getAddresses(user.id);
@@ -921,16 +951,7 @@ $('place-order-btn').addEventListener('click', async () => {
     return;
   }
 
-  /*
-    PRODUCTION NOTE:
-    In production, create a Supabase Edge Function that:
-    1. Creates the Stripe PaymentIntent / Flutterwave charge
-    2. Only creates the order record AFTER payment succeeds
-    3. Stores the payment intent ID on the order
-
-    For now we create the order record directly and mark as 'escrowed'
-    to demonstrate the full flow. Wire up real payments when ready.
-  */
+  /* ── Step 1: Create order as pending ── */
   const orderPayload = {
     buyer_id:      user.id,
     seller_id:     c.seller_id,
@@ -942,30 +963,68 @@ $('place-order-btn').addEventListener('click', async () => {
     amount:        total,
     platform_fee:  fee,
     seller_payout: payout,
-    status:        'escrowed', /* payment collected, in escrow */
+    status:        'pending',
     package_label: c.package_label,
   };
 
   const { data: order, error } = await DB.createOrder(orderPayload);
-
   btn.classList.remove('ld'); btn.disabled = false;
 
   if (error) {
-    /* If not logged in error */
     if (error.message?.includes('auth')) {
-      showAlert('step3-err','Please log in to complete your purchase.');
+      showAlert('step3-err', 'Please log in to complete your purchase.');
     } else {
-      showAlert('step3-err', 'Order failed: ' + error.message);
+      showAlert('step3-err', 'Could not create order. Please try again.');
     }
     return;
   }
 
-  /* Clear checkout data */
-  sessionStorage.removeItem('traydr_checkout');
+  /* ── Step 2: Initiate Flutterwave payment ── */
+  btn.classList.add('ld'); btn.disabled = true;
+  btn.querySelector('.lbl').textContent = 'Redirecting to payment...';
 
-  /* Show success */
-  $('success-order-id').textContent = `#TRX-${String(order.id).padStart(6,'0')}`;
-  goStep(4);
+  try {
+    const flwRes = await fetch(
+      'https://rtwbrcbifnowrqpgivma.supabase.co/functions/v1/flutterwave-charge',
+      {
+        method:  'POST',
+        headers: {
+          'Content-Type':  'application/json',
+          'Authorization': 'Bearer sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7',
+        },
+        body: JSON.stringify({
+          action:        'initiate',
+          amount:        total,
+          currency:      delivery.country === 'NG' ? 'NGN' :
+                         delivery.country === 'GH' ? 'GHS' :
+                         delivery.country === 'KE' ? 'KES' :
+                         delivery.country === 'ZA' ? 'ZAR' : 'USD',
+          email:         user.email,
+          name:          delivery.name,
+          phone:         delivery.phone || '',
+          order_id:      order.id,
+          listing_title: c.listing_title,
+          redirect_url:  `${window.location.origin}/checkout.html?flw=success&order_id=${order.id}`,
+        }),
+      }
+    );
+
+    const flwData = await flwRes.json();
+    btn.classList.remove('ld'); btn.disabled = false;
+
+    if (flwData.success && flwData.payment_link) {
+      sessionStorage.setItem('traydr_pending_order', order.id);
+      sessionStorage.removeItem('traydr_checkout');
+      window.location.href = flwData.payment_link;
+      return;
+    }
+
+    showAlert('step3-err', flwData.error || 'Payment initiation failed. Please try again.');
+
+  } catch(e) {
+    btn.classList.remove('ld'); btn.disabled = false;
+    showAlert('step3-err', 'Payment service unavailable. Please try again.');
+  }
 });
 
 /* ── Login prompt (shown when user hits checkout without being logged in) ── */

@@ -199,7 +199,7 @@ window.DB = {
         last_at: msgs?.[0]?.created_at, unread: unread || 0,
       };
     }));
-    return { data: convs.filter(c => c.last_at), error: null };
+    return { data: convs, error: null }; /* show all orders, not just ones with messages */
   },
   getMessages: async (orderId) => {
     const { data, error } = await _dbSb.from('messages').select('*')
