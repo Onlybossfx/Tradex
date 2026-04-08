@@ -277,6 +277,27 @@
     [data-theme="dark"] .ni.on .lb { color: var(--amber) !important; }
     [data-theme="dark"] .tbl th { background: var(--bg3) !important; color: var(--muted) !important; }
     [data-theme="dark"] .filter-label { color: var(--muted) !important; }
+
+    /* ══════════════════════════════════════
+       MOBILE FIRST — Full Responsive System
+    ══════════════════════════════════════ */
+    * { box-sizing: border-box; }
+    #nav, nav { padding-left: 0.85rem; padding-right: 0.85rem; }
+
+    /* Tables */
+    .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; }
+    .tbl { width: 100%; min-width: 480px; }
+
+    /* Cards */
+    .card, .listing-card { min-width: 0; }
+
+    /* Modals */
+    .mbox { width: calc(100vw - 2rem) !important; max-width: 100% !important; }
+
+    @media (max-width: 480px) {
+      .f2 { grid-template-columns: 1fr !important; }
+      .grid-2 { grid-template-columns: 1fr !important; }
+    }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="icon" type="image/png" href="logo.png">
@@ -680,9 +701,9 @@ async function init() {
   const urlP = new URLSearchParams(window.location.search);
   if (urlP.get('flw') === 'success') {
     const transaction_id = urlP.get('transaction_id');
-    const tx_ref         = urlP.get('tx_ref');
-    const order_id       = urlP.get('order_id') || sessionStorage.getItem('traydr_pending_order');
-    if (transaction_id && order_id) {
+    const tx_ref         = urlP.get('tx_ref') || sessionStorage.getItem('traydr_pending_order');
+    const order_id       = urlP.get('order_id') || tx_ref;
+    if (transaction_id && tx_ref) {
       try {
         const vRes = await fetch(
           'https://rtwbrcbifnowrqpgivma.supabase.co/functions/v1/flutterwave-charge',
@@ -692,30 +713,21 @@ async function init() {
               'Content-Type':  'application/json',
               'Authorization': 'Bearer sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7',
             },
-            body: JSON.stringify({ action: 'verify', transaction_id, tx_ref, order_id }),
+            body: JSON.stringify({
+              action:        'verify',
+              transaction_id,
+              tx_ref,
+              checkout_data: JSON.parse(sessionStorage.getItem('traydr_pending_checkout') || '{}'),
+            }),
           }
         );
         const vData = await vRes.json();
         if (vData.success) {
-          /* Payment verified — NOW create the order */
-          const pending = JSON.parse(sessionStorage.getItem('traydr_pending_checkout') || '{}');
-          if (pending.buyer_id) {
-            const { data: order } = await DB.createOrder({
-              ...pending,
-              status:         'escrowed',
-              payment_ref:    vData.flw_ref,
-              payment_method: 'flutterwave',
-              paid_at:        new Date().toISOString(),
-            });
-            sessionStorage.removeItem('traydr_pending_checkout');
-            sessionStorage.removeItem('traydr_pending_order');
-            goStep(4);
-            $('success-order-id').textContent = `#TRX-${String(order?.id || order_id).padStart(6,'0')}`;
-          } else {
-            sessionStorage.removeItem('traydr_pending_order');
-            goStep(4);
-            $('success-order-id').textContent = `#TRX-${String(order_id).padStart(6,'0')}`;
-          }
+          /* Order created in Edge Function — just show success */
+          sessionStorage.removeItem('traydr_pending_checkout');
+          sessionStorage.removeItem('traydr_pending_order');
+          goStep(4);
+          $('success-order-id').textContent = `#TRX-${String(vData.order_id || '').padStart(6,'0')}`;
           return;
         }
       } catch(e) { console.error('Verify error:', e); }
@@ -1021,7 +1033,7 @@ $('place-order-btn').addEventListener('click', async () => {
           email:         user.email,
           name:          delivery.name,
           phone:         delivery.phone || '',
-          order_id:      order.id,
+          order_id:      `tmp_${Date.now()}`,
           listing_title: c.listing_title,
           redirect_url:  `${window.location.origin}/checkout.html?flw=success`,
         }),
@@ -1032,7 +1044,7 @@ $('place-order-btn').addEventListener('click', async () => {
     btn.classList.remove('ld'); btn.disabled = false;
 
     if (flwData.success && flwData.payment_link) {
-      sessionStorage.setItem('traydr_pending_order', order.id);
+      sessionStorage.setItem('traydr_pending_order', flwData.tx_ref);
       sessionStorage.removeItem('traydr_checkout');
       window.location.href = flwData.payment_link;
       return;
