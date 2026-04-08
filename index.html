@@ -71,13 +71,13 @@
     .nav-logo span { font-family: var(--serif); font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; }
     .nav-logo i { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); display: inline-block; margin-bottom: 2px; }
     .nav-links { display: flex; align-items: center; gap: 1.75rem; }
-    .nav-links a { color: rgba(255,255,255,0.65); font-size: 0.875rem; transition: color 0.2s; }
-    .nav-links a:hover { color: var(--text); }
+    .nav-links a { color: #1C1208; font-size: 0.875rem; transition: color 0.2s; font-weight: 500; }
+    .nav-links a:hover { color: #000; }
     .btn-outline {
-      background: transparent; border: 1px solid rgba(255,255,255,0.25); color: var(--text);
+      background: transparent; border: 1px solid rgba(28,18,8,0.3); color: #1C1208;
       padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.85rem; transition: background 0.2s;
     }
-    .btn-outline:hover { background: rgba(255,255,255,0.08); }
+    .btn-outline:hover { background: rgba(28,18,8,0.08); }
     .btn-amber {
       background: var(--amber); border: none; color: #0a0a0a;
       padding: 0.4rem 1.1rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600; transition: background 0.2s;
@@ -179,10 +179,10 @@
       border-radius: 14px; padding: 1.75rem 1.5rem; cursor: pointer; transition: all 0.3s;
     }
     .cat-card:hover { background: rgba(245,158,11,0.06); border-color: rgba(245,158,11,0.25); transform: translateY(-4px); }
-    .cat-icon { font-size: 2rem; margin-bottom: 0.85rem; }
-    .cat-name { font-family: var(--serif); font-size: 1.05rem; font-weight: 600; margin-bottom: 0.4rem; }
-    .cat-desc { color: var(--text-muted); font-size: 0.78rem; line-height: 1.5; margin-bottom: 0.8rem; }
-    .cat-count { color: var(--amber); font-size: 0.75rem; font-weight: 500; }
+    .cat-icon { font-size: 2rem; margin-bottom: 0.85rem; color: #fff !important; }
+    .cat-name { font-family: var(--serif); font-size: 1.05rem; font-weight: 600; margin-bottom: 0.4rem; color: #fff !important; }
+    .cat-desc { color: rgba(255,255,255,0.75) !important; font-size: 0.78rem; line-height: 1.5; margin-bottom: 0.8rem; }
+    .cat-count { color: rgba(255,255,255,0.85) !important; font-size: 0.75rem; font-weight: 500; }
 
     /* ══════════════════ LISTINGS ══════════════════ */
     #listings { background: var(--bg2); }
@@ -283,8 +283,8 @@
     .cta-btns { display: flex; gap: 0.85rem; justify-content: center; flex-wrap: wrap; }
     .btn-amber-lg { background: var(--amber); border: none; color: #0a0a0a; padding: 0.85rem 2.25rem; border-radius: 8px; font-size: 0.95rem; font-weight: 700; transition: background 0.2s; }
     .btn-amber-lg:hover { background: var(--amber-light); }
-    .btn-outline-lg { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--text); padding: 0.85rem 2.25rem; border-radius: 8px; font-size: 0.95rem; transition: border-color 0.2s; }
-    .btn-outline-lg:hover { border-color: rgba(255,255,255,0.5); }
+    .btn-outline-lg { background: transparent; border: 1px solid rgba(28,18,8,0.25); color: var(--text); padding: 0.85rem 2.25rem; border-radius: 8px; font-size: 0.95rem; transition: border-color 0.2s; }
+    .btn-outline-lg:hover { border-color: rgba(28,18,8,0.5); }
 
     /* ══════════════════ FOOTER ══════════════════ */
     footer { background: var(--bg); border-top: 1px solid var(--border); padding: 2.5rem 1.5rem; }
@@ -416,8 +416,6 @@
     .plan-name, .plan-price strong { color: var(--text) !important; }
     .plan-desc, .plan-price span { color: var(--muted) !important; }
     .plan-features li { color: var(--muted) !important; }
-    .cat-name { color: var(--text) !important; }
-    .cat-desc { color: var(--muted) !important; }
     .how-num { color: var(--amber) !important; }
     .how-title { color: var(--text) !important; }
     .how-desc { color: var(--muted) !important; }
@@ -451,6 +449,11 @@
     [data-theme="dark"] #mobile-menu { background: rgba(10,10,10,0.98) !important; border-top-color: rgba(255,255,255,0.07) !important; }
     [data-theme="dark"] #mobile-menu a { color: rgba(255,255,255,0.7) !important; }
     [data-theme="dark"] .hamburger span { background: #fff !important; }
+
+    [data-theme="dark"] .nav-links a { color: rgba(255,255,255,0.75) !important; }
+    [data-theme="dark"] .nav-links a:hover { color: #fff !important; }
+    [data-theme="dark"] .btn-outline { border-color: rgba(255,255,255,0.25) !important; color: #fff !important; }
+    [data-theme="dark"] .btn-outline:hover { background: rgba(255,255,255,0.08) !important; }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="icon" type="image/png" href="logo.png">
