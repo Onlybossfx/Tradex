@@ -470,11 +470,22 @@
               <label>Network *</label>
               <select class="finp" id="fw-network">
                 <option value="">Select network</option>
-                <option value="MTN">MTN Mobile Money</option>
-                <option value="VODAFONE">Vodafone Cash</option>
-                <option value="AIRTEL">Airtel Money</option>
-                <option value="MPESA">M-Pesa</option>
-                <option value="TIGO">Tigo Cash</option>
+                <optgroup label="Nigeria">
+                  <option value="MTN">MTN MoMo</option>
+                  <option value="AIRTEL">Airtel Money</option>
+                  <option value="9MOBILE">9Mobile</option>
+                </optgroup>
+                <optgroup label="Ghana">
+                  <option value="VODAFONE">Vodafone Cash</option>
+                  <option value="TIGO">Tigo Cash</option>
+                </optgroup>
+                <optgroup label="Kenya">
+                  <option value="MPESA">M-Pesa</option>
+                </optgroup>
+                <optgroup label="Uganda / Rwanda">
+                  <option value="AIRTEL_UG">Airtel Uganda</option>
+                  <option value="MTN_RW">MTN Rwanda</option>
+                </optgroup>
               </select>
             </div>
             <div class="frow">
@@ -686,9 +697,25 @@ async function init() {
         );
         const vData = await vRes.json();
         if (vData.success) {
-          sessionStorage.removeItem('traydr_pending_order');
-          goStep(4);
-          $('success-order-id').textContent = `#TRX-${String(order_id).padStart(6,'0')}`;
+          /* Payment verified — NOW create the order */
+          const pending = JSON.parse(sessionStorage.getItem('traydr_pending_checkout') || '{}');
+          if (pending.buyer_id) {
+            const { data: order } = await DB.createOrder({
+              ...pending,
+              status:         'escrowed',
+              payment_ref:    vData.flw_ref,
+              payment_method: 'flutterwave',
+              paid_at:        new Date().toISOString(),
+            });
+            sessionStorage.removeItem('traydr_pending_checkout');
+            sessionStorage.removeItem('traydr_pending_order');
+            goStep(4);
+            $('success-order-id').textContent = `#TRX-${String(order?.id || order_id).padStart(6,'0')}`;
+          } else {
+            sessionStorage.removeItem('traydr_pending_order');
+            goStep(4);
+            $('success-order-id').textContent = `#TRX-${String(order_id).padStart(6,'0')}`;
+          }
           return;
         }
       } catch(e) { console.error('Verify error:', e); }
@@ -860,9 +887,15 @@ $('fw-methods').addEventListener('click', e => {
   document.querySelectorAll('.fw-method').forEach(x => x.classList.remove('on'));
   m.classList.add('on'); fwMethod = m.dataset.fw;
   /* show correct fields */
-  ['card','mobile_money','bank_transfer','ussd'].forEach(k => {
-    const el = $(`fw-${k.replace('_','-')}-fields`);
-    if(el) el.style.display = k===fwMethod ? '' : 'none';
+  const fieldMap = {
+    card:          'fw-card-fields',
+    mobile_money:  'fw-mobile-fields',
+    bank_transfer: 'fw-bank-fields',
+    ussd:          'fw-ussd-fields',
+  };
+  Object.entries(fieldMap).forEach(([k, id]) => {
+    const el = $(id);
+    if (el) el.style.display = k === fwMethod ? '' : 'none';
   });
 });
 
@@ -951,8 +984,11 @@ $('place-order-btn').addEventListener('click', async () => {
     return;
   }
 
-  /* ── Step 1: Create order as pending ── */
-  const orderPayload = {
+  /* ── Initiate Flutterwave payment FIRST — order only created after success ── */
+  btn.querySelector('.lbl').textContent = 'Redirecting to payment...';
+
+  /* Store checkout details in session for after return */
+  sessionStorage.setItem('traydr_pending_checkout', JSON.stringify({
     buyer_id:      user.id,
     seller_id:     c.seller_id,
     listing_id:    c.listing_id,
@@ -963,25 +999,8 @@ $('place-order-btn').addEventListener('click', async () => {
     amount:        total,
     platform_fee:  fee,
     seller_payout: payout,
-    status:        'pending',
     package_label: c.package_label,
-  };
-
-  const { data: order, error } = await DB.createOrder(orderPayload);
-  btn.classList.remove('ld'); btn.disabled = false;
-
-  if (error) {
-    if (error.message?.includes('auth')) {
-      showAlert('step3-err', 'Please log in to complete your purchase.');
-    } else {
-      showAlert('step3-err', 'Could not create order. Please try again.');
-    }
-    return;
-  }
-
-  /* ── Step 2: Initiate Flutterwave payment ── */
-  btn.classList.add('ld'); btn.disabled = true;
-  btn.querySelector('.lbl').textContent = 'Redirecting to payment...';
+  }));
 
   try {
     const flwRes = await fetch(
@@ -1004,7 +1023,7 @@ $('place-order-btn').addEventListener('click', async () => {
           phone:         delivery.phone || '',
           order_id:      order.id,
           listing_title: c.listing_title,
-          redirect_url:  `${window.location.origin}/checkout.html?flw=success&order_id=${order.id}`,
+          redirect_url:  `${window.location.origin}/checkout.html?flw=success`,
         }),
       }
     );

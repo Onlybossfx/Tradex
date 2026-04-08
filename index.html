@@ -149,7 +149,7 @@
     .search-bar button { background: var(--amber); border: none; color: #0a0a0a; padding: 0 1.2rem; font-size: 0.88rem; font-weight: 600; white-space: nowrap; flex-shrink: 0; transition: background 0.2s; }
     .search-bar button:hover { background: var(--amber-light); }
 
-    .tags { display: flex; gap: 0.5rem; justify-content: center; align-items: center; }
+    .tags { display: flex; gap: 0.5rem; justify-content: flex-start; align-items: center; padding: 0 0.25rem; }
     .tags .label { color: var(--muted); font-size: 0.78rem; flex-shrink: 0; }
     .tag { background: var(--bg3); border: 1px solid var(--border); color: var(--muted); padding: 0.28rem 0.75rem; border-radius: 100px; font-size: 0.78rem; white-space: nowrap; flex-shrink: 0; transition: all 0.2s; }
     .tag:hover { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.3); color: var(--amber); }
@@ -271,7 +271,7 @@
     .plan-btn { width: 100%; padding: 0.78rem; border-radius: 8px; font-size: 0.88rem; font-weight: 600; transition: opacity 0.2s; }
     .plan-btn:hover { opacity: 0.85; }
     .plan-btn.primary { background: var(--amber); border: none; color: #0a0a0a; }
-    .plan-btn.secondary { background: rgba(255,255,255,0.06); border: 1px solid var(--border-bright); color: var(--text); }
+    .plan-btn.secondary { background: transparent; border: 1px solid var(--border-md); color: var(--text); }
     .pricing-note { text-align: center; color: var(--text-dim); font-size: 0.78rem; margin-top: 1.75rem; }
 
     /* ══════════════════ CTA ══════════════════ */
@@ -293,8 +293,8 @@
     .footer-logo span { font-family: var(--serif); font-weight: 700; font-size: 1.15rem; }
     .footer-logo i { width: 5px; height: 5px; border-radius: 50%; background: var(--amber); display: inline-block; }
     .footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
-    .footer-links a { color: rgba(255,255,255,0.33); font-size: 0.8rem; transition: color 0.2s; }
-    .footer-links a:hover { color: rgba(255,255,255,0.7); }
+    .footer-links a { color: var(--amber); font-size: 0.8rem; transition: color 0.2s; text-decoration: none; }
+    .footer-links a:hover { color: var(--amber-light); text-decoration: underline; }
     .footer-copy { color: var(--text-dim); font-size: 0.75rem; }
 
     /* ══════════════════ FADE-IN ANIMATION ══════════════════ */
@@ -512,6 +512,12 @@
       <button class="tag" onclick="window.location.href='browse.html?q=Photography'">Photography</button>
       <button class="tag" onclick="window.location.href='browse.html?q=Figma+Kit'">Figma Kit</button>
     </div>
+
+    <!-- Hero CTA buttons below tags -->
+    <div style="display:flex;gap:0.75rem;margin-top:1.5rem;justify-content:center;flex-wrap:wrap">
+      <button onclick="window.location.href='traydr-auth.html'" style="background:transparent;border:2px solid #1C1208;color:#1C1208;padding:0.65rem 1.5rem;border-radius:8px;font-size:0.9rem;font-weight:600;cursor:pointer;transition:all 0.2s">Log In</button>
+      <button onclick="window.location.href='traydr-auth.html#signup'" style="background:#C2690A;border:none;color:#fff;padding:0.65rem 1.75rem;border-radius:8px;font-size:0.9rem;font-weight:700;cursor:pointer;transition:all 0.2s">Sign Up Free →</button>
+    </div>
   </div>
 </section>
 
@@ -641,7 +647,7 @@
           <div class="plan-feature"><span class="check"><i class="fas fa-check"></i></span><span>Basic analytics</span></div>
           <div class="plan-feature"><span class="check"><i class="fas fa-check"></i></span><span>Community support</span></div>
         </div>
-        <button class="plan-btn secondary">Get Started</button>
+        <button class="plan-btn secondary" onclick="window.location.href='traydr-auth.html#signup'">Get Started</button>
       </div>
       <div class="plan-card highlight fade-up" style="transition-delay:.1s">
         <div class="popular-pill">MOST POPULAR</div>
@@ -655,7 +661,7 @@
           <div class="plan-feature"><span class="check"><i class="fas fa-check"></i></span><span>Lower transaction fees</span></div>
           <div class="plan-feature"><span class="check"><i class="fas fa-check"></i></span><span>Priority support</span></div>
         </div>
-        <button class="plan-btn primary">Start Free Trial</button>
+        <button class="plan-btn primary" onclick="window.location.href='traydr-auth.html#signup'">Start Free Trial</button>
       </div>
       <div class="plan-card fade-up" style="transition-delay:.2s">
         <div class="plan-name">Business</div>
@@ -668,7 +674,7 @@
           <div class="plan-feature"><span class="check"><i class="fas fa-check"></i></span><span>Bulk listing tools</span></div>
           <div class="plan-feature"><span class="check"><i class="fas fa-check"></i></span><span>Dedicated account manager</span></div>
         </div>
-        <button class="plan-btn secondary">Contact Sales</button>
+        <button class="plan-btn secondary" onclick="window.location.href='mailto:hello@traydr.market'">Contact Sales</button>
       </div>
     </div>
     <p class="pricing-note">Transaction fees: Free 8% · Pro 5% · Business 3%</p>
