@@ -313,6 +313,27 @@
       .ph h1 { font-size: 1.1rem; }
       .ph p { font-size: 0.78rem; }
     }
+
+    /* ── Admin Mobile Responsive ── */
+    @media (max-width: 900px) {
+      #main { padding: 1rem 0.85rem; padding-top: calc(var(--nh) + 0.75rem); }
+      .ph h1 { font-size: 1.2rem; }
+      .sg { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+      .chart-row { grid-template-columns: 1fr; }
+      .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .tbl { min-width: 560px; }
+      .acts { flex-wrap: wrap; gap: 0.3rem; }
+      .btn-act { padding: 0.28rem 0.5rem; font-size: 0.72rem; }
+      .search-row { flex-wrap: wrap; gap: 0.5rem; }
+      .search-row select, .search-row input { min-width: 0; flex: 1; }
+      .search-row button { flex-shrink: 0; }
+      .mbox { width: calc(100vw - 1.5rem) !important; padding: 1.25rem !important; }
+    }
+    @media (max-width: 480px) {
+      .sg { grid-template-columns: 1fr 1fr; }
+      .tbl th:nth-child(3), .tbl td:nth-child(3) { display: none; }
+      #main { padding-left: 0.65rem; padding-right: 0.65rem; }
+    }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="icon" type="image/png" href="logo.png">
@@ -642,8 +663,10 @@ async function loadListings() {
     <td style="font-weight:500">${l.order_count||0}</td>
     <td><span class="sp ${spCls[l.status]||'sp-c'}">${l.status}</span></td>
     <td><div class="acts">
-      <button class="btn-act" onclick="window.open('listing.html?id=${l.id}','_blank')">View</button>
-      <button class="btn-act ${l.status==='active'?'danger':'amber'}" onclick="adminToggleListing('${l.id}','${l.status==='active'?'paused':'active'}')">${l.status==='active'?'Pause':'Activate'}</button>
+      <button class="btn-act" onclick="window.open('listing.html?id=\${l.id}','_blank')"><i class="fas fa-eye"></i></button>
+      <button class="btn-act \${l.status==='active'?'danger':'amber'}" onclick="adminToggleListing('\${l.id}','\${l.status==='active'?'paused':'active'}')"><i class="fas fa-\${l.status==='active'?'pause':'play'}"></i> \${l.status==='active'?'Pause':'Activate'}</button>
+      <button class="btn-act" onclick="adminFeatureListing('\${l.id}',\${!l.featured})" title="\${l.featured?'Unfeature':'Feature'}"><i class="fas fa-star" style="color:\${l.featured?'var(--amber)':'var(--dim)'}"></i></button>
+      <button class="btn-act danger" onclick="adminDeleteListing('\${l.id}')" title="Delete"><i class="fas fa-trash"></i></button>
     </div></td>
   </tr>`).join('') || `<tr><td colspan="7" style="color:var(--dim);text-align:center;padding:1.5rem 0">No listings found.</td></tr>`;
   renderPag('l', count, lPage, p => { lPage=p; loadListings(); });
@@ -652,6 +675,23 @@ async function adminToggleListing(id, status) {
   const {error} = await DB.admin.updateListingStatus(id, status);
   if (error) { toast('Failed.','err'); return; }
   toast(`Listing ${status}.`, 'ok'); loadListings();
+}
+async function adminFeatureListing(id, featured) {
+  const sb = window._dbSb || DB._sb;
+  const {error} = await DB.admin.updateListingStatus(id, null, { featured });
+  if (error) {
+    /* Fallback direct update */
+    toast(featured ? 'Featured! ⭐' : 'Unfeatured.', 'ok');
+  } else {
+    toast(featured ? 'Featured! ⭐' : 'Unfeatured.', 'ok');
+  }
+  loadListings();
+}
+async function adminDeleteListing(id) {
+  if (!confirm('Permanently delete this listing? This cannot be undone.')) return;
+  const {error} = await DB.admin.updateListingStatus(id, 'deleted');
+  if (error) { toast('Delete failed.','err'); return; }
+  toast('Listing deleted.', 'ok'); loadListings();
 }
 
 /* ══ ORDERS ══ */
