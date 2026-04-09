@@ -425,6 +425,98 @@
 
     [data-theme="dark"] .msg-bub { background: #1e1e1e !important; border-color: rgba(255,255,255,0.1) !important; color: rgba(255,255,255,0.85) !important; }
     [data-theme="dark"] .msg-row.me .msg-bub { background: #F59E0B !important; border-color: #F59E0B !important; color: #0a0a0a !important; }
+
+    /* ══════════════════════════════════════
+       MOBILE FIRST — Full Responsive System
+    ══════════════════════════════════════ */
+
+    /* ── Base: everything stacks on mobile ── */
+    * { box-sizing: border-box; }
+
+    #nav { padding: 0 0.85rem; }
+    #main { padding: 1rem 0.85rem; overflow-x: hidden; }
+
+    /* ── Stat/overview cards: 2 col, no overflow ── */
+    .sg { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .sc { min-width: 0; word-break: break-word; }
+    .sc-val { font-size: 1.45rem; }
+
+    /* ── Tables: fully scrollable, sticky header ── */
+    .tbl-wrap { overflow-x: auto; overflow-y: auto; -webkit-overflow-scrolling: touch; max-height: 65vh; border-radius: 8px; }
+    .tbl { width: 100%; min-width: 520px; border-collapse: collapse; }
+    .tbl thead th { position: sticky; top: 0; background: var(--bg2); z-index: 2; }
+    .tbl td, .tbl th { white-space: nowrap; padding: 0.65rem 0.6rem; }
+    .tbl-title { max-width: 140px; }
+
+    /* ── Listings grid ── */
+    .lg { grid-template-columns: 1fr 1fr; }
+    .listing-card { min-width: 0; }
+
+    /* ── Chart box ── */
+    .chart-box { overflow-x: auto; }
+
+    /* ── Panel header ── */
+    .ph { padding: 1rem; }
+    .ph h1 { font-size: 1.25rem; }
+
+    /* ── Message layout ── */
+    .ml { height: 70vh; }
+    .ml-list { max-height: 220px; }
+    .msg-bub { max-width: 85%; font-size: 0.8rem; }
+
+    /* ── Settings max-width ── */
+    #panel-settings > div { max-width: 100% !important; }
+    .pcard { padding: 1rem; }
+
+    /* ── Nav: tighter ── */
+    .nav-logo img { height: 44px !important; }
+    .btn-new { font-size: 0.78rem; padding: 0.42rem 0.7rem; }
+
+    /* ── Modals ── */
+    .mo .mbox { width: calc(100vw - 2rem) !important; max-width: 100% !important; padding: 1.25rem !important; margin: 1rem; }
+
+    /* ── Earnings ── */
+    .eg { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+
+    /* ── 480px: single col where needed ── */
+    @media (max-width: 480px) {
+      .eg { grid-template-columns: 1fr; }
+      .lg { grid-template-columns: 1fr; }
+      .f2col { grid-template-columns: 1fr !important; }
+      .pgrid { grid-template-columns: 1fr !important; }
+      .tbl-title { max-width: 110px; }
+      .sc-val { font-size: 1.3rem; }
+      .nav-logo img { height: 38px !important; }
+      .mbox { padding: 1rem !important; }
+      .ph h1 { font-size: 1.1rem; }
+    }
+
+    /* ── 360px: very small phones ── */
+    @media (max-width: 360px) {
+      #main { padding: 0.75rem 0.6rem; }
+      .sg { gap: 0.5rem; }
+      .sc { padding: 0.75rem; }
+      .sc-val { font-size: 1.1rem; }
+    }
+
+    /* ── Panel header fix — not hidden under nav ── */
+    .ph { padding: 0.5rem 0 1.25rem; margin-bottom: 1.25rem; }
+    .ph h1 { font-size: clamp(1.2rem, 4vw, 1.75rem); }
+    .ph p { font-size: 0.82rem; }
+    #main { padding-top: 1.25rem; }
+
+    @media (max-width: 900px) {
+      /* On mobile, main starts after nav */
+      #main { padding-top: calc(var(--nh) + 1rem); }
+      .ph { text-align: left; }
+      .ph h1 { font-size: 1.2rem; }
+    }
+
+    @media (max-width: 480px) {
+      #main { padding-top: calc(var(--nh) + 0.75rem); padding-left: 0.85rem; padding-right: 0.85rem; }
+      .ph h1 { font-size: 1.1rem; }
+      .ph p { font-size: 0.78rem; }
+    }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="icon" type="image/png" href="logo.png">
@@ -499,7 +591,7 @@
       </div>
     </div>
     <div class="sh"><h2>Recent Orders</h2><a onclick="switchP('orders')">View all →</a></div>
-    <div style="overflow-x:auto;overflow-y:auto;max-height:50vh"><table class="tbl"><thead><tr><th>Listing</th><th>Buyer</th><th>Status</th><th>Amount</th><th>Date</th></tr></thead><tbody id="ov-orders"></tbody></table></div>
+    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Listing</th><th>Buyer</th><th>Status</th><th>Amount</th><th>Date</th></tr></thead><tbody id="ov-orders"></tbody></table></div>
   </div>
 
   <!-- LISTINGS -->
@@ -517,7 +609,7 @@
   <!-- ORDERS -->
   <div class="panel" id="panel-orders">
     <div class="ph"><div><h1>Orders</h1><p>Manage and fulfil customer orders.</p></div></div>
-    <div style="overflow-x:auto;overflow-y:auto;max-height:60vh"><table class="tbl"><thead><tr><th>Listing</th><th>Buyer</th><th>Status</th><th>Amount</th><th>Date</th><th>Action</th></tr></thead><tbody id="all-orders"></tbody></table></div>
+    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Listing</th><th>Buyer</th><th>Status</th><th>Amount</th><th>Date</th><th>Action</th></tr></thead><tbody id="all-orders"></tbody></table></div>
   </div>
 
   <!-- MESSAGES -->
@@ -546,7 +638,7 @@
       <button class="btn-payout" id="payout-btn">Request Payout</button>
     </div>
     <div class="sh"><h2>Transaction History</h2></div>
-    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Description</th><th>Type</th><th>Amount</th><th>Date</th></tr></thead><tbody id="tx-body"></tbody></table></div>
+    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Description</th><th>Type</th><th>Amount</th><th>Date</th></tr></thead><tbody id="tx-body"></tbody></table></div>
   </div>
 
   <!-- PROFILE -->
@@ -638,14 +730,31 @@
         <div class="frow" style="margin:0 0 0.75rem">
           <label>Preferred method</label>
           <select class="finp" id="payout-method-sel">
-            <option value="stripe">Stripe (USD / EUR / GBP)</option>
-            <option value="flutterwave">Flutterwave (NGN / GHS / KES)</option>
-            <option value="payoneer">Payoneer</option>
+            <optgroup label="Mobile Money / Wallets">
+              <option value="opay">OPay</option>
+              <option value="palmpay">PalmPay</option>
+              <option value="flutterwave">Flutterwave (NGN / GHS / KES)</option>
+              <option value="momo">MTN MoMo</option>
+            </optgroup>
+            <optgroup label="Nigerian Banks">
+              <option value="first_bank">First Bank</option>
+              <option value="wema">Wema Bank (ALAT)</option>
+              <option value="gtb">GTBank</option>
+              <option value="uba">UBA</option>
+              <option value="zenith">Zenith Bank</option>
+              <option value="access">Access Bank</option>
+              <option value="sterling">Sterling Bank</option>
+            </optgroup>
+            <optgroup label="International">
+              <option value="stripe">Stripe (USD / EUR / GBP)</option>
+              <option value="payoneer">Payoneer</option>
+              <option value="paypal">PayPal</option>
+            </optgroup>
           </select>
         </div>
         <div class="frow" style="margin:0 0 0.75rem">
-          <label>Account / IBAN / Phone</label>
-          <input class="finp" id="payout-account-inp" placeholder="Your account number, IBAN or phone" />
+          <label>Account Number / Phone / Email</label>
+          <input class="finp" id="payout-account-inp" placeholder="e.g. 0901234567 or user@email.com" />
         </div>
         <button class="btn-submit" id="save-payout-btn"><span class="lbl">Save Payout Info</span></button>
       </div>
@@ -685,7 +794,7 @@
       <div class="sc"><div class="sc-lbl">⭐ Avg Rating</div><div class="sc-val a" id="a-rate">—</div><div class="sc-note">across all listings</div></div>
     </div>
     <div class="sh" style="margin-top:1rem"><h2>Listing Performance</h2></div>
-    <div style="overflow-x:auto">
+    <div class="tbl-wrap">
       <table class="tbl" id="analytics-tbl">
         <thead><tr><th>Listing</th><th>Status</th><th>Views</th><th>Orders</th><th>Rating</th><th>Revenue</th></tr></thead>
         <tbody id="analytics-body"><tr><td colspan="6" style="color:var(--dim);text-align:center;padding:1.5rem 0">Loading...</td></tr></tbody>

@@ -382,6 +382,98 @@
 
     [data-theme="dark"] .msg-bub { background: #1e1e1e !important; border-color: rgba(255,255,255,0.1) !important; color: rgba(255,255,255,0.85) !important; }
     [data-theme="dark"] .msg-row.me .msg-bub { background: #F59E0B !important; border-color: #F59E0B !important; color: #0a0a0a !important; }
+
+    /* ══════════════════════════════════════
+       MOBILE FIRST — Full Responsive System
+    ══════════════════════════════════════ */
+
+    /* ── Base: everything stacks on mobile ── */
+    * { box-sizing: border-box; }
+
+    #nav { padding: 0 0.85rem; }
+    #main { padding: 1rem 0.85rem; overflow-x: hidden; }
+
+    /* ── Stat/overview cards: 2 col, no overflow ── */
+    .sg { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .sc { min-width: 0; word-break: break-word; }
+    .sc-val { font-size: 1.45rem; }
+
+    /* ── Tables: fully scrollable, sticky header ── */
+    .tbl-wrap { overflow-x: auto; overflow-y: auto; -webkit-overflow-scrolling: touch; max-height: 65vh; border-radius: 8px; }
+    .tbl { width: 100%; min-width: 520px; border-collapse: collapse; }
+    .tbl thead th { position: sticky; top: 0; background: var(--bg2); z-index: 2; }
+    .tbl td, .tbl th { white-space: nowrap; padding: 0.65rem 0.6rem; }
+    .tbl-title { max-width: 140px; }
+
+    /* ── Listings grid ── */
+    .lg { grid-template-columns: 1fr 1fr; }
+    .listing-card { min-width: 0; }
+
+    /* ── Chart box ── */
+    .chart-box { overflow-x: auto; }
+
+    /* ── Panel header ── */
+    .ph { padding: 1rem; }
+    .ph h1 { font-size: 1.25rem; }
+
+    /* ── Message layout ── */
+    .ml { height: 70vh; }
+    .ml-list { max-height: 220px; }
+    .msg-bub { max-width: 85%; font-size: 0.8rem; }
+
+    /* ── Settings max-width ── */
+    #panel-settings > div { max-width: 100% !important; }
+    .pcard { padding: 1rem; }
+
+    /* ── Nav: tighter ── */
+    .nav-logo img { height: 44px !important; }
+    .btn-new { font-size: 0.78rem; padding: 0.42rem 0.7rem; }
+
+    /* ── Modals ── */
+    .mo .mbox { width: calc(100vw - 2rem) !important; max-width: 100% !important; padding: 1.25rem !important; margin: 1rem; }
+
+    /* ── Earnings ── */
+    .eg { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+
+    /* ── 480px: single col where needed ── */
+    @media (max-width: 480px) {
+      .eg { grid-template-columns: 1fr; }
+      .lg { grid-template-columns: 1fr; }
+      .f2col { grid-template-columns: 1fr !important; }
+      .pgrid { grid-template-columns: 1fr !important; }
+      .tbl-title { max-width: 110px; }
+      .sc-val { font-size: 1.3rem; }
+      .nav-logo img { height: 38px !important; }
+      .mbox { padding: 1rem !important; }
+      .ph h1 { font-size: 1.1rem; }
+    }
+
+    /* ── 360px: very small phones ── */
+    @media (max-width: 360px) {
+      #main { padding: 0.75rem 0.6rem; }
+      .sg { gap: 0.5rem; }
+      .sc { padding: 0.75rem; }
+      .sc-val { font-size: 1.1rem; }
+    }
+
+    /* ── Panel header fix — not hidden under nav ── */
+    .ph { padding: 0.5rem 0 1.25rem; margin-bottom: 1.25rem; }
+    .ph h1 { font-size: clamp(1.2rem, 4vw, 1.75rem); }
+    .ph p { font-size: 0.82rem; }
+    #main { padding-top: 1.25rem; }
+
+    @media (max-width: 900px) {
+      /* On mobile, main starts after nav */
+      #main { padding-top: calc(var(--nh) + 1rem); }
+      .ph { text-align: left; }
+      .ph h1 { font-size: 1.2rem; }
+    }
+
+    @media (max-width: 480px) {
+      #main { padding-top: calc(var(--nh) + 0.75rem); padding-left: 0.85rem; padding-right: 0.85rem; }
+      .ph h1 { font-size: 1.1rem; }
+      .ph p { font-size: 0.78rem; }
+    }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="icon" type="image/png" href="logo.png">

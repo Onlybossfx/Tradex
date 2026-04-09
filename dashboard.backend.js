@@ -86,13 +86,19 @@ window.DB = {
 
   /* ══ ORDERS ══ */
   getSellerOrders: async (userId) => {
+    /* Exclude 'pending' — these are unpaid, payment not completed yet */
     const { data, error } = await _dbSb.from('orders').select('*')
-      .eq('seller_id', userId).order('created_at', { ascending: false });
+      .eq('seller_id', userId)
+      .neq('status', 'pending')
+      .order('created_at', { ascending: false });
     return { data: data || [], error };
   },
   getBuyerOrders: async (userId) => {
+    /* Exclude 'pending' — buyer shouldn't see unpaid ghost orders */
     const { data, error } = await _dbSb.from('orders').select('*')
-      .eq('buyer_id', userId).order('created_at', { ascending: false });
+      .eq('buyer_id', userId)
+      .neq('status', 'pending')
+      .order('created_at', { ascending: false });
     return { data: data || [], error };
   },
   createOrder: async (payload) => {
@@ -313,7 +319,14 @@ window.DB = {
     return { data, error };
   },
   savePayoutMethod: async (userId, method, account) => {
-    const { error } = await _dbSb.from('users').update({ payout_method: method, payout_account: account }).eq('id', userId);
+    /* Update user profile with payout info */
+    const { error } = await _dbSb.from('users')
+      .update({
+        payout_method:  method,
+        payout_account: account,
+        updated_at:     new Date().toISOString(),
+      })
+      .eq('id', userId);
     return { error };
   },
   getPayoutMethod: async (userId) => {

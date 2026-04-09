@@ -273,6 +273,46 @@
     [data-theme="dark"] .ni.on .lb { color: var(--amber) !important; }
     [data-theme="dark"] .tbl th { background: var(--bg3) !important; color: var(--muted) !important; }
     [data-theme="dark"] .filter-label { color: var(--muted) !important; }
+
+    /* ══════════════════════════════════════
+       MOBILE FIRST — Full Responsive System
+    ══════════════════════════════════════ */
+    * { box-sizing: border-box; }
+    #nav, nav { padding-left: 0.85rem; padding-right: 0.85rem; }
+
+    /* Tables */
+    .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; }
+    .tbl { width: 100%; min-width: 480px; }
+
+    /* Cards */
+    .card, .listing-card { min-width: 0; }
+
+    /* Modals */
+    .mbox { width: calc(100vw - 2rem) !important; max-width: 100% !important; }
+
+    @media (max-width: 480px) {
+      .f2 { grid-template-columns: 1fr !important; }
+      .grid-2 { grid-template-columns: 1fr !important; }
+    }
+
+    /* ── Panel header fix — not hidden under nav ── */
+    .ph { padding: 0.5rem 0 1.25rem; margin-bottom: 1.25rem; }
+    .ph h1 { font-size: clamp(1.2rem, 4vw, 1.75rem); }
+    .ph p { font-size: 0.82rem; }
+    #main { padding-top: 1.25rem; }
+
+    @media (max-width: 900px) {
+      /* On mobile, main starts after nav */
+      #main { padding-top: calc(var(--nh) + 1rem); }
+      .ph { text-align: left; }
+      .ph h1 { font-size: 1.2rem; }
+    }
+
+    @media (max-width: 480px) {
+      #main { padding-top: calc(var(--nh) + 0.75rem); padding-left: 0.85rem; padding-right: 0.85rem; }
+      .ph h1 { font-size: 1.1rem; }
+      .ph p { font-size: 0.78rem; }
+    }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="icon" type="image/png" href="logo.png">

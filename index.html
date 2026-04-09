@@ -179,7 +179,7 @@
       border-radius: 14px; padding: 1.75rem 1.5rem; cursor: pointer; transition: all 0.3s;
     }
     .cat-card:hover { background: rgba(245,158,11,0.06); border-color: rgba(245,158,11,0.25); transform: translateY(-4px); }
-    .cat-icon { font-size: 2rem; margin-bottom: 0.85rem; color: #fff !important; }
+    .cat-icon { font-size: 2rem; margin-bottom: 0.85rem; color: var(--amber) !important; }
     .cat-name { font-family: var(--serif); font-size: 1.05rem; font-weight: 600; margin-bottom: 0.4rem; color: #fff !important; }
     .cat-desc { color: rgba(255,255,255,0.75) !important; font-size: 0.78rem; line-height: 1.5; margin-bottom: 0.8rem; }
     .cat-count { color: rgba(255,255,255,0.85) !important; font-size: 0.75rem; font-weight: 500; }
@@ -198,7 +198,7 @@
       background: var(--bg2); border: 1px solid var(--border);
       border-radius: 14px; overflow: hidden; cursor: pointer; transition: all 0.3s;
     }
-    .listing-card:hover { border-color: rgba(245,158,11,0.2); transform: translateY(-3px); }
+    .listing-card:hover { border-color: var(--amber); transform: translateY(-3px); box-shadow: 0 4px 20px rgba(194,105,10,0.15); }
     .listing-thumb {
       height: 110px; background: rgba(255,255,255,0.04);
       display: flex; align-items: center; justify-content: center;
@@ -241,7 +241,7 @@
     #trust { background: var(--bg2); border-top: 1px solid rgba(255,255,255,0.05); }
     .trust-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; }
     .trust-card { text-align: center; padding: 1.25rem 0.75rem; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; }
-    .trust-icon { font-size: 1.75rem; margin-bottom: 0.6rem; }
+    .trust-icon { font-size: 1.75rem; margin-bottom: 0.6rem; color: var(--amber); }
     .trust-title { font-weight: 600; font-size: 0.88rem; margin-bottom: 0.35rem; }
     .trust-desc { color: var(--text-muted); font-size: 0.76rem; line-height: 1.5; }
 
@@ -405,7 +405,7 @@
     .ni.on .lb { color: var(--amber) !important; }
     .ph h1, .ph p { color: var(--text) !important; }
     .panel h1, .panel h2, .panel h3 { color: var(--text) !important; }
-    .stat-val, .stat-label { color: var(--text) !important; }
+    .stat-val { color: var(--amber) !important; } .stat-label { color: var(--muted) !important; }
     .tbl th { color: var(--muted) !important; background: var(--bg3) !important; }
     .tbl td { color: var(--text) !important; border-color: var(--border) !important; }
     .card-title, .card-price { color: var(--text) !important; }
@@ -454,6 +454,17 @@
     [data-theme="dark"] .nav-links a:hover { color: #fff !important; }
     [data-theme="dark"] .btn-outline { border-color: rgba(255,255,255,0.25) !important; color: #fff !important; }
     [data-theme="dark"] .btn-outline:hover { background: rgba(255,255,255,0.08) !important; }
+
+    [data-theme="dark"] .stat-val { color: var(--amber) !important; }
+    [data-theme="dark"] .stat-label { color: rgba(255,255,255,0.55) !important; }
+    [data-theme="dark"] .nav-logo span { color: var(--amber) !important; }
+    [data-theme="dark"] .trust-icon { color: var(--amber) !important; }
+    [data-theme="dark"] .trust-title { color: #fff !important; }
+    [data-theme="dark"] .trust-desc { color: rgba(255,255,255,0.55) !important; }
+    [data-theme="dark"] #trust { border-top-color: rgba(255,255,255,0.05) !important; }
+    [data-theme="dark"] .cat-icon { color: var(--amber) !important; }
+    [data-theme="dark"] .listing-card { background: rgba(255,255,255,0.03) !important; border-color: rgba(255,255,255,0.08) !important; }
+    [data-theme="dark"] .card-seller { color: rgba(255,255,255,0.45) !important; }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="icon" type="image/png" href="logo.png">
