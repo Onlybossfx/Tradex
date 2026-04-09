@@ -581,7 +581,8 @@
         <h3>Personal Info</h3>
         <div class="av-row">
           <div class="av-c" id="pav">B</div>
-          <div><div style="font-size:0.83rem;font-weight:600;margin-bottom:0.25rem" id="pav-name">Your Name</div><button style="background:var(--bg3);border:1px solid var(--border-md);color:var(--muted);padding:0.3rem 0.68rem;border-radius:6px;font-size:0.74rem">Change photo</button></div>
+          <div><div style="font-size:0.83rem;font-weight:600;margin-bottom:0.25rem" id="pav-name">Your Name</div><input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="uploadAvatar(this)">
+<button style="background:var(--bg3);border:1px solid var(--border-md);color:var(--muted);padding:0.3rem 0.68rem;border-radius:6px;font-size:0.74rem;cursor:pointer" onclick="document.getElementById('avatar-input').click()"><i class="fas fa-camera"></i> Change photo</button></div>
         </div>
         <div class="frow"><label>Full Name</label><input class="finp" id="pf-name" placeholder="Your full name" /></div>
         <div class="frow"><label>Email</label><input class="finp" id="pf-email" disabled /></div>
@@ -1336,6 +1337,18 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ══ INIT ══ */
+async function uploadAvatar(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) { toast('Image must be under 2MB','err'); return; }
+  const pav = $('pav');
+  pav.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+  const { url, error } = await DB.uploadAvatar(U.id, file);
+  if (error || !url) { toast('Upload failed. Try again.','err'); pav.textContent = (U.user_metadata?.full_name||'B')[0].toUpperCase(); return; }
+  pav.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+  toast('Profile photo updated! ✅','ok');
+}
+
 init();
 </script>
 

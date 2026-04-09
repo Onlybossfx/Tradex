@@ -647,7 +647,8 @@
     <div class="pgrid">
       <div class="pcard">
         <h3>Personal Info</h3>
-        <div class="av-row"><div class="av-c" id="pav">S</div><div><div style="font-size:0.84rem;font-weight:600;margin-bottom:0.28rem" id="pav-name">Your Name</div><button style="background:var(--bg3);border:1px solid var(--border-md);color:var(--muted);padding:0.32rem 0.7rem;border-radius:6px;font-size:0.74rem">Change photo</button></div></div>
+        <div class="av-row"><div class="av-c" id="pav">S</div><div><div style="font-size:0.84rem;font-weight:600;margin-bottom:0.28rem" id="pav-name">Your Name</div><input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="uploadAvatar(this)">
+<button style="background:var(--bg3);border:1px solid var(--border-md);color:var(--muted);padding:0.32rem 0.7rem;border-radius:6px;font-size:0.74rem;cursor:pointer" onclick="document.getElementById('avatar-input').click()"><i class="fas fa-camera"></i> Change photo</button></div></div>
         <div class="frow"><label>Full Name</label><input class="finp" id="pf-name" placeholder="Your name" /></div>
         <div class="frow"><label>Email</label><input class="finp" id="pf-email" disabled /></div>
         <div class="frow"><label>Location</label><input class="finp" id="pf-loc" placeholder="City, Country" /></div>
@@ -1379,6 +1380,10 @@ $('save-payout-btn')?.addEventListener('click', async () => {
 async function loadPayoutMethod() {
   const data = await DB.getPayoutMethod(U.id);
   if (data.payout_method)  { const el=$('payout-method-sel');  if(el) el.value=data.payout_method; }
+  if (data.avatar_url) {
+    const pav = $('pav');
+    if (pav) pav.innerHTML = `<img src="${data.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+  }
   if (data.payout_account) { const el=$('payout-account-inp'); if(el) el.value=data.payout_account; }
 }
 
@@ -1408,6 +1413,18 @@ function toast(msg,type='ok'){
   const icons={ok:'<i class="fas fa-circle-check"></i>',err:'<i class="fas fa-triangle-exclamation"></i>',inf:'ℹ️'};
   const el=document.createElement('div'); el.className=`ti ${type}`; el.innerHTML=`<span>${icons[type]||'ℹ️'}</span><span>${msg}</span>`;
   $('toast').appendChild(el); setTimeout(()=>el.remove(),3500);
+}
+
+async function uploadAvatar(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) { toast('Image must be under 2MB','err'); return; }
+  const pav = $('pav');
+  pav.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+  const { url, error } = await DB.uploadAvatar(U.id, file);
+  if (error || !url) { toast('Upload failed. Try again.','err'); pav.textContent = (U.user_metadata?.full_name||'S')[0].toUpperCase(); return; }
+  pav.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+  toast('Profile photo updated! ✅','ok');
 }
 
 /* ══ INIT ══ */

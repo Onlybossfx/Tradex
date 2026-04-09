@@ -75,6 +75,17 @@ window.DB = {
     const { error } = await _dbSb.from('listings').update({ status }).eq('id', id).eq('seller_id', userId);
     return { error };
   },
+  uploadAvatar: async (userId, file) => {
+    const ext  = file.name.split('.').pop();
+    const path = `avatars/${userId}.${ext}`;
+    const { error } = await _dbSb.storage.from('listings').upload(path, file, { upsert: true });
+    if (error) return { url: null, error };
+    const { data: { publicUrl } } = _dbSb.storage.from('listings').getPublicUrl(path);
+    /* Save avatar_url to users table */
+    await _dbSb.from('users').update({ avatar_url: publicUrl }).eq('id', userId);
+    return { url: publicUrl, error: null };
+  },
+
   uploadListingImage: async (userId, file) => {
     const ext  = file.name.split('.').pop();
     const path = `${userId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
@@ -533,8 +544,9 @@ window.DB = {
       }
       return {error};
     },
-    updateListingStatus: async (listingId, status) => {
-      const {error}=await _dbSb.from('listings').update({status}).eq('id',listingId);
+    updateListingStatus: async (listingId, status, extra={}) => {
+      const update = status ? { status, ...extra } : { ...extra };
+      const {error}=await _dbSb.from('listings').update(update).eq('id',listingId);
       return {error};
     },
     getPayouts: async ({status=''}={}) => {
