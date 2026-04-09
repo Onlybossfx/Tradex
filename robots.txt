@@ -20,7 +20,7 @@ Disallow: /browse.html?page=*
 Disallow: /browse.html?sort=*
 
 # Sitemap location
-Sitemap: https://traydr.market/sitemap.xml
+Sitemap: https://traydr.vercel.app/sitemap.xml
 
 # Crawl delay (be polite to servers)
 Crawl-delay: 1

@@ -7,19 +7,19 @@
   <meta name="description" content="Buy and sell physical goods, digital products, freelance skills and experiences — all in one trusted marketplace with escrow payments and verified sellers." />
   <meta name="keywords" content="marketplace, buy, sell, freelance, digital products, escrow, Africa, Nigeria, Ghana, Kenya" />
   <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://traydr.market/" />
+  <link rel="canonical" href="https://traydr.vercel.app/" />
   <!-- Open Graph -->
   <meta property="og:type"        content="website" />
-  <meta property="og:url"         content="https://traydr.market/" />
+  <meta property="og:url"         content="https://traydr.vercel.app/" />
   <meta property="og:title"       content="TraydR — One Marketplace. Every Kind of Trade." />
   <meta property="og:description" content="Buy and sell physical goods, digital products, freelance skills and experiences — all in one trusted marketplace with escrow payments and verified sellers." />
-  <meta property="og:image"       content="https://traydr.market/og-image.png" />
+  <meta property="og:image"       content="https://traydr.vercel.app/logo.png" />
   <meta property="og:site_name"   content="TraydR" />
   <!-- Twitter -->
   <meta name="twitter:card"        content="summary_large_image" />
   <meta name="twitter:title"       content="TraydR — One Marketplace. Every Kind of Trade." />
   <meta name="twitter:description" content="Buy, sell, and trade anything — escrow-protected marketplace for Africa, Europe and beyond." />
-  <meta name="twitter:image"       content="https://traydr.market/og-image.png" />
+  <meta name="twitter:image"       content="https://traydr.vercel.app/logo.png" />
   <!-- PWA -->
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F59E0B" />
@@ -852,5 +852,12 @@
     if (tog)   tog.checked = isDark;
     if (thumb) thumb.style.transform = isDark ? 'translateX(20px)' : 'translateX(0)';
   });</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
+  }
+</script>
 </body>
 </html>

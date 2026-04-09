@@ -8,17 +8,17 @@
   <meta name="robots"             content="index, follow" />
   <meta property="og:type"        content="product" />
   <meta property="og:site_name"   content="TraydR" />
-  <meta property="og:url"         id="og-url"   content="https://traydr.market/listing.html" />
+  <meta property="og:url"         id="og-url"   content="https://traydr.vercel.app/listing.html" />
   <meta property="og:title"       id="og-title" content="TraydR Listing" />
   <meta property="og:description" id="og-desc"  content="Find the best products and services on TraydR." />
-  <meta property="og:image"       id="og-img"   content="https://traydr.market/og-image.png" />
+  <meta property="og:image"       id="og-img"   content="https://traydr.vercel.app/logo.png" />
   <meta property="og:price:amount"       id="og-price"    content="" />
   <meta property="og:price:currency"     content="USD" />
   <meta name="twitter:card"       content="summary_large_image" />
   <meta name="twitter:title"      id="tw-title" content="TraydR Listing" />
   <meta name="twitter:description" id="tw-desc" content="Find the best products and services on TraydR." />
-  <meta name="twitter:image"      id="tw-img"   content="https://traydr.market/og-image.png" />
-  <link rel="canonical"           id="canonical" href="https://traydr.market/listing.html" />
+  <meta name="twitter:image"      id="tw-img"   content="https://traydr.vercel.app/logo.png" />
+  <link rel="canonical"           id="canonical" href="https://traydr.vercel.app/listing.html" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F59E0B" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -352,6 +352,27 @@
     [data-theme="dark"] .rv-text { color: rgba(255,255,255,0.65) !important; }
     [data-theme="dark"] .sf-bio { color: rgba(255,255,255,0.6) !important; }
     [data-theme="dark"] .badge-ver { background: rgba(255,255,255,0.1) !important; }
+
+    /* ══════════════════════════════════════
+       MOBILE FIRST — Full Responsive System
+    ══════════════════════════════════════ */
+    * { box-sizing: border-box; }
+    #nav, nav { padding-left: 0.85rem; padding-right: 0.85rem; }
+
+    /* Tables */
+    .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; }
+    .tbl { width: 100%; min-width: 480px; }
+
+    /* Cards */
+    .card, .listing-card { min-width: 0; }
+
+    /* Modals */
+    .mbox { width: calc(100vw - 2rem) !important; max-width: 100% !important; }
+
+    @media (max-width: 480px) {
+      .f2 { grid-template-columns: 1fr !important; }
+      .grid-2 { grid-template-columns: 1fr !important; }
+    }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="icon" type="image/png" href="logo.png">
@@ -904,8 +925,20 @@ $('save-btn-d').addEventListener('click', doSave);
 
 /* ── Share ── */
 function doShare() {
-  if (navigator.share) navigator.share({ title: listing?.title, url: window.location.href });
-  else { navigator.clipboard.writeText(window.location.href); showAlert('a-info','Link copied!','info'); }
+  const shareData = {
+    title: listing?.title || 'Check this out on TraydR',
+    text:  `${listing?.title} — ₦${(listing?.price||0).toLocaleString()} on TraydR Marketplace`,
+    url:   window.location.href,
+  };
+  if (navigator.share) {
+    navigator.share(shareData).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      showAlert('a-info', 'Link copied to clipboard!', 'info');
+    }).catch(() => {
+      showAlert('a-info', 'Link: ' + window.location.href, 'info');
+    });
+  }
 }
 $('share-btn-d').addEventListener('click', doShare);
 
@@ -951,5 +984,12 @@ loadListing();
     if (tog)   tog.checked = isDark;
     if (thumb) thumb.style.transform = isDark ? 'translateX(20px)' : 'translateX(0)';
   });</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
+  }
+</script>
 </body>
 </html>

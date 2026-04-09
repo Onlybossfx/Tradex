@@ -4,17 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Browse Listings — TraydR Marketplace</title>
+  <meta name="keywords" content="buy online Nigeria, sell products Africa, freelance marketplace, digital products, escrow payment, TraydR">
   <meta name="description" content="Discover thousands of products, digital downloads, freelance services and experiences on TraydR. Filter by category, price, rating and delivery time." />
   <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://traydr.market/browse.html" />
+  <link rel="canonical" href="https://traydr.vercel.app/browse.html" />
   <meta property="og:type"        content="website" />
-  <meta property="og:url"         content="https://traydr.market/browse.html" />
+  <meta property="og:url"         content="https://traydr.vercel.app/browse.html" />
   <meta property="og:title"       content="Browse Listings — TraydR Marketplace" />
   <meta property="og:description" content="Discover thousands of products, services and skills on TraydR." />
-  <meta property="og:image"       content="https://traydr.market/og-image.png" />
+  <meta property="og:image"       content="https://traydr.vercel.app/logo.png" />
   <meta name="twitter:card"       content="summary_large_image" />
   <meta name="twitter:title"      content="Browse Listings — TraydR" />
-  <meta name="twitter:image"      content="https://traydr.market/og-image.png" />
+  <meta name="twitter:image"      content="https://traydr.vercel.app/logo.png" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F59E0B" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -339,6 +340,27 @@
     [data-theme="dark"] .ni.on .lb { color: var(--amber) !important; }
     [data-theme="dark"] .tbl th { background: var(--bg3) !important; color: var(--muted) !important; }
     [data-theme="dark"] .filter-label { color: var(--muted) !important; }
+
+    /* ══════════════════════════════════════
+       MOBILE FIRST — Full Responsive System
+    ══════════════════════════════════════ */
+    * { box-sizing: border-box; }
+    #nav, nav { padding-left: 0.85rem; padding-right: 0.85rem; }
+
+    /* Tables */
+    .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; }
+    .tbl { width: 100%; min-width: 480px; }
+
+    /* Cards */
+    .card, .listing-card { min-width: 0; }
+
+    /* Modals */
+    .mbox { width: calc(100vw - 2rem) !important; max-width: 100% !important; }
+
+    @media (max-width: 480px) {
+      .f2 { grid-template-columns: 1fr !important; }
+      .grid-2 { grid-template-columns: 1fr !important; }
+    }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="icon" type="image/png" href="logo.png">
@@ -859,5 +881,12 @@ async function loadSaved() {
     if (tog)   tog.checked = isDark;
     if (thumb) thumb.style.transform = isDark ? 'translateX(20px)' : 'translateX(0)';
   });</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
+  }
+</script>
 </body>
 </html>
