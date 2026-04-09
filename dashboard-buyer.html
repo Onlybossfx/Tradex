@@ -1165,6 +1165,10 @@ $('disp-submit').addEventListener('click', async ()=>{
   if(!reason){ toast('Please select a reason.','err'); return; }
   if(!desc)  { toast('Please describe the issue.','err'); return; }
   const btn=$('disp-submit'); btn.classList.add('ld'); btn.disabled=true;
+  /* Check if dispute already open for this order */
+  const {data: existingDisp} = await DB._sb.from('disputes').select('id').eq('order_id', orderId).single();
+  if (existingDisp) { toast('A dispute is already open for this order.','inf'); closeDisp(); return; }
+
   const {error} = await DB.openDispute(orderId, U.id, sellerId, reason, desc);
   btn.classList.remove('ld'); btn.disabled=false;
   if(error){ toast('Failed to open dispute: '+error.message,'err'); return; }

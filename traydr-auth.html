@@ -559,7 +559,9 @@ $('s2-next').addEventListener('click', async () => {
   if (!terms) { alert$('s2-err', 'You must agree to the Terms of Service.'); return; }
 
   const btn = $('s2-next'); setLoad(btn, true);
-  const { error } = await api('signup', email, pw, { full_name:`${fname} ${lname}`, role: st.role });
+  const isTrial = new URLSearchParams(window.location.search).get('trial') === '1' ||
+    window.location.hash.includes('trial=1');
+  const { error } = await api('signup', email, pw, { full_name:`${fname} ${lname}`, role: st.role, trial: isTrial });
   setLoad(btn, false);
 
   if (error) {

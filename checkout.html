@@ -700,41 +700,92 @@ async function init() {
   /* ── Handle Flutterwave return ── */
   const urlP = new URLSearchParams(window.location.search);
   if (urlP.get('flw') === 'success') {
+    /* Show verifying state */
+    document.querySelector('.page').innerHTML = `
+      <div style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;text-align:center">
+        <div style="font-size:2.5rem;color:var(--amber)"><i class="fas fa-spinner fa-spin"></i></div>
+        <h2 style="font-family:var(--serif);font-size:1.3rem">Verifying payment...</h2>
+        <p style="color:var(--muted);font-size:0.88rem">Please wait, do not close this page.</p>
+      </div>`;
+
     const transaction_id = urlP.get('transaction_id');
     const tx_ref         = urlP.get('tx_ref') || sessionStorage.getItem('traydr_pending_order');
-    const order_id       = urlP.get('order_id') || tx_ref;
-    if (transaction_id && tx_ref) {
-      try {
-        const vRes = await fetch(
-          'https://rtwbrcbifnowrqpgivma.supabase.co/functions/v1/flutterwave-charge',
-          {
-            method:  'POST',
-            headers: {
-              'Content-Type':  'application/json',
-              'Authorization': 'Bearer sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7',
-            },
-            body: JSON.stringify({
-              action:        'verify',
-              transaction_id,
-              tx_ref,
-              checkout_data: JSON.parse(sessionStorage.getItem('traydr_pending_checkout') || '{}'),
-            }),
-          }
-        );
-        const vData = await vRes.json();
-        if (vData.success) {
-          /* Order created in Edge Function — just show success */
-          sessionStorage.removeItem('traydr_pending_checkout');
-          sessionStorage.removeItem('traydr_pending_order');
-          goStep(4);
-          $('success-order-id').textContent = `#TRX-${String(vData.order_id || '').padStart(6,'0')}`;
-          return;
-        }
-      } catch(e) { console.error('Verify error:', e); }
+    const checkoutData   = JSON.parse(sessionStorage.getItem('traydr_pending_checkout') || '{}');
+
+    if (!transaction_id || !tx_ref) {
+      /* Missing params — show error */
+      document.querySelector('.page').innerHTML = `
+        <div style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;text-align:center">
+          <div style="font-size:2.5rem;color:var(--error)"><i class="fas fa-triangle-exclamation"></i></div>
+          <h2 style="font-family:var(--serif);font-size:1.3rem">Payment verification failed</h2>
+          <p style="color:var(--muted);font-size:0.88rem">We couldn't verify your payment. If money was deducted, please contact support with reference: <strong>${tx_ref||'unknown'}</strong></p>
+          <a href="mailto:hello@traydr.market" style="color:var(--amber);font-size:0.88rem">Contact Support</a>
+          <a href="index.html" style="margin-top:0.5rem;color:var(--muted);font-size:0.82rem">← Return Home</a>
+        </div>`;
+      return;
     }
+
+    try {
+      const vRes = await fetch(
+        'https://rtwbrcbifnowrqpgivma.supabase.co/functions/v1/flutterwave-charge',
+        {
+          method:  'POST',
+          headers: {
+            'Content-Type':  'application/json',
+            'Authorization': 'Bearer sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7',
+          },
+          body: JSON.stringify({
+            action:        'verify',
+            transaction_id,
+            tx_ref,
+            checkout_data: checkoutData,
+          }),
+        }
+      );
+
+      const vData = await vRes.json();
+      console.log('Verify response:', vData);
+
+      if (vData.success) {
+        sessionStorage.removeItem('traydr_pending_checkout');
+        sessionStorage.removeItem('traydr_pending_order');
+        /* Rebuild page and show step 4 */
+        window.location.href = `checkout.html?success=1&order_id=${vData.order_id||''}&ref=${tx_ref}`;
+        return;
+      }
+
+      /* Payment failed or cancelled */
+      document.querySelector('.page').innerHTML = `
+        <div style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;text-align:center">
+          <div style="font-size:2.5rem;color:var(--error)"><i class="fas fa-circle-xmark"></i></div>
+          <h2 style="font-family:var(--serif);font-size:1.3rem">Payment not completed</h2>
+          <p style="color:var(--muted);font-size:0.88rem">Status: ${vData.status||'failed'}. ${vData.error||'Your payment was not successful.'}</p>
+          <p style="color:var(--muted);font-size:0.82rem">No money has been charged. You can try again.</p>
+          <button onclick="window.history.back()" style="background:var(--amber);border:none;color:#fff;padding:0.65rem 1.5rem;border-radius:8px;font-size:0.88rem;font-weight:600;cursor:pointer;margin-top:0.5rem">← Try Again</button>
+        </div>`;
+    } catch(e) {
+      console.error('Verify error:', e);
+      document.querySelector('.page').innerHTML = `
+        <div style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;text-align:center">
+          <div style="font-size:2.5rem;color:var(--error)"><i class="fas fa-wifi"></i></div>
+          <h2 style="font-family:var(--serif);font-size:1.3rem">Connection error</h2>
+          <p style="color:var(--muted);font-size:0.88rem">Could not connect to verify your payment. Please contact support with ref: <strong>${tx_ref}</strong></p>
+          <a href="mailto:hello@traydr.market" style="color:var(--amber);font-size:0.88rem">Contact Support</a>
+        </div>`;
+    }
+    return;
   }
 
-  /* Load saved addresses */
+  /* Handle success redirect (after verify redirects here) */
+  if (urlP.get('success') === '1') {
+    const orderId = urlP.get('order_id');
+    const ref     = urlP.get('ref');
+    goStep(4);
+    $('success-order-id').textContent = orderId ? `#TRX-${String(orderId).padStart(6,'0')}` : ref || 'Confirmed';
+    return;
+  }
+
+    /* Load saved addresses */
   try {
     const { data: addrs } = await DB.getAddresses(user.id);
     if (addrs && addrs.length > 0) {
@@ -760,8 +811,8 @@ async function init() {
 /* ── Summary ── */
 function renderSummary() {
   const c = checkout;
-  const fee   = c.price * 0.08;
-  const total = c.price + fee;
+  const fee   = +(c.price * 0.08).toFixed(2);
+  const total = +(c.price + fee).toFixed(2);
 
   /* image */
   if (c.listing_image) {
@@ -780,8 +831,8 @@ function renderSummary() {
 /* ── Review detail (step 1) ── */
 function renderReviewDetail() {
   const c = checkout;
-  const fee   = c.price * 0.08;
-  const total = c.price + fee;
+  const fee   = +(c.price * 0.08).toFixed(2);
+  const total = +(c.price + fee).toFixed(2);
   const catIcons = {physical:'<i class="fas fa-box"></i>',digital:'<i class="fas fa-floppy-disk"></i>',freelance:'<i class="fas fa-screwdriver-wrench"></i>',experience:'<i class="fas fa-graduation-cap"></i>'};
 
   $('review-detail').innerHTML = `
@@ -809,8 +860,8 @@ function renderReviewDetail() {
 /* ── Confirm detail (step 3) ── */
 function renderConfirmDetail() {
   const c = checkout;
-  const fee   = c.price * 0.08;
-  const total = c.price + fee;
+  const fee   = +(c.price * 0.08).toFixed(2);
+  const total = +(c.price + fee).toFixed(2);
   const methodLabel = region === 'global'
     ? `<i class="fas fa-credit-card"></i> Card ending ····${($('card-num').value.replace(/\s/g,'')).slice(-4) || '••••'}`
     : fwMethod === 'card'         ? `<i class="fas fa-credit-card"></i> Card (Flutterwave)`
@@ -971,9 +1022,10 @@ $('place-order-btn').addEventListener('click', async () => {
   $('step3-err').classList.remove('on');
 
   const c       = checkout;
-  const fee     = c.price * 0.08;
-  const total   = c.price + fee;
-  const payout  = c.price * 0.92;
+  const feeRate = 0.08;
+  const fee     = +(c.price * feeRate).toFixed(2);
+  const total   = +(c.price + fee).toFixed(2);
+  const payout  = +(c.price * (1 - feeRate)).toFixed(2);
 
   /* Guard: seller_id must exist */
   if (!c.seller_id) {

@@ -264,6 +264,19 @@ window.DB = {
       .insert({ order_id: orderId, listing_id: listingId, reviewer_id: reviewerId, reviewee_id: revieweeId, rating, comment })
       .select().single();
     if (!error) {
+      /* Update listing avg rating */
+      const { data: allRevs } = await _dbSb.from('reviews')
+        .select('rating').eq('listing_id', listingId);
+      if (allRevs?.length) {
+        const avg = allRevs.reduce((s, r) => s + r.rating, 0) / allRevs.length;
+        await _dbSb.from('listings').update({
+          rating:       Math.round(avg * 10) / 10,
+          review_count: allRevs.length,
+        }).eq('id', listingId);
+      }
+      /* Also mark order as reviewed so buyer can't double review */
+      await _dbSb.from('orders').update({ reviewed: true }).eq('id', orderId);
+
       /* get listing + seller info for notification */
       const { data: listing } = await _dbSb.from('listings').select('title').eq('id', listingId).single();
       const { data: reviewer } = await _dbSb.from('users').select('full_name').eq('id', reviewerId).single();
@@ -329,6 +342,54 @@ window.DB = {
       .select().single();
     return { data, error };
   },
+
+  /* ══ SUBSCRIPTION / PLAN ══ */
+  getPlan: async (userId) => {
+    const { data } = await _dbSb.from('users')
+      .select('plan, trial_started, plan_expires')
+      .eq('id', userId).single();
+    if (!data) return { plan: 'free', isTrialActive: false, daysLeft: 0 };
+    const plan     = data.plan || 'free';
+    const expires  = data.plan_expires ? new Date(data.plan_expires) : null;
+    const now      = new Date();
+    const expired  = expires && expires < now;
+    /* Auto-downgrade expired trials */
+    if (expired && plan !== 'free') {
+      await _dbSb.from('users').update({ plan: 'free', plan_expires: null }).eq('id', userId);
+      return { plan: 'free', isTrialActive: false, daysLeft: 0 };
+    }
+    const daysLeft = expires ? Math.max(0, Math.ceil((expires - now) / 86400000)) : 0;
+    return { plan, isTrialActive: plan === 'pro' && !!data.trial_started && !expired, daysLeft };
+  },
+
+  startTrial: async (userId) => {
+    const trialEnd = new Date(Date.now() + 14 * 86400000).toISOString();
+    const { error } = await _dbSb.from('users').update({
+      plan:          'pro',
+      trial_started: new Date().toISOString(),
+      plan_expires:  trialEnd,
+    }).eq('id', userId);
+    return { error };
+  },
+
+  getPlanFee: (plan) => {
+    return { free: 0.08, pro: 0.05, business: 0.03 }[plan] || 0.08;
+  },
+
+  canCreateListing: async (userId) => {
+    const { plan } = await DB.getPlan(userId);
+    if (plan !== 'free') return { allowed: true, reason: '' };
+    /* Free plan: max 5 listings */
+    const { count } = await _dbSb.from('listings')
+      .select('*', { count: 'exact', head: true })
+      .eq('seller_id', userId)
+      .neq('status', 'deleted');
+    if ((count || 0) >= 5) {
+      return { allowed: false, reason: 'Free plan allows up to 5 listings. Upgrade to Pro for unlimited.' };
+    }
+    return { allowed: true, reason: '' };
+  },
+
   savePayoutMethod: async (userId, method, account) => {
     /* Update user profile with payout info */
     const { error } = await _dbSb.from('users')
@@ -513,7 +574,14 @@ window.DB = {
         .select('*, orders(listing_title), buyer:buyer_id(email,full_name), seller:seller_id(email,full_name)')
         .eq('id',id).single();
       await _dbSb.from('disputes').update({status,resolution,resolved_at:new Date().toISOString()}).eq('id',id);
-      if (dispute?.order_id) await _dbSb.from('orders').update({status:'complete'}).eq('id',dispute.order_id);
+      if (dispute?.order_id) {
+        /* Winner gets funds — update order status + payout flag */
+        const finalStatus = winner === 'buyer' ? 'refunded' : 'complete';
+        await _dbSb.from('orders').update({
+          status:     finalStatus,
+          resolved_at: new Date().toISOString(),
+        }).eq('id', dispute.order_id);
+      }
       const orderRef=`#TRX-${String(dispute?.order_id||0).padStart(6,'0')}`;
       /* notify + email both parties */
       if (dispute?.buyer_id) {

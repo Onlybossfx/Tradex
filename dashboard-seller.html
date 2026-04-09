@@ -517,6 +517,16 @@
       .ph h1 { font-size: 1.1rem; }
       .ph p { font-size: 0.78rem; }
     }
+
+    /* ── Plan badge ── */
+    .plan-badge { display:inline-flex;align-items:center;gap:0.3rem;padding:0.2rem 0.6rem;border-radius:100px;font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em; }
+    .plan-badge.free { background:var(--bg3);color:var(--muted); }
+    .plan-badge.pro { background:rgba(194,105,10,0.15);color:var(--amber);border:1px solid rgba(194,105,10,0.3); }
+    .plan-badge.business { background:rgba(99,102,241,0.1);color:#6366F1;border:1px solid rgba(99,102,241,0.3); }
+    .plan-badge.trial { background:rgba(16,185,129,0.1);color:#10B981;border:1px solid rgba(16,185,129,0.3); }
+    .trial-banner { background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:0.75rem 1rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+    .trial-banner p { font-size:0.82rem;color:var(--text); }
+    .trial-banner strong { color:#10B981; }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="icon" type="image/png" href="logo.png">
@@ -535,7 +545,8 @@
   <div class="nav-right">
     <button class="btn-new" onclick="openModal()">+ New Listing</button>
     <div class="notif-btn" id="notif-btn"><span><i class="fas fa-bell"></i></span><div class="ndot" id="ndot" style="display:none"></div></div>
-    <div class="nav-av" id="nav-av">S</div>
+    <div id="plan-badge"></div><div class="nav-av" id="nav-av">S</div>
+  <div id="plan-badge" style="display:none;font-size:0.65rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:100px;background:var(--amber);color:#fff;flex-shrink:0"></div>
   </div>
 </nav>
 
@@ -1383,6 +1394,19 @@ async function loadPayoutMethod() {
   if (data.avatar_url) {
     const pav = $('pav');
     if (pav) pav.innerHTML = `<img src="${data.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+  }
+  /* Show plan badge */
+  const planInfo = await DB.getPlan(U.id);
+  const badgeEl  = document.getElementById('plan-badge');
+  if (badgeEl) {
+    const cls = planInfo.isTrialActive ? 'trial' : planInfo.plan;
+    const lbl = planInfo.isTrialActive ? `Pro Trial — ${planInfo.daysLeft}d left` : planInfo.plan.charAt(0).toUpperCase() + planInfo.plan.slice(1);
+    badgeEl.innerHTML = `<span class="plan-badge ${cls}"><i class="fas fa-${planInfo.plan==='free'?'circle':'crown'}"></i> ${lbl}</span>`;
+  }
+  /* Show trial banner if active */
+  if (planInfo.isTrialActive) {
+    const banner = document.getElementById('trial-banner');
+    if (banner) { banner.style.display='flex'; banner.querySelector('strong').textContent = planInfo.daysLeft + ' days'; }
   }
   if (data.payout_account) { const el=$('payout-account-inp'); if(el) el.value=data.payout_account; }
 }

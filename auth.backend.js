@@ -67,16 +67,22 @@ window.Auth = {
     });
 
     if (error || !data.user) return { error };
+    /* Check if trial signup */
+    const isTrial = meta.trial === true || meta.trial === '1';
 
     /* Insert user profile — use upsert to handle edge cases gracefully */
+    const trialEnd = new Date(Date.now() + 14 * 86400000).toISOString();
     await sb
       .from('users')
       .upsert({
-        id:        data.user.id,
-        email:     data.user.email,
-        full_name: meta.full_name,
-        role:      meta.role,
-      }, { onConflict: 'id', ignoreDuplicates: true });
+        id:            data.user.id,
+        email:         data.user.email,
+        full_name:     meta.full_name,
+        role:          meta.role,
+        plan:          isTrial ? 'pro' : 'free',
+        trial_started: isTrial ? new Date().toISOString() : null,
+        plan_expires:  isTrial ? trialEnd : null,
+      }, { onConflict: 'id', ignoreDuplicates: false });
 
     /* Welcome email — fire and forget */
     try {
@@ -167,7 +173,7 @@ window.Auth = {
      Called after: login, signup, OTP verify, password reset
      Redirects user based on context.
   ───────────────────────────────────────────── */
-  onSuccess: async ({ context, role }) => {
+  onSuccess: async ({ context, role, trial }) => {
     /* ── Always check for a pending return destination first ── */
     const returnTo = sessionStorage.getItem('traydr_return_to');
     if (returnTo) {
