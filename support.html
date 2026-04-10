@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Support — TraydR</title>
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#FFB34E">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root { --amber:#C2690A; --amber-light:#D97706; --bg:#FFF8F0; --bg2:#FFECD2; --border:rgba(255,160,60,0.35); --text:#1C1208; --muted:rgba(28,18,8,0.55); --serif:'Playfair Display',Georgia,serif; --sans:'DM Sans',system-ui,sans-serif; }
+    [data-theme="dark"] { --amber:#F59E0B; --bg:#0a0a0a; --bg2:#0f0f0f; --border:rgba(255,255,255,0.07); --text:#fff; --muted:rgba(255,255,255,0.45); }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:var(--sans); background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
+    nav { background:#FFB34E; padding:0 1.25rem; height:62px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
+    [data-theme="dark"] nav { background:rgba(10,10,10,0.97) !important; border-bottom:1px solid rgba(255,255,255,0.07); }
+    .nav-logo img { height:44px; width:auto; }
+    .nav-back { background:transparent; border:1px solid rgba(28,18,8,0.3); color:#1C1208; padding:0.4rem 1rem; border-radius:6px; font-size:0.85rem; font-weight:600; cursor:pointer; text-decoration:none; }
+    [data-theme="dark"] .nav-back { border-color:rgba(255,255,255,0.2); color:#fff; }
+    .container { max-width:720px; margin:0 auto; padding:3rem 1.5rem; }
+    h1 { font-family:var(--serif); font-size:clamp(1.8rem,5vw,2.5rem); font-weight:700; margin-bottom:1rem; letter-spacing:-0.03em; }
+    h2 { font-family:var(--serif); font-size:1.25rem; font-weight:700; margin:2rem 0 0.75rem; color:var(--amber); }
+    p { color:var(--muted); line-height:1.8; margin-bottom:1rem; font-size:0.93rem; }
+    strong { color:var(--text); }
+    .section { margin-bottom:2rem; padding-bottom:2rem; border-bottom:1px solid var(--border); }
+    .section:last-child { border-bottom:none; }
+    .faq-item { border:1px solid var(--border); border-radius:10px; margin-bottom:0.75rem; overflow:hidden; }
+    .faq-q { padding:1rem 1.1rem; font-weight:600; font-size:0.88rem; cursor:pointer; display:flex; justify-content:space-between; align-items:center; background:var(--bg2); color:var(--text); }
+    .faq-a { padding:0 1.1rem; max-height:0; overflow:hidden; transition:all 0.3s; font-size:0.85rem; color:var(--muted); line-height:1.7; }
+    .faq-item.open .faq-a { max-height:200px; padding:0.75rem 1.1rem 1rem; }
+    .faq-item.open .faq-icon { transform:rotate(45deg); }
+    .faq-icon { transition:transform 0.3s; color:var(--amber); }
+    .contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem; }
+    .contact-card { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:1.25rem; text-align:center; text-decoration:none; color:var(--text); transition:border-color 0.2s; display:block; }
+    .contact-card:hover { border-color:var(--amber); }
+    .contact-card i { font-size:1.5rem; color:var(--amber); margin-bottom:0.5rem; display:block; }
+    .contact-card strong { display:block; font-size:0.88rem; margin-bottom:0.2rem; }
+    .contact-card span { font-size:0.78rem; color:var(--muted); }
+    @media(max-width:480px) { .contact-grid { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="nav-logo"><img src="logo.png" alt="TraydR"></a>
+    <a href="index.html" class="nav-back"><i class="fas fa-arrow-left"></i> Back</a>
+  </nav>
+  <div class="container">
+    <h1>Support Center</h1>
+    <p>We're here to help. Find answers below or reach out directly.</p>
+
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">How does escrow work? <i class="fas fa-plus faq-icon"></i></div>
+      <div class="faq-a">When you pay for an order, your money is held securely by TraydR. The seller only receives payment after you confirm you've received your order. If there's a problem, you can open a dispute.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">How do I get paid as a seller? <i class="fas fa-plus faq-icon"></i></div>
+      <div class="faq-a">Once a buyer confirms delivery, your payout is processed within 3–5 business days to your registered payout method (bank, mobile money, or e-wallet).</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">What if I don't receive my order? <i class="fas fa-plus faq-icon"></i></div>
+      <div class="faq-a">Open a dispute from your buyer dashboard within 7 days of the expected delivery date. Our team will review within 24–48 hours and issue a refund if the seller cannot provide proof of delivery.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">How do I become a verified seller? <i class="fas fa-plus faq-icon"></i></div>
+      <div class="faq-a">Submit your ID verification from your seller dashboard → Profile. Our team reviews within 2 business days. Verified sellers get a badge and priority placement.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">What payment methods are accepted? <i class="fas fa-plus faq-icon"></i></div>
+      <div class="faq-a">We accept card payments, bank transfer, USSD, and mobile money (MTN MoMo, Airtel Money, M-Pesa, Vodafone Cash) through Flutterwave.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Can I cancel an order? <i class="fas fa-plus faq-icon"></i></div>
+      <div class="faq-a">Orders can be cancelled before the seller marks them as shipped. After shipping, you'll need to open a dispute. Contact the seller first through in-app messaging.</div>
+    </div>
+
+    <h2>Contact Us</h2>
+    <div class="contact-grid">
+      <a href="mailto:hello@traydr.market" class="contact-card">
+        <i class="fas fa-envelope"></i>
+        <strong>Email Support</strong>
+        <span>hello@traydr.market</span>
+      </a>
+      <a href="https://wa.me/2349061743543" class="contact-card" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+        <strong>WhatsApp</strong>
+        <span>Chat with us</span>
+      </a>
+    </div>
+    <p style="margin-top:1.5rem;font-size:0.82rem">Response time: within 24 hours on business days (Mon–Fri, 9am–6pm WAT)</p>
+  </div>
+  <script>(function(){const t=localStorage.getItem('traydr_theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
+</body>
+</html>

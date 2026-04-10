@@ -465,6 +465,26 @@
     [data-theme="dark"] .cat-icon { color: var(--amber) !important; }
     [data-theme="dark"] .listing-card { background: rgba(255,255,255,0.03) !important; border-color: rgba(255,255,255,0.08) !important; }
     [data-theme="dark"] .card-seller { color: rgba(255,255,255,0.45) !important; }
+
+    .btn-hero-login {
+      background: transparent;
+      border: 2px solid rgba(28,18,8,0.5);
+      color: #1C1208;
+      padding: 0.65rem 1.5rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-hero-login:hover { background: rgba(28,18,8,0.08); }
+    [data-theme="dark"] .btn-hero-login {
+      border-color: rgba(255,255,255,0.6) !important;
+      color: #fff !important;
+    }
+    [data-theme="dark"] .btn-hero-login:hover {
+      background: rgba(255,255,255,0.1) !important;
+    }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="icon" type="image/png" href="logo.png">
@@ -526,7 +546,7 @@
 
     <!-- Hero CTA buttons below tags -->
     <div style="display:flex;gap:0.75rem;margin-top:1.5rem;justify-content:center;flex-wrap:wrap">
-      <button onclick="window.location.href='traydr-auth.html'" style="background:transparent;border:2px solid #1C1208;color:#1C1208;padding:0.65rem 1.5rem;border-radius:8px;font-size:0.9rem;font-weight:600;cursor:pointer;transition:all 0.2s">Log In</button>
+      <button onclick="window.location.href='traydr-auth.html'" class="btn-hero-login">Log In</button>
       <button onclick="window.location.href='traydr-auth.html#signup'" style="background:#C2690A;border:none;color:#fff;padding:0.65rem 1.75rem;border-radius:8px;font-size:0.9rem;font-weight:700;cursor:pointer;transition:all 0.2s">Sign Up Free →</button>
     </div>
   </div>
@@ -710,7 +730,7 @@
   <div class="footer-inner">
     <div class="footer-logo"><img src="logo.png" alt="TraydR" style="height:70px;width:auto"></div>
     <div class="footer-links">
-      <a href="#">About</a><a href="#">Terms</a><a href="#">Privacy</a><a href="#">Support</a><a href="#">Blog</a>
+      <a href="about.html">About</a><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a><a href="support.html">Support</a><a href="blog.html">Blog</a>
     </div>
     <div class="footer-copy">© 2026 TraydR. All rights reserved.</div>
   </div>

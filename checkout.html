@@ -1102,11 +1102,14 @@ $('place-order-btn').addEventListener('click', async () => {
       return;
     }
 
-    showAlert('step3-err', flwData.error || 'Payment initiation failed. Please try again.');
+    console.error('FLW initiate failed:', flwData);
+    const errMsg = flwData.error || flwData.message || 'Payment initiation failed.';
+    showAlert('step3-err', errMsg + ' (Check console for details)');
 
   } catch(e) {
+    console.error('FLW network error:', e);
     btn.classList.remove('ld'); btn.disabled = false;
-    showAlert('step3-err', 'Payment service unavailable. Please try again.');
+    showAlert('step3-err', 'Could not reach payment service. Check your connection and try again.');
   }
 });
 

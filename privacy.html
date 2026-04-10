@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — TraydR</title>
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#FFB34E">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root { --amber:#C2690A; --amber-light:#D97706; --bg:#FFF8F0; --bg2:#FFECD2; --border:rgba(255,160,60,0.35); --text:#1C1208; --muted:rgba(28,18,8,0.55); --serif:'Playfair Display',Georgia,serif; --sans:'DM Sans',system-ui,sans-serif; }
+    [data-theme="dark"] { --amber:#F59E0B; --bg:#0a0a0a; --bg2:#0f0f0f; --border:rgba(255,255,255,0.07); --text:#fff; --muted:rgba(255,255,255,0.45); }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:var(--sans); background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
+    nav { background:#FFB34E; padding:0 1.25rem; height:62px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
+    [data-theme="dark"] nav { background:rgba(10,10,10,0.97) !important; border-bottom:1px solid rgba(255,255,255,0.07); }
+    .nav-logo img { height:44px; width:auto; }
+    .nav-back { background:transparent; border:1px solid rgba(28,18,8,0.3); color:#1C1208; padding:0.4rem 1rem; border-radius:6px; font-size:0.85rem; font-weight:600; cursor:pointer; text-decoration:none; }
+    [data-theme="dark"] .nav-back { border-color:rgba(255,255,255,0.2); color:#fff; }
+    .container { max-width:720px; margin:0 auto; padding:3rem 1.5rem; }
+    h1 { font-family:var(--serif); font-size:clamp(1.8rem,5vw,2.5rem); font-weight:700; margin-bottom:1rem; letter-spacing:-0.03em; }
+    h2 { font-family:var(--serif); font-size:1.25rem; font-weight:700; margin:2rem 0 0.75rem; color:var(--amber); }
+    p { color:var(--muted); line-height:1.8; margin-bottom:1rem; font-size:0.93rem; }
+    strong { color:var(--text); }
+    .section { margin-bottom:2rem; padding-bottom:2rem; border-bottom:1px solid var(--border); }
+    .section:last-child { border-bottom:none; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="nav-logo"><img src="logo.png" alt="TraydR"></a>
+    <a href="index.html" class="nav-back"><i class="fas fa-arrow-left"></i> Back</a>
+  </nav>
+  <div class="container">
+    <h1>Privacy Policy</h1>
+    <p style="color:var(--muted);font-size:0.82rem">Last updated: April 2026</p>
+    <div class="section">
+      <h2>What We Collect</h2>
+      <p>We collect your name, email, and profile information when you sign up. We also collect transaction data, messages, and usage analytics to improve TraydR.</p>
+    </div>
+    <div class="section">
+      <h2>How We Use It</h2>
+      <p>Your data is used to operate the marketplace, process payments, send notifications, and prevent fraud. We do not sell your personal data to third parties.</p>
+    </div>
+    <div class="section">
+      <h2>Third Parties</h2>
+      <p>We use <strong>Supabase</strong> for database and authentication, <strong>Flutterwave</strong> for payments, and <strong>Resend</strong> for emails. Each has their own privacy policy.</p>
+    </div>
+    <div class="section">
+      <h2>Your Rights</h2>
+      <p>You may request deletion of your account and data at any time from Settings → Security → Delete Account. We will process your request within 30 days.</p>
+    </div>
+    <div class="section">
+      <h2>Cookies</h2>
+      <p>TraydR uses localStorage for session management and theme preferences. We do not use tracking cookies or advertising pixels.</p>
+    </div>
+    <div class="section">
+      <h2>Contact</h2>
+      <p>For privacy concerns: <a href="mailto:privacy@traydr.market" style="color:var(--amber)">privacy@traydr.market</a></p>
+    </div>
+  </div>
+  <script>(function(){const t=localStorage.getItem('traydr_theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
+</body>
+</html>
