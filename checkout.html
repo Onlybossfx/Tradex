@@ -1066,9 +1066,16 @@ $('place-order-btn').addEventListener('click', async () => {
     package_label: c.package_label,
   }));
 
+  /* Reset button label */
+  btn.querySelector('.lbl').textContent = 'Redirecting to payment...';
+
   try {
+    const EDGE_URL = 'https://rtwbrcbifnowrqpgivma.supabase.co/functions/v1/flutterwave-charge';
+    console.log('Calling Edge Function:', EDGE_URL);
+    console.log('Amount:', total, 'Currency:', delivery.country === 'NG' ? 'NGN' : 'USD');
+
     const flwRes = await fetch(
-      'https://rtwbrcbifnowrqpgivma.supabase.co/functions/v1/flutterwave-charge',
+      EDGE_URL,
       {
         method:  'POST',
         headers: {
@@ -1109,7 +1116,10 @@ $('place-order-btn').addEventListener('click', async () => {
   } catch(e) {
     console.error('FLW network error:', e);
     btn.classList.remove('ld'); btn.disabled = false;
-    showAlert('step3-err', 'Could not reach payment service. Check your connection and try again.');
+    btn.querySelector('.lbl').textContent = 'Place Order & Pay $' + $('confirm-price').textContent;
+    /* Show specific error */
+    const msg = e?.message || String(e) || 'Unknown error';
+    showAlert('step3-err', `Payment error: ${msg}. Please try again or contact support.`);
   }
 });
 

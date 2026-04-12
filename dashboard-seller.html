@@ -527,6 +527,26 @@
     .trial-banner { background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:0.75rem 1rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
     .trial-banner p { font-size:0.82rem;color:var(--text); }
     .trial-banner strong { color:#10B981; }
+
+    /* ══ NAV MOBILE FIX ══ */
+    @media (max-width: 900px) {
+      /* Hide label + separator on mobile — too cramped */
+      .nav-sep   { display: none; }
+      .nav-label { display: none; }
+      /* Hide bell + avatar from nav on mobile — they're in sidebar */
+      .notif-btn { display: none; }
+      #nav-av    { display: none; }
+      #plan-badge{ display: none !important; }
+      /* Make logo slightly smaller */
+      .nav-logo img { height: 44px !important; }
+      /* New listing btn — shorter text */
+      .btn-new { font-size: 0.75rem; padding: 0.35rem 0.65rem; }
+      /* Nav layout — hamburger | logo | [spacer] | btn */
+      #nav { padding: 0 0.75rem; gap: 0.6rem; }
+    }
+    @media (max-width: 400px) {
+      .btn-new { display: none; }
+    }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="icon" type="image/png" href="logo.png">
@@ -553,6 +573,19 @@
 <!-- SIDEBAR -->
 <div class="shell">
 <aside id="sb">
+  <!-- Mobile profile strip — shown only on mobile -->
+  <div id="sb-profile" style="display:none;align-items:center;gap:0.75rem;padding:0.75rem 0.65rem 0;border-bottom:1px solid var(--border);margin-bottom:0.5rem">
+    <div class="nav-av" id="sb-nav-av" style="width:38px;height:38px;font-size:0.9rem">S</div>
+    <div style="flex:1;min-width:0">
+      <div id="sb-name" style="font-size:0.82rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Your Name</div>
+      <div id="sb-plan" style="font-size:0.68rem;color:var(--amber);font-weight:600;margin-top:1px">Free Plan</div>
+    </div>
+    <div class="notif-btn" id="sb-notif-btn" style="width:32px;height:32px" onclick="switchP('notifications')">
+      <span><i class="fas fa-bell"></i></span>
+      <div class="ndot" id="sb-ndot" style="display:none"></div>
+    </div>
+  </div>
+
   <div class="ns">Main</div>
   <div class="ni on" data-p="overview">  <span class="ic"><i class="fas fa-chart-bar"></i></span><span class="lb">Overview</span></div>
   <div class="ni" data-p="listings">     <span class="ic"><i class="fas fa-clipboard-list"></i></span><span class="lb">My Listings</span></div>
