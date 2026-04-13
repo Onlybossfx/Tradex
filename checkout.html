@@ -1075,7 +1075,7 @@ async function handlePaymentSuccess(transaction_id, tx_ref, checkoutData) {
   /* Verify payment + create order via Edge Function */
   try {
     const res = await fetch(
-      'https://rtwbrcbifnowrqpgivma.supabase.co/functions/v1/flutterwave-charge',
+      'https://rtwbrcbifnowrqpgivma.supabase.co/functions/v1/quick-api',
       {
         method:  'POST',
         headers: {
@@ -1834,7 +1834,7 @@ async function init() {
 
     try {
       const vRes = await fetch(
-        'https://rtwbrcbifnowrqpgivma.supabase.co/functions/v1/flutterwave-charge',
+        'https://rtwbrcbifnowrqpgivma.supabase.co/functions/v1/quick-api',
         {
           method:  'POST',
           headers: {
@@ -2177,7 +2177,7 @@ $('place-order-btn').addEventListener('click', async () => {
   btn.querySelector('.lbl').textContent = 'Redirecting to payment...';
 
   try {
-    const EDGE_URL = 'https://rtwbrcbifnowrqpgivma.supabase.co/functions/v1/flutterwave-charge';
+    const EDGE_URL = 'https://rtwbrcbifnowrqpgivma.supabase.co/functions/v1/quick-api';
     console.log('Calling Edge Function:', EDGE_URL);
     console.log('Amount:', total, 'Currency:', delivery.country === 'NG' ? 'NGN' : 'USD');
 
