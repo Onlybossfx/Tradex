@@ -647,7 +647,7 @@
 */
 
 const SUPABASE_URL  = 'https://rtwbrcbifnowrqpgivma.supabase.co';
-const SUPABASE_ANON = 'sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc';
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
 
@@ -1080,7 +1080,7 @@ async function handlePaymentSuccess(transaction_id, tx_ref, checkoutData) {
         method:  'POST',
         headers: {
           'Content-Type':  'application/json',
-          'Authorization': 'Bearer sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7',
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc',
         },
         body: JSON.stringify({ action: 'verify', transaction_id, tx_ref, checkout_data: checkoutData }),
       }
@@ -1753,7 +1753,7 @@ TYPE html>
 */
 
 const SUPABASE_URL  = 'https://rtwbrcbifnowrqpgivma.supabase.co';
-const SUPABASE_ANON = 'sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc';
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
 
@@ -1839,7 +1839,7 @@ async function init() {
           method:  'POST',
           headers: {
             'Content-Type':  'application/json',
-            'Authorization': 'Bearer sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7',
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc',
           },
           body: JSON.stringify({
             action:        'verify',
@@ -2187,7 +2187,6 @@ $('place-order-btn').addEventListener('click', async () => {
         method:  'POST',
         headers: {
           'Content-Type':  'application/json',
-          'Authorization': 'Bearer sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7',
         },
         body: JSON.stringify({
           action:        'initiate',
