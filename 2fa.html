@@ -1,1 +1,417 @@
-<!DOC
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TraydR — Two-Factor Verification</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="auth.backend.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --amber: #C2690A; --amber-light: #D97706; --amber-dim: rgba(194,105,10,0.1);
+      --bg: #FFF8F0; --bg2: #FFECD2; --bg3: #FFE0B8;
+      --border: rgba(255,160,60,0.35); --border-focus: rgba(194,105,10,0.5);
+      --text: #1C1208; --muted: rgba(28,18,8,0.55); --dim: rgba(28,18,8,0.35);
+      --error: #DC2626; --success: #16A34A;
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans: 'DM Sans', system-ui, sans-serif;
+    }
+    html, body { height: 100%; overflow-x: hidden; }
+    body { background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem 1.25rem; }
+
+    /* ── CARD ── */
+    .card {
+      width: 100%; max-width: 420px;
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 20px;
+      padding: 2.5rem 2rem; position: relative; overflow: hidden;
+    }
+    .card-glow { position: absolute; top: -30%; left: 50%; transform: translateX(-50%); width: 300px; height: 200px; background: radial-gradient(ellipse, rgba(245,158,11,0.1) 0%, transparent 70%); pointer-events: none; }
+
+    /* ── LOGO ── */
+    .logo { display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 2.5rem; text-decoration: none; }
+    .logo span { font-family: var(--serif); font-size: 1.3rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
+    .logo i { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); display: inline-block; }
+
+    /* ── HEADER ── */
+    .head { text-align: center; margin-bottom: 2rem; }
+    .icon-wrap { width: 68px; height: 68px; background: var(--amber-dim); border: 1px solid rgba(245,158,11,0.25); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; margin: 0 auto 1.25rem; }
+    .head h1 { font-family: var(--serif); font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+    .head p { color: var(--muted); font-size: 0.875rem; line-height: 1.6; }
+    .head p strong { color: var(--text); }
+
+    /* ── METHOD SWITCH ── */
+    .methods { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 1.75rem; }
+    .method { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 0.7rem; cursor: pointer; text-align: center; transition: all 0.2s; font-family: var(--sans); }
+    .method:hover, .method.on { border-color: rgba(245,158,11,0.35); background: var(--amber-dim); }
+    .method .mi { font-size: 1.1rem; margin-bottom: 0.25rem; }
+    .method .ml { font-size: 0.75rem; font-weight: 600; color: var(--muted); }
+    .method.on .ml { color: var(--amber); }
+
+    /* ── OTP ── */
+    .otp-row { display: flex; gap: 0.6rem; justify-content: center; margin-bottom: 1.5rem; }
+    .otp {
+      width: 52px; height: 60px; background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 12px; text-align: center; font-size: 1.5rem; font-weight: 700;
+      color: var(--text); font-family: var(--serif); outline: none;
+      transition: border-color 0.2s, background 0.2s, transform 0.2s; caret-color: var(--amber);
+    }
+    .otp:focus { border-color: var(--border-focus); background: rgba(245,158,11,0.05); transform: scale(1.06); }
+    .otp.filled { border-color: rgba(245,158,11,0.45); color: var(--amber); }
+    .otp.shake { animation: shake 0.4s ease; }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+
+    /* ── RESEND ── */
+    .resend { text-align: center; margin-bottom: 1.5rem; }
+    .resend p { color: var(--muted); font-size: 0.83rem; margin-bottom: 0.35rem; }
+    .resend-btn { background: none; border: none; color: var(--amber); font-size: 0.83rem; font-family: var(--sans); cursor: pointer; font-weight: 600; transition: opacity 0.2s; }
+    .resend-btn:disabled { color: var(--dim); cursor: not-allowed; }
+    .resend-btn:not(:disabled):hover { opacity: 0.8; }
+    #timer { color: var(--dim); font-size: 0.83rem; }
+
+    /* ── ALERTS ── */
+    .alert { display: none; padding: 0.75rem 1rem; border-radius: 10px; font-size: 0.83rem; margin-bottom: 1.25rem; align-items: center; gap: 0.6rem; }
+    .alert.on { display: flex; }
+    .alert.err  { background: rgba(239,68,68,0.1);  border: 1px solid rgba(239,68,68,0.25);  color: #FCA5A5; }
+    .alert.ok   { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25); color: #6EE7B7; }
+    .alert.info { background: var(--amber-dim);     border: 1px solid rgba(245,158,11,0.25); color: #FCD34D; }
+
+    /* ── BUTTONS ── */
+    .btn-primary { width: 100%; padding: 0.88rem; background: var(--amber); border: none; border-radius: 10px; color: #0a0a0a; font-size: 0.95rem; font-weight: 700; font-family: var(--sans); cursor: pointer; transition: all 0.2s; position: relative; margin-bottom: 1rem; }
+    .btn-primary:hover:not(:disabled) { background: var(--amber-light); transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-primary.loading .lbl { visibility: hidden; }
+    .btn-primary.loading::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 18px; height: 18px; border: 2px solid rgba(10,10,10,0.3); border-top-color: #0a0a0a; border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: translate(-50%,-50%) rotate(360deg); } }
+
+    .back { display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: none; border: none; color: var(--muted); font-size: 0.83rem; font-family: var(--sans); cursor: pointer; width: 100%; padding: 0.5rem; transition: color 0.2s; }
+    .back:hover { color: var(--text); }
+
+    /* ── MOBILE ── */
+    @media (max-width: 480px) {
+      body { padding: 1.25rem; align-items: flex-start; padding-top: 2rem; }
+      .card { padding: 2rem 1.25rem; border-radius: 16px; border: none; background: transparent; }
+      .otp { width: 44px; height: 52px; font-size: 1.25rem; }
+    }
+
+    [data-theme="dark"] {
+      --amber: #F59E0B; --amber-light: #FBBF24; --amber-dim: rgba(245,158,11,0.1);
+      --bg: #0a0a0a; --bg2: #0f0f0f; --bg3: #141414; --bg4: #181818;
+      --border: rgba(255,255,255,0.07); --border-md: rgba(255,255,255,0.11);
+      --text: #fff; --muted: rgba(255,255,255,0.45); --dim: rgba(255,255,255,0.22);
+      --error: #EF4444; --success: #10B981; --info: #3B82F6;
+    }
+    [data-theme="dark"] #nav { background: rgba(10,10,10,0.97) !important; border-bottom: 1px solid rgba(255,255,255,0.07) !important; }
+    [data-theme="dark"] .nav-logo span { color: #fff !important; }
+    [data-theme="dark"] .nav-label { color: rgba(255,255,255,0.6) !important; }
+    [data-theme="dark"] .hbg span { background: #fff !important; }
+    [data-theme="dark"] #sb, [data-theme="dark"] aside { background: #0f0f0f !important; border-right-color: rgba(255,255,255,0.07) !important; }
+    [data-theme="dark"] .sc, [data-theme="dark"] .pcard, [data-theme="dark"] .card,
+    [data-theme="dark"] .listing-card, [data-theme="dark"] .order-card, [data-theme="dark"] .sg-card,
+    [data-theme="dark"] .chart-box, [data-theme="dark"] .ph { background: #141414 !important; border-color: rgba(255,255,255,0.08) !important; box-shadow: none !important; backdrop-filter: none !important; }
+    [data-theme="dark"] .mo .mbox { background: #141414 !important; border-color: rgba(255,255,255,0.1) !important; }
+    [data-theme="dark"] input, [data-theme="dark"] select, [data-theme="dark"] textarea { background: #141414 !important; border-color: rgba(255,255,255,0.11) !important; color: #fff !important; }
+    [data-theme="dark"] .btn-primary, [data-theme="dark"] .btn-new { background: #F59E0B !important; color: #0a0a0a !important; }
+
+    #nav { background: #FFB34E !important; border-bottom: 1px solid rgba(180,100,20,0.2) !important; }
+    .nav-logo span { color: #1C1208 !important; }
+    .nav-logo i { background: #1C1208 !important; }
+    .nav-label { color: rgba(28,18,8,0.7) !important; }
+    .hbg span { background: #1C1208 !important; }
+    .nav-sep { background: rgba(28,18,8,0.15) !important; }
+    .nav-av { border-color: rgba(28,18,8,0.2) !important; }
+
+    .sc, .pcard, .sg-card, .stat-card, .earnings-card, .chart-box, .ph {
+      background: rgba(255,236,210,0.65) !important;
+      border: 1px solid rgba(255,160,60,0.4) !important;
+      box-shadow: 0 4px 24px rgba(180,100,20,0.08), 0 1px 4px rgba(180,100,20,0.05) !important;
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    }
+    .card, .listing-card, .order-card {
+      background: rgba(255,236,210,0.6) !important;
+      border: 1px solid rgba(255,160,60,0.35) !important;
+      box-shadow: 0 4px 20px rgba(180,100,20,0.07), 0 1px 3px rgba(180,100,20,0.04) !important;
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    }
+    .mo .mbox { background: rgba(255,248,240,0.97) !important; border: 1px solid rgba(255,160,60,0.45) !important; box-shadow: 0 8px 40px rgba(180,100,20,0.15) !important; }
+    #sb, aside { background: rgba(255,248,240,0.98) !important; border-right: 1px solid rgba(255,160,60,0.3) !important; }
+    .ni.on { background: rgba(194,105,10,0.12) !important; color: #C2690A !important; }
+    input, select, textarea { background: rgba(255,255,255,0.8) !important; border-color: rgba(255,160,60,0.4) !important; color: #1C1208 !important; }
+    input:focus, select:focus, textarea:focus { border-color: rgba(194,105,10,0.6) !important; }
+    .btn-primary, .btn-new { background: #C2690A !important; color: #fff !important; }
+    .btn-primary:hover, .btn-new:hover { background: #D97706 !important; }
+    .btn-ghost { border-color: rgba(194,105,10,0.4) !important; color: #C2690A !important; }
+
+    /* ── Light Mode Text Fixes ── */
+    .muted, .text-muted, .dim { color: var(--muted) !important; }
+    .nav-label { color: rgba(28,18,8,0.75) !important; }
+    .ni .lb, .ns { color: var(--muted) !important; }
+    .ni.on .lb { color: var(--amber) !important; }
+    .ph h1, .ph p { color: var(--text) !important; }
+    .panel h1, .panel h2, .panel h3 { color: var(--text) !important; }
+    .stat-val, .stat-label { color: var(--text) !important; }
+    .tbl th { color: var(--muted) !important; background: var(--bg3) !important; }
+    .tbl td { color: var(--text) !important; border-color: var(--border) !important; }
+    .card-title, .card-price { color: var(--text) !important; }
+    .card-cat, .card-seller, .seller-name { color: var(--muted) !important; }
+    .listing-title { color: var(--text) !important; }
+    .listing-price { color: var(--amber) !important; }
+    .section-title, .section-tag { color: var(--text) !important; }
+    .plan-name, .plan-price strong { color: var(--text) !important; }
+    .plan-desc, .plan-price span { color: var(--muted) !important; }
+    .plan-features li { color: var(--muted) !important; }
+    .cat-name { color: var(--text) !important; }
+    .cat-desc { color: var(--muted) !important; }
+    .how-num { color: var(--amber) !important; }
+    .how-title { color: var(--text) !important; }
+    .how-desc { color: var(--muted) !important; }
+    .footer-col h4 { color: var(--text) !important; }
+    .footer-col a { color: var(--muted) !important; }
+    .filter-label { color: var(--text) !important; }
+    .filter-item.active .filter-label { color: var(--amber) !important; }
+    .stars-display { color: var(--amber) !important; }
+    .section-label { color: var(--muted) !important; }
+    .empty h3 { color: var(--text) !important; }
+    .empty p { color: var(--muted) !important; }
+    .badge, .sp { color: var(--text) !important; }
+    .sm-name { color: var(--text) !important; }
+    .sm-tag { color: var(--muted) !important; }
+    .tab { color: var(--muted) !important; }
+    .tab.active { color: var(--text) !important; }
+    label { color: var(--text) !important; }
+    .frow label { color: var(--muted) !important; }
+    .listing-seller { color: var(--muted) !important; }
+    [data-theme="dark"] .nav-label { color: rgba(255,255,255,0.6) !important; }
+    [data-theme="dark"] .ni .lb { color: rgba(255,255,255,0.5) !important; }
+    [data-theme="dark"] .ni.on .lb { color: var(--amber) !important; }
+    [data-theme="dark"] .tbl th { background: var(--bg3) !important; color: var(--muted) !important; }
+    [data-theme="dark"] .filter-label { color: var(--muted) !important; }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#FFB34E">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="TraydR">
+  <link rel="apple-touch-icon" href="logo.png">
+</head>
+<body>
+  <div class="card">
+    <div class="card-glow"></div>
+
+    <a href="index.html" class="nav-logo"><img src="logo.png" alt="TraydR" style="height:64px;width:auto;display:block;object-fit:contain"></a>
+
+    <div class="head">
+      <div class="icon-wrap"><i class="fas fa-lock"></i></div>
+      <h1>Verify it's you</h1>
+      <p>Enter the 6-digit code sent to<br><strong id="target-display">your email</strong></p>
+    </div>
+
+    <!-- Method switch -->
+    <div class="methods">
+      <div class="method on" data-method="email"><div class="mi"><i class="fas fa-envelope"></i></div><div class="ml">Email</div></div>
+      <div class="method"    data-method="sms">  <div class="mi"><i class="fas fa-mobile-screen"></i></div><div class="ml">SMS</div></div>
+    </div>
+
+    <!-- Alerts -->
+    <div class="alert err"  id="otp-err"><span><i class="fas fa-triangle-exclamation"></i></span><span id="otp-err-msg"></span></div>
+    <div class="alert ok"   id="otp-ok"><span><i class="fas fa-circle-check"></i></span><span>Verified! Redirecting...</span></div>
+    <div class="alert info" id="otp-info"><span>ℹ️</span><span id="otp-info-msg"></span></div>
+
+    <!-- OTP inputs -->
+    <div class="otp-row">
+      <input class="otp" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+      <input class="otp" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+      <input class="otp" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+      <input class="otp" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+      <input class="otp" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+      <input class="otp" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+    </div>
+
+    <!-- Resend -->
+    <div class="resend">
+      <p>Didn't receive a code?</p>
+      <button class="resend-btn" id="resend-btn" disabled>Resend code</button>
+      <span id="timer"></span>
+    </div>
+
+    <button class="btn-primary" id="verify-btn"><span class="lbl">Verify & Continue</span></button>
+    <button class="back" onclick="window.location.href='traydr-auth.html'">← Back to login</button>
+  </div>
+
+<script>
+/*
+  ============================================================
+  2fa.html — FRONTEND ONLY
+  Reads context from sessionStorage set by traydr-auth.html:
+    traydr_2fa_email   — user's email address
+    traydr_2fa_context — 'login' | 'signup'
+
+  Backend hooks via window.Auth (auth.backend.js):
+    Auth.verifyOtp(email, token)  → { error }
+    Auth.resendOtp(email)         → { error }
+    Auth.onSuccess(ctx)           → redirect
+  ============================================================
+*/
+
+/* ── Read context from previous page ── */
+const email   = sessionStorage.getItem('traydr_2fa_email')   || '';
+const context = sessionStorage.getItem('traydr_2fa_context') || 'login';
+
+/* ── Show email in header ── */
+document.getElementById('target-display').textContent = email || 'your email';
+
+/* ── Helpers ── */
+const $ = id => document.getElementById(id);
+
+function showAlert(id, msg, type = 'err') {
+  ['otp-err','otp-ok','otp-info'].forEach(i => $(i).classList.remove('on'));
+  const el = $(id); el.className = `alert ${type} on`;
+  if (msg) { const sp = el.querySelectorAll('span')[1]; if (sp) sp.textContent = msg; }
+}
+function clearAlerts() { ['otp-err','otp-ok','otp-info'].forEach(i => $(i).classList.remove('on')); }
+
+function setLoad(btn, on) { btn.classList.toggle('loading', on); btn.disabled = on; }
+
+async function api(method, ...args) {
+  if (window.Auth?.[method]) return await window.Auth[method](...args);
+  console.warn(`[Auth] Not connected — Auth.${method}`, args);
+  return { error: null };
+}
+
+/* ── Method switch ── */
+document.querySelectorAll('[data-method]').forEach(btn =>
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-method]').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    $('target-display').textContent = btn.dataset.method === 'email' ? email : 'your phone';
+    resetOtp(); otpInputs[0].focus();
+  })
+);
+
+/* ── OTP inputs ── */
+const otpInputs = document.querySelectorAll('.otp');
+
+otpInputs.forEach((input, i) => {
+  input.addEventListener('input', e => {
+    const v = e.target.value.replace(/\D/g,'');
+    e.target.value = v;
+    e.target.classList.toggle('filled', !!v);
+    if (v && i < otpInputs.length - 1) otpInputs[i+1].focus();
+    if (i === otpInputs.length - 1 && v) autoVerify();
+  });
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Backspace' && !input.value && i > 0) otpInputs[i-1].focus();
+  });
+  input.addEventListener('paste', e => {
+    e.preventDefault();
+    const txt = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6);
+    txt.split('').forEach((ch, idx) => {
+      if (otpInputs[idx]) { otpInputs[idx].value = ch; otpInputs[idx].classList.add('filled'); }
+    });
+    if (txt.length === 6) autoVerify();
+  });
+});
+
+function getOtp() { return Array.from(otpInputs).map(i => i.value).join(''); }
+
+function resetOtp() {
+  otpInputs.forEach(i => { i.value = ''; i.classList.remove('filled','shake'); });
+  clearAlerts();
+}
+
+function shakeOtp() {
+  otpInputs.forEach(i => { i.classList.remove('shake'); void i.offsetWidth; i.classList.add('shake'); });
+}
+
+function autoVerify() { if (getOtp().length === 6) verify(); }
+
+/* ── Verify ── BACKEND HOOK */
+async function verify() {
+  const token = getOtp();
+  if (token.length < 6) return;
+
+  const btn = $('verify-btn');
+  setLoad(btn, true); clearAlerts();
+
+  const { error } = await api('verifyOtp', email, token, context);
+
+  setLoad(btn, false);
+
+  if (error) {
+    showAlert('otp-err', error.message || 'Invalid or expired code.');
+    shakeOtp(); resetOtp(); otpInputs[0].focus();
+    return;
+  }
+
+  showAlert('otp-ok', null, 'ok');
+  sessionStorage.removeItem('traydr_2fa_email');
+  sessionStorage.removeItem('traydr_2fa_context');
+
+  /* ── BACKEND HOOK: onSuccess ── */
+  setTimeout(() => api('onSuccess', { context }), 1200);
+}
+
+$('verify-btn').addEventListener('click', verify);
+
+/* ── Resend ── BACKEND HOOK */
+let resendInterval = null;
+
+function startTimer() {
+  let secs = 30;
+  const btn = $('resend-btn'), timer = $('timer');
+  btn.disabled = true; timer.textContent = `(${secs}s)`;
+  clearInterval(resendInterval);
+  resendInterval = setInterval(() => {
+    secs--;
+    if (secs > 0) timer.textContent = `(${secs}s)`;
+    else { timer.textContent = ''; btn.disabled = false; clearInterval(resendInterval); }
+  }, 1000);
+}
+
+$('resend-btn').addEventListener('click', async () => {
+  const { error } = await api('resendOtp', email, context);
+  if (error) { showAlert('otp-err', error.message); return; }
+  resetOtp(); startTimer();
+  showAlert('otp-info', 'Code resent! Check your inbox.', 'info');
+});
+
+/* ── Init ── */
+startTimer();
+if (otpInputs[0]) otpInputs[0].focus();
+</script>
+<script>
+  (function() {
+    var t = localStorage.getItem('traydr_theme') || 'light';
+    document.documentElement.setAttribute('data-theme', t);
+  })();
+  function toggleTheme() {
+    var cur  = document.documentElement.getAttribute('data-theme') || 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('traydr_theme', next);
+    var tog   = document.getElementById('dark-mode-toggle');
+    var thumb = document.getElementById('dark-mode-thumb');
+    if (tog)   tog.checked = next === 'dark';
+    if (thumb) thumb.style.transform = next === 'dark' ? 'translateX(20px)' : 'translateX(0)';
+  }
+  document.addEventListener('DOMContentLoaded', function() {
+    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    var tog    = document.getElementById('dark-mode-toggle');
+    var thumb  = document.getElementById('dark-mode-thumb');
+    if (tog)   tog.checked = isDark;
+    if (thumb) thumb.style.transform = isDark ? 'translateX(20px)' : 'translateX(0)';
+  });</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
+  }
+</script>
+</body>
+</html>

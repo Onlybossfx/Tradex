@@ -1,6 +1,6 @@
 /*
   ============================================================
-  auth.guard.js — TRADEX SESSION GUARD
+  auth.guard.js — TraydR SESSION GUARD
   Include on EVERY page. Handles:
 
   1. HARD GUARD  — page requires login (dashboards, checkout)
@@ -25,7 +25,7 @@
 if (!window._gSb) {
   window._gSb = supabase.createClient(
     'https://rtwbrcbifnowrqpgivma.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc'
+    'sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7'
   );
 }
 
@@ -59,8 +59,8 @@ if (!window._gSb) {
     const user = await getUser();
     if (!user) {
       const dest = returnTo || window.location.pathname + window.location.search;
-      sessionStorage.setItem('tradex_return_to', dest);
-      window.location.replace('tradex-auth.html');
+      sessionStorage.setItem('traydr_return_to', dest);
+      window.location.replace('traydr-auth.html');
       return null;
     }
 
@@ -79,7 +79,7 @@ if (!window._gSb) {
 
     /* save where to return after login */
     const dest = returnTo || window.location.href;
-    sessionStorage.setItem('tradex_return_to', dest);
+    sessionStorage.setItem('traydr_return_to', dest);
 
     showAuthPrompt(label);
   }
@@ -117,9 +117,9 @@ if (!window._gSb) {
           color:rgba(255,255,255,0.45);width:30px;height:30px;
           border-radius:7px;font-size:0.85rem;cursor:pointer;
           display:flex;align-items:center;justify-content:center;
-        ">✕</button>
+        "><i class="fas fa-xmark"></i></button>
 
-        <div style="font-size:2.5rem;margin-bottom:1rem">🔐</div>
+        <div style="font-size:2.5rem;margin-bottom:1rem"><i class="fas fa-lock"></i></div>
         <h2 style="
           font-family:'Playfair Display',Georgia,serif;
           font-size:1.35rem;font-weight:700;color:#fff;
@@ -130,7 +130,7 @@ if (!window._gSb) {
           line-height:1.65;margin-bottom:1.75rem;
           font-family:'DM Sans',system-ui,sans-serif;
         ">
-          You need a free Tradex account to continue.<br>
+          You need a free TraydR account to continue.<br>
           It only takes 30 seconds to sign up.
         </p>
 
@@ -166,10 +166,10 @@ if (!window._gSb) {
     document.getElementById('_ag_close').onclick  = () => overlay.remove();
     overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
     document.getElementById('_ag_signup').onclick = () => {
-      window.location.href = 'tradex-auth.html#signup';
+      window.location.href = 'traydr-auth.html#signup';
     };
     document.getElementById('_ag_login').onclick = () => {
-      window.location.href = 'tradex-auth.html';
+      window.location.href = 'traydr-auth.html';
     };
     document.getElementById('_ag_signup').onmouseover = function() { this.style.background='#FBBF24'; };
     document.getElementById('_ag_signup').onmouseout  = function() { this.style.background='#F59E0B'; };
