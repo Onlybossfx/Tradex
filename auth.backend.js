@@ -21,7 +21,7 @@
   /* ── Config ── */
 ;(function() {
 const _AUTH_URL  = window._AUTH_URL  || 'https://rtwbrcbifnowrqpgivma.supabase.co';
-const _AUTH_ANON = window._AUTH_ANON || 'sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7';
+const _AUTH_ANON = window._AUTH_ANON || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc';
 
 const { createClient } = supabase;
 const sb = createClient(_AUTH_URL, _AUTH_ANON);
@@ -67,22 +67,16 @@ window.Auth = {
     });
 
     if (error || !data.user) return { error };
-    /* Check if trial signup */
-    const isTrial = meta.trial === true || meta.trial === '1';
 
     /* Insert user profile — use upsert to handle edge cases gracefully */
-    const trialEnd = new Date(Date.now() + 14 * 86400000).toISOString();
     await sb
       .from('users')
       .upsert({
-        id:            data.user.id,
-        email:         data.user.email,
-        full_name:     meta.full_name,
-        role:          meta.role,
-        plan:          isTrial ? 'pro' : 'free',
-        trial_started: isTrial ? new Date().toISOString() : null,
-        plan_expires:  isTrial ? trialEnd : null,
-      }, { onConflict: 'id', ignoreDuplicates: false });
+        id:        data.user.id,
+        email:     data.user.email,
+        full_name: meta.full_name,
+        role:      meta.role,
+      }, { onConflict: 'id', ignoreDuplicates: true });
 
     /* Welcome email — fire and forget */
     try {
@@ -173,7 +167,7 @@ window.Auth = {
      Called after: login, signup, OTP verify, password reset
      Redirects user based on context.
   ───────────────────────────────────────────── */
-  onSuccess: async ({ context, role, trial }) => {
+  onSuccess: async ({ context, role }) => {
     /* ── Always check for a pending return destination first ── */
     const returnTo = sessionStorage.getItem('traydr_return_to');
     if (returnTo) {

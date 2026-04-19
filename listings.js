@@ -1,11 +1,11 @@
 /*
-  listings.js — TraydR DATA LAYER
+  listings.js — TRADEX DATA LAYER
   Uses window pattern to avoid duplicate const errors
 */
 if (!window._lSb) {
   window._lSb = supabase.createClient(
     'https://rtwbrcbifnowrqpgivma.supabase.co',
-    'sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7'
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc'
   );
 }
 
@@ -251,7 +251,7 @@ window.Listings = {
   },
 
   /* ── HELPERS ── */
-  getCatEmoji:   (cat)    => ({ physical: '<i class="fas fa-box"></i>', digital: '<i class="fas fa-floppy-disk"></i>', freelance: '<i class="fas fa-screwdriver-wrench"></i>', experience: '<i class="fas fa-star"></i>' }[cat] || '<i class="fas fa-tag"></i>'),
+  getCatEmoji:   (cat)    => ({ physical: '📦', digital: '💾', freelance: '🛠️', experience: '🌟' }[cat] || '🏷️'),
   getCatName:    (cat)    => ({ physical: 'Physical Goods', digital: 'Digital Products', freelance: 'Freelance Skills', experience: 'Experiences' }[cat] || cat || 'Other'),
   getImage:      (l, i=0) => l?.images?.[i] || '',
   getBadgeLabel: (badge)  => ({ featured: 'Featured', top_rated: 'Top Rated', new: 'New', trending: 'Trending' }[badge] || ''),

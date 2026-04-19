@@ -87,7 +87,7 @@
     .pay-method.selected .pm-desc { color: var(--amber); }
     .pm-check { position: absolute; top: 0.75rem; right: 0.75rem; width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border); transition: all 0.2s; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; }
     .pay-method.selected .pm-check { background: var(--amber); border-color: var(--amber); color: #0a0a0a; }
-    .pay-method.selected .pm-check::after { content: '✓'; font-weight: 900; font-size: 0.7rem; }
+    .pay-method.selected .pm-check::after { content: '<i class="fas fa-check"></i>'; font-weight: 700; }
 
     /* ── CARD INPUT VISUAL ── */
     .card-visual { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.25rem; position: relative; overflow: hidden; min-height: 130px; }
@@ -277,37 +277,15 @@
     [data-theme="dark"] .ni.on .lb { color: var(--amber) !important; }
     [data-theme="dark"] .tbl th { background: var(--bg3) !important; color: var(--muted) !important; }
     [data-theme="dark"] .filter-label { color: var(--muted) !important; }
-
-    /* ══════════════════════════════════════
-       MOBILE FIRST — Full Responsive System
-    ══════════════════════════════════════ */
-    * { box-sizing: border-box; }
-    #nav, nav { padding-left: 0.85rem; padding-right: 0.85rem; }
-
-    /* Tables */
-    .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; }
-    .tbl { width: 100%; min-width: 480px; }
-
-    /* Cards */
-    .card, .listing-card { min-width: 0; }
-
-    /* Modals */
-    .mbox { width: calc(100vw - 2rem) !important; max-width: 100% !important; }
-
-    @media (max-width: 480px) {
-      .f2 { grid-template-columns: 1fr !important; }
-      .grid-2 { grid-template-columns: 1fr !important; }
-    }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link rel="icon" type="image/png" href="logo.png">
   <script src="https://checkout.flutterwave.com/v3.js"></script>
 </head>
 <body>
 
 <!-- NAV -->
 <nav id="nav">
-  <a href="index.html" class="nav-logo"><img src="logo.png" alt="TraydR" style="height:64px;width:auto;display:block;object-fit:contain"></a>
+  <a href="index.html" class="nav-logo"><span>TraydR</span><i></i></a>
   <div class="nav-sep"></div>
   <span class="nav-step">Secure Checkout</span>
   <div class="nav-secure"><i class="fas fa-lock"></i> SSL Encrypted</div>
@@ -492,22 +470,11 @@
               <label>Network *</label>
               <select class="finp" id="fw-network">
                 <option value="">Select network</option>
-                <optgroup label="Nigeria">
-                  <option value="MTN">MTN MoMo</option>
-                  <option value="AIRTEL">Airtel Money</option>
-                  <option value="9MOBILE">9Mobile</option>
-                </optgroup>
-                <optgroup label="Ghana">
-                  <option value="VODAFONE">Vodafone Cash</option>
-                  <option value="TIGO">Tigo Cash</option>
-                </optgroup>
-                <optgroup label="Kenya">
-                  <option value="MPESA">M-Pesa</option>
-                </optgroup>
-                <optgroup label="Uganda / Rwanda">
-                  <option value="AIRTEL_UG">Airtel Uganda</option>
-                  <option value="MTN_RW">MTN Rwanda</option>
-                </optgroup>
+                <option value="MTN">MTN Mobile Money</option>
+                <option value="VODAFONE">Vodafone Cash</option>
+                <option value="AIRTEL">Airtel Money</option>
+                <option value="MPESA">M-Pesa</option>
+                <option value="TIGO">Tigo Cash</option>
               </select>
             </div>
             <div class="frow">
@@ -698,63 +665,7 @@ async function init() {
   $('d-name').value  = user.user_metadata?.full_name || '';
   $('d-email').value = user.email || '';
 
-  /* ── Handle Flutterwave return ── */
-  const urlP = new URLSearchParams(window.location.search);
-  if (urlP.get('flw') === 'success') {
-    /* Flutterwave redirect return — get params from URL */
-    const transaction_id = urlP.get('transaction_id');
-    const tx_ref         = urlP.get('tx_ref') || sessionStorage.getItem('traydr_tx_ref');
-    const checkoutData   = JSON.parse(sessionStorage.getItem('traydr_pending_checkout') || '{}');
-
-    /* Show verifying screen */
-    document.querySelector('.page').innerHTML = `
-      <div style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.25rem;padding:2rem;text-align:center">
-        <div style="font-size:2.5rem;color:var(--amber)"><i class="fas fa-spinner fa-spin"></i></div>
-        <h2 style="font-family:var(--serif);font-size:1.3rem;color:var(--text)">Verifying payment...</h2>
-        <p style="color:var(--muted);font-size:0.88rem">Please wait, do not close this page.</p>
-      </div>`;
-
-    if (transaction_id && tx_ref && checkoutData.buyer_id) {
-      await handlePaymentSuccess(transaction_id, tx_ref, checkoutData);
-    } else if (urlP.get('status') === 'successful' && tx_ref) {
-      /* Some redirect params might differ */
-      const tid = urlP.get('transaction_id') || urlP.get('txid') || '';
-      if (tid) {
-        await handlePaymentSuccess(tid, tx_ref, checkoutData);
-      } else {
-        /* No transaction_id — show partial success */
-        goStep(4);
-        $('success-order-id').textContent = '#TRX-' + (tx_ref||'').slice(-6);
-      }
-    } else {
-      document.querySelector('.page').innerHTML = `
-        <div style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;text-align:center">
-          <div style="font-size:2.5rem;color:var(--error)"><i class="fas fa-triangle-exclamation"></i></div>
-          <h2 style="font-family:var(--serif);font-size:1.3rem;color:var(--text)">Payment verification failed</h2>
-          <p style="color:var(--muted);font-size:0.88rem">Could not verify payment. If money was deducted contact: <a href="mailto:hello@traydr.market" style="color:var(--amber)">hello@traydr.market</a> with ref: <strong>${tx_ref||'unknown'}</strong></p>
-          <button onclick="window.location.href='index.html'" style="background:var(--amber);border:none;color:#fff;padding:0.65rem 1.5rem;border-radius:8px;font-size:0.88rem;font-weight:600;cursor:pointer">Go Home</button>
-        </div>`;
-    }
-    return;
-  }
-
-  /* Handle success=1 redirect */
-  if (urlP.get('success') === '1') {
-    goStep(4);
-    $('success-order-id').textContent = urlP.get('ref') || 'Confirmed';
-    return;
-  }
-
-    /* Handle success redirect (after verify redirects here) */
-  if (urlP.get('success') === '1') {
-    const orderId = urlP.get('order_id');
-    const ref     = urlP.get('ref');
-    goStep(4);
-    $('success-order-id').textContent = orderId ? `#TRX-${String(orderId).padStart(6,'0')}` : ref || 'Confirmed';
-    return;
-  }
-
-    /* Load saved addresses */
+  /* Load saved addresses */
   try {
     const { data: addrs } = await DB.getAddresses(user.id);
     if (addrs && addrs.length > 0) {
@@ -780,8 +691,8 @@ async function init() {
 /* ── Summary ── */
 function renderSummary() {
   const c = checkout;
-  const fee   = +(c.price * 0.08).toFixed(2);
-  const total = +(c.price + fee).toFixed(2);
+  const fee   = c.price * 0.08;
+  const total = c.price + fee;
 
   /* image */
   if (c.listing_image) {
@@ -800,8 +711,8 @@ function renderSummary() {
 /* ── Review detail (step 1) ── */
 function renderReviewDetail() {
   const c = checkout;
-  const fee   = +(c.price * 0.08).toFixed(2);
-  const total = +(c.price + fee).toFixed(2);
+  const fee   = c.price * 0.08;
+  const total = c.price + fee;
   const catIcons = {physical:'<i class="fas fa-box"></i>',digital:'<i class="fas fa-floppy-disk"></i>',freelance:'<i class="fas fa-screwdriver-wrench"></i>',experience:'<i class="fas fa-graduation-cap"></i>'};
 
   $('review-detail').innerHTML = `
@@ -829,8 +740,8 @@ function renderReviewDetail() {
 /* ── Confirm detail (step 3) ── */
 function renderConfirmDetail() {
   const c = checkout;
-  const fee   = +(c.price * 0.08).toFixed(2);
-  const total = +(c.price + fee).toFixed(2);
+  const fee   = c.price * 0.08;
+  const total = c.price + fee;
   const methodLabel = region === 'global'
     ? `<i class="fas fa-credit-card"></i> Card ending ····${($('card-num').value.replace(/\s/g,'')).slice(-4) || '••••'}`
     : fwMethod === 'card'         ? `<i class="fas fa-credit-card"></i> Card (Flutterwave)`
@@ -919,15 +830,9 @@ $('fw-methods').addEventListener('click', e => {
   document.querySelectorAll('.fw-method').forEach(x => x.classList.remove('on'));
   m.classList.add('on'); fwMethod = m.dataset.fw;
   /* show correct fields */
-  const fieldMap = {
-    card:          'fw-card-fields',
-    mobile_money:  'fw-mobile-fields',
-    bank_transfer: 'fw-bank-fields',
-    ussd:          'fw-ussd-fields',
-  };
-  Object.entries(fieldMap).forEach(([k, id]) => {
-    const el = $(id);
-    if (el) el.style.display = k === fwMethod ? '' : 'none';
+  ['card','mobile_money','bank_transfer','ussd'].forEach(k => {
+    const el = $(`fw-${k.replace('_','-')}-fields`);
+    if(el) el.style.display = k===fwMethod ? '' : 'none';
   });
 });
 
@@ -996,7 +901,7 @@ $('place-order-btn').addEventListener('click', async () => {
   const total   = +(c.price + fee).toFixed(2);
   const payout  = +(c.price * (1 - feeRate)).toFixed(2);
 
-  if (!c.seller_id) { btn.classList.remove('ld'); btn.disabled = false; showAlert('step3-err','No seller found. Contact support.'); return; }
+  if (!c.seller_id) { btn.classList.remove('ld'); btn.disabled = false; showAlert('step3-err','No seller assigned. Contact support.'); return; }
   if (!user)         { btn.classList.remove('ld'); btn.disabled = false; showAlert('step3-err','Please log in first.'); return; }
   if (c.seller_id === user.id) { btn.classList.remove('ld'); btn.disabled = false; showAlert('step3-err','You cannot buy your own listing.'); return; }
 
@@ -1021,26 +926,29 @@ $('place-order-btn').addEventListener('click', async () => {
   const tx_ref = 'TRADDR-' + Date.now() + '-' + Math.random().toString(36).slice(2,7).toUpperCase();
   sessionStorage.setItem('traydr_tx_ref', tx_ref);
 
-  const currency = delivery.country === 'NG' ? 'NGN'
-                 : delivery.country === 'GH' ? 'GHS'
-                 : delivery.country === 'KE' ? 'KES'
-                 : delivery.country === 'ZA' ? 'ZAR' : 'NGN';
+  /* Always use NGN for Nigerian users — required for bank transfer */
+  const country  = delivery.country || 'NG';
+  const currency = country === 'GH' ? 'GHS' : country === 'KE' ? 'KES' : country === 'ZA' ? 'ZAR' : 'NGN';
 
-  /* Use Flutterwave inline.js — no Edge Function needed for initiation */
+  /* Convert to NGN if listing is in USD */
+  const displayAmount = currency === 'NGN' && c.currency !== 'NGN'
+    ? total * 1600  /* approx NGN rate — update as needed */
+    : total;
+
   try {
-    const handler = window.FlutterwaveCheckout({
-      public_key: 'FLWPUBK-7e690677caf3199951323b1b832003ba-X',
+    window.FlutterwaveCheckout({
+      public_key:      'FLWPUBK-7e690677caf3199951323b1b832003ba-X',
       tx_ref,
-      amount:          total,
+      amount:          displayAmount,
       currency,
-      payment_options: currency === 'NGN' ? 'card,banktransfer,ussd,mobilemoneynigeria'
-                     : currency === 'GHS' ? 'card,mobilemoneymomo'
-                     : currency === 'KES' ? 'card,mpesa' : 'card',
-      redirect_url:    window.location.origin + '/checkout.html?flw=success',
+      payment_options: currency === 'NGN'
+        ? 'card,banktransfer,ussd'
+        : currency === 'GHS' ? 'card,mobilemoneymomo'
+        : currency === 'KES' ? 'card,mpesa' : 'card',
       customer: {
-        email:       user.email,
-        name:        delivery.name  || 'TraydR Buyer',
-        phone_number:delivery.phone || '',
+        email:        user.email,
+        name:         delivery.name  || 'TraydR Buyer',
+        phone_number: delivery.phone || '',
       },
       customizations: {
         title:       'TraydR Marketplace',
@@ -1049,7 +957,6 @@ $('place-order-btn').addEventListener('click', async () => {
       },
       callback: async (response) => {
         console.log('FLW callback:', response);
-        handler.close();
         if (response.status === 'successful' || response.status === 'completed') {
           await handlePaymentSuccess(response.transaction_id, tx_ref, checkoutData);
         } else {
@@ -1064,1173 +971,74 @@ $('place-order-btn').addEventListener('click', async () => {
       },
     });
   } catch(e) {
-    console.error('Flutterwave error:', e);
+    console.error('FLW error:', e);
     btn.classList.remove('ld'); btn.disabled = false;
     btn.querySelector('.lbl').textContent = 'Place Order & Pay';
-    showAlert('step3-err', 'Could not open payment. Make sure you are connected and try again.');
+    showAlert('step3-err', 'Could not open payment. Please try again.');
   }
 });
 
 async function handlePaymentSuccess(transaction_id, tx_ref, checkoutData) {
-  /* Verify payment + create order via Edge Function */
+  console.log('Verifying:', transaction_id, tx_ref);
+  /* Show verifying state */
+  document.querySelectorAll('.step-panel').forEach(p => p.style.display = 'none');
+  document.querySelector('.page') && (document.querySelector('.page').style.minHeight = '60vh');
+
   try {
+    const controller = new AbortController();
+    const timeout    = setTimeout(() => controller.abort(), 20000);
     const res = await fetch(
       'https://rtwbrcbifnowrqpgivma.supabase.co/functions/v1/quick-api',
       {
-        method:  'POST',
+        method : 'POST',
+        signal : controller.signal,
         headers: {
-          'Content-Type':  'application/json',
+          'Content-Type' : 'application/json',
           'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc',
         },
-        body: JSON.stringify({ action: 'verify', transaction_id, tx_ref, checkout_data: checkoutData }),
+        body: JSON.stringify({
+          action:        'verify',
+          transaction_id,
+          tx_ref,
+          checkout_data: checkoutData,
+        }),
       }
     );
+    clearTimeout(timeout);
     const data = await res.json();
-    console.log('Verify response:', data);
-    if (data.success) {
-      sessionStorage.removeItem('traydr_pending_checkout');
-      sessionStorage.removeItem('traydr_tx_ref');
-      goStep(4);
-      $('success-order-id').textContent = data.order_id
-        ? '#TRX-' + String(data.order_id).padStart(6,'0')
-        : '#TRX-' + tx_ref.slice(-6);
-    } else {
-      showAlert('step3-err', 'Payment received but order creation failed. Contact support with ref: ' + tx_ref);
-    }
+    console.log('Verify result:', data);
+    sessionStorage.removeItem('traydr_pending_checkout');
+    sessionStorage.removeItem('traydr_tx_ref');
+    goStep(4);
+    $('success-order-id').textContent = data.order_id
+      ? '#TRX-' + String(data.order_id).padStart(6,'0')
+      : '#TRX-' + tx_ref.slice(-6);
   } catch(e) {
     console.error('Verify error:', e);
-    /* Payment went through but verification failed — still show success, webhook will handle it */
+    /* Payment went through — show success, webhook creates order */
+    sessionStorage.removeItem('traydr_pending_checkout');
+    sessionStorage.removeItem('traydr_tx_ref');
     goStep(4);
     $('success-order-id').textContent = '#TRX-' + tx_ref.slice(-6);
   }
 }
 
-TYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TraydR — Checkout</title>
-  <meta name="robots" content="noindex, nofollow" />
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#F59E0B" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" />
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-  <script src="auth.guard.js"></script>
-  <script src="dashboard.backend.js"></script>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --amber: #C2690A; --amber-light: #D97706; --amber-dim: rgba(194,105,10,0.1);
-      --bg: #FFF8F0; --bg2: #FFECD2; --bg3: #FFE0B8; --bg4: #FFD49E;
-      --border: rgba(255,160,60,0.35); --border-md: rgba(255,140,40,0.5);
-      --text: #1C1208; --muted: rgba(28,18,8,0.55); --dim: rgba(28,18,8,0.35);
-      --error: #DC2626; --success: #16A34A;
-      --serif: 'Playfair Display', Georgia, serif;
-      --sans: 'DM Sans', system-ui, sans-serif;
-      --nav-h: 62px;
-    }
-    html { overflow-x: hidden; scroll-behavior: smooth; }
-    body { background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
-    a { text-decoration: none; color: inherit; }
-    button { cursor: pointer; font-family: var(--sans); }
-    input, select { font-family: var(--sans); }
-
-    /* ── NAV ── */
-    #nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: var(--nav-h); padding: 0 1.25rem; background: rgba(10,10,10,0.97); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 1rem; }
-    .nav-logo { display: flex; align-items: center; gap: 6px; text-decoration: none; }
-    .nav-logo span { font-family: var(--serif); font-size: 1.25rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
-    .nav-logo i { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); display: inline-block; }
-    .nav-sep { width: 1px; height: 18px; background: var(--border); }
-    .nav-step { font-size: 0.8rem; color: var(--muted); }
-    .nav-secure { margin-left: auto; display: flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; color: var(--success); }
-
-    /* ── PROGRESS BAR ── */
-    .progress { padding: calc(var(--nav-h) + 1.5rem) 1.25rem 0; max-width: 900px; margin: 0 auto; }
-    .prog-steps { display: flex; align-items: center; margin-bottom: 2rem; }
-    .ps { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--dim); flex-shrink: 0; }
-    .ps .dot { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; transition: all 0.3s; }
-    .ps.done .dot { background: var(--success); border-color: var(--success); color: var(--text); }
-    .ps.active .dot { border-color: var(--amber); color: var(--amber); }
-    .ps.active { color: var(--text); font-weight: 500; }
-    .ps-line { flex: 1; height: 2px; background: var(--border); margin: 0 0.5rem; transition: background 0.3s; }
-    .ps-line.done { background: var(--success); }
-
-    /* ── LAYOUT ── */
-    .page { max-width: 900px; margin: 0 auto; padding: 0 1.25rem 4rem; display: grid; grid-template-columns: 1fr 340px; gap: 1.75rem; align-items: start; }
-
-    /* ── PANELS ── */
-    .step-panel { display: none; }
-    .step-panel.active { display: block; }
-
-    /* ── SECTION CARD ── */
-    .scard { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; margin-bottom: 1rem; }
-    .scard h2 { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.6rem; }
-    .scard h2 .step-num { width: 26px; height: 26px; border-radius: 50%; background: var(--amber); color: #0a0a0a; font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: var(--sans); }
-
-    /* ── FORM FIELDS ── */
-    .frow { margin-bottom: 1rem; }
-    .frow label { display: block; font-size: 0.78rem; font-weight: 600; color: rgba(255,255,255,0.65); margin-bottom: 0.38rem; }
-    .finp { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 9px; padding: 0.7rem 0.9rem; color: var(--text); font-size: 0.88rem; outline: none; transition: border-color 0.2s; }
-    .finp:focus { border-color: rgba(245,158,11,0.4); }
-    .finp::placeholder { color: var(--dim); }
-    .finp.err { border-color: var(--error); }
-    select.finp { cursor: pointer; }
-    select.finp option { background: var(--bg3); }
-    .f2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
-    .f3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; }
-    .ferr { color: var(--error); font-size: 0.72rem; margin-top: 0.28rem; display: none; }
-    .ferr.on { display: block; }
-
-    /* ── PAYMENT METHOD SELECTOR ── */
-    .pay-methods { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.25rem; }
-    .pay-method { background: var(--bg3); border: 2px solid var(--border); border-radius: 12px; padding: 1rem; cursor: pointer; transition: all 0.2s; position: relative; }
-    .pay-method:hover { border-color: var(--border-md); }
-    .pay-method.selected { border-color: var(--amber); background: var(--amber-dim); }
-    .pay-method .pm-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
-    .pay-method .pm-name { font-size: 0.88rem; font-weight: 600; margin-bottom: 0.18rem; }
-    .pay-method .pm-desc { font-size: 0.72rem; color: var(--muted); }
-    .pay-method.selected .pm-desc { color: var(--amber); }
-    .pm-check { position: absolute; top: 0.75rem; right: 0.75rem; width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border); transition: all 0.2s; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; }
-    .pay-method.selected .pm-check { background: var(--amber); border-color: var(--amber); color: #0a0a0a; }
-    .pay-method.selected .pm-check::after { content: '✓'; font-weight: 900; font-size: 0.7rem; }
-
-    /* ── CARD INPUT VISUAL ── */
-    .card-visual { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.25rem; position: relative; overflow: hidden; min-height: 130px; }
-    .card-visual::before { content: ''; position: absolute; top: -30px; right: -30px; width: 120px; height: 120px; border-radius: 50%; background: rgba(245,158,11,0.08); }
-    .card-visual::after  { content: ''; position: absolute; bottom: -40px; left: -20px; width: 140px; height: 140px; border-radius: 50%; background: rgba(99,102,241,0.08); }
-    .cv-chip { width: 32px; height: 24px; background: linear-gradient(135deg, #d4a853, #f0c040); border-radius: 4px; margin-bottom: 0.85rem; }
-    .cv-num  { font-size: 1.05rem; letter-spacing: 0.18em; color: rgba(255,255,255,0.85); margin-bottom: 0.75rem; font-family: 'Courier New', monospace; }
-    .cv-bot  { display: flex; justify-content: space-between; align-items: flex-end; }
-    .cv-label { font-size: 0.6rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.2rem; }
-    .cv-val   { font-size: 0.82rem; color: rgba(255,255,255,0.85); }
-    .cv-network { font-size: 1.5rem; position: absolute; bottom: 1rem; right: 1rem; }
-
-    /* ── FLUTTERWAVE PANEL ── */
-    .fw-methods { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.6rem; margin-bottom: 1.25rem; }
-    .fw-method { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 0.75rem 0.5rem; cursor: pointer; text-align: center; transition: all 0.2s; }
-    .fw-method:hover { border-color: var(--border-md); }
-    .fw-method.on { border-color: rgba(245,158,11,0.3); background: var(--amber-dim); }
-    .fw-icon { font-size: 1.3rem; margin-bottom: 0.3rem; }
-    .fw-lbl  { font-size: 0.72rem; font-weight: 600; color: var(--muted); }
-    .fw-method.on .fw-lbl { color: var(--amber); }
-
-    /* ── REGION SELECTOR ── */
-    .region-tabs { display: flex; background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 3px; margin-bottom: 1.25rem; }
-    .rtab { flex: 1; padding: 0.5rem; border: none; background: transparent; color: var(--muted); font-size: 0.82rem; font-family: var(--sans); border-radius: 8px; cursor: pointer; transition: all 0.2s; text-align: center; }
-    .rtab.on { background: var(--bg2); color: var(--text); border: 1px solid var(--border-md); }
-
-    /* ── ALERTS ── */
-    .alert { display: none; padding: 0.75rem 1rem; border-radius: 10px; font-size: 0.83rem; margin-bottom: 1rem; align-items: center; gap: 0.6rem; line-height: 1.5; }
-    .alert.on { display: flex; }
-    .alert.err  { background: rgba(239,68,68,0.1);  border: 1px solid rgba(239,68,68,0.25);  color: #FCA5A5; }
-    .alert.ok   { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25); color: #6EE7B7; }
-    .alert.info { background: var(--amber-dim);     border: 1px solid rgba(245,158,11,0.25); color: #FCD34D; }
-
-    /* ── BUTTONS ── */
-    .btn-primary { width: 100%; padding: 0.9rem; background: var(--amber); border: none; border-radius: 10px; color: #0a0a0a; font-size: 0.95rem; font-weight: 700; transition: all 0.2s; position: relative; }
-    .btn-primary:hover:not(:disabled) { background: var(--amber-light); transform: translateY(-1px); }
-    .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
-    .btn-primary.ld .lbl { visibility: hidden; }
-    .btn-primary.ld::after { content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:18px; height:18px; border:2px solid rgba(10,10,10,0.3); border-top-color:#0a0a0a; border-radius:50%; animation:spin 0.7s linear infinite; }
-    @keyframes spin { to{transform:translate(-50%,-50%) rotate(360deg)} }
-    .btn-back { background: transparent; border: 1px solid var(--border-md); color: var(--muted); padding: 0.7rem 1.5rem; border-radius: 10px; font-size: 0.88rem; transition: all 0.2s; }
-    .btn-back:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
-    .btn-row { display: flex; gap: 0.75rem; align-items: center; margin-top: 1.25rem; }
-    .btn-row .btn-primary { flex: 1; }
-
-    /* ── ORDER SUMMARY (right col) ── */
-    .summary { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 1.35rem; position: sticky; top: calc(var(--nav-h) + 1.25rem); }
-    .summary h3 { font-family: var(--serif); font-size: 1rem; font-weight: 700; margin-bottom: 1.1rem; padding-bottom: 0.85rem; border-bottom: 1px solid var(--border); }
-    .sum-listing { display: flex; gap: 0.85rem; margin-bottom: 1.1rem; padding-bottom: 1.1rem; border-bottom: 1px solid var(--border); }
-    .sum-img { width: 64px; height: 64px; border-radius: 10px; overflow: hidden; background: var(--bg3); flex-shrink: 0; }
-    .sum-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .sum-img-ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; }
-    .sum-info { flex: 1; min-width: 0; }
-    .sum-title { font-size: 0.88rem; font-weight: 600; line-height: 1.35; margin-bottom: 0.25rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .sum-seller { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.35rem; }
-    .sum-pkg { display: inline-flex; align-items: center; gap: 0.3rem; background: var(--amber-dim); border: 1px solid rgba(245,158,11,0.2); color: var(--amber); font-size: 0.7rem; font-weight: 600; padding: 0.18rem 0.55rem; border-radius: 100px; }
-    .sum-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.83rem; margin-bottom: 0.6rem; }
-    .sum-row .lbl { color: var(--muted); }
-    .sum-row .val { font-weight: 500; }
-    .sum-row .val.amber { color: var(--amber); }
-    .sum-divider { height: 1px; background: var(--border); margin: 0.85rem 0; }
-    .sum-total { display: flex; justify-content: space-between; align-items: center; }
-    .sum-total .lbl { font-size: 0.88rem; font-weight: 600; }
-    .sum-total .val { font-family: var(--serif); font-size: 1.5rem; font-weight: 700; color: var(--amber); }
-    .escrow-note { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2); border-radius: 10px; padding: 0.75rem 0.9rem; margin-top: 1rem; }
-    .escrow-note p { font-size: 0.75rem; color: rgba(16,185,129,0.9); line-height: 1.55; }
-    .trust-row { display: flex; justify-content: space-around; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
-    .ti { text-align: center; }
-    .ti-icon { font-size: 1rem; margin-bottom: 0.2rem; }
-    .ti-lbl { font-size: 0.62rem; color: var(--dim); line-height: 1.3; }
-
-    /* ── SUCCESS STATE ── */
-    #step-success { text-align: center; padding: 2rem 1rem; }
-    .success-icon { font-size: 4rem; margin-bottom: 1.25rem; animation: pop 0.5s ease; }
-    @keyframes pop { 0%{transform:scale(0)} 70%{transform:scale(1.2)} 100%{transform:scale(1)} }
-    .success-title { font-family: var(--serif); font-size: 1.75rem; font-weight: 700; margin-bottom: 0.6rem; }
-    .success-sub { color: var(--muted); font-size: 0.92rem; line-height: 1.65; margin-bottom: 2rem; }
-    .success-sub strong { color: var(--text); }
-    .success-actions { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
-    .btn-outline { background: transparent; border: 1px solid var(--border-md); color: var(--text); padding: 0.75rem 1.75rem; border-radius: 10px; font-size: 0.9rem; transition: all 0.2s; }
-    .btn-outline:hover { border-color: rgba(255,255,255,0.2); }
-    .order-id-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.25rem; margin: 1.25rem auto; max-width: 360px; }
-    .oid-label { font-size: 0.72rem; color: var(--dim); margin-bottom: 0.25rem; }
-    .oid-val { font-size: 1rem; font-weight: 600; color: var(--amber); letter-spacing: 0.05em; }
-
-    /* ── RESPONSIVE ── */
-    @media (max-width: 700px) {
-      .page { grid-template-columns: 1fr; }
-      .summary { position: static; }
-      .f2, .f3 { grid-template-columns: 1fr; }
-      .pay-methods { grid-template-columns: 1fr; }
-      .fw-methods { grid-template-columns: repeat(2,1fr); }
-    }
-    @media (max-width: 400px) {
-      .fw-methods { grid-template-columns: 1fr 1fr; }
-    }
-
-    [data-theme="dark"] {
-      --amber: #F59E0B; --amber-light: #FBBF24; --amber-dim: rgba(245,158,11,0.1);
-      --bg: #0a0a0a; --bg2: #0f0f0f; --bg3: #141414; --bg4: #181818;
-      --border: rgba(255,255,255,0.07); --border-md: rgba(255,255,255,0.11);
-      --text: #fff; --muted: rgba(255,255,255,0.45); --dim: rgba(255,255,255,0.22);
-      --error: #EF4444; --success: #10B981; --info: #3B82F6;
-    }
-    [data-theme="dark"] #nav { background: rgba(10,10,10,0.97) !important; border-bottom: 1px solid rgba(255,255,255,0.07) !important; }
-    [data-theme="dark"] .nav-logo span { color: #fff !important; }
-    [data-theme="dark"] .nav-label { color: rgba(255,255,255,0.6) !important; }
-    [data-theme="dark"] .hbg span { background: #fff !important; }
-    [data-theme="dark"] #sb, [data-theme="dark"] aside { background: #0f0f0f !important; border-right-color: rgba(255,255,255,0.07) !important; }
-    [data-theme="dark"] .sc, [data-theme="dark"] .pcard, [data-theme="dark"] .card,
-    [data-theme="dark"] .listing-card, [data-theme="dark"] .order-card, [data-theme="dark"] .sg-card,
-    [data-theme="dark"] .chart-box, [data-theme="dark"] .ph { background: #141414 !important; border-color: rgba(255,255,255,0.08) !important; box-shadow: none !important; backdrop-filter: none !important; }
-    [data-theme="dark"] .mo .mbox { background: #141414 !important; border-color: rgba(255,255,255,0.1) !important; }
-    [data-theme="dark"] input, [data-theme="dark"] select, [data-theme="dark"] textarea { background: #141414 !important; border-color: rgba(255,255,255,0.11) !important; color: #fff !important; }
-    [data-theme="dark"] .btn-primary, [data-theme="dark"] .btn-new { background: #F59E0B !important; color: #0a0a0a !important; }
-
-    #nav { background: #FFB34E !important; border-bottom: 1px solid rgba(180,100,20,0.2) !important; }
-    .nav-logo span { color: #1C1208 !important; }
-    .nav-logo i { background: #1C1208 !important; }
-    .nav-label { color: rgba(28,18,8,0.7) !important; }
-    .hbg span { background: #1C1208 !important; }
-    .nav-sep { background: rgba(28,18,8,0.15) !important; }
-    .nav-av { border-color: rgba(28,18,8,0.2) !important; }
-
-    .sc, .pcard, .sg-card, .stat-card, .earnings-card, .chart-box, .ph {
-      background: rgba(255,236,210,0.65) !important;
-      border: 1px solid rgba(255,160,60,0.4) !important;
-      box-shadow: 0 4px 24px rgba(180,100,20,0.08), 0 1px 4px rgba(180,100,20,0.05) !important;
-      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-    }
-    .card, .listing-card, .order-card {
-      background: rgba(255,236,210,0.6) !important;
-      border: 1px solid rgba(255,160,60,0.35) !important;
-      box-shadow: 0 4px 20px rgba(180,100,20,0.07), 0 1px 3px rgba(180,100,20,0.04) !important;
-      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-    }
-    .mo .mbox { background: rgba(255,248,240,0.97) !important; border: 1px solid rgba(255,160,60,0.45) !important; box-shadow: 0 8px 40px rgba(180,100,20,0.15) !important; }
-    #sb, aside { background: rgba(255,248,240,0.98) !important; border-right: 1px solid rgba(255,160,60,0.3) !important; }
-    .ni.on { background: rgba(194,105,10,0.12) !important; color: #C2690A !important; }
-    input, select, textarea { background: rgba(255,255,255,0.8) !important; border-color: rgba(255,160,60,0.4) !important; color: #1C1208 !important; }
-    input:focus, select:focus, textarea:focus { border-color: rgba(194,105,10,0.6) !important; }
-    .btn-primary, .btn-new { background: #C2690A !important; color: #fff !important; }
-    .btn-primary:hover, .btn-new:hover { background: #D97706 !important; }
-    .btn-ghost { border-color: rgba(194,105,10,0.4) !important; color: #C2690A !important; }
-
-    /* ── Light Mode Text Fixes ── */
-    .muted, .text-muted, .dim { color: var(--muted) !important; }
-    .nav-label { color: rgba(28,18,8,0.75) !important; }
-    .ni .lb, .ns { color: var(--muted) !important; }
-    .ni.on .lb { color: var(--amber) !important; }
-    .ph h1, .ph p { color: var(--text) !important; }
-    .panel h1, .panel h2, .panel h3 { color: var(--text) !important; }
-    .stat-val, .stat-label { color: var(--text) !important; }
-    .tbl th { color: var(--muted) !important; background: var(--bg3) !important; }
-    .tbl td { color: var(--text) !important; border-color: var(--border) !important; }
-    .card-title, .card-price { color: var(--text) !important; }
-    .card-cat, .card-seller, .seller-name { color: var(--muted) !important; }
-    .listing-title { color: var(--text) !important; }
-    .listing-price { color: var(--amber) !important; }
-    .section-title, .section-tag { color: var(--text) !important; }
-    .plan-name, .plan-price strong { color: var(--text) !important; }
-    .plan-desc, .plan-price span { color: var(--muted) !important; }
-    .plan-features li { color: var(--muted) !important; }
-    .cat-name { color: var(--text) !important; }
-    .cat-desc { color: var(--muted) !important; }
-    .how-num { color: var(--amber) !important; }
-    .how-title { color: var(--text) !important; }
-    .how-desc { color: var(--muted) !important; }
-    .footer-col h4 { color: var(--text) !important; }
-    .footer-col a { color: var(--muted) !important; }
-    .filter-label { color: var(--text) !important; }
-    .filter-item.active .filter-label { color: var(--amber) !important; }
-    .stars-display { color: var(--amber) !important; }
-    .section-label { color: var(--muted) !important; }
-    .empty h3 { color: var(--text) !important; }
-    .empty p { color: var(--muted) !important; }
-    .badge, .sp { color: var(--text) !important; }
-    .sm-name { color: var(--text) !important; }
-    .sm-tag { color: var(--muted) !important; }
-    .tab { color: var(--muted) !important; }
-    .tab.active { color: var(--text) !important; }
-    label { color: var(--text) !important; }
-    .frow label { color: var(--muted) !important; }
-    .listing-seller { color: var(--muted) !important; }
-    [data-theme="dark"] .nav-label { color: rgba(255,255,255,0.6) !important; }
-    [data-theme="dark"] .ni .lb { color: rgba(255,255,255,0.5) !important; }
-    [data-theme="dark"] .ni.on .lb { color: var(--amber) !important; }
-    [data-theme="dark"] .tbl th { background: var(--bg3) !important; color: var(--muted) !important; }
-    [data-theme="dark"] .filter-label { color: var(--muted) !important; }
-
-    /* ══════════════════════════════════════
-       MOBILE FIRST — Full Responsive System
-    ══════════════════════════════════════ */
-    * { box-sizing: border-box; }
-    #nav, nav { padding-left: 0.85rem; padding-right: 0.85rem; }
-
-    /* Tables */
-    .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; }
-    .tbl { width: 100%; min-width: 480px; }
-
-    /* Cards */
-    .card, .listing-card { min-width: 0; }
-
-    /* Modals */
-    .mbox { width: calc(100vw - 2rem) !important; max-width: 100% !important; }
-
-    @media (max-width: 480px) {
-      .f2 { grid-template-columns: 1fr !important; }
-      .grid-2 { grid-template-columns: 1fr !important; }
-    }
-  </style>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link rel="icon" type="image/png" href="logo.png">
-</head>
-<body>
-
-<!-- NAV -->
-<nav id="nav">
-  <a href="index.html" class="nav-logo"><img src="logo.png" alt="TraydR" style="height:64px;width:auto;display:block;object-fit:contain"></a>
-  <div class="nav-sep"></div>
-  <span class="nav-step">Secure Checkout</span>
-  <div class="nav-secure"><i class="fas fa-lock"></i> SSL Encrypted</div>
-</nav>
-
-<!-- PROGRESS -->
-<div class="progress">
-  <div class="prog-steps">
-    <div class="ps done"    id="ps1"><div class="dot"><i class="fas fa-check"></i></div><span>Review</span></div>
-    <div class="ps-line"    id="pl1"></div>
-    <div class="ps active"  id="ps2"><div class="dot">2</div><span>Payment</span></div>
-    <div class="ps-line"    id="pl2"></div>
-    <div class="ps"         id="ps3"><div class="dot">3</div><span>Confirm</span></div>
-  </div>
-</div>
-
-<!-- PAGE -->
-<div class="page">
-
-  <!-- LEFT COL -->
-  <div id="left-col">
-
-    <!-- STEP 1: Review order -->
-    <div class="step-panel active" id="step-review">
-      <div class="scard">
-        <h2><span class="step-num">1</span> Review Your Order</h2>
-        <div id="review-detail"></div>
-      </div>
-
-      <div class="scard">
-        <h2><span class="step-num" style="background:var(--bg3);color:var(--muted);border:1px solid var(--border)">2</span> Delivery Information</h2>
-        <div class="frow">
-          <label>Full Name *</label>
-          <!-- Saved address selector -->
-          <div id="saved-addr-wrap" style="display:none;margin-bottom:1rem">
-            <label style="display:block;font-size:0.78rem;font-weight:600;color:var(--muted);margin-bottom:0.38rem">Use a saved address</label>
-            <select class="finp" id="saved-addr-sel" onchange="applyAddr(this.value)">
-              <option value="">— Select saved address —</option>
-            </select>
-            <div style="font-size:0.72rem;color:var(--dim);margin-top:0.3rem">Or fill in manually below</div>
-          </div>
-          <input class="finp" id="d-name" placeholder="Your full name" autocomplete="name" />
-          <div class="ferr" id="e-dname">Required.</div>
-        </div>
-        <div class="frow">
-          <label>Email Address *</label>
-          <input class="finp" id="d-email" type="email" placeholder="you@example.com" autocomplete="email" />
-          <div class="ferr" id="e-demail">Valid email required.</div>
-        </div>
-        <div class="f2">
-          <div class="frow">
-            <label>Phone Number</label>
-            <input class="finp" id="d-phone" placeholder="+234 800 000 0000" autocomplete="tel" />
-          </div>
-          <div class="frow">
-            <label>Country *</label>
-            <select class="finp" id="d-country">
-              <option value="">Select country</option>
-              <optgroup label="Africa">
-                <option value="NG">🇳🇬 Nigeria</option>
-                <option value="GH">🇬🇭 Ghana</option>
-                <option value="KE">🇰🇪 Kenya</option>
-                <option value="ZA">🇿🇦 South Africa</option>
-                <option value="EG">🇪🇬 Egypt</option>
-                <option value="ET">🇪🇹 Ethiopia</option>
-                <option value="TZ">🇹🇿 Tanzania</option>
-                <option value="UG">🇺🇬 Uganda</option>
-              </optgroup>
-              <optgroup label="Europe">
-                <option value="GB">🇬🇧 United Kingdom</option>
-                <option value="DE">🇩🇪 Germany</option>
-                <option value="FR">🇫🇷 France</option>
-                <option value="NL">🇳🇱 Netherlands</option>
-                <option value="ES">🇪🇸 Spain</option>
-                <option value="IT">🇮🇹 Italy</option>
-              </optgroup>
-              <optgroup label="Americas">
-                <option value="US">🇺🇸 United States</option>
-                <option value="CA">🇨🇦 Canada</option>
-                <option value="BR">🇧🇷 Brazil</option>
-              </optgroup>
-            </select>
-            <div class="ferr" id="e-dcountry">Required.</div>
-          </div>
-        </div>
-        <div class="frow" id="address-row">
-          <label>Delivery Address <span style="color:var(--dim);font-weight:400">(for physical goods)</span></label>
-          <input class="finp" id="d-address" placeholder="Street address, city, state" />
-        </div>
-      </div>
-
-      <div class="alert err"  id="step1-err"><span><i class="fas fa-triangle-exclamation"></i></span><span id="step1-err-msg"></span></div>
-
-      <div class="btn-row">
-        <button class="btn-back" onclick="history.back()">← Back</button>
-        <button class="btn-primary" id="step1-next"><span class="lbl">Continue to Payment →</span></button>
-      </div>
-    </div>
-
-    <!-- STEP 2: Payment -->
-    <div class="step-panel" id="step-payment">
-      <div class="scard">
-        <h2><span class="step-num">2</span> Choose Payment Method</h2>
-
-        <!-- Region tabs -->
-        <div class="region-tabs" id="region-tabs">
-          <button class="rtab on" data-region="global"><i class="fas fa-earth-africa"></i> Global (Card)</button>
-          <button class="rtab" data-region="africa"><i class="fas fa-earth-africa"></i> Africa (Local)</button>
-        </div>
-
-        <!-- Global: Stripe card -->
-        <div id="global-payment">
-          <div class="card-visual">
-            <div class="cv-chip"></div>
-            <div class="cv-num" id="cv-num">•••• •••• •••• ••••</div>
-            <div class="cv-bot">
-              <div>
-                <div class="cv-label">Card Holder</div>
-                <div class="cv-val" id="cv-name">Your Name</div>
-              </div>
-              <div>
-                <div class="cv-label">Expires</div>
-                <div class="cv-val" id="cv-exp">MM / YY</div>
-              </div>
-            </div>
-            <div class="cv-network"><i class="fas fa-credit-card"></i></div>
-          </div>
-
-          <div class="frow">
-            <label>Card Number *</label>
-            <input class="finp" id="card-num" placeholder="1234 5678 9012 3456" maxlength="19" inputmode="numeric" />
-            <div class="ferr" id="e-cardnum">Enter a valid 16-digit card number.</div>
-          </div>
-          <div class="frow">
-            <label>Cardholder Name *</label>
-            <input class="finp" id="card-name" placeholder="Name as on card" />
-            <div class="ferr" id="e-cardname">Required.</div>
-          </div>
-          <div class="f2">
-            <div class="frow">
-              <label>Expiry Date *</label>
-              <input class="finp" id="card-exp" placeholder="MM / YY" maxlength="7" inputmode="numeric" />
-              <div class="ferr" id="e-cardexp">Invalid expiry.</div>
-            </div>
-            <div class="frow">
-              <label>CVV *</label>
-              <input class="finp" id="card-cvv" placeholder="•••" maxlength="4" inputmode="numeric" type="password" />
-              <div class="ferr" id="e-cardcvv">Invalid CVV.</div>
-            </div>
-          </div>
-          <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.25rem">
-            <span style="font-size:0.72rem;color:var(--dim)">Powered by</span>
-            <span style="font-size:0.78rem;font-weight:700;color:#635BFF">Stripe</span>
-            <span style="font-size:0.72rem;color:var(--dim)">· 256-bit SSL · PCI DSS Compliant</span>
-          </div>
-        </div>
-
-        <!-- Africa: Flutterwave -->
-        <div id="africa-payment" style="display:none">
-          <div class="fw-methods" id="fw-methods">
-            <div class="fw-method on" data-fw="card">       <div class="fw-icon"><i class="fas fa-credit-card"></i></div><div class="fw-lbl">Card</div></div>
-            <div class="fw-method" data-fw="mobile_money">  <div class="fw-icon"><i class="fas fa-mobile-screen"></i></div><div class="fw-lbl">Mobile Money</div></div>
-            <div class="fw-method" data-fw="bank_transfer"> <div class="fw-icon"><i class="fas fa-building-columns"></i></div><div class="fw-lbl">Bank Transfer</div></div>
-            <div class="fw-method" data-fw="ussd">          <div class="fw-icon"><i class="fas fa-mobile-screen"></i></div><div class="fw-lbl">USSD</div></div>
-          </div>
-
-          <!-- FW Card -->
-          <div id="fw-card-fields">
-            <div class="frow">
-              <label>Card Number *</label>
-              <input class="finp" id="fw-cardnum" placeholder="1234 5678 9012 3456" maxlength="19" inputmode="numeric" />
-            </div>
-            <div class="f2">
-              <div class="frow"><label>Expiry *</label><input class="finp" id="fw-exp" placeholder="MM / YY" maxlength="7" /></div>
-              <div class="frow"><label>CVV *</label><input class="finp" id="fw-cvv" placeholder="•••" maxlength="4" type="password" /></div>
-            </div>
-          </div>
-
-          <!-- FW Mobile Money -->
-          <div id="fw-mobile-fields" style="display:none">
-            <div class="frow">
-              <label>Network *</label>
-              <select class="finp" id="fw-network">
-                <option value="">Select network</option>
-                <optgroup label="Nigeria">
-                  <option value="MTN">MTN MoMo</option>
-                  <option value="AIRTEL">Airtel Money</option>
-                  <option value="9MOBILE">9Mobile</option>
-                </optgroup>
-                <optgroup label="Ghana">
-                  <option value="VODAFONE">Vodafone Cash</option>
-                  <option value="TIGO">Tigo Cash</option>
-                </optgroup>
-                <optgroup label="Kenya">
-                  <option value="MPESA">M-Pesa</option>
-                </optgroup>
-                <optgroup label="Uganda / Rwanda">
-                  <option value="AIRTEL_UG">Airtel Uganda</option>
-                  <option value="MTN_RW">MTN Rwanda</option>
-                </optgroup>
-              </select>
-            </div>
-            <div class="frow">
-              <label>Phone Number *</label>
-              <input class="finp" id="fw-phone" placeholder="+234 800 000 0000" inputmode="tel" />
-            </div>
-          </div>
-
-          <!-- FW Bank Transfer -->
-          <div id="fw-bank-fields" style="display:none">
-            <div class="alert info on" style="margin-bottom:0"><span>ℹ️</span><span>We'll generate a dedicated account number for this transaction. Funds must be transferred within 30 minutes.</span></div>
-          </div>
-
-          <!-- FW USSD -->
-          <div id="fw-ussd-fields" style="display:none">
-            <div class="frow"><label>Bank *</label>
-              <select class="finp" id="fw-bank">
-                <option value="">Select your bank</option>
-                <option>Access Bank</option><option>GTBank</option><option>UBA</option>
-                <option>First Bank</option><option>Zenith Bank</option><option>Sterling Bank</option>
-              </select>
-            </div>
-          </div>
-
-          <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.85rem">
-            <span style="font-size:0.72rem;color:var(--dim)">Powered by</span>
-            <span style="font-size:0.78rem;font-weight:700;color:#F5A623">Flutterwave</span>
-            <span style="font-size:0.72rem;color:var(--dim)">· PCI DSS Compliant</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="alert err"  id="step2-err"><span><i class="fas fa-triangle-exclamation"></i></span><span id="step2-err-msg"></span></div>
-      <div class="alert info" id="step2-info"><span>ℹ️</span><span id="step2-info-msg"></span></div>
-
-      <div class="btn-row">
-        <button class="btn-back" onclick="goStep(1)">← Back</button>
-        <button class="btn-primary" id="step2-next"><span class="lbl">Review & Confirm →</span></button>
-      </div>
-    </div>
-
-    <!-- STEP 3: Confirm -->
-    <div class="step-panel" id="step-confirm">
-      <div class="scard">
-        <h2><span class="step-num">3</span> Confirm Your Order</h2>
-        <div id="confirm-detail"></div>
-      </div>
-
-      <div class="scard" style="background:rgba(16,185,129,0.05);border-color:rgba(16,185,129,0.15)">
-        <div style="display:flex;gap:0.75rem;align-items:flex-start">
-          <span style="font-size:1.4rem;flex-shrink:0"><i class="fas fa-lock"></i></span>
-          <div>
-            <div style="font-size:0.88rem;font-weight:600;margin-bottom:0.3rem;color:var(--success)">Escrow Protection Active</div>
-            <div style="font-size:0.8rem;color:var(--muted);line-height:1.6">Your payment is held securely in escrow. Funds are only released to the seller once you confirm delivery. If anything goes wrong, you're covered by TraydR Buyer Protection.</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="alert err" id="step3-err"><span><i class="fas fa-triangle-exclamation"></i></span><span id="step3-err-msg"></span></div>
-
-      <div class="btn-row">
-        <button class="btn-back" onclick="goStep(2)">← Back</button>
-        <button class="btn-primary" id="place-order-btn"><span class="lbl">Place Order & Pay $<span id="confirm-price">0</span></span></button>
-      </div>
-    </div>
-
-    <!-- SUCCESS -->
-    <div class="step-panel" id="step-success">
-      <div class="success-icon"><i class="fas fa-champagne-glasses"></i></div>
-      <div class="success-title">Order Placed!</div>
-      <div class="success-sub">
-        Your payment is held in escrow and your order has been sent to <strong id="success-seller">the seller</strong>.<br><br>
-        You'll receive a confirmation email shortly. Track your order in your dashboard.
-      </div>
-      <div class="order-id-box">
-        <div class="oid-label">Order Reference</div>
-        <div class="oid-val" id="success-order-id">#TRX-000000</div>
-      </div>
-      <div class="success-actions">
-        <button class="btn-primary" style="width:auto;padding:0.75rem 2rem" onclick="window.location.href='dashboard-buyer.html'">Track Order →</button>
-        <button class="btn-outline" onclick="window.location.href='browse.html'">Continue Shopping</button>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- RIGHT COL: Order summary -->
-  <div class="summary" id="order-summary">
-    <h3>Order Summary</h3>
-
-    <div class="sum-listing">
-      <div class="sum-img" id="sum-img">
-        <div class="sum-img-ph"><i class="fas fa-box"></i></div>
-      </div>
-      <div class="sum-info">
-        <div class="sum-title" id="sum-title">Loading...</div>
-        <div class="sum-seller" id="sum-seller"></div>
-        <div class="sum-pkg" id="sum-pkg">Basic</div>
-      </div>
-    </div>
-
-    <div class="sum-row"><span class="lbl">Package price</span><span class="val" id="sum-price">$0</span></div>
-    <div class="sum-row"><span class="lbl">Platform fee (8%)</span><span class="val" id="sum-fee">$0</span></div>
-    <div class="sum-row"><span class="lbl">Delivery time</span><span class="val" id="sum-delivery">—</span></div>
-    <div class="sum-divider"></div>
-    <div class="sum-total"><span class="lbl">Total</span><span class="val" id="sum-total">$0</span></div>
-
-    <div class="escrow-note">
-      <p><i class="fas fa-lock"></i> <strong>Escrow protected</strong> — your money is held safely until you confirm delivery.</p>
-    </div>
-
-    <div class="trust-row">
-      <div class="ti"><div class="ti-icon"><i class="fas fa-shield-halved"></i></div><div class="ti-lbl">Buyer<br>Protection</div></div>
-      <div class="ti"><div class="ti-icon">↩️</div><div class="ti-lbl">Refund<br>Policy</div></div>
-      <div class="ti"><div class="ti-icon"><i class="fas fa-comment-dots"></i></div><div class="ti-lbl">24/7<br>Support</div></div>
-    </div>
-  </div>
-
-</div>
-
-<script>
-/*
-  ============================================================
-  checkout.html — TraydR CHECKOUT
-  
-  Reads order data from sessionStorage (set by listing.html)
-  Creates order in Supabase on confirmation
-  
-  Payment processors:
-    Stripe  → Global (card payments) 
-    Flutterwave → Africa (card, mobile money, bank, USSD)
-  
-  NOTE: In production, payment processing MUST happen server-side
-  via Supabase Edge Functions. The UI here collects payment intent
-  and passes to your backend. Card details never touch your server.
-  ============================================================
-*/
-
-const SUPABASE_URL  = 'https://rtwbrcbifnowrqpgivma.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc';
-const { createClient } = supabase;
-const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
-
-/* ── State ── */
-let checkout  = null; /* from sessionStorage */
-let user      = null;
-let currentStep = 1;
-let region    = 'global';
-let fwMethod  = 'card';
-
-/* delivery info */
-let delivery  = {};
-
-const $ = id => document.getElementById(id);
-const isEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-const fmt = n => Number(n||0).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
-
-/* ── Load checkout data ── */
-/* ── Address helpers ── */
-function applyAddr(id) {
-  const addrs = window._savedAddrs || [];
-  const a = addrs.find(x => String(x.id) === String(id));
-  if (a) applyAddrObj(a);
-}
-function applyAddrObj(a) {
-  if (!a) return;
-  $('d-name').value    = a.full_name || '';
-  $('d-phone').value   = a.phone || '';
-  $('d-address').value = [a.address, a.city, a.state].filter(Boolean).join(', ');
-  const sel = $('d-country');
-  if (sel && a.country) sel.value = a.country;
-}
-
-async function init() {
-  /* Hard guard — must be logged in to checkout */
-  user = await AuthGuard.require('checkout.html');
-  if (!user) return;
-
-  /* Load checkout data from sessionStorage */
-  const raw = sessionStorage.getItem('traydr_checkout');
-  if (!raw) {
-    showGlobalError('No order data found. Please go back and select a package.');
-    return;
-  }
-  checkout = JSON.parse(raw);
-
-  /* Pre-fill delivery info from account */
-  $('d-name').value  = user.user_metadata?.full_name || '';
-  $('d-email').value = user.email || '';
-
-  /* ── Handle Flutterwave return ── */
-  const urlP = new URLSearchParams(window.location.search);
-  if (urlP.get('flw') === 'success') {
-    /* Show verifying state */
-    document.querySelector('.page').innerHTML = `
-      <div style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;text-align:center">
-        <div style="font-size:2.5rem;color:var(--amber)"><i class="fas fa-spinner fa-spin"></i></div>
-        <h2 style="font-family:var(--serif);font-size:1.3rem">Verifying payment...</h2>
-        <p style="color:var(--muted);font-size:0.88rem">Please wait, do not close this page.</p>
-      </div>`;
-
+/* ── Handle Flutterwave redirect return (for mobile/redirect flow) ── */
+(async () => {
+  const urlP           = new URLSearchParams(window.location.search);
+  if (urlP.get('status') === 'successful' || urlP.get('flw') === 'success') {
     const transaction_id = urlP.get('transaction_id');
-    const tx_ref         = urlP.get('tx_ref') || sessionStorage.getItem('traydr_pending_order');
+    const tx_ref         = urlP.get('tx_ref') || sessionStorage.getItem('traydr_tx_ref');
     const checkoutData   = JSON.parse(sessionStorage.getItem('traydr_pending_checkout') || '{}');
-
-    if (!transaction_id || !tx_ref) {
-      /* Missing params — show error */
-      document.querySelector('.page').innerHTML = `
-        <div style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;text-align:center">
-          <div style="font-size:2.5rem;color:var(--error)"><i class="fas fa-triangle-exclamation"></i></div>
-          <h2 style="font-family:var(--serif);font-size:1.3rem">Payment verification failed</h2>
-          <p style="color:var(--muted);font-size:0.88rem">We couldn't verify your payment. If money was deducted, please contact support with reference: <strong>${tx_ref||'unknown'}</strong></p>
-          <a href="mailto:hello@traydr.market" style="color:var(--amber);font-size:0.88rem">Contact Support</a>
-          <a href="index.html" style="margin-top:0.5rem;color:var(--muted);font-size:0.82rem">← Return Home</a>
-        </div>`;
-      return;
-    }
-
-    try {
-      const vRes = await fetch(
-        'https://rtwbrcbifnowrqpgivma.supabase.co/functions/v1/quick-api',
-        {
-          method:  'POST',
-          headers: {
-            'Content-Type':  'application/json',
-            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc',
-          },
-          body: JSON.stringify({
-            action:        'verify',
-            transaction_id,
-            tx_ref,
-            checkout_data: checkoutData,
-          }),
-        }
-      );
-
-      const vData = await vRes.json();
-      console.log('Verify response:', vData);
-
-      if (vData.success) {
-        sessionStorage.removeItem('traydr_pending_checkout');
-        sessionStorage.removeItem('traydr_pending_order');
-        /* Rebuild page and show step 4 */
-        window.location.href = `checkout.html?success=1&order_id=${vData.order_id||''}&ref=${tx_ref}`;
-        return;
-      }
-
-      /* Payment failed or cancelled */
-      document.querySelector('.page').innerHTML = `
-        <div style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;text-align:center">
-          <div style="font-size:2.5rem;color:var(--error)"><i class="fas fa-circle-xmark"></i></div>
-          <h2 style="font-family:var(--serif);font-size:1.3rem">Payment not completed</h2>
-          <p style="color:var(--muted);font-size:0.88rem">Status: ${vData.status||'failed'}. ${vData.error||'Your payment was not successful.'}</p>
-          <p style="color:var(--muted);font-size:0.82rem">No money has been charged. You can try again.</p>
-          <button onclick="window.history.back()" style="background:var(--amber);border:none;color:#fff;padding:0.65rem 1.5rem;border-radius:8px;font-size:0.88rem;font-weight:600;cursor:pointer;margin-top:0.5rem">← Try Again</button>
-        </div>`;
-    } catch(e) {
-      console.error('Verify error:', e);
-      document.querySelector('.page').innerHTML = `
-        <div style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;text-align:center">
-          <div style="font-size:2.5rem;color:var(--error)"><i class="fas fa-wifi"></i></div>
-          <h2 style="font-family:var(--serif);font-size:1.3rem">Connection error</h2>
-          <p style="color:var(--muted);font-size:0.88rem">Could not connect to verify your payment. Please contact support with ref: <strong>${tx_ref}</strong></p>
-          <a href="mailto:hello@traydr.market" style="color:var(--amber);font-size:0.88rem">Contact Support</a>
-        </div>`;
-    }
-    return;
-  }
-
-  /* Handle success redirect (after verify redirects here) */
-  if (urlP.get('success') === '1') {
-    const orderId = urlP.get('order_id');
-    const ref     = urlP.get('ref');
-    goStep(4);
-    $('success-order-id').textContent = orderId ? `#TRX-${String(orderId).padStart(6,'0')}` : ref || 'Confirmed';
-    return;
-  }
-
-    /* Load saved addresses */
-  try {
-    const { data: addrs } = await DB.getAddresses(user.id);
-    if (addrs && addrs.length > 0) {
-      const sel = $('saved-addr-sel');
-      addrs.forEach(a => {
-        const opt = document.createElement('option');
-        opt.value = a.id;
-        opt.textContent = `${a.label}: ${a.full_name} — ${a.address}, ${a.city}${a.is_default ? ' (Default)' : ''}`;
-        sel.appendChild(opt);
-      });
-      $('saved-addr-wrap').style.display = '';
-      /* auto-select default */
-      const def = addrs.find(a => a.is_default) || addrs[0];
-      if (def) { sel.value = def.id; applyAddrObj(def); }
-      window._savedAddrs = addrs;
-    }
-  } catch(e) {}
-
-  renderSummary();
-  renderReviewDetail();
-}
-
-/* ── Summary ── */
-function renderSummary() {
-  const c = checkout;
-  const fee   = +(c.price * 0.08).toFixed(2);
-  const total = +(c.price + fee).toFixed(2);
-
-  /* image */
-  if (c.listing_image) {
-    $('sum-img').innerHTML = `<img src="${c.listing_image}" alt="" onerror="this.style.display='none'" style="width:100%;height:100%;object-fit:cover;display:block" />`;
-  }
-  $('sum-title').textContent    = c.listing_title;
-  $('sum-seller').textContent   = `by ${c.seller_name}`;
-  $('sum-pkg').textContent      = c.package_label;
-  $('sum-price').textContent    = `$${fmt(c.price)}`;
-  $('sum-fee').textContent      = `$${fmt(fee)}`;
-  $('sum-delivery').textContent = `${c.delivery_days} day${c.delivery_days!==1?'s':''}`;
-  $('sum-total').textContent    = `$${fmt(total)}`;
-  $('confirm-price').textContent= fmt(total);
-}
-
-/* ── Review detail (step 1) ── */
-function renderReviewDetail() {
-  const c = checkout;
-  const fee   = +(c.price * 0.08).toFixed(2);
-  const total = +(c.price + fee).toFixed(2);
-  const catIcons = {physical:'<i class="fas fa-box"></i>',digital:'<i class="fas fa-floppy-disk"></i>',freelance:'<i class="fas fa-screwdriver-wrench"></i>',experience:'<i class="fas fa-graduation-cap"></i>'};
-
-  $('review-detail').innerHTML = `
-    <div style="display:flex;gap:1rem;padding-bottom:1rem;border-bottom:1px solid var(--border);margin-bottom:1rem">
-      <div style="width:80px;height:80px;border-radius:10px;overflow:hidden;background:var(--bg3);flex-shrink:0">
-        ${c.listing_image
-          ? `<img src="${c.listing_image}" alt="" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.style.display='none'" />`
-          : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem">${catIcons[c.category]||'<i class="fas fa-box"></i>'}</div>`}
-      </div>
-      <div style="flex:1;min-width:0">
-        <div style="font-weight:600;font-size:0.92rem;margin-bottom:0.25rem;line-height:1.35">${c.listing_title}</div>
-        <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.5rem">by ${c.seller_name}</div>
-        <div style="display:inline-flex;align-items:center;gap:0.3rem;background:var(--amber-dim);border:1px solid rgba(245,158,11,0.2);color:var(--amber);font-size:0.7rem;font-weight:600;padding:0.18rem 0.55rem;border-radius:100px">${c.package_label} Package</div>
-      </div>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:0.55rem">
-      <div style="display:flex;justify-content:space-between;font-size:0.83rem"><span style="color:var(--muted)">Package</span><span style="font-weight:500">$${fmt(c.price)}</span></div>
-      <div style="display:flex;justify-content:space-between;font-size:0.83rem"><span style="color:var(--muted)">Platform fee (8%)</span><span style="font-weight:500">$${fmt(fee)}</span></div>
-      <div style="display:flex;justify-content:space-between;font-size:0.83rem"><span style="color:var(--muted)">Delivery</span><span style="font-weight:500">${c.delivery_days} day${c.delivery_days!==1?'s':''}</span></div>
-      <div style="height:1px;background:var(--border);margin:0.25rem 0"></div>
-      <div style="display:flex;justify-content:space-between"><span style="font-weight:600">Total</span><span style="font-family:var(--serif);font-size:1.2rem;font-weight:700;color:var(--amber)">$${fmt(total)}</span></div>
-    </div>`;
-}
-
-/* ── Confirm detail (step 3) ── */
-function renderConfirmDetail() {
-  const c = checkout;
-  const fee   = +(c.price * 0.08).toFixed(2);
-  const total = +(c.price + fee).toFixed(2);
-  const methodLabel = region === 'global'
-    ? `<i class="fas fa-credit-card"></i> Card ending ····${($('card-num').value.replace(/\s/g,'')).slice(-4) || '••••'}`
-    : fwMethod === 'card'         ? `<i class="fas fa-credit-card"></i> Card (Flutterwave)`
-    : fwMethod === 'mobile_money' ? `<i class="fas fa-mobile-screen"></i> Mobile Money — ${$('fw-network').value||'—'}`
-    : fwMethod === 'bank_transfer'? `<i class="fas fa-building-columns"></i> Bank Transfer`
-    : `<i class="fas fa-mobile-screen"></i> USSD — ${$('fw-bank').value||'—'}`;
-
-  $('confirm-detail').innerHTML = `
-    <div style="display:flex;flex-direction:column;gap:0.7rem">
-      <div style="display:flex;justify-content:space-between;font-size:0.83rem;padding:0.65rem 0.85rem;background:var(--bg3);border-radius:9px"><span style="color:var(--muted)">Item</span><span style="font-weight:500;max-width:200px;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.listing_title}</span></div>
-      <div style="display:flex;justify-content:space-between;font-size:0.83rem;padding:0.65rem 0.85rem;background:var(--bg3);border-radius:9px"><span style="color:var(--muted)">Package</span><span style="font-weight:500">${c.package_label}</span></div>
-      <div style="display:flex;justify-content:space-between;font-size:0.83rem;padding:0.65rem 0.85rem;background:var(--bg3);border-radius:9px"><span style="color:var(--muted)">Delivering to</span><span style="font-weight:500">${delivery.name || '—'} · ${delivery.country || '—'}</span></div>
-      <div style="display:flex;justify-content:space-between;font-size:0.83rem;padding:0.65rem 0.85rem;background:var(--bg3);border-radius:9px"><span style="color:var(--muted)">Payment</span><span style="font-weight:500">${methodLabel}</span></div>
-      <div style="display:flex;justify-content:space-between;font-size:0.83rem;padding:0.65rem 0.85rem;background:var(--amber-dim);border:1px solid rgba(245,158,11,0.2);border-radius:9px"><span style="color:var(--amber);font-weight:600">Total charge</span><span style="font-family:var(--serif);font-size:1.1rem;font-weight:700;color:var(--amber)">$${fmt(total)}</span></div>
-    </div>`;
-  $('success-seller').textContent = c.seller_name;
-}
-
-/* ── Step management ── */
-function goStep(n) {
-  currentStep = n;
-  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
-  const panels = ['step-review','step-payment','step-confirm','step-success'];
-  $(panels[n-1])?.classList.add('active');
-
-  /* update progress dots */
-  [1,2,3].forEach(i => {
-    const dot = $(`ps${i}`);
-    dot.classList.remove('done','active');
-    if (i < n)      dot.classList.add('done');
-    else if (i===n) dot.classList.add('active');
-    if ($(`pl${i}`)) $(`pl${i}`).classList.toggle('done', i < n);
-  });
-
-  /* hide summary on success */
-  $('order-summary').style.display = n === 4 ? 'none' : '';
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-/* ── STEP 1: Validate delivery info ── */
-$('step1-next').addEventListener('click', () => {
-  const name    = $('d-name').value.trim();
-  const email   = $('d-email').value.trim();
-  const country = $('d-country').value;
-  let ok = true;
-
-  const fe = (id, show) => { $(id).classList.toggle('on', show); if(show) ok=false; };
-  fe('e-dname',    !name);
-  fe('e-demail',   !isEmail(email));
-  fe('e-dcountry', !country);
-  $('step1-err').classList.remove('on');
-
-  if (!ok) { showAlert('step1-err','Please fill in all required fields.'); return; }
-
-  delivery = { name, email, country, phone: $('d-phone').value, address: $('d-address').value };
-
-  /* Auto-select region based on country */
-  const africaCountries = ['NG','GH','KE','ZA','EG','ET','TZ','UG'];
-  if (africaCountries.includes(country)) {
-    setRegion('africa');
-  } else {
-    setRegion('global');
-  }
-
-  goStep(2);
-});
-
-/* ── STEP 2: Payment ── */
-
-/* Region tabs */
-$('region-tabs').addEventListener('click', e => {
-  const tab = e.target.closest('.rtab'); if(!tab) return;
-  setRegion(tab.dataset.region);
-});
-
-function setRegion(r) {
-  region = r;
-  document.querySelectorAll('.rtab').forEach(t => t.classList.toggle('on', t.dataset.region === r));
-  $('global-payment').style.display  = r === 'global' ? '' : 'none';
-  $('africa-payment').style.display  = r === 'africa' ? '' : 'none';
-}
-
-/* Flutterwave method tabs */
-$('fw-methods').addEventListener('click', e => {
-  const m = e.target.closest('.fw-method'); if(!m) return;
-  document.querySelectorAll('.fw-method').forEach(x => x.classList.remove('on'));
-  m.classList.add('on'); fwMethod = m.dataset.fw;
-  /* show correct fields */
-  const fieldMap = {
-    card:          'fw-card-fields',
-    mobile_money:  'fw-mobile-fields',
-    bank_transfer: 'fw-bank-fields',
-    ussd:          'fw-ussd-fields',
-  };
-  Object.entries(fieldMap).forEach(([k, id]) => {
-    const el = $(id);
-    if (el) el.style.display = k === fwMethod ? '' : 'none';
-  });
-});
-
-/* Card number formatting */
-[$('card-num'), $('fw-cardnum')].forEach(inp => {
-  if(!inp) return;
-  inp.addEventListener('input', function() {
-    let v = this.value.replace(/\D/g,'').slice(0,16);
-    this.value = v.match(/.{1,4}/g)?.join(' ') || v;
-    if(this.id==='card-num') {
-      $('cv-num').textContent = v.padEnd(16,'•').match(/.{1,4}/g).join(' ');
-    }
-  });
-});
-
-/* Card name live update */
-$('card-name').addEventListener('input', function() {
-  $('cv-name').textContent = this.value || 'Your Name';
-});
-
-/* Expiry formatting */
-[$('card-exp'), $('fw-exp')].forEach(inp => {
-  if(!inp) return;
-  inp.addEventListener('input', function() {
-    let v = this.value.replace(/\D/g,'').slice(0,4);
-    if(v.length > 2) v = v.slice(0,2) + ' / ' + v.slice(2);
-    this.value = v;
-    if(this.id==='card-exp') $('cv-exp').textContent = v || 'MM / YY';
-  });
-});
-
-$('step2-next').addEventListener('click', () => {
-  $('step2-err').classList.remove('on');
-  if (region === 'global') {
-    const num  = $('card-num').value.replace(/\s/g,'');
-    const name = $('card-name').value.trim();
-    const exp  = $('card-exp').value.trim();
-    const cvv  = $('card-cvv').value.trim();
-    if (num.length < 16)  { showAlert('step2-err','Please enter a valid card number.'); return; }
-    if (!name)             { showAlert('step2-err','Please enter the cardholder name.'); return; }
-    if (exp.length < 7)   { showAlert('step2-err','Please enter a valid expiry date.'); return; }
-    if (cvv.length < 3)   { showAlert('step2-err','Please enter a valid CVV.'); return; }
-  } else {
-    if (fwMethod === 'mobile_money') {
-      if (!$('fw-network').value) { showAlert('step2-err','Please select a network.'); return; }
-      if (!$('fw-phone').value)   { showAlert('step2-err','Please enter your phone number.'); return; }
-    }
-    if (fwMethod === 'card') {
-      const num = $('fw-cardnum').value.replace(/\s/g,'');
-      if (num.length < 16) { showAlert('step2-err','Please enter a valid card number.'); return; }
+    if (transaction_id && checkoutData.buyer_id) {
+      document.querySelector('.page') && (document.querySelector('.page').innerHTML =
+        '<div style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;text-align:center"><div style="font-size:2.5rem;color:var(--amber)"><i class="fas fa-spinner fa-spin"></i></div><h2 style="font-family:var(--serif);font-size:1.3rem;color:var(--text)">Verifying payment...</h2><p style="color:var(--muted);font-size:0.88rem">Please wait</p></div>');
+      await handlePaymentSuccess(transaction_id, tx_ref, checkoutData);
     }
   }
-  renderConfirmDetail();
-  goStep(3);
-});
+})();
 
-/* ── STEP 3: Place order ── */
-$('place-order-btn').addEventListener('click', async () => {
-  const btn = $('place-order-btn');
-  btn.classList.add('ld'); btn.disabled = true;
-  $('step3-err').classList.remove('on');
-
-  const c       = checkout;
-  const feeRate = 0.08;
-  const fee     = +(c.price * feeRate).toFixed(2);
-  const total   = +(c.price + fee).toFixed(2);
-  const payout  = +(c.price * (1 - feeRate)).toFixed(2);
-
-  /* Guard: seller_id must exist */
-  if (!c.seller_id) {
-    btn.classList.remove('ld'); btn.disabled = false;
-    showAlert('step3-err', 'This listing has no assigned seller. Please contact support.');
-    return;
-  }
-
-  /* Guard: must be logged in (shouldn't reach here if not, but just in case) */
-  if (!user) {
-    btn.classList.remove('ld'); btn.disabled = false;
-    showAlert('step3-err', 'Please log in to complete your purchase.');
-    return;
-  }
-
-  /* Guard: buyer can't buy their own listing */
-  if (c.seller_id === user.id) {
-    btn.classList.remove('ld'); btn.disabled = false;
-    showAlert('step3-err', 'You cannot purchase your own listing.');
-    return;
-  }
-
-  /* ── Initiate Flutterwave payment FIRST — order only created after success ── */
-  btn.querySelector('.lbl').textContent = 'Redirecting to payment...';
-
-  /* Store checkout details in session for after return */
-  sessionStorage.setItem('traydr_pending_checkout', JSON.stringify({
-    buyer_id:      user.id,
-    seller_id:     c.seller_id,
-    listing_id:    c.listing_id,
-    listing_title: c.listing_title,
-    listing_image: c.listing_image,
-    seller_name:   c.seller_name,
-    buyer_name:    delivery.name,
-    amount:        total,
-    platform_fee:  fee,
-    seller_payout: payout,
-    package_label: c.package_label,
-  }));
-
-  /* Reset button label */
-  btn.querySelector('.lbl').textContent = 'Redirecting to payment...';
-
-  try {
-    const EDGE_URL = 'https://rtwbrcbifnowrqpgivma.supabase.co/functions/v1/quick-api';
-    console.log('Calling Edge Function:', EDGE_URL);
-    console.log('Amount:', total, 'Currency:', delivery.country === 'NG' ? 'NGN' : 'USD');
-
-    const flwRes = await fetch(
-      EDGE_URL,
-      {
-        method:  'POST',
-        headers: {
-          'Content-Type':  'application/json',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc',
-        },
-        body: JSON.stringify({
-          action:        'initiate',
-          amount:        total,
-          currency:      delivery.country === 'NG' ? 'NGN' :
-                         delivery.country === 'GH' ? 'GHS' :
-                         delivery.country === 'KE' ? 'KES' :
-                         delivery.country === 'ZA' ? 'ZAR' : 'USD',
-          email:         user.email,
-          name:          delivery.name,
-          phone:         delivery.phone || '',
-          order_id:      `tmp_${Date.now()}`,
-          listing_title: c.listing_title,
-          redirect_url:  `${window.location.origin}/checkout.html?flw=success`,
-        }),
-      }
-    );
-
-    const flwData = await flwRes.json();
-    btn.classList.remove('ld'); btn.disabled = false;
-
-    if (flwData.success && flwData.payment_link) {
-      sessionStorage.setItem('traydr_pending_order', flwData.tx_ref);
-      sessionStorage.removeItem('traydr_checkout');
-      window.location.href = flwData.payment_link;
-      return;
-    }
-
-    console.error('FLW initiate failed:', flwData);
-    const errMsg = flwData.error || flwData.message || 'Payment initiation failed.';
-    showAlert('step3-err', errMsg + ' (Check console for details)');
-
-  } catch(e) {
-    console.error('FLW network error:', e);
-    btn.classList.remove('ld'); btn.disabled = false;
-    btn.querySelector('.lbl').textContent = 'Place Order & Pay $' + $('confirm-price').textContent;
-    /* Show specific error */
-    const msg = e?.message || String(e) || 'Unknown error';
-    showAlert('step3-err', `Payment error: ${msg}. Please try again or contact support.`);
-  }
-});
-
-/* ── Login prompt (shown when user hits checkout without being logged in) ── */
+/* ── Login prompt/* ── Login prompt (shown when user hits checkout without being logged in) ── */
 function showAlert(id, msg) {
   const el = $(id); el.classList.add('on');
   el.querySelectorAll('span')[1].textContent = msg;
@@ -2271,12 +1079,5 @@ init();
     if (tog)   tog.checked = isDark;
     if (thumb) thumb.style.transform = isDark ? 'translateX(20px)' : 'translateX(0)';
   });</script>
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js').catch(() => {});
-    });
-  }
-</script>
 </body>
 </html>
