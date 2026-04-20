@@ -13,13 +13,13 @@
   <meta property="og:url"         content="https://traydr.vercel.app/" />
   <meta property="og:title"       content="TraydR — One Marketplace. Every Kind of Trade." />
   <meta property="og:description" content="Buy and sell physical goods, digital products, freelance skills and experiences — all in one trusted marketplace with escrow payments and verified sellers." />
-  <meta property="og:image"       content="https://traydr.vercel.app/logo.png" />
+  <meta property="og:image"       content="https://traydr.vercel.app/og-image.png" />
   <meta property="og:site_name"   content="TraydR" />
   <!-- Twitter -->
   <meta name="twitter:card"        content="summary_large_image" />
   <meta name="twitter:title"       content="TraydR — One Marketplace. Every Kind of Trade." />
   <meta name="twitter:description" content="Buy, sell, and trade anything — escrow-protected marketplace for Africa, Europe and beyond." />
-  <meta name="twitter:image"       content="https://traydr.vercel.app/logo.png" />
+  <meta name="twitter:image"       content="https://traydr.vercel.app/og-image.png" />
   <!-- PWA -->
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F59E0B" />
@@ -71,13 +71,13 @@
     .nav-logo span { font-family: var(--serif); font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; }
     .nav-logo i { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); display: inline-block; margin-bottom: 2px; }
     .nav-links { display: flex; align-items: center; gap: 1.75rem; }
-    .nav-links a { color: #1C1208; font-size: 0.875rem; transition: color 0.2s; font-weight: 500; }
-    .nav-links a:hover { color: #000; }
+    .nav-links a { color: rgba(255,255,255,0.65); font-size: 0.875rem; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--text); }
     .btn-outline {
-      background: transparent; border: 1px solid rgba(28,18,8,0.3); color: #1C1208;
+      background: transparent; border: 1px solid rgba(255,255,255,0.25); color: var(--text);
       padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.85rem; transition: background 0.2s;
     }
-    .btn-outline:hover { background: rgba(28,18,8,0.08); }
+    .btn-outline:hover { background: rgba(255,255,255,0.08); }
     .btn-amber {
       background: var(--amber); border: none; color: #0a0a0a;
       padding: 0.4rem 1.1rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600; transition: background 0.2s;
@@ -149,7 +149,7 @@
     .search-bar button { background: var(--amber); border: none; color: #0a0a0a; padding: 0 1.2rem; font-size: 0.88rem; font-weight: 600; white-space: nowrap; flex-shrink: 0; transition: background 0.2s; }
     .search-bar button:hover { background: var(--amber-light); }
 
-    .tags { display: flex; gap: 0.5rem; justify-content: flex-start; align-items: center; padding: 0 0.25rem; }
+    .tags { display: flex; gap: 0.5rem; justify-content: center; align-items: center; }
     .tags .label { color: var(--muted); font-size: 0.78rem; flex-shrink: 0; }
     .tag { background: var(--bg3); border: 1px solid var(--border); color: var(--muted); padding: 0.28rem 0.75rem; border-radius: 100px; font-size: 0.78rem; white-space: nowrap; flex-shrink: 0; transition: all 0.2s; }
     .tag:hover { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.3); color: var(--amber); }
@@ -179,10 +179,10 @@
       border-radius: 14px; padding: 1.75rem 1.5rem; cursor: pointer; transition: all 0.3s;
     }
     .cat-card:hover { background: rgba(245,158,11,0.06); border-color: rgba(245,158,11,0.25); transform: translateY(-4px); }
-    .cat-icon { font-size: 2rem; margin-bottom: 0.85rem; color: var(--amber) !important; }
-    .cat-name { font-family: var(--serif); font-size: 1.05rem; font-weight: 600; margin-bottom: 0.4rem; color: #fff !important; }
-    .cat-desc { color: rgba(255,255,255,0.75) !important; font-size: 0.78rem; line-height: 1.5; margin-bottom: 0.8rem; }
-    .cat-count { color: rgba(255,255,255,0.85) !important; font-size: 0.75rem; font-weight: 500; }
+    .cat-icon { font-size: 2rem; margin-bottom: 0.85rem; }
+    .cat-name { font-family: var(--serif); font-size: 1.05rem; font-weight: 600; margin-bottom: 0.4rem; }
+    .cat-desc { color: var(--text-muted); font-size: 0.78rem; line-height: 1.5; margin-bottom: 0.8rem; }
+    .cat-count { color: var(--amber); font-size: 0.75rem; font-weight: 500; }
 
     /* ══════════════════ LISTINGS ══════════════════ */
     #listings { background: var(--bg2); }
@@ -198,7 +198,7 @@
       background: var(--bg2); border: 1px solid var(--border);
       border-radius: 14px; overflow: hidden; cursor: pointer; transition: all 0.3s;
     }
-    .listing-card:hover { border-color: var(--amber); transform: translateY(-3px); box-shadow: 0 4px 20px rgba(194,105,10,0.15); }
+    .listing-card:hover { border-color: rgba(245,158,11,0.2); transform: translateY(-3px); }
     .listing-thumb {
       height: 110px; background: rgba(255,255,255,0.04);
       display: flex; align-items: center; justify-content: center;
@@ -241,7 +241,7 @@
     #trust { background: var(--bg2); border-top: 1px solid rgba(255,255,255,0.05); }
     .trust-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; }
     .trust-card { text-align: center; padding: 1.25rem 0.75rem; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; }
-    .trust-icon { font-size: 1.75rem; margin-bottom: 0.6rem; color: var(--amber); }
+    .trust-icon { font-size: 1.75rem; margin-bottom: 0.6rem; }
     .trust-title { font-weight: 600; font-size: 0.88rem; margin-bottom: 0.35rem; }
     .trust-desc { color: var(--text-muted); font-size: 0.76rem; line-height: 1.5; }
 
@@ -271,7 +271,7 @@
     .plan-btn { width: 100%; padding: 0.78rem; border-radius: 8px; font-size: 0.88rem; font-weight: 600; transition: opacity 0.2s; }
     .plan-btn:hover { opacity: 0.85; }
     .plan-btn.primary { background: var(--amber); border: none; color: #0a0a0a; }
-    .plan-btn.secondary { background: transparent; border: 1px solid var(--border-md); color: var(--text); }
+    .plan-btn.secondary { background: rgba(255,255,255,0.06); border: 1px solid var(--border-bright); color: var(--text); }
     .pricing-note { text-align: center; color: var(--text-dim); font-size: 0.78rem; margin-top: 1.75rem; }
 
     /* ══════════════════ CTA ══════════════════ */
@@ -283,8 +283,8 @@
     .cta-btns { display: flex; gap: 0.85rem; justify-content: center; flex-wrap: wrap; }
     .btn-amber-lg { background: var(--amber); border: none; color: #0a0a0a; padding: 0.85rem 2.25rem; border-radius: 8px; font-size: 0.95rem; font-weight: 700; transition: background 0.2s; }
     .btn-amber-lg:hover { background: var(--amber-light); }
-    .btn-outline-lg { background: transparent; border: 1px solid rgba(28,18,8,0.25); color: var(--text); padding: 0.85rem 2.25rem; border-radius: 8px; font-size: 0.95rem; transition: border-color 0.2s; }
-    .btn-outline-lg:hover { border-color: rgba(28,18,8,0.5); }
+    .btn-outline-lg { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--text); padding: 0.85rem 2.25rem; border-radius: 8px; font-size: 0.95rem; transition: border-color 0.2s; }
+    .btn-outline-lg:hover { border-color: rgba(255,255,255,0.5); }
 
     /* ══════════════════ FOOTER ══════════════════ */
     footer { background: var(--bg); border-top: 1px solid var(--border); padding: 2.5rem 1.5rem; }
@@ -293,8 +293,8 @@
     .footer-logo span { font-family: var(--serif); font-weight: 700; font-size: 1.15rem; }
     .footer-logo i { width: 5px; height: 5px; border-radius: 50%; background: var(--amber); display: inline-block; }
     .footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
-    .footer-links a { color: var(--amber); font-size: 0.8rem; transition: color 0.2s; text-decoration: none; }
-    .footer-links a:hover { color: var(--amber-light); text-decoration: underline; }
+    .footer-links a { color: rgba(255,255,255,0.33); font-size: 0.8rem; transition: color 0.2s; }
+    .footer-links a:hover { color: rgba(255,255,255,0.7); }
     .footer-copy { color: var(--text-dim); font-size: 0.75rem; }
 
     /* ══════════════════ FADE-IN ANIMATION ══════════════════ */
@@ -405,7 +405,7 @@
     .ni.on .lb { color: var(--amber) !important; }
     .ph h1, .ph p { color: var(--text) !important; }
     .panel h1, .panel h2, .panel h3 { color: var(--text) !important; }
-    .stat-val { color: var(--amber) !important; } .stat-label { color: var(--muted) !important; }
+    .stat-val, .stat-label { color: var(--text) !important; }
     .tbl th { color: var(--muted) !important; background: var(--bg3) !important; }
     .tbl td { color: var(--text) !important; border-color: var(--border) !important; }
     .card-title, .card-price { color: var(--text) !important; }
@@ -416,6 +416,8 @@
     .plan-name, .plan-price strong { color: var(--text) !important; }
     .plan-desc, .plan-price span { color: var(--muted) !important; }
     .plan-features li { color: var(--muted) !important; }
+    .cat-name { color: var(--text) !important; }
+    .cat-desc { color: var(--muted) !important; }
     .how-num { color: var(--amber) !important; }
     .how-title { color: var(--text) !important; }
     .how-desc { color: var(--muted) !important; }
@@ -449,45 +451,8 @@
     [data-theme="dark"] #mobile-menu { background: rgba(10,10,10,0.98) !important; border-top-color: rgba(255,255,255,0.07) !important; }
     [data-theme="dark"] #mobile-menu a { color: rgba(255,255,255,0.7) !important; }
     [data-theme="dark"] .hamburger span { background: #fff !important; }
-
-    [data-theme="dark"] .nav-links a { color: rgba(255,255,255,0.75) !important; }
-    [data-theme="dark"] .nav-links a:hover { color: #fff !important; }
-    [data-theme="dark"] .btn-outline { border-color: rgba(255,255,255,0.25) !important; color: #fff !important; }
-    [data-theme="dark"] .btn-outline:hover { background: rgba(255,255,255,0.08) !important; }
-
-    [data-theme="dark"] .stat-val { color: var(--amber) !important; }
-    [data-theme="dark"] .stat-label { color: rgba(255,255,255,0.55) !important; }
-    [data-theme="dark"] .nav-logo span { color: var(--amber) !important; }
-    [data-theme="dark"] .trust-icon { color: var(--amber) !important; }
-    [data-theme="dark"] .trust-title { color: #fff !important; }
-    [data-theme="dark"] .trust-desc { color: rgba(255,255,255,0.55) !important; }
-    [data-theme="dark"] #trust { border-top-color: rgba(255,255,255,0.05) !important; }
-    [data-theme="dark"] .cat-icon { color: var(--amber) !important; }
-    [data-theme="dark"] .listing-card { background: rgba(255,255,255,0.03) !important; border-color: rgba(255,255,255,0.08) !important; }
-    [data-theme="dark"] .card-seller { color: rgba(255,255,255,0.45) !important; }
-
-    .btn-hero-login {
-      background: transparent;
-      border: 2px solid rgba(28,18,8,0.5);
-      color: #1C1208;
-      padding: 0.65rem 1.5rem;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .btn-hero-login:hover { background: rgba(28,18,8,0.08); }
-    [data-theme="dark"] .btn-hero-login {
-      border-color: rgba(255,255,255,0.6) !important;
-      color: #fff !important;
-    }
-    [data-theme="dark"] .btn-hero-login:hover {
-      background: rgba(255,255,255,0.1) !important;
-    }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link rel="icon" type="image/png" href="logo.png">
 </head>
 <body>
 
@@ -524,7 +489,6 @@
   <div class="hero-glow"></div>
   <div class="hero-grid"></div>
   <div class="hero-inner">
-      <div class="hero-logo" style="margin-bottom:1.5rem"><img src="logo.png" alt="TraydR" style="height:160px;width:auto"></div>
     <div class="beta-pill">
       <i></i>
       <span>NOW IN BETA — JOIN FREE</span>
@@ -542,12 +506,6 @@
       <button class="tag" onclick="window.location.href='browse.html?q=Leather+Bag'">Leather Bag</button>
       <button class="tag" onclick="window.location.href='browse.html?q=Photography'">Photography</button>
       <button class="tag" onclick="window.location.href='browse.html?q=Figma+Kit'">Figma Kit</button>
-    </div>
-
-    <!-- Hero CTA buttons below tags -->
-    <div style="display:flex;gap:0.75rem;margin-top:1.5rem;justify-content:center;flex-wrap:wrap">
-      <button onclick="window.location.href='traydr-auth.html'" class="btn-hero-login">Log In</button>
-      <button onclick="window.location.href='traydr-auth.html#signup'" style="background:#C2690A;border:none;color:#fff;padding:0.65rem 1.75rem;border-radius:8px;font-size:0.9rem;font-weight:700;cursor:pointer;transition:all 0.2s">Sign Up Free →</button>
     </div>
   </div>
 </section>
@@ -678,7 +636,7 @@
           <div class="plan-feature"><span class="check"><i class="fas fa-check"></i></span><span>Basic analytics</span></div>
           <div class="plan-feature"><span class="check"><i class="fas fa-check"></i></span><span>Community support</span></div>
         </div>
-        <button class="plan-btn secondary" onclick="window.location.href='traydr-auth.html#signup'">Get Started</button>
+        <button class="plan-btn secondary">Get Started</button>
       </div>
       <div class="plan-card highlight fade-up" style="transition-delay:.1s">
         <div class="popular-pill">MOST POPULAR</div>
@@ -692,7 +650,7 @@
           <div class="plan-feature"><span class="check"><i class="fas fa-check"></i></span><span>Lower transaction fees</span></div>
           <div class="plan-feature"><span class="check"><i class="fas fa-check"></i></span><span>Priority support</span></div>
         </div>
-        <button class="plan-btn primary" onclick="window.location.href='traydr-auth.html#signup?trial=1'">Start Free Trial</button>
+        <button class="plan-btn primary">Start Free Trial</button>
       </div>
       <div class="plan-card fade-up" style="transition-delay:.2s">
         <div class="plan-name">Business</div>
@@ -705,7 +663,7 @@
           <div class="plan-feature"><span class="check"><i class="fas fa-check"></i></span><span>Bulk listing tools</span></div>
           <div class="plan-feature"><span class="check"><i class="fas fa-check"></i></span><span>Dedicated account manager</span></div>
         </div>
-        <button class="plan-btn secondary" onclick="window.location.href='mailto:hello@traydr.market'">Contact Sales</button>
+        <button class="plan-btn secondary">Contact Sales</button>
       </div>
     </div>
     <p class="pricing-note">Transaction fees: Free 8% · Pro 5% · Business 3%</p>
@@ -728,9 +686,9 @@
 <!-- ══════════ FOOTER ══════════ -->
 <footer>
   <div class="footer-inner">
-    <div class="footer-logo"><img src="logo.png" alt="TraydR" style="height:70px;width:auto"></div>
+    <div class="footer-logo"><span>TraydR</span><i></i></div>
     <div class="footer-links">
-      <a href="about.html">About</a><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a><a href="support.html">Support</a><a href="blog.html">Blog</a>
+      <a href="#">About</a><a href="#">Terms</a><a href="#">Privacy</a><a href="#">Support</a><a href="#">Blog</a>
     </div>
     <div class="footer-copy">© 2026 TraydR. All rights reserved.</div>
   </div>
@@ -872,12 +830,5 @@
     if (tog)   tog.checked = isDark;
     if (thumb) thumb.style.transform = isDark ? 'translateX(20px)' : 'translateX(0)';
   });</script>
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js').catch(() => {});
-    });
-  }
-</script>
 </body>
 </html>

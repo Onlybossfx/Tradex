@@ -190,20 +190,12 @@
     [data-theme="dark"] .filter-label { color: var(--muted) !important; }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link rel="icon" type="image/png" href="logo.png">
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#FFB34E">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="TraydR">
-  <link rel="apple-touch-icon" href="logo.png">
 </head>
 <body>
   <div class="card">
     <div class="card-glow"></div>
 
-    <a href="index.html" class="nav-logo"><img src="logo.png" alt="TraydR" style="height:64px;width:auto;display:block;object-fit:contain"></a>
+    <a href="traydr-auth.html" class="logo"><span>TraydR</span><i></i></a>
 
     <div class="head">
       <div class="icon-wrap"><i class="fas fa-lock"></i></div>
@@ -406,12 +398,5 @@ if (otpInputs[0]) otpInputs[0].focus();
     if (tog)   tog.checked = isDark;
     if (thumb) thumb.style.transform = isDark ? 'translateX(20px)' : 'translateX(0)';
   });</script>
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js').catch(() => {});
-    });
-  }
-</script>
 </body>
 </html>

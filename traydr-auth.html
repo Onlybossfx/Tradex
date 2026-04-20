@@ -251,30 +251,8 @@
     [data-theme="dark"] .ni.on .lb { color: var(--amber) !important; }
     [data-theme="dark"] .tbl th { background: var(--bg3) !important; color: var(--muted) !important; }
     [data-theme="dark"] .filter-label { color: var(--muted) !important; }
-
-    /* ══════════════════════════════════════
-       MOBILE FIRST — Full Responsive System
-    ══════════════════════════════════════ */
-    * { box-sizing: border-box; }
-    #nav, nav { padding-left: 0.85rem; padding-right: 0.85rem; }
-
-    /* Tables */
-    .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; }
-    .tbl { width: 100%; min-width: 480px; }
-
-    /* Cards */
-    .card, .listing-card { min-width: 0; }
-
-    /* Modals */
-    .mbox { width: calc(100vw - 2rem) !important; max-width: 100% !important; }
-
-    @media (max-width: 480px) {
-      .f2 { grid-template-columns: 1fr !important; }
-      .grid-2 { grid-template-columns: 1fr !important; }
-    }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link rel="icon" type="image/png" href="logo.png">
 </head>
 <body>
 <div class="page">
@@ -282,7 +260,7 @@
   <!-- LEFT -->
   <div class="left">
     <div class="glow-1"></div><div class="glow-2"></div><div class="grid-bg"></div>
-    <a href="index.html" class="nav-logo"><img src="logo.png" alt="TraydR" style="height:64px;width:auto;display:block;object-fit:contain"></a>
+    <a href="index.html" class="logo"><span>TraydR</span><i></i></a>
     <div class="left-body">
       <h2>Trade with<br><em>confidence.</em><br>Grow with trust.</h2>
       <p>Join a marketplace built for buyers and sellers across Africa, Europe and the Americas — with escrow protection on every transaction.</p>
@@ -299,7 +277,7 @@
   <!-- RIGHT -->
   <div class="right">
     <div class="box">
-      <div class="mob-logo"><img src="logo.png" alt="TraydR" style="height:50px;width:auto"></div>
+      <div class="mob-logo"><span>TraydR</span><i></i></div>
 
       <!-- TABS -->
       <div class="tabs" id="tabs">
@@ -524,7 +502,7 @@ function goStep(n) {
   [1,2,3].forEach(i => {
     const d = $(`d${i}`);
     d.classList.remove('active','done');
-    if (i < n) { d.classList.add('done'); d.innerHTML = '<i class="fas fa-check"></i>'; }
+    if (i < n) { d.classList.add('done'); d.textContent = '<i class="fas fa-check"></i>'; }
     else if (i === n) { d.classList.add('active'); d.textContent = i; }
     else d.textContent = i;
     if (i <= 2) $(`ln${i}`).classList.toggle('done', i < n);
@@ -559,26 +537,10 @@ $('s2-next').addEventListener('click', async () => {
   if (!terms) { alert$('s2-err', 'You must agree to the Terms of Service.'); return; }
 
   const btn = $('s2-next'); setLoad(btn, true);
-  const isTrial = new URLSearchParams(window.location.search).get('trial') === '1' ||
-    window.location.hash.includes('trial=1');
-  const { error } = await api('signup', email, pw, { full_name:`${fname} ${lname}`, role: st.role, trial: isTrial });
+  const { error } = await api('signup', email, pw, { full_name:`${fname} ${lname}`, role: st.role });
   setLoad(btn, false);
 
-  if (error) {
-    const msg = error.message || '';
-    if (msg.includes('users_pkey') || msg.includes('duplicate') || msg.includes('already registered') || msg.includes('already exists')) {
-      alert$('s2-err', 'An account with this email already exists. Please log in or check your email for a confirmation link.');
-    } else if (msg.includes('password') || msg.includes('weak')) {
-      alert$('s2-err', 'Password is too weak. Please use at least 8 characters with letters and numbers.');
-    } else if (msg.includes('email')) {
-      alert$('s2-err', 'Please enter a valid email address.');
-    } else if (msg.includes('rate') || msg.includes('too many')) {
-      alert$('s2-err', 'Too many attempts. Please wait a few minutes and try again.');
-    } else {
-      alert$('s2-err', 'Something went wrong. Please try again or contact support.');
-    }
-    return;
-  }
+  if (error) { alert$('s2-err', error.message); return; }
   st.email = email;
 
   /* ── Show "Check your email" screen ── */
@@ -642,19 +604,7 @@ $('l-btn').addEventListener('click', async () => {
   const { error } = await api('login', email, pw);
   setLoad(btn, false);
 
-  if (error) {
-    const msg = error.message || '';
-    if (msg.includes('Invalid login') || msg.includes('invalid') || msg.includes('credentials') || msg.includes('password')) {
-      alert$('l-err', 'Incorrect email or password. Please try again.');
-    } else if (msg.includes('Email not confirmed') || msg.includes('not confirmed')) {
-      alert$('l-err', 'Please confirm your email first. Check your inbox for a verification link.');
-    } else if (msg.includes('rate') || msg.includes('too many')) {
-      alert$('l-err', 'Too many attempts. Please wait a few minutes and try again.');
-    } else {
-      alert$('l-err', 'Unable to log in. Please try again.');
-    }
-    return;
-  }
+  if (error) { alert$('l-err', error.message); return; }
 
   /* Login successful — go straight to dashboard */
   await api('onSuccess', { context: 'login' });
@@ -668,7 +618,7 @@ document.querySelectorAll('[data-provider]').forEach(b =>
 /* ── Resend confirmation ── */
 async function resendConfirmation(email) {
   const { error } = await api('resendOtp', email, 'signup');
-  if (error) { alert$('s2-err', 'Failed to resend email. Please try again in a few minutes.'); return; }
+  if (error) { alert('Failed to resend: ' + error.message); return; }
   alert('Confirmation email resent! Check your inbox.');
 }
 
@@ -685,7 +635,7 @@ if (window.location.search.includes('oauth=1')) {
       /* Use Auth.sb from auth.backend.js — no duplicate declaration */
       const _oSb = window.supabase.createClient(
         'https://rtwbrcbifnowrqpgivma.supabase.co',
-        'sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7'
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc'
       );
       const { data: { user } } = await _oSb.auth.getUser();
       if (!user) { window.location.href = 'traydr-auth.html'; return; }
@@ -713,7 +663,7 @@ if (window.location.search.includes('confirmed=1')) {
   /* Show a success message */
   const alert = document.createElement('div');
   alert.style.cssText = 'background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);color:#6EE7B7;padding:0.75rem 1rem;border-radius:10px;font-size:0.85rem;margin-bottom:1rem;text-align:center';
-  alert.innerHTML = '<i class="fas fa-circle-check"></i> Email confirmed! Please log in to continue.';
+  alert.textContent = '<i class="fas fa-circle-check"></i> Email confirmed! Please log in to continue.';
   const loginForm = document.querySelector('.login-form, #login-form, form');
   if (loginForm) loginForm.prepend(alert);
   else document.querySelector('.wrap, .card, .auth-card')?.prepend(alert);
@@ -741,12 +691,5 @@ if (window.location.search.includes('confirmed=1')) {
     if (tog)   tog.checked = isDark;
     if (thumb) thumb.style.transform = isDark ? 'translateX(20px)' : 'translateX(0)';
   });</script>
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js').catch(() => {});
-    });
-  }
-</script>
 </body>
 </html>

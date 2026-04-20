@@ -901,13 +901,12 @@ $('place-order-btn').addEventListener('click', async () => {
   const total   = +(c.price + fee).toFixed(2);
   const payout  = +(c.price * (1 - feeRate)).toFixed(2);
 
-  if (!c.seller_id) { btn.classList.remove('ld'); btn.disabled = false; showAlert('step3-err','No seller assigned. Contact support.'); return; }
+  if (!c.seller_id) { btn.classList.remove('ld'); btn.disabled = false; showAlert('step3-err','No seller assigned.'); return; }
   if (!user)         { btn.classList.remove('ld'); btn.disabled = false; showAlert('step3-err','Please log in first.'); return; }
   if (c.seller_id === user.id) { btn.classList.remove('ld'); btn.disabled = false; showAlert('step3-err','You cannot buy your own listing.'); return; }
 
   btn.querySelector('.lbl').textContent = 'Opening payment...';
 
-  /* Save checkout data for after payment */
   const checkoutData = {
     buyer_id:      user.id,
     seller_id:     c.seller_id,
@@ -922,29 +921,22 @@ $('place-order-btn').addEventListener('click', async () => {
     package_label: c.package_label,
   };
   sessionStorage.setItem('traydr_pending_checkout', JSON.stringify(checkoutData));
-
   const tx_ref = 'TRADDR-' + Date.now() + '-' + Math.random().toString(36).slice(2,7).toUpperCase();
   sessionStorage.setItem('traydr_tx_ref', tx_ref);
 
-  /* Always use NGN for Nigerian users — required for bank transfer */
   const country  = delivery.country || 'NG';
   const currency = country === 'GH' ? 'GHS' : country === 'KE' ? 'KES' : country === 'ZA' ? 'ZAR' : 'NGN';
-
-  /* Convert to NGN if listing is in USD */
-  const displayAmount = currency === 'NGN' && c.currency !== 'NGN'
-    ? total * 1600  /* approx NGN rate — update as needed */
-    : total;
+  const amount   = total;
 
   try {
     window.FlutterwaveCheckout({
       public_key:      'FLWPUBK-7e690677caf3199951323b1b832003ba-X',
       tx_ref,
-      amount:          displayAmount,
+      amount,
       currency,
-      payment_options: currency === 'NGN'
-        ? 'card,banktransfer,ussd'
-        : currency === 'GHS' ? 'card,mobilemoneymomo'
-        : currency === 'KES' ? 'card,mpesa' : 'card',
+      payment_options: currency === 'NGN' ? 'card,banktransfer,ussd'
+                     : currency === 'GHS' ? 'card,mobilemoneymomo'
+                     : currency === 'KES' ? 'card,mpesa' : 'card',
       customer: {
         email:        user.email,
         name:         delivery.name  || 'TraydR Buyer',
@@ -952,7 +944,7 @@ $('place-order-btn').addEventListener('click', async () => {
       },
       customizations: {
         title:       'TraydR Marketplace',
-        description: c.listing_title || 'Order Payment',
+        description: c.listing_title || 'Secure Payment',
         logo:        window.location.origin + '/logo.png',
       },
       callback: async (response) => {
@@ -962,7 +954,7 @@ $('place-order-btn').addEventListener('click', async () => {
         } else {
           btn.classList.remove('ld'); btn.disabled = false;
           btn.querySelector('.lbl').textContent = 'Place Order & Pay';
-          showAlert('step3-err', 'Payment was not completed. Please try again.');
+          showAlert('step3-err', 'Payment not completed. Please try again.');
         }
       },
       onclose: () => {
@@ -974,67 +966,54 @@ $('place-order-btn').addEventListener('click', async () => {
     console.error('FLW error:', e);
     btn.classList.remove('ld'); btn.disabled = false;
     btn.querySelector('.lbl').textContent = 'Place Order & Pay';
-    showAlert('step3-err', 'Could not open payment. Please try again.');
+    showAlert('step3-err', 'Could not open payment. Please refresh and try again.');
   }
 });
 
 async function handlePaymentSuccess(transaction_id, tx_ref, checkoutData) {
-  console.log('Verifying:', transaction_id, tx_ref);
-  /* Show verifying state */
-  document.querySelectorAll('.step-panel').forEach(p => p.style.display = 'none');
-  document.querySelector('.page') && (document.querySelector('.page').style.minHeight = '60vh');
+  console.log('Verifying payment:', transaction_id);
+  goStep(4);
+  $('success-order-id').textContent = 'Verifying...';
 
   try {
-    const controller = new AbortController();
-    const timeout    = setTimeout(() => controller.abort(), 20000);
-    const res = await fetch(
+    const ctrl = new AbortController();
+    const t    = setTimeout(() => ctrl.abort(), 20000);
+    const res  = await fetch(
       'https://rtwbrcbifnowrqpgivma.supabase.co/functions/v1/quick-api',
       {
         method : 'POST',
-        signal : controller.signal,
+        signal : ctrl.signal,
         headers: {
           'Content-Type' : 'application/json',
           'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc',
         },
-        body: JSON.stringify({
-          action:        'verify',
-          transaction_id,
-          tx_ref,
-          checkout_data: checkoutData,
-        }),
+        body: JSON.stringify({ action: 'verify', transaction_id, tx_ref, checkout_data: checkoutData }),
       }
     );
-    clearTimeout(timeout);
+    clearTimeout(t);
     const data = await res.json();
-    console.log('Verify result:', data);
+    console.log('Verify:', data);
     sessionStorage.removeItem('traydr_pending_checkout');
     sessionStorage.removeItem('traydr_tx_ref');
-    goStep(4);
     $('success-order-id').textContent = data.order_id
       ? '#TRX-' + String(data.order_id).padStart(6,'0')
       : '#TRX-' + tx_ref.slice(-6);
   } catch(e) {
     console.error('Verify error:', e);
-    /* Payment went through — show success, webhook creates order */
     sessionStorage.removeItem('traydr_pending_checkout');
     sessionStorage.removeItem('traydr_tx_ref');
-    goStep(4);
     $('success-order-id').textContent = '#TRX-' + tx_ref.slice(-6);
   }
 }
 
-/* ── Handle Flutterwave redirect return (for mobile/redirect flow) ── */
+/* Handle Flutterwave redirect return */
 (async () => {
-  const urlP           = new URLSearchParams(window.location.search);
-  if (urlP.get('status') === 'successful' || urlP.get('flw') === 'success') {
-    const transaction_id = urlP.get('transaction_id');
-    const tx_ref         = urlP.get('tx_ref') || sessionStorage.getItem('traydr_tx_ref');
-    const checkoutData   = JSON.parse(sessionStorage.getItem('traydr_pending_checkout') || '{}');
-    if (transaction_id && checkoutData.buyer_id) {
-      document.querySelector('.page') && (document.querySelector('.page').innerHTML =
-        '<div style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;text-align:center"><div style="font-size:2.5rem;color:var(--amber)"><i class="fas fa-spinner fa-spin"></i></div><h2 style="font-family:var(--serif);font-size:1.3rem;color:var(--text)">Verifying payment...</h2><p style="color:var(--muted);font-size:0.88rem">Please wait</p></div>');
-      await handlePaymentSuccess(transaction_id, tx_ref, checkoutData);
-    }
+  const p = new URLSearchParams(window.location.search);
+  if (p.get('status') === 'successful' || p.get('flw') === 'success') {
+    const tid  = p.get('transaction_id');
+    const tref = p.get('tx_ref') || sessionStorage.getItem('traydr_tx_ref');
+    const cd   = JSON.parse(sessionStorage.getItem('traydr_pending_checkout') || '{}');
+    if (tid && cd.buyer_id) await handlePaymentSuccess(tid, tref, cd);
   }
 })();
 

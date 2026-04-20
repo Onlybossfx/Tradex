@@ -11,13 +11,13 @@
   <meta property="og:url"         id="og-url"   content="https://traydr.vercel.app/listing.html" />
   <meta property="og:title"       id="og-title" content="TraydR Listing" />
   <meta property="og:description" id="og-desc"  content="Find the best products and services on TraydR." />
-  <meta property="og:image"       id="og-img"   content="https://traydr.vercel.app/logo.png" />
+  <meta property="og:image"       id="og-img"   content="https://traydr.vercel.app/og-image.png" />
   <meta property="og:price:amount"       id="og-price"    content="" />
   <meta property="og:price:currency"     content="USD" />
   <meta name="twitter:card"       content="summary_large_image" />
   <meta name="twitter:title"      id="tw-title" content="TraydR Listing" />
   <meta name="twitter:description" id="tw-desc" content="Find the best products and services on TraydR." />
-  <meta name="twitter:image"      id="tw-img"   content="https://traydr.vercel.app/logo.png" />
+  <meta name="twitter:image"      id="tw-img"   content="https://traydr.vercel.app/og-image.png" />
   <link rel="canonical"           id="canonical" href="https://traydr.vercel.app/listing.html" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F59E0B" />
@@ -87,7 +87,7 @@
     .badge-top  { background: var(--amber); color: #0a0a0a; }
     .badge-best { background: #6366F1; color: var(--text); }
     .badge-new  { background: var(--success); color: var(--text); }
-    .badge-ver  { background: var(--bg3); color: var(--text); border: 1px solid var(--border-md); }
+    .badge-ver  { background: rgba(255,255,255,0.1); color: var(--text); border: 1px solid var(--border-md); }
     .listing-title { font-family: var(--serif); font-size: clamp(1.3rem,5vw,2rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 0.85rem; }
     .listing-stats { display: flex; gap: 1rem; flex-wrap: wrap; }
     .stat-item { display: flex; align-items: center; gap: 0.35rem; font-size: 0.82rem; }
@@ -113,7 +113,7 @@
     .pkg-price { font-family: var(--serif); font-size: 1.8rem; font-weight: 700; color: var(--amber); margin-bottom: 0.25rem; }
     .pkg-note { font-size: 0.78rem; color: var(--muted); margin-bottom: 0.75rem; }
     .pkg-feats { display: flex; flex-direction: column; gap: 0.42rem; margin-bottom: 0.85rem; }
-    .pkg-feat { display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; color: var(--muted); }
+    .pkg-feat { display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; color: rgba(255,255,255,0.65); }
     .pf-check { color: var(--success); font-size: 0.78rem; flex-shrink: 0; }
     .pkg-del { display: flex; align-items: center; gap: 0.5rem; background: var(--bg3); border-radius: 8px; padding: 0.55rem 0.8rem; font-size: 0.82rem; }
     .pkg-del strong { color: var(--text); }
@@ -136,7 +136,7 @@
     @keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
 
     /* description */
-    .desc-body { color: var(--text); font-size: 0.9rem; line-height: 1.8; }
+    .desc-body { color: rgba(255,255,255,0.7); font-size: 0.9rem; line-height: 1.8; }
     .desc-body p { margin-bottom: 0.85rem; }
     .desc-body ul { padding-left: 1.25rem; margin-bottom: 0.85rem; }
     .desc-body li { margin-bottom: 0.35rem; }
@@ -167,7 +167,7 @@
     .rv-name { font-size: 0.85rem; font-weight: 600; }
     .rv-date { font-size: 0.72rem; color: var(--dim); }
     .rv-rating { color: var(--amber); font-size: 0.8rem; flex-shrink: 0; }
-    .rv-text { color: var(--muted); font-size: 0.83rem; line-height: 1.65; }
+    .rv-text { color: rgba(255,255,255,0.65); font-size: 0.83rem; line-height: 1.65; }
     .no-reviews { color: var(--muted); font-size: 0.88rem; text-align: center; padding: 2rem 0; }
 
     /* seller tab */
@@ -180,7 +180,7 @@
     .sf-stat { text-align: center; background: var(--bg3); border-radius: 10px; padding: 0.6rem 0.4rem; }
     .ss-val { font-family: var(--serif); font-size: 1.05rem; font-weight: 700; color: var(--amber); }
     .ss-lbl { font-size: 0.68rem; color: var(--muted); margin-top: 0.12rem; }
-    .sf-bio { color: var(--muted); font-size: 0.83rem; line-height: 1.65; margin-bottom: 1rem; }
+    .sf-bio { color: rgba(255,255,255,0.6); font-size: 0.83rem; line-height: 1.65; margin-bottom: 1rem; }
     .sf-pills { display: flex; gap: 0.4rem; flex-wrap: wrap; }
     .sf-pill { background: var(--bg3); border: 1px solid var(--border-md); color: var(--muted); font-size: 0.73rem; padding: 0.2rem 0.55rem; border-radius: 100px; }
 
@@ -346,43 +346,15 @@
     [data-theme="dark"] .ni.on .lb { color: var(--amber) !important; }
     [data-theme="dark"] .tbl th { background: var(--bg3) !important; color: var(--muted) !important; }
     [data-theme="dark"] .filter-label { color: var(--muted) !important; }
-
-    [data-theme="dark"] .pkg-feat { color: rgba(255,255,255,0.65) !important; }
-    [data-theme="dark"] .desc-body { color: rgba(255,255,255,0.7) !important; }
-    [data-theme="dark"] .rv-text { color: rgba(255,255,255,0.65) !important; }
-    [data-theme="dark"] .sf-bio { color: rgba(255,255,255,0.6) !important; }
-    [data-theme="dark"] .badge-ver { background: rgba(255,255,255,0.1) !important; }
-
-    /* ══════════════════════════════════════
-       MOBILE FIRST — Full Responsive System
-    ══════════════════════════════════════ */
-    * { box-sizing: border-box; }
-    #nav, nav { padding-left: 0.85rem; padding-right: 0.85rem; }
-
-    /* Tables */
-    .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; }
-    .tbl { width: 100%; min-width: 480px; }
-
-    /* Cards */
-    .card, .listing-card { min-width: 0; }
-
-    /* Modals */
-    .mbox { width: calc(100vw - 2rem) !important; max-width: 100% !important; }
-
-    @media (max-width: 480px) {
-      .f2 { grid-template-columns: 1fr !important; }
-      .grid-2 { grid-template-columns: 1fr !important; }
-    }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link rel="icon" type="image/png" href="logo.png">
 </head>
 <body>
 
 <!-- NAV -->
 <nav id="nav">
   <button class="nav-back" onclick="history.back()">←</button>
-  <a href="index.html" class="nav-logo"><img src="logo.png" alt="TraydR" style="height:64px;width:auto;display:block;object-fit:contain"></a>
+  <a href="index.html" class="nav-logo"><span>TraydR</span><i></i></a>
   <div class="nav-right">
     <button class="btn-sm"       id="nav-login"  onclick="window.location.href='traydr-auth.html'" style="display:none">Log In</button>
     <button class="btn-amber-sm" id="nav-signup" onclick="window.location.href='traydr-auth.html#signup'" style="display:none">Sign Up</button>
@@ -925,20 +897,8 @@ $('save-btn-d').addEventListener('click', doSave);
 
 /* ── Share ── */
 function doShare() {
-  const shareData = {
-    title: listing?.title || 'Check this out on TraydR',
-    text:  `${listing?.title} — ₦${(listing?.price||0).toLocaleString()} on TraydR Marketplace`,
-    url:   window.location.href,
-  };
-  if (navigator.share) {
-    navigator.share(shareData).catch(() => {});
-  } else {
-    navigator.clipboard.writeText(window.location.href).then(() => {
-      showAlert('a-info', 'Link copied to clipboard!', 'info');
-    }).catch(() => {
-      showAlert('a-info', 'Link: ' + window.location.href, 'info');
-    });
-  }
+  if (navigator.share) navigator.share({ title: listing?.title, url: window.location.href });
+  else { navigator.clipboard.writeText(window.location.href); showAlert('a-info','Link copied!','info'); }
 }
 $('share-btn-d').addEventListener('click', doShare);
 
@@ -984,12 +944,5 @@ loadListing();
     if (tog)   tog.checked = isDark;
     if (thumb) thumb.style.transform = isDark ? 'translateX(20px)' : 'translateX(0)';
   });</script>
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js').catch(() => {});
-    });
-  }
-</script>
 </body>
 </html>
