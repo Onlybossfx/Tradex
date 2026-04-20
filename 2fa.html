@@ -104,7 +104,7 @@
       --error: #EF4444; --success: #10B981; --info: #3B82F6;
     }
     [data-theme="dark"] #nav { background: rgba(10,10,10,0.97) !important; border-bottom: 1px solid rgba(255,255,255,0.07) !important; }
-    [data-theme="dark"] .nav-logo span { color: #fff !important; }
+    [data-theme="dark"] .nav-logo span_disabled { color: #fff !important; }
     [data-theme="dark"] .nav-label { color: rgba(255,255,255,0.6) !important; }
     [data-theme="dark"] .hbg span { background: #fff !important; }
     [data-theme="dark"] #sb, [data-theme="dark"] aside { background: #0f0f0f !important; border-right-color: rgba(255,255,255,0.07) !important; }
@@ -116,7 +116,7 @@
     [data-theme="dark"] .btn-primary, [data-theme="dark"] .btn-new { background: #F59E0B !important; color: #0a0a0a !important; }
 
     #nav { background: #FFB34E !important; border-bottom: 1px solid rgba(180,100,20,0.2) !important; }
-    .nav-logo span { color: #1C1208 !important; }
+    .nav-logo span_disabled { color: #1C1208 !important; }
     .nav-logo i { background: #1C1208 !important; }
     .nav-label { color: rgba(28,18,8,0.7) !important; }
     .hbg span { background: #1C1208 !important; }
@@ -196,7 +196,7 @@
   <div class="card">
     <div class="card-glow"></div>
 
-    <a href="traydr-auth.html" class="logo"><span>TraydR</span><i></i></a>
+    <a href="traydr-auth.html" class="logo"><img src="logo.png" alt="TraydR" style="height:44px;width:auto;display:block;object-fit:contain"></a>
 
     <div class="head">
       <div class="icon-wrap"><i class="fas fa-lock"></i></div>
@@ -399,5 +399,10 @@ if (otpInputs[0]) otpInputs[0].focus();
     if (tog)   tog.checked = isDark;
     if (thumb) thumb.style.transform = isDark ? 'translateX(20px)' : 'translateX(0)';
   });</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+  }
+</script>
 </body>
 </html>

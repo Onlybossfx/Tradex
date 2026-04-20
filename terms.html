@@ -30,7 +30,7 @@
 </head>
 <body>
   <nav>
-    <a href="index.html" class="nav-logo"><img src="logo.png" alt="TraydR"></a>
+    <a href="index.html" class="nav-logo"><img src="logo.png" alt="TraydR" style="height:44px;width:auto;display:block;object-fit:contain"></a>
     <a href="index.html" class="nav-back"><i class="fas fa-arrow-left"></i> Back</a>
   </nav>
   <div class="container">
@@ -68,5 +68,10 @@
     </div>
   </div>
   <script>(function(){const t=localStorage.getItem('traydr_theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+  }
+</script>
 </body>
 </html>
