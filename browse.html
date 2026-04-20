@@ -23,6 +23,7 @@
   <script src="auth.guard.js"></script>
   <script src="auth.backend.js"></script>
   <script src="listings.js"></script>
+  <script src="currency.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -542,7 +543,7 @@ function renderCard(l, idx) {
             <span class="rv">${l.rating || '—'}</span>
             <span class="rc">(${l.review_count || 0})</span>
           </div>
-          <div class="card-price"><small>from</small>$${l.price}</div>
+          <div class="card-price">${window.Currency ? Currency.format(l.price) : '$'+l.price}</div>
         </div>
       </div>
     </a>`;
@@ -833,8 +834,29 @@ async function loadSaved() {
       if (el) el.textContent = n;
     });
   }
+
+  /* Init currency then render */
+  await Currency.init();
+  const _sel = $('currency-select');
+  if (_sel) {
+    const _saved = localStorage.getItem('traydr_user_currency');
+    if (_saved) Currency.set(_saved);
+    _sel.value = Currency.getCurrency();
+    const _lbl = $('currency-rate-label');
+    if (_lbl && Currency.getCurrency() !== 'USD') {
+      _lbl.textContent = `1 USD ≈ ${Currency.format(1)}`;
+    }
+  }
   render();
 })();
+
+function changeCurrency(code) {
+  Currency.set(code);
+  localStorage.setItem('traydr_user_currency', code);
+  const lbl = $('currency-rate-label');
+  if (lbl) lbl.textContent = code !== 'USD' ? `1 USD ≈ ${Currency.format(1)}` : '';
+  render();
+}
 </script>
 <script>
   (function() {

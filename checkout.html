@@ -280,6 +280,8 @@
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <script src="https://checkout.flutterwave.com/v3.js"></script>
+  <script src="currency.js"></script>
+  <script src="https://checkout.flutterwave.com/v3.js"></script>
 </head>
 <body>
 
@@ -701,10 +703,10 @@ function renderSummary() {
   $('sum-title').textContent    = c.listing_title;
   $('sum-seller').textContent   = `by ${c.seller_name}`;
   $('sum-pkg').textContent      = c.package_label;
-  $('sum-price').textContent    = `$${fmt(c.price)}`;
-  $('sum-fee').textContent      = `$${fmt(fee)}`;
+  $('sum-price').textContent    = window.Currency ? Currency.format(c.price) : `$${fmt(c.price)}`;
+  $('sum-fee').textContent      = window.Currency ? Currency.format(fee) : `$${fmt(fee)}`;
   $('sum-delivery').textContent = `${c.delivery_days} day${c.delivery_days!==1?'s':''}`;
-  $('sum-total').textContent    = `$${fmt(total)}`;
+  $('sum-total').textContent    = window.Currency ? Currency.format(total) : `$${fmt(total)}`;
   $('confirm-price').textContent= fmt(total);
 }
 
@@ -907,6 +909,23 @@ $('place-order-btn').addEventListener('click', async () => {
 
   btn.querySelector('.lbl').textContent = 'Opening payment...';
 
+  /* Detect currency from delivery country */
+  const country  = delivery.country || Currency.getCountry() || 'NG';
+  const currency = country === 'GH' ? 'GHS'
+                 : country === 'KE' ? 'KES'
+                 : country === 'ZA' ? 'ZAR'
+                 : country === 'GB' ? 'GBP'
+                 : country === 'US' ? 'USD'
+                 : country === 'IN' ? 'INR'
+                 : country === 'CN' ? 'CNY' : 'NGN';
+
+  /* Convert USD amount to local currency for Flutterwave */
+  Currency.set(currency);
+  const rate        = Currency.getRateToUSD();
+  const localTotal  = +(total * rate).toFixed(2);
+  const localFee    = +(fee   * rate).toFixed(2);
+  const localPayout = +(payout* rate).toFixed(2);
+
   const checkoutData = {
     buyer_id:      user.id,
     seller_id:     c.seller_id,
@@ -915,7 +934,9 @@ $('place-order-btn').addEventListener('click', async () => {
     listing_image: c.listing_image,
     seller_name:   c.seller_name,
     buyer_name:    delivery.name,
-    amount:        total,
+    amount:        total,           /* store in USD */
+    local_amount:  localTotal,      /* for display */
+    currency,
     platform_fee:  fee,
     seller_payout: payout,
     package_label: c.package_label,
@@ -924,19 +945,16 @@ $('place-order-btn').addEventListener('click', async () => {
   const tx_ref = 'TRADDR-' + Date.now() + '-' + Math.random().toString(36).slice(2,7).toUpperCase();
   sessionStorage.setItem('traydr_tx_ref', tx_ref);
 
-  const country  = delivery.country || 'NG';
-  const currency = country === 'GH' ? 'GHS' : country === 'KE' ? 'KES' : country === 'ZA' ? 'ZAR' : 'NGN';
-  const amount   = total;
-
   try {
     window.FlutterwaveCheckout({
       public_key:      'FLWPUBK-7e690677caf3199951323b1b832003ba-X',
       tx_ref,
-      amount,
+      amount:          localTotal,
       currency,
       payment_options: currency === 'NGN' ? 'card,banktransfer,ussd'
                      : currency === 'GHS' ? 'card,mobilemoneymomo'
-                     : currency === 'KES' ? 'card,mpesa' : 'card',
+                     : currency === 'KES' ? 'card,mpesa'
+                     : 'card',
       customer: {
         email:        user.email,
         name:         delivery.name  || 'TraydR Buyer',
@@ -966,7 +984,7 @@ $('place-order-btn').addEventListener('click', async () => {
     console.error('FLW error:', e);
     btn.classList.remove('ld'); btn.disabled = false;
     btn.querySelector('.lbl').textContent = 'Place Order & Pay';
-    showAlert('step3-err', 'Could not open payment. Please refresh and try again.');
+    showAlert('step3-err', 'Could not open payment. Please try again.');
   }
 });
 
@@ -974,7 +992,6 @@ async function handlePaymentSuccess(transaction_id, tx_ref, checkoutData) {
   console.log('Verifying payment:', transaction_id);
   goStep(4);
   $('success-order-id').textContent = 'Verifying...';
-
   try {
     const ctrl = new AbortController();
     const t    = setTimeout(() => ctrl.abort(), 20000);
@@ -1008,16 +1025,21 @@ async function handlePaymentSuccess(transaction_id, tx_ref, checkoutData) {
 
 /* Handle Flutterwave redirect return */
 (async () => {
-  const p = new URLSearchParams(window.location.search);
-  if (p.get('status') === 'successful' || p.get('flw') === 'success') {
+  const p    = new URLSearchParams(window.location.search);
+  const stat = p.get('status');
+  const flw  = p.get('flw');
+  if (stat === 'successful' || flw === 'success') {
     const tid  = p.get('transaction_id');
     const tref = p.get('tx_ref') || sessionStorage.getItem('traydr_tx_ref');
     const cd   = JSON.parse(sessionStorage.getItem('traydr_pending_checkout') || '{}');
-    if (tid && cd.buyer_id) await handlePaymentSuccess(tid, tref, cd);
+    if (tid && cd.buyer_id) {
+      document.querySelector('.page').innerHTML = '<div style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;text-align:center"><div style="font-size:2.5rem;color:var(--amber)"><i class=\"fas fa-spinner fa-spin\"></i></div><h2 style="font-family:var(--serif);font-size:1.3rem;color:var(--text)">Verifying payment...</h2><p style="color:var(--muted);font-size:0.88rem">Please wait</p></div>';
+      await handlePaymentSuccess(tid, tref, cd);
+    }
   }
 })();
 
-/* ── Login prompt/* ── Login prompt (shown when user hits checkout without being logged in) ── */
+/* ── Login prompt/* ── Login prompt/* ── Login prompt (shown when user hits checkout without being logged in) ── */
 function showAlert(id, msg) {
   const el = $(id); el.classList.add('on');
   el.querySelectorAll('span')[1].textContent = msg;

@@ -27,6 +27,7 @@
   <script src="auth.guard.js"></script>
   <script src="auth.backend.js"></script>
   <script src="listings.js"></script>
+  <script src="currency.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -515,6 +516,13 @@ function getPackages(l) {
 }
 
 /* ── Load listing from Supabase ── */
+/* Init currency on listing page */
+(async () => {
+  await Currency.init();
+  const saved = localStorage.getItem('traydr_user_currency');
+  if (saved) Currency.set(saved);
+})();
+
 async function loadListing() {
   /* sync nav first — non-blocking */
   AuthGuard.syncNav({
@@ -656,15 +664,15 @@ function renderPkg() {
   document.querySelectorAll('[data-pkg-d]').forEach((t,i) => { t.textContent = pkgs[i]?.label || t.textContent; });
 
   /* mobile */
-  $('pkg-price').textContent = `$${p.price}`;
+  $('pkg-price').textContent = window.Currency ? Currency.format(p.price) : `$${p.price}`;
   $('pkg-note').textContent  = p.note;
   $('pkg-feats').innerHTML   = p.feats.map(f=>`<div class="pkg-feat"><span class="pf-check"><i class="fas fa-check"></i></span>${f}</div>`).join('');
   $('pkg-days').textContent  = `${p.days} day${p.days!==1?'s':''} delivery`;
   $('pkg-revs').textContent  = ` · ${revStr}`;
-  $('bar-amount').textContent= `$${p.price}`;
+  $('bar-amount').textContent = window.Currency ? Currency.format(p.price) : `$${p.price}`;
 
   /* desktop */
-  $('pkg-price-d').textContent = `$${p.price}`;
+  $('pkg-price-d').textContent = window.Currency ? Currency.format(p.price) : `$${p.price}`;
   $('pkg-note-d').textContent  = p.note;
   $('pkg-feats-d').innerHTML   = p.feats.map(f=>`<div class="pkg-feat"><span class="pf-check"><i class="fas fa-check"></i></span>${f}</div>`).join('');
   $('pkg-days-d').textContent  = `${p.days} day${p.days!==1?'s':''} delivery`;
