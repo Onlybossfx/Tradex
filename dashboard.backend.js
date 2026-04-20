@@ -6,7 +6,7 @@
 */
 ;(function() {
 const _URL  = 'https://rtwbrcbifnowrqpgivma.supabase.co';
-const _ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc';
+const _ANON = 'sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7';
 const { createClient } = supabase;
 const _dbSb = createClient(_URL, _ANON);
 const _fmt = n => Number(n||0).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -75,6 +75,17 @@ window.DB = {
     const { error } = await _dbSb.from('listings').update({ status }).eq('id', id).eq('seller_id', userId);
     return { error };
   },
+  uploadAvatar: async (userId, file) => {
+    const ext  = file.name.split('.').pop();
+    const path = `avatars/${userId}.${ext}`;
+    const { error } = await _dbSb.storage.from('listings').upload(path, file, { upsert: true });
+    if (error) return { url: null, error };
+    const { data: { publicUrl } } = _dbSb.storage.from('listings').getPublicUrl(path);
+    /* Save avatar_url to users table */
+    await _dbSb.from('users').update({ avatar_url: publicUrl }).eq('id', userId);
+    return { url: publicUrl, error: null };
+  },
+
   uploadListingImage: async (userId, file) => {
     const ext  = file.name.split('.').pop();
     const path = `${userId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
@@ -86,13 +97,19 @@ window.DB = {
 
   /* ══ ORDERS ══ */
   getSellerOrders: async (userId) => {
+    /* Exclude 'pending' — these are unpaid, payment not completed yet */
     const { data, error } = await _dbSb.from('orders').select('*')
-      .eq('seller_id', userId).order('created_at', { ascending: false });
+      .eq('seller_id', userId)
+      .neq('status', 'pending')
+      .order('created_at', { ascending: false });
     return { data: data || [], error };
   },
   getBuyerOrders: async (userId) => {
+    /* Exclude 'pending' — buyer shouldn't see unpaid ghost orders */
     const { data, error } = await _dbSb.from('orders').select('*')
-      .eq('buyer_id', userId).order('created_at', { ascending: false });
+      .eq('buyer_id', userId)
+      .neq('status', 'pending')
+      .order('created_at', { ascending: false });
     return { data: data || [], error };
   },
   createOrder: async (payload) => {
@@ -199,7 +216,7 @@ window.DB = {
         last_at: msgs?.[0]?.created_at, unread: unread || 0,
       };
     }));
-    return { data: convs.filter(c => c.last_at), error: null };
+    return { data: convs, error: null }; /* show all orders, not just ones with messages */
   },
   getMessages: async (orderId) => {
     const { data, error } = await _dbSb.from('messages').select('*')
@@ -247,6 +264,19 @@ window.DB = {
       .insert({ order_id: orderId, listing_id: listingId, reviewer_id: reviewerId, reviewee_id: revieweeId, rating, comment })
       .select().single();
     if (!error) {
+      /* Update listing avg rating */
+      const { data: allRevs } = await _dbSb.from('reviews')
+        .select('rating').eq('listing_id', listingId);
+      if (allRevs?.length) {
+        const avg = allRevs.reduce((s, r) => s + r.rating, 0) / allRevs.length;
+        await _dbSb.from('listings').update({
+          rating:       Math.round(avg * 10) / 10,
+          review_count: allRevs.length,
+        }).eq('id', listingId);
+      }
+      /* Also mark order as reviewed so buyer can't double review */
+      await _dbSb.from('orders').update({ reviewed: true }).eq('id', orderId);
+
       /* get listing + seller info for notification */
       const { data: listing } = await _dbSb.from('listings').select('title').eq('id', listingId).single();
       const { data: reviewer } = await _dbSb.from('users').select('full_name').eq('id', reviewerId).single();
@@ -312,8 +342,63 @@ window.DB = {
       .select().single();
     return { data, error };
   },
+
+  /* ══ SUBSCRIPTION / PLAN ══ */
+  getPlan: async (userId) => {
+    const { data } = await _dbSb.from('users')
+      .select('plan, trial_started, plan_expires')
+      .eq('id', userId).single();
+    if (!data) return { plan: 'free', isTrialActive: false, daysLeft: 0 };
+    const plan     = data.plan || 'free';
+    const expires  = data.plan_expires ? new Date(data.plan_expires) : null;
+    const now      = new Date();
+    const expired  = expires && expires < now;
+    /* Auto-downgrade expired trials */
+    if (expired && plan !== 'free') {
+      await _dbSb.from('users').update({ plan: 'free', plan_expires: null }).eq('id', userId);
+      return { plan: 'free', isTrialActive: false, daysLeft: 0 };
+    }
+    const daysLeft = expires ? Math.max(0, Math.ceil((expires - now) / 86400000)) : 0;
+    return { plan, isTrialActive: plan === 'pro' && !!data.trial_started && !expired, daysLeft };
+  },
+
+  startTrial: async (userId) => {
+    const trialEnd = new Date(Date.now() + 14 * 86400000).toISOString();
+    const { error } = await _dbSb.from('users').update({
+      plan:          'pro',
+      trial_started: new Date().toISOString(),
+      plan_expires:  trialEnd,
+    }).eq('id', userId);
+    return { error };
+  },
+
+  getPlanFee: (plan) => {
+    return { free: 0.08, pro: 0.05, business: 0.03 }[plan] || 0.08;
+  },
+
+  canCreateListing: async (userId) => {
+    const { plan } = await DB.getPlan(userId);
+    if (plan !== 'free') return { allowed: true, reason: '' };
+    /* Free plan: max 5 listings */
+    const { count } = await _dbSb.from('listings')
+      .select('*', { count: 'exact', head: true })
+      .eq('seller_id', userId)
+      .neq('status', 'deleted');
+    if ((count || 0) >= 5) {
+      return { allowed: false, reason: 'Free plan allows up to 5 listings. Upgrade to Pro for unlimited.' };
+    }
+    return { allowed: true, reason: '' };
+  },
+
   savePayoutMethod: async (userId, method, account) => {
-    const { error } = await _dbSb.from('users').update({ payout_method: method, payout_account: account }).eq('id', userId);
+    /* Update user profile with payout info */
+    const { error } = await _dbSb.from('users')
+      .update({
+        payout_method:  method,
+        payout_account: account,
+        updated_at:     new Date().toISOString(),
+      })
+      .eq('id', userId);
     return { error };
   },
   getPayoutMethod: async (userId) => {
@@ -489,7 +574,14 @@ window.DB = {
         .select('*, orders(listing_title), buyer:buyer_id(email,full_name), seller:seller_id(email,full_name)')
         .eq('id',id).single();
       await _dbSb.from('disputes').update({status,resolution,resolved_at:new Date().toISOString()}).eq('id',id);
-      if (dispute?.order_id) await _dbSb.from('orders').update({status:'complete'}).eq('id',dispute.order_id);
+      if (dispute?.order_id) {
+        /* Winner gets funds — update order status + payout flag */
+        const finalStatus = winner === 'buyer' ? 'refunded' : 'complete';
+        await _dbSb.from('orders').update({
+          status:     finalStatus,
+          resolved_at: new Date().toISOString(),
+        }).eq('id', dispute.order_id);
+      }
       const orderRef=`#TRX-${String(dispute?.order_id||0).padStart(6,'0')}`;
       /* notify + email both parties */
       if (dispute?.buyer_id) {
@@ -520,8 +612,9 @@ window.DB = {
       }
       return {error};
     },
-    updateListingStatus: async (listingId, status) => {
-      const {error}=await _dbSb.from('listings').update({status}).eq('id',listingId);
+    updateListingStatus: async (listingId, status, extra={}) => {
+      const update = status ? { status, ...extra } : { ...extra };
+      const {error}=await _dbSb.from('listings').update(update).eq('id',listingId);
       return {error};
     },
     getPayouts: async ({status=''}={}) => {

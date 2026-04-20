@@ -185,8 +185,8 @@
     .msg-row { display: flex; gap: 0.5rem; align-items: flex-end; }
     .msg-row.me { flex-direction: row-reverse; }
     .msg-av2 { width: 26px; height: 26px; border-radius: 50%; background: var(--bg3); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; color: var(--muted); flex-shrink: 0; }
-    .msg-bub { max-width: 68%; background: var(--bg3); border: 1px solid var(--border); border-radius: 11px 11px 11px 3px; padding: 0.6rem 0.85rem; font-size: 0.83rem; line-height: 1.55; color: rgba(255,255,255,0.85); }
-    .msg-row.me .msg-bub { background: var(--amber-dim); border-color: rgba(245,158,11,0.22); border-radius: 11px 11px 3px 11px; }
+    .msg-bub { max-width: 68%; background: #fff; border: 1px solid var(--border-md); border-radius: 11px 11px 11px 3px; padding: 0.6rem 0.85rem; font-size: 0.83rem; line-height: 1.55; color: #1C1208; }
+    .msg-row.me .msg-bub { background: #FFB34E; border-color: #FFB34E; border-radius: 11px 11px 3px 11px; color: #1C1208 !important; }
     .msg-t { font-size: 0.65rem; color: var(--dim); margin-top: 0.25rem; }
     .msg-row.me .msg-t { text-align: left; }
     .mw-input { padding: 0.85rem 1rem; border-top: 1px solid var(--border); background: var(--bg2); display: flex; gap: 0.5rem; align-items: flex-end; }
@@ -422,8 +422,114 @@
     [data-theme="dark"] .ni.on .lb { color: var(--amber) !important; }
     [data-theme="dark"] .tbl th { background: var(--bg3) !important; color: var(--muted) !important; }
     [data-theme="dark"] .filter-label { color: var(--muted) !important; }
+
+    [data-theme="dark"] .msg-bub { background: #1e1e1e !important; border-color: rgba(255,255,255,0.1) !important; color: rgba(255,255,255,0.85) !important; }
+    [data-theme="dark"] .msg-row.me .msg-bub { background: #F59E0B !important; border-color: #F59E0B !important; color: #0a0a0a !important; }
+
+    /* ══════════════════════════════════════
+       MOBILE FIRST — Full Responsive System
+    ══════════════════════════════════════ */
+
+    /* ── Base: everything stacks on mobile ── */
+    * { box-sizing: border-box; }
+
+    #nav { padding: 0 0.85rem; }
+    #main { padding: 1rem 0.85rem; overflow-x: hidden; }
+
+    /* ── Stat/overview cards: 2 col, no overflow ── */
+    .sg { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .sc { min-width: 0; word-break: break-word; }
+    .sc-val { font-size: 1.45rem; }
+
+    /* ── Tables: fully scrollable, sticky header ── */
+    .tbl-wrap { overflow-x: auto; overflow-y: auto; -webkit-overflow-scrolling: touch; max-height: 65vh; border-radius: 8px; }
+    .tbl { width: 100%; min-width: 520px; border-collapse: collapse; }
+    .tbl thead th { position: sticky; top: 0; background: var(--bg2); z-index: 2; }
+    .tbl td, .tbl th { white-space: nowrap; padding: 0.65rem 0.6rem; }
+    .tbl-title { max-width: 140px; }
+
+    /* ── Listings grid ── */
+    .lg { grid-template-columns: 1fr 1fr; }
+    .listing-card { min-width: 0; }
+
+    /* ── Chart box ── */
+    .chart-box { overflow-x: auto; }
+
+    /* ── Panel header ── */
+    .ph { padding: 1rem; }
+    .ph h1 { font-size: 1.25rem; }
+
+    /* ── Message layout ── */
+    .ml { height: 70vh; }
+    .ml-list { max-height: 220px; }
+    .msg-bub { max-width: 85%; font-size: 0.8rem; }
+
+    /* ── Settings max-width ── */
+    #panel-settings > div { max-width: 100% !important; }
+    .pcard { padding: 1rem; }
+
+    /* ── Nav: tighter ── */
+    .nav-logo img { height: 44px !important; }
+    .btn-new { font-size: 0.78rem; padding: 0.42rem 0.7rem; }
+
+    /* ── Modals ── */
+    .mo .mbox { width: calc(100vw - 2rem) !important; max-width: 100% !important; padding: 1.25rem !important; margin: 1rem; }
+
+    /* ── Earnings ── */
+    .eg { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+
+    /* ── 480px: single col where needed ── */
+    @media (max-width: 480px) {
+      .eg { grid-template-columns: 1fr; }
+      .lg { grid-template-columns: 1fr; }
+      .f2col { grid-template-columns: 1fr !important; }
+      .pgrid { grid-template-columns: 1fr !important; }
+      .tbl-title { max-width: 110px; }
+      .sc-val { font-size: 1.3rem; }
+      .nav-logo img { height: 38px !important; }
+      .mbox { padding: 1rem !important; }
+      .ph h1 { font-size: 1.1rem; }
+    }
+
+    /* ── 360px: very small phones ── */
+    @media (max-width: 360px) {
+      #main { padding: 0.75rem 0.6rem; }
+      .sg { gap: 0.5rem; }
+      .sc { padding: 0.75rem; }
+      .sc-val { font-size: 1.1rem; }
+    }
+
+    /* ── Panel header fix — not hidden under nav ── */
+    .ph { padding: 0.5rem 0 1.25rem; margin-bottom: 1.25rem; }
+    .ph h1 { font-size: clamp(1.2rem, 4vw, 1.75rem); }
+    .ph p { font-size: 0.82rem; }
+    #main { padding-top: 1.25rem; }
+
+    @media (max-width: 900px) {
+      /* On mobile, main starts after nav */
+      #main { padding-top: calc(var(--nh) + 1rem); }
+      .ph { text-align: left; }
+      .ph h1 { font-size: 1.2rem; }
+    }
+
+    @media (max-width: 480px) {
+      #main { padding-top: calc(var(--nh) + 0.75rem); padding-left: 0.85rem; padding-right: 0.85rem; }
+      .ph h1 { font-size: 1.1rem; }
+      .ph p { font-size: 0.78rem; }
+    }
+
+    /* ── Plan badge ── */
+    .plan-badge { display:inline-flex;align-items:center;gap:0.3rem;padding:0.2rem 0.6rem;border-radius:100px;font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em; }
+    .plan-badge.free { background:var(--bg3);color:var(--muted); }
+    .plan-badge.pro { background:rgba(194,105,10,0.15);color:var(--amber);border:1px solid rgba(194,105,10,0.3); }
+    .plan-badge.business { background:rgba(99,102,241,0.1);color:#6366F1;border:1px solid rgba(99,102,241,0.3); }
+    .plan-badge.trial { background:rgba(16,185,129,0.1);color:#10B981;border:1px solid rgba(16,185,129,0.3); }
+    .trial-banner { background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:0.75rem 1rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+    .trial-banner p { font-size:0.82rem;color:var(--text); }
+    .trial-banner strong { color:#10B981; }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="icon" type="image/png" href="logo.png">
 </head>
 <body>
 
@@ -433,13 +539,14 @@
 <!-- NAV -->
 <nav id="nav">
   <button class="hbg" id="hbg"><span></span><span></span><span></span></button>
-  <a href="index.html" class="nav-logo"><span>TraydR</span><i></i></a>
+  <a href="index.html" class="nav-logo"><img src="logo.png" alt="TraydR" style="height:64px;width:auto;display:block;object-fit:contain"></a>
   <div class="nav-sep"></div>
   <span class="nav-label">Seller Dashboard</span>
   <div class="nav-right">
     <button class="btn-new" onclick="openModal()">+ New Listing</button>
     <div class="notif-btn" id="notif-btn"><span><i class="fas fa-bell"></i></span><div class="ndot" id="ndot" style="display:none"></div></div>
-    <div class="nav-av" id="nav-av">S</div>
+    <div id="plan-badge"></div><div class="nav-av" id="nav-av">S</div>
+  <div id="plan-badge" style="display:none;font-size:0.65rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:100px;background:var(--amber);color:#fff;flex-shrink:0"></div>
   </div>
 </nav>
 
@@ -495,7 +602,7 @@
       </div>
     </div>
     <div class="sh"><h2>Recent Orders</h2><a onclick="switchP('orders')">View all →</a></div>
-    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Listing</th><th>Buyer</th><th>Status</th><th>Amount</th><th>Date</th></tr></thead><tbody id="ov-orders"></tbody></table></div>
+    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Listing</th><th>Buyer</th><th>Status</th><th>Amount</th><th>Date</th></tr></thead><tbody id="ov-orders"></tbody></table></div>
   </div>
 
   <!-- LISTINGS -->
@@ -513,7 +620,7 @@
   <!-- ORDERS -->
   <div class="panel" id="panel-orders">
     <div class="ph"><div><h1>Orders</h1><p>Manage and fulfil customer orders.</p></div></div>
-    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Listing</th><th>Buyer</th><th>Status</th><th>Amount</th><th>Date</th><th>Action</th></tr></thead><tbody id="all-orders"></tbody></table></div>
+    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Listing</th><th>Buyer</th><th>Status</th><th>Amount</th><th>Date</th><th>Action</th></tr></thead><tbody id="all-orders"></tbody></table></div>
   </div>
 
   <!-- MESSAGES -->
@@ -542,7 +649,7 @@
       <button class="btn-payout" id="payout-btn">Request Payout</button>
     </div>
     <div class="sh"><h2>Transaction History</h2></div>
-    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Description</th><th>Type</th><th>Amount</th><th>Date</th></tr></thead><tbody id="tx-body"></tbody></table></div>
+    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Description</th><th>Type</th><th>Amount</th><th>Date</th></tr></thead><tbody id="tx-body"></tbody></table></div>
   </div>
 
   <!-- PROFILE -->
@@ -551,7 +658,8 @@
     <div class="pgrid">
       <div class="pcard">
         <h3>Personal Info</h3>
-        <div class="av-row"><div class="av-c" id="pav">S</div><div><div style="font-size:0.84rem;font-weight:600;margin-bottom:0.28rem" id="pav-name">Your Name</div><button style="background:var(--bg3);border:1px solid var(--border-md);color:var(--muted);padding:0.32rem 0.7rem;border-radius:6px;font-size:0.74rem">Change photo</button></div></div>
+        <div class="av-row"><div class="av-c" id="pav">S</div><div><div style="font-size:0.84rem;font-weight:600;margin-bottom:0.28rem" id="pav-name">Your Name</div><input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="uploadAvatar(this)">
+<button style="background:var(--bg3);border:1px solid var(--border-md);color:var(--muted);padding:0.32rem 0.7rem;border-radius:6px;font-size:0.74rem;cursor:pointer" onclick="document.getElementById('avatar-input').click()"><i class="fas fa-camera"></i> Change photo</button></div></div>
         <div class="frow"><label>Full Name</label><input class="finp" id="pf-name" placeholder="Your name" /></div>
         <div class="frow"><label>Email</label><input class="finp" id="pf-email" disabled /></div>
         <div class="frow"><label>Location</label><input class="finp" id="pf-loc" placeholder="City, Country" /></div>
@@ -634,14 +742,31 @@
         <div class="frow" style="margin:0 0 0.75rem">
           <label>Preferred method</label>
           <select class="finp" id="payout-method-sel">
-            <option value="stripe">Stripe (USD / EUR / GBP)</option>
-            <option value="flutterwave">Flutterwave (NGN / GHS / KES)</option>
-            <option value="payoneer">Payoneer</option>
+            <optgroup label="Mobile Money / Wallets">
+              <option value="opay">OPay</option>
+              <option value="palmpay">PalmPay</option>
+              <option value="flutterwave">Flutterwave (NGN / GHS / KES)</option>
+              <option value="momo">MTN MoMo</option>
+            </optgroup>
+            <optgroup label="Nigerian Banks">
+              <option value="first_bank">First Bank</option>
+              <option value="wema">Wema Bank (ALAT)</option>
+              <option value="gtb">GTBank</option>
+              <option value="uba">UBA</option>
+              <option value="zenith">Zenith Bank</option>
+              <option value="access">Access Bank</option>
+              <option value="sterling">Sterling Bank</option>
+            </optgroup>
+            <optgroup label="International">
+              <option value="stripe">Stripe (USD / EUR / GBP)</option>
+              <option value="payoneer">Payoneer</option>
+              <option value="paypal">PayPal</option>
+            </optgroup>
           </select>
         </div>
         <div class="frow" style="margin:0 0 0.75rem">
-          <label>Account / IBAN / Phone</label>
-          <input class="finp" id="payout-account-inp" placeholder="Your account number, IBAN or phone" />
+          <label>Account Number / Phone / Email</label>
+          <input class="finp" id="payout-account-inp" placeholder="e.g. 0901234567 or user@email.com" />
         </div>
         <button class="btn-submit" id="save-payout-btn"><span class="lbl">Save Payout Info</span></button>
       </div>
@@ -681,7 +806,7 @@
       <div class="sc"><div class="sc-lbl">⭐ Avg Rating</div><div class="sc-val a" id="a-rate">—</div><div class="sc-note">across all listings</div></div>
     </div>
     <div class="sh" style="margin-top:1rem"><h2>Listing Performance</h2></div>
-    <div style="overflow-x:auto">
+    <div class="tbl-wrap">
       <table class="tbl" id="analytics-tbl">
         <thead><tr><th>Listing</th><th>Status</th><th>Views</th><th>Orders</th><th>Rating</th><th>Revenue</th></tr></thead>
         <tbody id="analytics-body"><tr><td colspan="6" style="color:var(--dim);text-align:center;padding:1.5rem 0">Loading...</td></tr></tbody>
@@ -1266,6 +1391,23 @@ $('save-payout-btn')?.addEventListener('click', async () => {
 async function loadPayoutMethod() {
   const data = await DB.getPayoutMethod(U.id);
   if (data.payout_method)  { const el=$('payout-method-sel');  if(el) el.value=data.payout_method; }
+  if (data.avatar_url) {
+    const pav = $('pav');
+    if (pav) pav.innerHTML = `<img src="${data.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+  }
+  /* Show plan badge */
+  const planInfo = await DB.getPlan(U.id);
+  const badgeEl  = document.getElementById('plan-badge');
+  if (badgeEl) {
+    const cls = planInfo.isTrialActive ? 'trial' : planInfo.plan;
+    const lbl = planInfo.isTrialActive ? `Pro Trial — ${planInfo.daysLeft}d left` : planInfo.plan.charAt(0).toUpperCase() + planInfo.plan.slice(1);
+    badgeEl.innerHTML = `<span class="plan-badge ${cls}"><i class="fas fa-${planInfo.plan==='free'?'circle':'crown'}"></i> ${lbl}</span>`;
+  }
+  /* Show trial banner if active */
+  if (planInfo.isTrialActive) {
+    const banner = document.getElementById('trial-banner');
+    if (banner) { banner.style.display='flex'; banner.querySelector('strong').textContent = planInfo.daysLeft + ' days'; }
+  }
   if (data.payout_account) { const el=$('payout-account-inp'); if(el) el.value=data.payout_account; }
 }
 
@@ -1297,6 +1439,18 @@ function toast(msg,type='ok'){
   $('toast').appendChild(el); setTimeout(()=>el.remove(),3500);
 }
 
+async function uploadAvatar(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) { toast('Image must be under 2MB','err'); return; }
+  const pav = $('pav');
+  pav.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+  const { url, error } = await DB.uploadAvatar(U.id, file);
+  if (error || !url) { toast('Upload failed. Try again.','err'); pav.textContent = (U.user_metadata?.full_name||'S')[0].toUpperCase(); return; }
+  pav.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+  toast('Profile photo updated! ✅','ok');
+}
+
 /* ══ INIT ══ */
 init();
 </script>
@@ -1322,5 +1476,12 @@ init();
     if (tog)   tog.checked = isDark;
     if (thumb) thumb.style.transform = isDark ? 'translateX(20px)' : 'translateX(0)';
   });</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
+  }
+</script>
 </body>
 </html>
