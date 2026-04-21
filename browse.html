@@ -340,6 +340,13 @@
     [data-theme="dark"] .ni.on .lb { color: var(--amber) !important; }
     [data-theme="dark"] .tbl th { background: var(--bg3) !important; color: var(--muted) !important; }
     [data-theme="dark"] .filter-label { color: var(--muted) !important; }
+
+    /* ── Freelance skill card ── */
+    .card-img-skill { background: linear-gradient(135deg, var(--amber-dim) 0%, var(--bg3) 100%); }
+    .skill-avatar-ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+    .skill-avatar-ph span { width: 70px; height: 70px; border-radius: 50%; background: var(--amber-dim); border: 3px solid rgba(194,105,10,0.25); display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 700; color: var(--amber); font-family: var(--serif); }
+    .skill-type-badge { position: absolute; bottom: 0.6rem; left: 0.6rem; background: rgba(10,10,10,0.75); color: #fff; font-size: 0.68rem; font-weight: 600; padding: 0.22rem 0.6rem; border-radius: 100px; backdrop-filter: blur(4px); }
+    [data-theme="light"] .skill-type-badge { background: rgba(28,18,8,0.7); }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
@@ -518,23 +525,38 @@ function showSkeletons(n = 6) {
 
 /* ── Render card ── */
 function renderCard(l, idx) {
-  const img   = Listings.getImage(l, 0);
-  const badge = Listings.getBadgeLabel(l.badge);
-  const bCls  = Listings.getBadgeClass(l.badge);
-  const isSv  = saved.has(l.id);
+  const isFreelance = l.category === 'freelance' || l.category === 'experience';
+  const img         = Listings.getImage(l, 0);
+  const badge       = Listings.getBadgeLabel(l.badge);
+  const bCls        = Listings.getBadgeClass(l.badge);
+  const isSv        = saved.has(l.id);
+
+  /* Freelance cards show seller avatar instead of product image */
+  const imgSection = isFreelance ? `
+    <div class="card-img card-img-skill">
+      ${l.seller_avatar
+        ? `<img src="${l.seller_avatar}" alt="${l.seller_name}" loading="lazy" style="width:100%;height:100%;object-fit:cover">`
+        : `<div class="skill-avatar-ph"><span>${l.seller_name ? l.seller_name[0].toUpperCase() : '?'}</span></div>`
+      }
+      <div class="skill-type-badge"><i class="fas fa-screwdriver-wrench"></i> ${Listings.getCatName(l.category)}</div>
+      ${badge ? `<span class="card-badge ${bCls}">${badge}</span>` : ''}
+      <button class="card-save ${isSv?'saved':''}" onclick="toggleSave(event,${l.id})" title="${isSv?'Unsave':'Save'}">${isSv?'<i class="fas fa-heart"></i>':'<i class="far fa-heart"></i>'}</button>
+    </div>` : `
+    <div class="card-img">
+      <img src="${img}" alt="${l.title}" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.insertAdjacentHTML('afterend','<div class=\'img-unavailable\'><i class=\'fas fa-image\'></i><span>Image Unavailable</span></div>')"/>
+      <div class="card-img-placeholder" style="display:none">${Listings.getCatEmoji(l.category)}</div>
+      ${badge ? `<span class="card-badge ${bCls}">${badge}</span>` : ''}
+      <button class="card-save ${isSv?'saved':''}" onclick="toggleSave(event,${l.id})" title="${isSv?'Unsave':'Save'}">${isSv?'<i class="fas fa-heart"></i>':'<i class="far fa-heart"></i>'}</button>
+    </div>`;
+
   return `
     <a class="card" href="listing.html?id=${l.id}" style="animation-delay:${idx*0.04}s">
-      <div class="card-img">
-        <img src="${img}" alt="${l.title}" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.insertAdjacentHTML('afterend','<div class=\'img-unavailable\'><i class=\'fas fa-image\'></i><span>Image Unavailable</span></div>')"/>
-        <div class="card-img-placeholder" style="display:none">${Listings.getCatEmoji(l.category)}</div>
-        ${badge ? `<span class="card-badge ${bCls}">${badge}</span>` : ''}
-        <button class="card-save ${isSv?'saved':''}" onclick="toggleSave(event,${l.id})" title="${isSv?'Unsave':'Save'}">${isSv?'<i class="fas fa-heart"></i>':'<i class="far fa-heart"></i>'}</button>
-      </div>
+      ${imgSection}
       <div class="card-body">
         <div class="card-cat">${Listings.getCatEmoji(l.category)} ${Listings.getCatName(l.category)}</div>
         <div class="card-title">${l.title}</div>
         <div class="card-seller">
-          <div class="seller-dot">${l.seller_name ? l.seller_name[0] : '?'}</div>
+          <div class="seller-dot" style="${l.seller_avatar ? 'overflow:hidden;padding:0' : ''}">${l.seller_avatar ? `<img src="${l.seller_avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">` : (l.seller_name ? l.seller_name[0] : '?')}</div>
           <span class="seller-name">${l.seller_name || 'Unknown'} ${l.seller_verified ? '<i class="fas fa-circle-check"></i>' : ''}</span>
         </div>
         <div class="card-foot">
