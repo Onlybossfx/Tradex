@@ -68,7 +68,7 @@
     .sb-overlay.show { display: block; }
 
     /* MAIN */
-    #main { padding: 1.5rem; min-height: calc(100vh - var(--nh)); }
+    #main { padding: 1.5rem; min-height: calc(100vh - var(--nh)); overflow-x: hidden; width: 100%; box-sizing: border-box; }
     .panel { display: none; animation: fi 0.22s ease; }
     .panel.on { display: block; }
     @keyframes fi { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
@@ -551,6 +551,27 @@
     .sb-pname { font-size:0.82rem; font-weight:700; color:var(--text); }
     .sb-notif { cursor:pointer; }
     @media (max-width: 900px) { .sb-profile { display:flex !important; } }
+
+    /* ══ OVERFLOW FIXES ══ */
+    #main { overflow-x: hidden; box-sizing: border-box; width: 100%; }
+    .ph   { overflow: hidden; width: 100%; box-sizing: border-box; }
+    .ph h1 { word-break: break-word; }
+    .of   { -webkit-overflow-scrolling: touch; padding-right: 1rem; }
+    .of::-webkit-scrollbar { display: none; }
+    .panel { overflow-x: hidden; width: 100%; box-sizing: border-box; }
+    /* Address book + misc cards */
+    .addr-card, .oc, .scard, .pcard { max-width: 100%; box-sizing: border-box; }
+    /* Prevent any child from overflowing */
+    @media (max-width: 900px) {
+      #main  { padding: 1rem !important; padding-top: calc(var(--nh) + 1rem) !important; }
+      .ph    { margin-bottom: 1rem; }
+      .ph h1 { font-size: 1.5rem; }
+      /* Address card actions should wrap */
+      .addr-actions { flex-wrap: wrap; gap: 0.4rem; }
+      /* Order card should not overflow */
+      .oc   { padding: 0.9rem; }
+      .oc-top { gap: 0.6rem; }
+    }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="icon" type="image/png" href="logo.png">
