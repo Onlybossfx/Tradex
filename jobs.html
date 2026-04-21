@@ -186,6 +186,20 @@
     @media(max-width:400px){
       .btn-post-nav span{display:none;}
     }
+
+    /* Take-down button */
+    .btn-takedown{background:transparent;border:1px solid rgba(220,38,38,0.35);color:#DC2626;padding:0.42rem 0.85rem;border-radius:8px;font-size:0.78rem;font-weight:600;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+    .btn-takedown:hover{background:rgba(220,38,38,0.08);border-color:#DC2626;}
+    /* Own job badge */
+    .btn-own{font-size:0.75rem;font-weight:600;color:var(--amber);background:var(--amber-dim);border:1px solid rgba(194,105,10,0.25);padding:0.35rem 0.85rem;border-radius:8px;white-space:nowrap;}
+    /* File drop zone */
+    .file-drop{border:2px dashed var(--border-md);border-radius:10px;padding:1.25rem;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--bg);}
+    .file-drop:hover,.file-drop.drag{border-color:var(--amber);background:var(--amber-dim);}
+    /* File chip */
+    .file-chip{display:flex;align-items:center;gap:0.4rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:0.3rem 0.6rem;font-size:0.75rem;color:var(--text);}
+    .file-chip i{color:var(--amber);}
+    .file-chip button{background:none;border:none;cursor:pointer;color:var(--muted);padding:0;line-height:1;margin-left:0.2rem;font-size:0.75rem;}
+    .file-chip button:hover{color:var(--error);}
   </style>
 </head>
 <body>
@@ -388,16 +402,26 @@
       </div>
     </div>
     <div class="fg">
-      <label>Portfolio / Relevant Work</label>
-      <input class="finp" id="prop-portfolio" placeholder="https://your-portfolio.com or Behance link">
+      <label>Portfolio / Relevant Links</label>
+      <input class="finp" id="prop-portfolio" placeholder="https://your-portfolio.com, Behance, GitHub...">
     </div>
     <div class="fg">
-      <label>Proposed Milestones (optional)</label>
-      <textarea class="finp" id="prop-milestones" rows="2" placeholder="e.g. 50% payment on wireframes, 50% on final delivery"></textarea>
+      <label>Attachments <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.75rem;color:var(--dim)">(CV, portfolio PDF, images — max 5MB each)</span></label>
+      <div class="file-drop" id="file-drop" onclick="$('prop-files').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event)">
+        <i class="fas fa-cloud-arrow-up" style="font-size:1.5rem;color:var(--amber);margin-bottom:0.4rem;display:block"></i>
+        <span style="font-size:0.82rem;color:var(--muted)">Click to upload or drag files here</span>
+        <span style="font-size:0.72rem;color:var(--dim);display:block;margin-top:0.2rem">PDF, DOC, JPG, PNG, ZIP — up to 5 files</span>
+      </div>
+      <input type="file" id="prop-files" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.zip,.txt" style="display:none" onchange="handleFiles(this.files)">
+      <div id="file-preview" style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.5rem"></div>
+    </div>
+    <div class="fg">
+      <label>Proposed Milestones <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.75rem;color:var(--dim)">(optional)</span></label>
+      <textarea class="finp" id="prop-milestones" rows="2" placeholder="e.g. 50% on wireframes, 50% on final delivery"></textarea>
     </div>
     <div class="mfoot">
       <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-submit" onclick="submitProposal()"><i class="fas fa-paper-plane"></i> Submit Proposal</button>
+      <button class="btn-submit" id="prop-submit-btn" onclick="submitProposal()"><i class="fas fa-paper-plane"></i> Submit Proposal</button>
     </div>
   </div>
 </div>
@@ -528,8 +552,12 @@ function renderJobs() {
           <div class="jcard-time">${j.proposal_count||0} proposals · ${ago}</div>
         </div>
         <div class="jcard-actions">
-          <button class="btn-save" onclick="event.stopPropagation();saveJob(${j.id})"><i class="far fa-bookmark"></i></button>
-          <button class="btn-apply" onclick="event.stopPropagation();openProposal(${j.id},'${(j.title||'').replace(/'/g,'`')}')">Apply Now</button>
+          \${isOwner(j) ? `
+            <button class="btn-takedown" onclick="event.stopPropagation();takedownJob(${j.id},'${(j.title||'').replace(/'/g,'`')}')" title="Take down job"><i class="fas fa-trash-can"></i> Take Down</button>
+          ` : `
+            <button class="btn-save" onclick="event.stopPropagation();saveJob(${j.id})"><i class="far fa-bookmark"></i></button>
+            \${ownJob(j) ? `<span class="btn-own">Your Job</span>` : `<button class="btn-apply" onclick="event.stopPropagation();openProposal(${j.id},'${(j.title||'').replace(/'/g,'`')}','${j.client_id||''}')">Apply Now</button>`}
+          `}
         </div>
       </div>
     </div>`;
@@ -546,29 +574,146 @@ function timeAgo(dt) {
 }
 
 /* ── PROPOSAL ── */
-function openProposal(id, title) {
+function isOwner(j) { return user && (user.id === j.client_id || user?.user_metadata?.is_admin); }
+function ownJob(j)   { return user && user.id === j.client_id; }
+
+function openProposal(id, title, clientId) {
   if (!user) { toast('Please log in to apply'); setTimeout(()=>window.location.href='traydr-auth.html',1200); return; }
+  if (user.id === clientId) { toast('You cannot apply to your own job listing.'); return; }
   currentJobId = id;
   $('prop-title').textContent = title;
-  ['prop-cover','prop-price','prop-portfolio','prop-milestones'].forEach(id=>$(id).value='');
+  ['prop-cover','prop-price','prop-portfolio','prop-milestones'].forEach(fid=>$(fid).value='');
+  /* Clear file input */
+  const fi = $('prop-files'); if(fi) fi.value='';
+  $('file-preview').innerHTML='';
   $('prop-modal').classList.add('open');
 }
 function closeModal() { $('prop-modal').classList.remove('open'); }
+let proposalFiles = [];
+
+function handleFiles(files) {
+  const MAX = 5 * 1024 * 1024; // 5MB
+  Array.from(files).forEach(f => {
+    if (proposalFiles.length >= 5) { toast('Max 5 files'); return; }
+    if (f.size > MAX) { toast(`${f.name} is too large (max 5MB)`); return; }
+    if (proposalFiles.find(x => x.name === f.name)) return; // dedup
+    proposalFiles.push(f);
+  });
+  renderFilePreview();
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  $('file-drop').classList.remove('drag');
+  handleFiles(e.dataTransfer.files);
+}
+
+function removeFile(name) {
+  proposalFiles = proposalFiles.filter(f => f.name !== name);
+  renderFilePreview();
+}
+
+function renderFilePreview() {
+  const icons = { pdf:'fa-file-pdf', doc:'fa-file-word', docx:'fa-file-word', jpg:'fa-file-image', jpeg:'fa-file-image', png:'fa-file-image', zip:'fa-file-zipper', txt:'fa-file-lines' };
+  $('file-preview').innerHTML = proposalFiles.map(f => {
+    const ext  = f.name.split('.').pop().toLowerCase();
+    const icon = icons[ext] || 'fa-file';
+    const size = f.size > 1024*1024 ? (f.size/1024/1024).toFixed(1)+'MB' : Math.round(f.size/1024)+'KB';
+    return `<div class="file-chip">
+      <i class="fas ${icon}"></i>
+      <span>${f.name.length>18?f.name.slice(0,15)+'...':f.name}</span>
+      <span style="color:var(--dim);font-size:0.68rem">${size}</span>
+      <button onclick="removeFile('${f.name}')" title="Remove"><i class="fas fa-xmark"></i></button>
+    </div>`;
+  }).join('');
+}
+
+async function uploadProposalFiles(proposalId) {
+  if (!proposalFiles.length) return [];
+  const session = await sb?.auth?.getSession();
+  const token   = session?.data?.session?.access_token || SUPA_ANON;
+  const urls = [];
+  for (const file of proposalFiles) {
+    const path = `proposals/${proposalId}/${Date.now()}_${file.name.replace(/\s/g,'_')}`;
+    const res  = await fetch(`${SUPA_URL}/storage/v1/object/listings/${path}`, {
+      method:  'POST',
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': file.type || 'application/octet-stream', 'x-upsert': 'true' },
+      body:    file,
+    });
+    if (res.ok) {
+      urls.push(`${SUPA_URL}/storage/v1/object/public/listings/${path}`);
+    }
+  }
+  return urls;
+}
+
 async function submitProposal() {
   const cover = $('prop-cover').value.trim();
   const price = $('prop-price').value;
   if (!cover||!price) { toast('Please fill in your cover letter and price'); return; }
+
+  const btn = $('prop-submit-btn');
+  btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+
+  const session = await sb?.auth?.getSession();
+  const token   = session?.data?.session?.access_token || SUPA_ANON;
+
   try {
-    await fetch(`${SUPA_URL}/rest/v1/job_proposals`, {
-      method:'POST',
-      headers:{'Content-Type':'application/json','apikey':SUPA_ANON,'Authorization':`Bearer ${SUPA_ANON}`,'Prefer':'return=minimal'},
-      body: JSON.stringify({ job_id:currentJobId, freelancer_id:user.id, cover_letter:cover, proposed_price:parseFloat(price), delivery_time:$('prop-time').value, portfolio_url:$('prop-portfolio').value, milestones:$('prop-milestones').value })
+    /* Insert proposal first */
+    const res = await fetch(`${SUPA_URL}/rest/v1/job_proposals`, {
+      method:  'POST',
+      headers: { 'Content-Type':'application/json','apikey':SUPA_ANON,'Authorization':`Bearer ${token}`,'Prefer':'return=representation' },
+      body:    JSON.stringify({ job_id:currentJobId, freelancer_id:user.id, cover_letter:cover, proposed_price:parseFloat(price), delivery_time:$('prop-time').value, portfolio_url:$('prop-portfolio').value, milestones:$('prop-milestones').value }),
     });
-  } catch(e) { console.warn('Proposal save:', e); }
-  toast('Proposal submitted! The client will be in touch. ✅', 4000);
-  closeModal();
+    const data = await res.json();
+    const proposalId = data?.[0]?.id || data?.id || currentJobId;
+
+    /* Upload attachments */
+    let fileUrls = [];
+    if (proposalFiles.length) {
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading files...';
+      fileUrls = await uploadProposalFiles(proposalId);
+      /* Save file URLs back to proposal */
+      if (fileUrls.length) {
+        await fetch(`${SUPA_URL}/rest/v1/job_proposals?id=eq.${proposalId}`, {
+          method:  'PATCH',
+          headers: { 'Content-Type':'application/json','apikey':SUPA_ANON,'Authorization':`Bearer ${token}`,'Prefer':'return=minimal' },
+          body:    JSON.stringify({ attachment_urls: fileUrls.join(',') }),
+        });
+      }
+    }
+
+    toast(`Proposal submitted${fileUrls.length ? ` with ${fileUrls.length} file(s)` : ''}! The client will be in touch. ✅`, 4000);
+    proposalFiles = [];
+    closeModal();
+  } catch(e) {
+    console.error('Proposal error:', e);
+    toast('Could not submit proposal. Please try again.');
+  } finally {
+    btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Proposal';
+  }
 }
 function saveJob(id) { toast('Job saved to bookmarks <i class="far fa-bookmark"></i>'); }
+
+async function takedownJob(id, title) {
+  if (!confirm(`Take down "${title}"? This will close the job and freelancers can no longer apply.`)) return;
+  const session = await sb?.auth?.getSession();
+  const token   = session?.data?.session?.access_token || SUPA_ANON;
+  try {
+    const res = await fetch(`${SUPA_URL}/rest/v1/jobs?id=eq.${id}`, {
+      method:  'PATCH',
+      headers: { 'Content-Type':'application/json','apikey':SUPA_ANON,'Authorization':`Bearer ${token}`,'Prefer':'return=minimal' },
+      body:    JSON.stringify({ status:'closed' }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    toast('Job taken down successfully.');
+    allJobs = allJobs.filter(j => j.id !== id);
+    applyFilters();
+  } catch(e) {
+    console.error('Takedown error:', e);
+    toast('Could not take down job. Try again.');
+  }
+}
 
 /* ── POST JOB ── */
 function setBtype(t) {
