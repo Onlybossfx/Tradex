@@ -125,7 +125,7 @@
     .cat-link-count{font-size:0.75rem;color:var(--muted);}
 
     /* POST JOB PANEL */
-    #panel-post{display:none;max-width:700px;margin:0 auto;padding:1.5rem;}
+    #panel-post{display:none;max-width:700px;margin:0 auto;padding:1.5rem;padding-top:calc(var(--nh) + 1.5rem);}
     .pcard{background:var(--card);border:1px solid var(--card-b);border-radius:14px;padding:2rem;box-shadow:var(--shadow);}
     .pcard h2{font-family:var(--serif);font-size:1.5rem;font-weight:700;margin-bottom:0.25rem;}
     .pcard>.sub{font-size:0.85rem;color:var(--muted);margin-bottom:1.75rem;}
@@ -170,11 +170,20 @@
 
     /* RESPONSIVE */
     @media(max-width:768px){
-      #nav{padding:0 1rem;}
+      #nav{padding:0 0.85rem;gap:0.5rem;}
       .nav-search-wrap{display:none;}
-      .top-bar{padding:0 1rem;}
-      .filter-bar{padding:0.5rem 1rem;}
-      .main{padding:1rem;}
+      .nav-divider{display:none;}
+      .nav-title{display:none;}
+      .nav-link{display:none;}
+      .btn-post-nav{padding:0.4rem 0.75rem;font-size:0.78rem;}
+      .top-bar{padding:0 0.85rem;}
+      .filter-bar{padding:0.5rem 0.85rem;}
+      .main{padding:1rem 0.85rem;}
+      #panel-post{padding:1rem 0.85rem;}
+      .pcard{padding:1.25rem;}
+    }
+    @media(max-width:400px){
+      .btn-post-nav span{display:none;}
     }
   </style>
 </head>
@@ -603,6 +612,7 @@ function switchTab(tab) {
   $('panel-browse').style.display = browse ? 'block' : 'none';
   $('panel-post').style.display   = browse ? 'none'  : 'block';
   $('filter-bar-wrap').style.display = browse ? 'block' : 'none';
+  $('panel-post').style.paddingTop = browse ? '' : 'calc(var(--nh) + 44px + 1.5rem)';
   $('tab-browse').classList.toggle('on', browse);
   $('tab-post').classList.toggle('on', !browse);
   if (browse) window.scrollTo({top:0,behavior:'smooth'});
