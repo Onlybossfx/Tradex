@@ -53,16 +53,17 @@
     .page{padding-top:var(--nh);}
 
     /* TOP BAR — tabs + filters */
-    .top-bar{background:var(--card);border-bottom:1px solid var(--border);padding:0 1.5rem;}
+    .top-bar{background:var(--card);border-bottom:1px solid var(--border);padding:0 1.5rem;position:sticky;top:var(--nh);z-index:100;}
     [data-theme="dark"] .top-bar{background:#111;}
-    .top-bar-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:0;flex-wrap:wrap;}
-    .tab-btn{padding:0.9rem 1.1rem;border:none;background:transparent;color:var(--muted);font-size:0.85rem;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;font-family:var(--sans);transition:all 0.2s;white-space:nowrap;}
+    .top-bar-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:0;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;}
+    .top-bar-inner::-webkit-scrollbar{display:none;}
+    .tab-btn{padding:0.9rem 1.1rem;border:none;background:transparent;color:var(--muted);font-size:0.85rem;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;font-family:var(--sans);transition:all 0.2s;white-space:nowrap;flex-shrink:0;}
     .tab-btn.on{color:var(--amber);border-bottom-color:var(--amber);}
     .tab-btn:hover:not(.on){color:var(--text);}
     .tab-sep{width:1px;height:20px;background:var(--border);margin:0 0.5rem;}
 
     /* FILTER BAR */
-    .filter-bar{background:var(--bg);border-bottom:1px solid var(--border);padding:0.65rem 1.5rem;display:flex;align-items:center;gap:0.5rem;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;}
+    .filter-bar{background:var(--bg);border-bottom:1px solid var(--border);padding:0.65rem 1.5rem;display:flex;align-items:center;gap:0.5rem;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;position:sticky;top:calc(var(--nh) + 44px);z-index:99;}
     .filter-bar::-webkit-scrollbar{display:none;}
     .filter-bar-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:0.5rem;width:100%;}
     .fchip{display:flex;align-items:center;gap:0.4rem;padding:0.35rem 0.85rem;border:1px solid var(--border);border-radius:100px;font-size:0.78rem;font-weight:500;color:var(--muted);background:var(--card);cursor:pointer;white-space:nowrap;transition:all 0.18s;}
@@ -72,7 +73,7 @@
     .fchip-sep{width:1px;height:16px;background:var(--border);flex-shrink:0;}
 
     /* MAIN LAYOUT */
-    .main{max-width:1100px;margin:0 auto;padding:1.5rem 1.5rem;display:grid;grid-template-columns:1fr 320px;gap:1.5rem;align-items:start;}
+    .main{max-width:1100px;margin:0 auto;padding:1.5rem;display:grid;grid-template-columns:1fr 320px;gap:1.5rem;align-items:start;}
     @media(max-width:900px){.main{grid-template-columns:1fr;}.aside{display:none;}}
 
     /* JOB LIST */
@@ -125,7 +126,7 @@
     .cat-link-count{font-size:0.75rem;color:var(--muted);}
 
     /* POST JOB PANEL */
-    #panel-post{display:none;max-width:700px;margin:0 auto;padding:1.5rem;padding-top:calc(var(--nh) + 1.5rem);}
+    #panel-post{display:none;max-width:700px;margin:0 auto;padding:1.5rem;padding-top:2rem;}
     .pcard{background:var(--card);border:1px solid var(--card-b);border-radius:14px;padding:2rem;box-shadow:var(--shadow);}
     .pcard h2{font-family:var(--serif);font-size:1.5rem;font-weight:700;margin-bottom:0.25rem;}
     .pcard>.sub{font-size:0.85rem;color:var(--muted);margin-bottom:1.75rem;}
@@ -211,7 +212,7 @@
     <button class="tab-btn on" id="tab-browse" onclick="switchTab('browse')">Browse Jobs</button>
     <button class="tab-btn" id="tab-post" onclick="switchTab('post')">Post a Job</button>
     <div class="tab-sep"></div>
-    <span style="font-size:0.78rem;color:var(--muted);padding:0.75rem 0" id="live-count">0 open positions</span>
+    <span style="font-size:0.78rem;color:var(--muted);padding:0.75rem 0.5rem;margin-left:auto;flex-shrink:0;white-space:nowrap" id="live-count">0 open positions</span>
   </div>
 </div>
 
@@ -419,7 +420,7 @@ function goToDash(){ const r=user?.user_metadata?.role||'buyer'; window.location
 /* ── DB ── */
 async function loadJobs() {
   try {
-    const res = await fetch(`${SUPA_URL}/rest/v1/jobs?select=*&order=created_at.desc&status=eq.open`, {
+    const res = await fetch(`${SUPA_URL}/rest/v1/jobs?select=*&order=created_at.desc`, {
       headers: { 'apikey': SUPA_ANON, 'Authorization': `Bearer ${SUPA_ANON}` }
     });
     if (!res.ok) throw new Error('DB error');
@@ -503,7 +504,7 @@ function renderJobs() {
     const budMin = window.Currency ? Currency.format(j.budget_min||0) : '$'+(j.budget_min||0);
     const budMax = j.budget_max ? (window.Currency ? Currency.format(j.budget_max) : '$'+j.budget_max) : '';
     const ago = timeAgo(j.created_at);
-    const skillsArr = Array.isArray(j.skills) ? j.skills : (j.skills ? j.skills.split(',') : []);
+    const skillsArr = j.skills ? j.skills.split(',').map(s=>s.trim()).filter(Boolean) : [];
     return `
     <div class="jcard" onclick="openProposal(${j.id},'${(j.title||'').replace(/'/g,'`')}')">
       <div class="jcard-top">
@@ -589,20 +590,68 @@ async function postJob() {
   const title=$('jt').value.trim(), cat=$('jcat').value, desc=$('jdesc').value.trim(), bmin=$('jbmin').value;
   if (!title||!cat||!desc||!bmin) { toast('Please fill in all required fields (*)'); return; }
   if (!user) { toast('Please log in to post a job'); setTimeout(()=>window.location.href='traydr-auth.html',1200); return; }
+
+  const btn = document.querySelector('.btn-post-submit');
+  if (btn) { btn.disabled=true; btn.textContent='Posting...'; }
+
   try {
+    const payload = {
+      title, category:cat, description:desc,
+      budget_type: btypeVal,
+      budget_min:  parseFloat(bmin)||0,
+      budget_max:  parseFloat($('jbmax').value)||null,
+      timeline:    $('jtimeline').value,
+      experience_level: $('jlevel').value,
+      skills:      skills.length ? skills.join(',') : null,
+      location:    $('jloc').value,
+      visibility:  $('jvis').value,
+      client_id:   user.id,
+      client_name: user.user_metadata?.full_name || user.email || 'Anonymous',
+      status:      'open',
+      proposal_count: 0,
+    };
+
+    /* Use anon key for auth header — user must be logged in */
+    const userSession = await sb?.auth?.getSession();
+    const token = userSession?.data?.session?.access_token || SUPA_ANON;
+
     const res = await fetch(`${SUPA_URL}/rest/v1/jobs`, {
-      method:'POST',
-      headers:{'Content-Type':'application/json','apikey':SUPA_ANON,'Authorization':`Bearer ${SUPA_ANON}`,'Prefer':'return=minimal'},
-      body: JSON.stringify({ title, category:cat, description:desc, budget_type:btypeVal, budget_min:parseFloat(bmin)||0, budget_max:parseFloat($('jbmax').value)||null, timeline:$('jtimeline').value, experience_level:$('jlevel').value, skills, location:$('jloc').value, visibility:$('jvis').value, client_id:user.id, status:'open', proposal_count:0 })
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey':        SUPA_ANON,
+        'Authorization': `Bearer ${token}`,
+        'Prefer':        'return=minimal',
+      },
+      body: JSON.stringify(payload),
     });
-    if (!res.ok) throw new Error('post failed');
+
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error('Post job error response:', res.status, errText);
+      /* If table doesn't exist, tell user clearly */
+      let msg = 'Could not post job.';
+      if (res.status === 404 || errText.includes('does not exist') || errText.includes('relation')) {
+        msg = 'Jobs table missing — please run jobs-setup.sql in Supabase first.';
+      } else if (res.status === 401 || res.status === 403) {
+        msg = 'Permission error. Please log out and log back in.';
+      } else if (res.status === 409) {
+        msg = 'Duplicate entry. Please try again.';
+      }
+      toast(msg, 5000);
+      return;
+    }
+
     toast('Job posted! Freelancers will start applying shortly. 🎉', 4000);
     skills=[]; renderSkillChips();
     ['jt','jdesc','jbmin','jbmax'].forEach(id=>$(id).value='');
     setTimeout(()=>{ switchTab('browse'); loadJobs(); }, 1500);
+
   } catch(e) {
     console.error('Post job error:', e);
-    toast('Could not post job. Please try again.');
+    toast('Network error. Check your connection and try again.', 4000);
+  } finally {
+    if (btn) { btn.disabled=false; btn.innerHTML='<i class="fas fa-paper-plane"></i> Post Job — Free'; }
   }
 }
 
@@ -612,10 +661,10 @@ function switchTab(tab) {
   $('panel-browse').style.display = browse ? 'block' : 'none';
   $('panel-post').style.display   = browse ? 'none'  : 'block';
   $('filter-bar-wrap').style.display = browse ? 'block' : 'none';
-  $('panel-post').style.paddingTop = browse ? '' : 'calc(var(--nh) + 44px + 1.5rem)';
+  $('panel-post').style.paddingTop = browse ? '' : '1.5rem';
   $('tab-browse').classList.toggle('on', browse);
   $('tab-post').classList.toggle('on', !browse);
-  if (browse) window.scrollTo({top:0,behavior:'smooth'});
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 /* ── INIT ── */
