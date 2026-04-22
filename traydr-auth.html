@@ -173,9 +173,8 @@
       .left { display: none; }
       .right { padding: 1.5rem 1.25rem; align-items: flex-start; padding-top: 2rem; }
       .box { max-width: 100%; }
-      .mob-logo { display: flex; align-items: center; gap: 6px; margin-bottom: 2rem; }
-      .mob-logo span { font-family: var(--serif); font-size: 1.3rem; font-weight: 700; }
-      .mob-logo i { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); display: inline-block; }
+      .mob-logo { display: flex; align-items: center; margin-bottom: 2rem; }
+      .mob-logo img { height: 44px; width: auto; display: block; object-fit: contain; }
       .name-row { grid-template-columns: 1fr; }
     }
     @media (min-width: 769px) { .mob-logo { display: none; } }
@@ -278,7 +277,7 @@
   <!-- RIGHT -->
   <div class="right">
     <div class="box">
-      <div class="mob-logo"><span>TraydR</span><i></i></div>
+      <div class="mob-logo"><img src="logo.png" alt="TraydR" style="height:44px;width:auto;display:block;object-fit:contain"></div>
 
       <!-- TABS -->
       <div class="tabs" id="tabs">

@@ -510,6 +510,19 @@ function sortJobs(by) {
 }
 
 /* ── RENDER ── */
+function cardActions(j) {
+  const jid   = j.id;
+  const title = (j.title||'').replace(/'/g, '`');
+  const cid   = j.client_id || '';
+  if (isOwner(j)) {
+    return `<button class="btn-takedown" onclick="event.stopPropagation();takedownJob(${jid},'${title}')" title="Take down job"><i class="fas fa-trash-can"></i> Take Down</button>`;
+  }
+  const saveBtn  = `<button class="btn-save" onclick="event.stopPropagation();saveJob(${jid})"><i class="far fa-bookmark"></i></button>`;
+  const applyBtn = ownJob(j)
+    ? `<span class="btn-own">Your Job</span>`
+    : `<button class="btn-apply" onclick="event.stopPropagation();openProposal(${jid},'${title}','${cid}')">Apply Now</button>`;
+  return saveBtn + applyBtn;
+}
 function renderJobs() {
   const list = $('jobs-list');
   $('jobs-count').textContent = `${filtered.length} job${filtered.length!==1?'s':''} found`;
@@ -551,14 +564,7 @@ function renderJobs() {
           <div class="jcard-budget">${budMin}${budMax?' – '+budMax:''}<span>${j.budget_type==='hourly'?'/hr':''}</span></div>
           <div class="jcard-time">${j.proposal_count||0} proposals · ${ago}</div>
         </div>
-        <div class="jcard-actions">
-          \${isOwner(j) ? `
-            <button class="btn-takedown" onclick="event.stopPropagation();takedownJob(${j.id},'${(j.title||'').replace(/'/g,'`')}')" title="Take down job"><i class="fas fa-trash-can"></i> Take Down</button>
-          ` : `
-            <button class="btn-save" onclick="event.stopPropagation();saveJob(${j.id})"><i class="far fa-bookmark"></i></button>
-            \${ownJob(j) ? `<span class="btn-own">Your Job</span>` : `<button class="btn-apply" onclick="event.stopPropagation();openProposal(${j.id},'${(j.title||'').replace(/'/g,'`')}','${j.client_id||''}')">Apply Now</button>`}
-          `}
-        </div>
+        <div class="jcard-actions">${cardActions(j)}</div>
       </div>
     </div>`;
   }).join('');
@@ -813,13 +819,13 @@ function switchTab(tab) {
 }
 
 /* ── INIT ── */
-(async () => {
+document.addEventListener('DOMContentLoaded', async () => {
   /* Theme */
   const t=localStorage.getItem('traydr_theme')||'light';
   document.documentElement.setAttribute('data-theme',t);
 
   /* Currency */
-  await Currency.init();
+  try { await Promise.race([Currency.init(), new Promise(r=>setTimeout(r,3000))]); } catch(e){}
   const sc=localStorage.getItem('traydr_user_currency'); if(sc) Currency.set(sc);
 
   /* Auth */
@@ -835,7 +841,7 @@ function switchTab(tab) {
   } catch(e) { console.warn('Auth init:', e); }
 
   loadJobs();
-})();
+});
 </script>
 
 <script>
