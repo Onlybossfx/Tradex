@@ -897,11 +897,20 @@ $('place-order-btn').addEventListener('click', async () => {
   btn.classList.add('ld'); btn.disabled = true;
   $('step3-err').classList.remove('on');
 
-  const c       = checkout;
-  const feeRate = 0.08;
-  const fee     = +(c.price * feeRate).toFixed(2);
-  const total   = +(c.price + fee).toFixed(2);
-  const payout  = +(c.price * (1 - feeRate)).toFixed(2);
+  const c = checkout;
+
+  /* Get seller's plan for correct fee rate */
+  let feeRate = 0.08; /* default: free plan */
+  try {
+    if (window.DB && c.seller_id) {
+      const planInfo = await DB.getPlan(c.seller_id);
+      feeRate = DB.getPlanFee(planInfo.plan); /* 0.08/0.05/0.03 */
+    }
+  } catch(e) { /* fallback to 8% */ }
+
+  const fee    = +(c.price * feeRate).toFixed(2);
+  const total  = +(c.price + fee).toFixed(2);
+  const payout = +(c.price * (1 - feeRate)).toFixed(2);
 
   if (!c.seller_id) { btn.classList.remove('ld'); btn.disabled = false; showAlert('step3-err','No seller assigned.'); return; }
   if (!user)         { btn.classList.remove('ld'); btn.disabled = false; showAlert('step3-err','Please log in first.'); return; }
