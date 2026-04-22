@@ -444,7 +444,7 @@ function goToDash(){ const r=user?.user_metadata?.role||'buyer'; window.location
 /* ── DB ── */
 async function loadJobs() {
   try {
-    const res = await fetch(`${SUPA_URL}/rest/v1/jobs?select=*&order=created_at.desc`, {
+    const res = await fetch(`${SUPA_URL}/rest/v1/jobs?select=*&status=eq.open&order=created_at.desc`, {
       headers: { 'apikey': SUPA_ANON, 'Authorization': `Bearer ${SUPA_ANON}` }
     });
     if (!res.ok) throw new Error('DB error');
@@ -702,22 +702,55 @@ async function submitProposal() {
 function saveJob(id) { toast('Job saved to bookmarks <i class="far fa-bookmark"></i>'); }
 
 async function takedownJob(id, title) {
-  if (!confirm(`Take down "${title}"? This will close the job and freelancers can no longer apply.`)) return;
-  const session = await sb?.auth?.getSession();
-  const token   = session?.data?.session?.access_token || SUPA_ANON;
+  if (!confirm(`Take down "${title}"?\nThis will permanently remove the job listing.`)) return;
+
+  /* Always get fresh session token — anon key won't pass RLS */
+  let token = SUPA_ANON;
   try {
+    const { data } = await sb.auth.getSession();
+    if (data?.session?.access_token) token = data.session.access_token;
+  } catch(e) {}
+
+  if (token === SUPA_ANON) {
+    toast('Session expired. Please log in again.'); return;
+  }
+
+  try {
+    /* DELETE the job entirely (cleaner than status patch) */
     const res = await fetch(`${SUPA_URL}/rest/v1/jobs?id=eq.${id}`, {
-      method:  'PATCH',
-      headers: { 'Content-Type':'application/json','apikey':SUPA_ANON,'Authorization':`Bearer ${token}`,'Prefer':'return=minimal' },
-      body:    JSON.stringify({ status:'closed' }),
+      method:  'DELETE',
+      headers: {
+        'apikey':        SUPA_ANON,
+        'Authorization': `Bearer ${token}`,
+        'Prefer':        'return=minimal',
+      },
     });
-    if (!res.ok) throw new Error(await res.text());
-    toast('Job taken down successfully.');
+
+    if (!res.ok) {
+      const err = await res.text();
+      console.error('Takedown error:', res.status, err);
+      /* Fallback to PATCH if DELETE fails (e.g. foreign key constraint) */
+      const res2 = await fetch(`${SUPA_URL}/rest/v1/jobs?id=eq.${id}`, {
+        method:  'PATCH',
+        headers: {
+          'Content-Type':  'application/json',
+          'apikey':        SUPA_ANON,
+          'Authorization': `Bearer ${token}`,
+          'Prefer':        'return=minimal',
+        },
+        body: JSON.stringify({ status: 'closed' }),
+      });
+      if (!res2.ok) { toast('Could not remove job. Please try again.'); return; }
+    }
+
+    toast('Job removed successfully. ✅');
     allJobs = allJobs.filter(j => j.id !== id);
-    applyFilters();
+    filtered = filtered.filter(j => j.id !== id);
+    renderJobs();
+    updateStats();
   } catch(e) {
     console.error('Takedown error:', e);
-    toast('Could not take down job. Try again.');
+    toast('Could not remove job. Check your connection.');
   }
 }
 
