@@ -126,7 +126,7 @@
     .cat-link-count{font-size:0.75rem;color:var(--muted);}
 
     /* POST JOB PANEL */
-    #panel-post{display:none;max-width:700px;margin:0 auto;padding:1.5rem;padding-top:calc(44px + 2rem);}
+    #panel-post{display:none;max-width:700px;margin:0 auto;padding:1.5rem;padding-top:2rem;}
     .pcard{background:var(--card);border:1px solid var(--card-b);border-radius:14px;padding:2rem;box-shadow:var(--shadow);}
     .pcard h2{font-family:var(--serif);font-size:1.5rem;font-weight:700;margin-bottom:0.25rem;}
     .pcard>.sub{font-size:0.85rem;color:var(--muted);margin-bottom:1.75rem;}
@@ -180,7 +180,7 @@
       .top-bar{padding:0 0.85rem;}
       .filter-bar{padding:0.5rem 0.85rem;}
       .main{padding:1rem 0.85rem;}
-      #panel-post{padding:1rem 0.85rem;padding-top:calc(44px + 1rem);}
+      #panel-post{padding:1rem 0.85rem;}
       .pcard{padding:1.25rem;}
     }
     @media(max-width:400px){
@@ -861,15 +861,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   try { await Promise.race([Currency.init(), new Promise(r=>setTimeout(r,3000))]); } catch(e){}
   const sc=localStorage.getItem('traydr_user_currency'); if(sc) Currency.set(sc);
 
-  /* Auth — use window.supabase loaded from CDN script tag */
+  /* Auth */
   try {
-    sb = window.supabase.createClient(SUPA_URL, SUPA_ANON);
+    const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm');
+    sb = createClient(SUPA_URL, SUPA_ANON);
     const { data: { session } } = await sb.auth.getSession();
-    user = session?.user || null;
+    user = session?.user||null;
     if (user) {
-      const av = $('nav-av');
-      const name = user.user_metadata?.full_name || user.email || 'U';
-      if (av) av.textContent = name[0].toUpperCase();
+      const av=$('nav-av'), name=user.user_metadata?.full_name||user.email||'U';
+      av.textContent = name[0].toUpperCase();
     }
   } catch(e) { console.warn('Auth init:', e); }
 
