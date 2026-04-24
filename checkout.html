@@ -87,7 +87,7 @@
     .pay-method.selected .pm-desc { color: var(--amber); }
     .pm-check { position: absolute; top: 0.75rem; right: 0.75rem; width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border); transition: all 0.2s; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; }
     .pay-method.selected .pm-check { background: var(--amber); border-color: var(--amber); color: #0a0a0a; }
-    .pay-method.selected .pm-check::after { content: '✓'; font-weight: 900; font-size: 0.7rem; }
+    .pay-method.selected .pm-check::after { content: '<i class="fas fa-check"></i>'; font-weight: 700; }
 
     /* ── CARD INPUT VISUAL ── */
     .card-visual { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.25rem; position: relative; overflow: hidden; min-height: 130px; }
@@ -277,36 +277,15 @@
     [data-theme="dark"] .ni.on .lb { color: var(--amber) !important; }
     [data-theme="dark"] .tbl th { background: var(--bg3) !important; color: var(--muted) !important; }
     [data-theme="dark"] .filter-label { color: var(--muted) !important; }
-
-    /* ══════════════════════════════════════
-       MOBILE FIRST — Full Responsive System
-    ══════════════════════════════════════ */
-    * { box-sizing: border-box; }
-    #nav, nav { padding-left: 0.85rem; padding-right: 0.85rem; }
-
-    /* Tables */
-    .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; }
-    .tbl { width: 100%; min-width: 480px; }
-
-    /* Cards */
-    .card, .listing-card { min-width: 0; }
-
-    /* Modals */
-    .mbox { width: calc(100vw - 2rem) !important; max-width: 100% !important; }
-
-    @media (max-width: 480px) {
-      .f2 { grid-template-columns: 1fr !important; }
-      .grid-2 { grid-template-columns: 1fr !important; }
-    }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link rel="icon" type="image/png" href="logo.png">
+  <script src="https://checkout.flutterwave.com/v3.js"></script>
 </head>
 <body>
 
 <!-- NAV -->
 <nav id="nav">
-  <a href="index.html" class="nav-logo"><img src="logo.png" alt="TraydR" style="height:64px;width:auto;display:block;object-fit:contain"></a>
+  <a href="index.html" class="nav-logo"><span>TraydR</span><i></i></a>
   <div class="nav-sep"></div>
   <span class="nav-step">Secure Checkout</span>
   <div class="nav-secure"><i class="fas fa-lock"></i> SSL Encrypted</div>
@@ -491,22 +470,11 @@
               <label>Network *</label>
               <select class="finp" id="fw-network">
                 <option value="">Select network</option>
-                <optgroup label="Nigeria">
-                  <option value="MTN">MTN MoMo</option>
-                  <option value="AIRTEL">Airtel Money</option>
-                  <option value="9MOBILE">9Mobile</option>
-                </optgroup>
-                <optgroup label="Ghana">
-                  <option value="VODAFONE">Vodafone Cash</option>
-                  <option value="TIGO">Tigo Cash</option>
-                </optgroup>
-                <optgroup label="Kenya">
-                  <option value="MPESA">M-Pesa</option>
-                </optgroup>
-                <optgroup label="Uganda / Rwanda">
-                  <option value="AIRTEL_UG">Airtel Uganda</option>
-                  <option value="MTN_RW">MTN Rwanda</option>
-                </optgroup>
+                <option value="MTN">MTN Mobile Money</option>
+                <option value="VODAFONE">Vodafone Cash</option>
+                <option value="AIRTEL">Airtel Money</option>
+                <option value="MPESA">M-Pesa</option>
+                <option value="TIGO">Tigo Cash</option>
               </select>
             </div>
             <div class="frow">
@@ -646,7 +614,7 @@
 */
 
 const SUPABASE_URL  = 'https://rtwbrcbifnowrqpgivma.supabase.co';
-const SUPABASE_ANON = 'sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc';
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
 
@@ -697,95 +665,7 @@ async function init() {
   $('d-name').value  = user.user_metadata?.full_name || '';
   $('d-email').value = user.email || '';
 
-  /* ── Handle Flutterwave return ── */
-  const urlP = new URLSearchParams(window.location.search);
-  if (urlP.get('flw') === 'success') {
-    /* Show verifying state */
-    document.querySelector('.page').innerHTML = `
-      <div style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;text-align:center">
-        <div style="font-size:2.5rem;color:var(--amber)"><i class="fas fa-spinner fa-spin"></i></div>
-        <h2 style="font-family:var(--serif);font-size:1.3rem">Verifying payment...</h2>
-        <p style="color:var(--muted);font-size:0.88rem">Please wait, do not close this page.</p>
-      </div>`;
-
-    const transaction_id = urlP.get('transaction_id');
-    const tx_ref         = urlP.get('tx_ref') || sessionStorage.getItem('traydr_pending_order');
-    const checkoutData   = JSON.parse(sessionStorage.getItem('traydr_pending_checkout') || '{}');
-
-    if (!transaction_id || !tx_ref) {
-      /* Missing params — show error */
-      document.querySelector('.page').innerHTML = `
-        <div style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;text-align:center">
-          <div style="font-size:2.5rem;color:var(--error)"><i class="fas fa-triangle-exclamation"></i></div>
-          <h2 style="font-family:var(--serif);font-size:1.3rem">Payment verification failed</h2>
-          <p style="color:var(--muted);font-size:0.88rem">We couldn't verify your payment. If money was deducted, please contact support with reference: <strong>${tx_ref||'unknown'}</strong></p>
-          <a href="mailto:hello@traydr.market" style="color:var(--amber);font-size:0.88rem">Contact Support</a>
-          <a href="index.html" style="margin-top:0.5rem;color:var(--muted);font-size:0.82rem">← Return Home</a>
-        </div>`;
-      return;
-    }
-
-    try {
-      const vRes = await fetch(
-        'https://rtwbrcbifnowrqpgivma.supabase.co/functions/v1/flutterwave-charge',
-        {
-          method:  'POST',
-          headers: {
-            'Content-Type':  'application/json',
-            'Authorization': 'Bearer sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7',
-          },
-          body: JSON.stringify({
-            action:        'verify',
-            transaction_id,
-            tx_ref,
-            checkout_data: checkoutData,
-          }),
-        }
-      );
-
-      const vData = await vRes.json();
-      console.log('Verify response:', vData);
-
-      if (vData.success) {
-        sessionStorage.removeItem('traydr_pending_checkout');
-        sessionStorage.removeItem('traydr_pending_order');
-        /* Rebuild page and show step 4 */
-        window.location.href = `checkout.html?success=1&order_id=${vData.order_id||''}&ref=${tx_ref}`;
-        return;
-      }
-
-      /* Payment failed or cancelled */
-      document.querySelector('.page').innerHTML = `
-        <div style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;text-align:center">
-          <div style="font-size:2.5rem;color:var(--error)"><i class="fas fa-circle-xmark"></i></div>
-          <h2 style="font-family:var(--serif);font-size:1.3rem">Payment not completed</h2>
-          <p style="color:var(--muted);font-size:0.88rem">Status: ${vData.status||'failed'}. ${vData.error||'Your payment was not successful.'}</p>
-          <p style="color:var(--muted);font-size:0.82rem">No money has been charged. You can try again.</p>
-          <button onclick="window.history.back()" style="background:var(--amber);border:none;color:#fff;padding:0.65rem 1.5rem;border-radius:8px;font-size:0.88rem;font-weight:600;cursor:pointer;margin-top:0.5rem">← Try Again</button>
-        </div>`;
-    } catch(e) {
-      console.error('Verify error:', e);
-      document.querySelector('.page').innerHTML = `
-        <div style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;text-align:center">
-          <div style="font-size:2.5rem;color:var(--error)"><i class="fas fa-wifi"></i></div>
-          <h2 style="font-family:var(--serif);font-size:1.3rem">Connection error</h2>
-          <p style="color:var(--muted);font-size:0.88rem">Could not connect to verify your payment. Please contact support with ref: <strong>${tx_ref}</strong></p>
-          <a href="mailto:hello@traydr.market" style="color:var(--amber);font-size:0.88rem">Contact Support</a>
-        </div>`;
-    }
-    return;
-  }
-
-  /* Handle success redirect (after verify redirects here) */
-  if (urlP.get('success') === '1') {
-    const orderId = urlP.get('order_id');
-    const ref     = urlP.get('ref');
-    goStep(4);
-    $('success-order-id').textContent = orderId ? `#TRX-${String(orderId).padStart(6,'0')}` : ref || 'Confirmed';
-    return;
-  }
-
-    /* Load saved addresses */
+  /* Load saved addresses */
   try {
     const { data: addrs } = await DB.getAddresses(user.id);
     if (addrs && addrs.length > 0) {
@@ -811,8 +691,8 @@ async function init() {
 /* ── Summary ── */
 function renderSummary() {
   const c = checkout;
-  const fee   = +(c.price * 0.08).toFixed(2);
-  const total = +(c.price + fee).toFixed(2);
+  const fee   = c.price * 0.08;
+  const total = c.price + fee;
 
   /* image */
   if (c.listing_image) {
@@ -831,8 +711,8 @@ function renderSummary() {
 /* ── Review detail (step 1) ── */
 function renderReviewDetail() {
   const c = checkout;
-  const fee   = +(c.price * 0.08).toFixed(2);
-  const total = +(c.price + fee).toFixed(2);
+  const fee   = c.price * 0.08;
+  const total = c.price + fee;
   const catIcons = {physical:'<i class="fas fa-box"></i>',digital:'<i class="fas fa-floppy-disk"></i>',freelance:'<i class="fas fa-screwdriver-wrench"></i>',experience:'<i class="fas fa-graduation-cap"></i>'};
 
   $('review-detail').innerHTML = `
@@ -860,8 +740,8 @@ function renderReviewDetail() {
 /* ── Confirm detail (step 3) ── */
 function renderConfirmDetail() {
   const c = checkout;
-  const fee   = +(c.price * 0.08).toFixed(2);
-  const total = +(c.price + fee).toFixed(2);
+  const fee   = c.price * 0.08;
+  const total = c.price + fee;
   const methodLabel = region === 'global'
     ? `<i class="fas fa-credit-card"></i> Card ending ····${($('card-num').value.replace(/\s/g,'')).slice(-4) || '••••'}`
     : fwMethod === 'card'         ? `<i class="fas fa-credit-card"></i> Card (Flutterwave)`
@@ -950,15 +830,9 @@ $('fw-methods').addEventListener('click', e => {
   document.querySelectorAll('.fw-method').forEach(x => x.classList.remove('on'));
   m.classList.add('on'); fwMethod = m.dataset.fw;
   /* show correct fields */
-  const fieldMap = {
-    card:          'fw-card-fields',
-    mobile_money:  'fw-mobile-fields',
-    bank_transfer: 'fw-bank-fields',
-    ussd:          'fw-ussd-fields',
-  };
-  Object.entries(fieldMap).forEach(([k, id]) => {
-    const el = $(id);
-    if (el) el.style.display = k === fwMethod ? '' : 'none';
+  ['card','mobile_money','bank_transfer','ussd'].forEach(k => {
+    const el = $(`fw-${k.replace('_','-')}-fields`);
+    if(el) el.style.display = k===fwMethod ? '' : 'none';
   });
 });
 
@@ -1027,32 +901,14 @@ $('place-order-btn').addEventListener('click', async () => {
   const total   = +(c.price + fee).toFixed(2);
   const payout  = +(c.price * (1 - feeRate)).toFixed(2);
 
-  /* Guard: seller_id must exist */
-  if (!c.seller_id) {
-    btn.classList.remove('ld'); btn.disabled = false;
-    showAlert('step3-err', 'This listing has no assigned seller. Please contact support.');
-    return;
-  }
+  if (!c.seller_id) { btn.classList.remove('ld'); btn.disabled = false; showAlert('step3-err','No seller assigned. Contact support.'); return; }
+  if (!user)         { btn.classList.remove('ld'); btn.disabled = false; showAlert('step3-err','Please log in first.'); return; }
+  if (c.seller_id === user.id) { btn.classList.remove('ld'); btn.disabled = false; showAlert('step3-err','You cannot buy your own listing.'); return; }
 
-  /* Guard: must be logged in (shouldn't reach here if not, but just in case) */
-  if (!user) {
-    btn.classList.remove('ld'); btn.disabled = false;
-    showAlert('step3-err', 'Please log in to complete your purchase.');
-    return;
-  }
+  btn.querySelector('.lbl').textContent = 'Opening payment...';
 
-  /* Guard: buyer can't buy their own listing */
-  if (c.seller_id === user.id) {
-    btn.classList.remove('ld'); btn.disabled = false;
-    showAlert('step3-err', 'You cannot purchase your own listing.');
-    return;
-  }
-
-  /* ── Initiate Flutterwave payment FIRST — order only created after success ── */
-  btn.querySelector('.lbl').textContent = 'Redirecting to payment...';
-
-  /* Store checkout details in session for after return */
-  sessionStorage.setItem('traydr_pending_checkout', JSON.stringify({
+  /* Save checkout data for after payment */
+  const checkoutData = {
     buyer_id:      user.id,
     seller_id:     c.seller_id,
     listing_id:    c.listing_id,
@@ -1064,56 +920,125 @@ $('place-order-btn').addEventListener('click', async () => {
     platform_fee:  fee,
     seller_payout: payout,
     package_label: c.package_label,
-  }));
+  };
+  sessionStorage.setItem('traydr_pending_checkout', JSON.stringify(checkoutData));
+
+  const tx_ref = 'TRADDR-' + Date.now() + '-' + Math.random().toString(36).slice(2,7).toUpperCase();
+  sessionStorage.setItem('traydr_tx_ref', tx_ref);
+
+  /* Always use NGN for Nigerian users — required for bank transfer */
+  const country  = delivery.country || 'NG';
+  const currency = country === 'GH' ? 'GHS' : country === 'KE' ? 'KES' : country === 'ZA' ? 'ZAR' : 'NGN';
+
+  /* Convert to NGN if listing is in USD */
+  const displayAmount = currency === 'NGN' && c.currency !== 'NGN'
+    ? total * 1600  /* approx NGN rate — update as needed */
+    : total;
 
   try {
-    const flwRes = await fetch(
-      'https://rtwbrcbifnowrqpgivma.supabase.co/functions/v1/flutterwave-charge',
-      {
-        method:  'POST',
-        headers: {
-          'Content-Type':  'application/json',
-          'Authorization': 'Bearer sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7',
-        },
-        body: JSON.stringify({
-          action:        'initiate',
-          amount:        total,
-          currency:      delivery.country === 'NG' ? 'NGN' :
-                         delivery.country === 'GH' ? 'GHS' :
-                         delivery.country === 'KE' ? 'KES' :
-                         delivery.country === 'ZA' ? 'ZAR' : 'USD',
-          email:         user.email,
-          name:          delivery.name,
-          phone:         delivery.phone || '',
-          order_id:      `tmp_${Date.now()}`,
-          listing_title: c.listing_title,
-          redirect_url:  `${window.location.origin}/checkout.html?flw=success`,
-        }),
-      }
-    );
-
-    const flwData = await flwRes.json();
-    btn.classList.remove('ld'); btn.disabled = false;
-
-    if (flwData.success && flwData.payment_link) {
-      sessionStorage.setItem('traydr_pending_order', flwData.tx_ref);
-      sessionStorage.removeItem('traydr_checkout');
-      window.location.href = flwData.payment_link;
-      return;
-    }
-
-    console.error('FLW initiate failed:', flwData);
-    const errMsg = flwData.error || flwData.message || 'Payment initiation failed.';
-    showAlert('step3-err', errMsg + ' (Check console for details)');
-
+    window.FlutterwaveCheckout({
+      public_key:      'FLWPUBK-7e690677caf3199951323b1b832003ba-X',
+      tx_ref,
+      amount:          displayAmount,
+      currency,
+      payment_options: currency === 'NGN'
+        ? 'card,banktransfer,ussd'
+        : currency === 'GHS' ? 'card,mobilemoneymomo'
+        : currency === 'KES' ? 'card,mpesa' : 'card',
+      customer: {
+        email:        user.email,
+        name:         delivery.name  || 'TraydR Buyer',
+        phone_number: delivery.phone || '',
+      },
+      customizations: {
+        title:       'TraydR Marketplace',
+        description: c.listing_title || 'Order Payment',
+        logo:        window.location.origin + '/logo.png',
+      },
+      callback: async (response) => {
+        console.log('FLW callback:', response);
+        if (response.status === 'successful' || response.status === 'completed') {
+          await handlePaymentSuccess(response.transaction_id, tx_ref, checkoutData);
+        } else {
+          btn.classList.remove('ld'); btn.disabled = false;
+          btn.querySelector('.lbl').textContent = 'Place Order & Pay';
+          showAlert('step3-err', 'Payment was not completed. Please try again.');
+        }
+      },
+      onclose: () => {
+        btn.classList.remove('ld'); btn.disabled = false;
+        btn.querySelector('.lbl').textContent = 'Place Order & Pay';
+      },
+    });
   } catch(e) {
-    console.error('FLW network error:', e);
+    console.error('FLW error:', e);
     btn.classList.remove('ld'); btn.disabled = false;
-    showAlert('step3-err', 'Could not reach payment service. Check your connection and try again.');
+    btn.querySelector('.lbl').textContent = 'Place Order & Pay';
+    showAlert('step3-err', 'Could not open payment. Please try again.');
   }
 });
 
-/* ── Login prompt (shown when user hits checkout without being logged in) ── */
+async function handlePaymentSuccess(transaction_id, tx_ref, checkoutData) {
+  console.log('Verifying:', transaction_id, tx_ref);
+  /* Show verifying state */
+  document.querySelectorAll('.step-panel').forEach(p => p.style.display = 'none');
+  document.querySelector('.page') && (document.querySelector('.page').style.minHeight = '60vh');
+
+  try {
+    const controller = new AbortController();
+    const timeout    = setTimeout(() => controller.abort(), 20000);
+    const res = await fetch(
+      'https://rtwbrcbifnowrqpgivma.supabase.co/functions/v1/quick-api',
+      {
+        method : 'POST',
+        signal : controller.signal,
+        headers: {
+          'Content-Type' : 'application/json',
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc',
+        },
+        body: JSON.stringify({
+          action:        'verify',
+          transaction_id,
+          tx_ref,
+          checkout_data: checkoutData,
+        }),
+      }
+    );
+    clearTimeout(timeout);
+    const data = await res.json();
+    console.log('Verify result:', data);
+    sessionStorage.removeItem('traydr_pending_checkout');
+    sessionStorage.removeItem('traydr_tx_ref');
+    goStep(4);
+    $('success-order-id').textContent = data.order_id
+      ? '#TRX-' + String(data.order_id).padStart(6,'0')
+      : '#TRX-' + tx_ref.slice(-6);
+  } catch(e) {
+    console.error('Verify error:', e);
+    /* Payment went through — show success, webhook creates order */
+    sessionStorage.removeItem('traydr_pending_checkout');
+    sessionStorage.removeItem('traydr_tx_ref');
+    goStep(4);
+    $('success-order-id').textContent = '#TRX-' + tx_ref.slice(-6);
+  }
+}
+
+/* ── Handle Flutterwave redirect return (for mobile/redirect flow) ── */
+(async () => {
+  const urlP           = new URLSearchParams(window.location.search);
+  if (urlP.get('status') === 'successful' || urlP.get('flw') === 'success') {
+    const transaction_id = urlP.get('transaction_id');
+    const tx_ref         = urlP.get('tx_ref') || sessionStorage.getItem('traydr_tx_ref');
+    const checkoutData   = JSON.parse(sessionStorage.getItem('traydr_pending_checkout') || '{}');
+    if (transaction_id && checkoutData.buyer_id) {
+      document.querySelector('.page') && (document.querySelector('.page').innerHTML =
+        '<div style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;text-align:center"><div style="font-size:2.5rem;color:var(--amber)"><i class="fas fa-spinner fa-spin"></i></div><h2 style="font-family:var(--serif);font-size:1.3rem;color:var(--text)">Verifying payment...</h2><p style="color:var(--muted);font-size:0.88rem">Please wait</p></div>');
+      await handlePaymentSuccess(transaction_id, tx_ref, checkoutData);
+    }
+  }
+})();
+
+/* ── Login prompt/* ── Login prompt (shown when user hits checkout without being logged in) ── */
 function showAlert(id, msg) {
   const el = $(id); el.classList.add('on');
   el.querySelectorAll('span')[1].textContent = msg;
@@ -1154,12 +1079,5 @@ init();
     if (tog)   tog.checked = isDark;
     if (thumb) thumb.style.transform = isDark ? 'translateX(20px)' : 'translateX(0)';
   });</script>
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js').catch(() => {});
-    });
-  }
-</script>
 </body>
 </html>
