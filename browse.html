@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Browse Listings — TraydR Marketplace</title>
+  <meta name="keywords" content="buy online Nigeria, sell products Africa, freelance marketplace, digital products, escrow payment, TraydR">
   <meta name="description" content="Discover thousands of products, digital downloads, freelance services and experiences on TraydR. Filter by category, price, rating and delivery time." />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://traydr.vercel.app/browse.html" />
@@ -11,10 +12,10 @@
   <meta property="og:url"         content="https://traydr.vercel.app/browse.html" />
   <meta property="og:title"       content="Browse Listings — TraydR Marketplace" />
   <meta property="og:description" content="Discover thousands of products, services and skills on TraydR." />
-  <meta property="og:image"       content="https://traydr.vercel.app/og-image.png" />
+  <meta property="og:image"       content="https://traydr.vercel.app/logo.png" />
   <meta name="twitter:card"       content="summary_large_image" />
   <meta name="twitter:title"      content="Browse Listings — TraydR" />
-  <meta name="twitter:image"      content="https://traydr.vercel.app/og-image.png" />
+  <meta name="twitter:image"      content="https://traydr.vercel.app/logo.png" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F59E0B" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -23,7 +24,6 @@
   <script src="auth.guard.js"></script>
   <script src="auth.backend.js"></script>
   <script src="listings.js"></script>
-  <script src="currency.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -51,8 +51,8 @@
       display: flex; align-items: center; gap: 0.75rem;
     }
     .nav-logo { display: flex; align-items: center; gap: 6px; flex-shrink: 0; text-decoration: none; }
-    .nav-logo img { height: 44px; width: auto; display: block; object-fit: contain; }
-    .nav-logo i { display: none; }
+    .nav-logo span { font-family: var(--serif); font-size: 1.3rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
+    .nav-logo i { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); display: inline-block; }
     .nav-search { flex: 1; display: flex; background: var(--bg3); border: 1px solid var(--border-md); border-radius: 10px; overflow: hidden; max-width: 500px; }
     .nav-search input { flex: 1; background: transparent; border: none; outline: none; padding: 0.6rem 1rem; color: var(--text); font-size: 0.88rem; font-family: var(--sans); min-width: 0; }
     .nav-search input::placeholder { color: var(--dim); }
@@ -341,20 +341,35 @@
     [data-theme="dark"] .tbl th { background: var(--bg3) !important; color: var(--muted) !important; }
     [data-theme="dark"] .filter-label { color: var(--muted) !important; }
 
-    /* ── Freelance skill card ── */
-    .card-img-skill { background: linear-gradient(135deg, var(--amber-dim) 0%, var(--bg3) 100%); }
-    .skill-avatar-ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-    .skill-avatar-ph span { width: 70px; height: 70px; border-radius: 50%; background: var(--amber-dim); border: 3px solid rgba(194,105,10,0.25); display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 700; color: var(--amber); font-family: var(--serif); }
-    .skill-type-badge { position: absolute; bottom: 0.6rem; left: 0.6rem; background: rgba(10,10,10,0.75); color: #fff; font-size: 0.68rem; font-weight: 600; padding: 0.22rem 0.6rem; border-radius: 100px; backdrop-filter: blur(4px); }
-    [data-theme="light"] .skill-type-badge { background: rgba(28,18,8,0.7); }
+    /* ══════════════════════════════════════
+       MOBILE FIRST — Full Responsive System
+    ══════════════════════════════════════ */
+    * { box-sizing: border-box; }
+    #nav, nav { padding-left: 0.85rem; padding-right: 0.85rem; }
+
+    /* Tables */
+    .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; }
+    .tbl { width: 100%; min-width: 480px; }
+
+    /* Cards */
+    .card, .listing-card { min-width: 0; }
+
+    /* Modals */
+    .mbox { width: calc(100vw - 2rem) !important; max-width: 100% !important; }
+
+    @media (max-width: 480px) {
+      .f2 { grid-template-columns: 1fr !important; }
+      .grid-2 { grid-template-columns: 1fr !important; }
+    }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="icon" type="image/png" href="logo.png">
 </head>
 <body>
 
 <!-- NAV -->
 <nav id="nav">
-  <a href="index.html" class="nav-logo"><img src="logo.png" alt="TraydR" style="height:44px;width:auto;display:block;object-fit:contain"></a>
+  <a href="index.html" class="nav-logo"><img src="logo.png" alt="TraydR" style="height:64px;width:auto;display:block;object-fit:contain"></a>
 
   <div class="nav-search-wrap">
     <div class="nav-search">
@@ -525,39 +540,24 @@ function showSkeletons(n = 6) {
 
 /* ── Render card ── */
 function renderCard(l, idx) {
-  const isFreelance = l.category === 'freelance' || l.category === 'experience';
-  const img         = Listings.getImage(l, 0);
-  const badge       = Listings.getBadgeLabel(l.badge);
-  const bCls        = Listings.getBadgeClass(l.badge);
-  const isSv        = saved.has(l.id);
-
-  /* Freelance cards show seller avatar instead of product image */
-  const imgSection = isFreelance ? `
-    <div class="card-img card-img-skill">
-      ${l.seller_avatar
-        ? `<img src="${l.seller_avatar}" alt="${l.seller_name}" loading="lazy" style="width:100%;height:100%;object-fit:cover">`
-        : `<div class="skill-avatar-ph"><span>${l.seller_name ? l.seller_name[0].toUpperCase() : '?'}</span></div>`
-      }
-      <div class="skill-type-badge"><i class="fas fa-screwdriver-wrench"></i> ${Listings.getCatName(l.category)}</div>
-      ${badge ? `<span class="card-badge ${bCls}">${badge}</span>` : ''}
-      <button class="card-save ${isSv?'saved':''}" onclick="toggleSave(event,${l.id})" title="${isSv?'Unsave':'Save'}">${isSv?'<i class="fas fa-heart"></i>':'<i class="far fa-heart"></i>'}</button>
-    </div>` : `
-    <div class="card-img">
-      <img src="${img}" alt="${l.title}" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.insertAdjacentHTML('afterend','<div class=\'img-unavailable\'><i class=\'fas fa-image\'></i><span>Image Unavailable</span></div>')"/>
-      <div class="card-img-placeholder" style="display:none">${Listings.getCatEmoji(l.category)}</div>
-      ${badge ? `<span class="card-badge ${bCls}">${badge}</span>` : ''}
-      <button class="card-save ${isSv?'saved':''}" onclick="toggleSave(event,${l.id})" title="${isSv?'Unsave':'Save'}">${isSv?'<i class="fas fa-heart"></i>':'<i class="far fa-heart"></i>'}</button>
-    </div>`;
-
+  const img   = Listings.getImage(l, 0);
+  const badge = Listings.getBadgeLabel(l.badge);
+  const bCls  = Listings.getBadgeClass(l.badge);
+  const isSv  = saved.has(l.id);
   return `
     <a class="card" href="listing.html?id=${l.id}" style="animation-delay:${idx*0.04}s">
-      ${imgSection}
+      <div class="card-img">
+        <img src="${img}" alt="${l.title}" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.insertAdjacentHTML('afterend','<div class=\'img-unavailable\'><i class=\'fas fa-image\'></i><span>Image Unavailable</span></div>')"/>
+        <div class="card-img-placeholder" style="display:none">${Listings.getCatEmoji(l.category)}</div>
+        ${badge ? `<span class="card-badge ${bCls}">${badge}</span>` : ''}
+        <button class="card-save ${isSv?'saved':''}" onclick="toggleSave(event,${l.id})" title="${isSv?'Unsave':'Save'}">${isSv?'<i class="fas fa-heart"></i>':'<i class="far fa-heart"></i>'}</button>
+      </div>
       <div class="card-body">
         <div class="card-cat">${Listings.getCatEmoji(l.category)} ${Listings.getCatName(l.category)}</div>
         <div class="card-title">${l.title}</div>
         <div class="card-seller">
-          <div class="seller-dot" style="${l.seller_avatar ? 'overflow:hidden;padding:0' : ''}">${l.seller_avatar ? `<img src="${l.seller_avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">` : (l.seller_name ? l.seller_name[0] : '?')}</div>
-          <span class="seller-name"><a href="profile.html?id=${l.seller_id}" onclick="event.stopPropagation()" style="color:inherit;text-decoration:none">${l.seller_name || 'Unknown'}</a> ${l.seller_verified ? '<i class="fas fa-circle-check"></i>' : ''}</span>
+          <div class="seller-dot">${l.seller_name ? l.seller_name[0] : '?'}</div>
+          <span class="seller-name">${l.seller_name || 'Unknown'} ${l.seller_verified ? '<i class="fas fa-circle-check"></i>' : ''}</span>
         </div>
         <div class="card-foot">
           <div class="card-rating">
@@ -565,7 +565,7 @@ function renderCard(l, idx) {
             <span class="rv">${l.rating || '—'}</span>
             <span class="rc">(${l.review_count || 0})</span>
           </div>
-          <div class="card-price">${window.Currency ? Currency.format(l.price) : '$'+l.price}</div>
+          <div class="card-price"><small>from</small>$${l.price}</div>
         </div>
       </div>
     </a>`;
@@ -777,7 +777,7 @@ async function toggleSave(e, id) {
     if (saved.has(id)) { saved.delete(id); await Listings.unsave(id); }
     else               { saved.add(id);    await Listings.save(id);   }
     const btn = e.currentTarget;
-    btn.textContent = saved.has(id) ? '<i class="fas fa-heart"></i>' : '<i class="far fa-heart"></i>';
+    btn.innerHTML = saved.has(id) ? '<i class="fas fa-heart"></i>' : '<i class="far fa-heart"></i>';
     btn.classList.toggle('saved', saved.has(id));
   }, { label: 'save listings' });
 }
@@ -856,29 +856,8 @@ async function loadSaved() {
       if (el) el.textContent = n;
     });
   }
-
-  /* Init currency then render */
-  await Currency.init();
-  const _sel = $('currency-select');
-  if (_sel) {
-    const _saved = localStorage.getItem('traydr_user_currency');
-    if (_saved) Currency.set(_saved);
-    _sel.value = Currency.getCurrency();
-    const _lbl = $('currency-rate-label');
-    if (_lbl && Currency.getCurrency() !== 'USD') {
-      _lbl.textContent = `1 USD ≈ ${Currency.format(1)}`;
-    }
-  }
   render();
 })();
-
-function changeCurrency(code) {
-  Currency.set(code);
-  localStorage.setItem('traydr_user_currency', code);
-  const lbl = $('currency-rate-label');
-  if (lbl) lbl.textContent = code !== 'USD' ? `1 USD ≈ ${Currency.format(1)}` : '';
-  render();
-}
 </script>
 <script>
   (function() {
@@ -904,7 +883,9 @@ function changeCurrency(code) {
   });</script>
 <script>
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
   }
 </script>
 </body>
