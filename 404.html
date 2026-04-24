@@ -155,11 +155,10 @@
       opacity: 0.15;
     }
   </style>
-  <script src="currency.js"></script>
 </head>
 <body>
   <div class="logo">
-    <a href="index.html" class="nav-logo"><img src="logo.png" alt="TraydR" style="height:44px;width:auto;display:block;object-fit:contain"></a>
+    <a href="index.html"><img src="logo.png" alt="TraydR"></a>
   </div>
 
   <div class="icon-wrap"><i class="fas fa-magnifying-glass"></i></div>
@@ -190,10 +189,5 @@
       document.documentElement.setAttribute('data-theme', t);
     })();
   </script>
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
-  }
-</script>
 </body>
 </html>

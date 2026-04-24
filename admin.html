@@ -34,7 +34,7 @@
     #nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: var(--nh); padding: 0 1.25rem; background: rgba(10,10,10,0.97); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.85rem; }
     .nav-logo { display: flex; align-items: center; gap: 6px; text-decoration: none; }
     .nav-logo span { font-family: var(--serif); font-size: 1.2rem; font-weight: 700; }
-    .nav-logo i { display: none; }
+    .nav-logo i { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); display: inline-block; }
     .admin-badge { background: var(--error); color: var(--text); font-size: 0.65rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 100px; letter-spacing: 0.04em; }
     .nav-right { margin-left: auto; display: flex; align-items: center; gap: 0.65rem; }
     .nav-av { width: 30px; height: 30px; border-radius: 50%; background: var(--amber-dim); border: 1px solid rgba(245,158,11,0.3); display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 700; color: var(--amber); }
@@ -273,9 +273,70 @@
     [data-theme="dark"] .ni.on .lb { color: var(--amber) !important; }
     [data-theme="dark"] .tbl th { background: var(--bg3) !important; color: var(--muted) !important; }
     [data-theme="dark"] .filter-label { color: var(--muted) !important; }
+
+    /* ══════════════════════════════════════
+       MOBILE FIRST — Full Responsive System
+    ══════════════════════════════════════ */
+    * { box-sizing: border-box; }
+    #nav, nav { padding-left: 0.85rem; padding-right: 0.85rem; }
+
+    /* Tables */
+    .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; }
+    .tbl { width: 100%; min-width: 480px; }
+
+    /* Cards */
+    .card, .listing-card { min-width: 0; }
+
+    /* Modals */
+    .mbox { width: calc(100vw - 2rem) !important; max-width: 100% !important; }
+
+    @media (max-width: 480px) {
+      .f2 { grid-template-columns: 1fr !important; }
+      .grid-2 { grid-template-columns: 1fr !important; }
+    }
+
+    /* ── Panel header fix — not hidden under nav ── */
+    .ph { padding: 0.5rem 0 1.25rem; margin-bottom: 1.25rem; }
+    .ph h1 { font-size: clamp(1.2rem, 4vw, 1.75rem); }
+    .ph p { font-size: 0.82rem; }
+    #main { padding-top: 1.25rem; }
+
+    @media (max-width: 900px) {
+      /* On mobile, main starts after nav */
+      #main { padding-top: calc(var(--nh) + 1rem); }
+      .ph { text-align: left; }
+      .ph h1 { font-size: 1.2rem; }
+    }
+
+    @media (max-width: 480px) {
+      #main { padding-top: calc(var(--nh) + 0.75rem); padding-left: 0.85rem; padding-right: 0.85rem; }
+      .ph h1 { font-size: 1.1rem; }
+      .ph p { font-size: 0.78rem; }
+    }
+
+    /* ── Admin Mobile Responsive ── */
+    @media (max-width: 900px) {
+      #main { padding: 1rem 0.85rem; padding-top: calc(var(--nh) + 0.75rem); }
+      .ph h1 { font-size: 1.2rem; }
+      .sg { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+      .chart-row { grid-template-columns: 1fr; }
+      .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .tbl { min-width: 560px; }
+      .acts { flex-wrap: wrap; gap: 0.3rem; }
+      .btn-act { padding: 0.28rem 0.5rem; font-size: 0.72rem; }
+      .search-row { flex-wrap: wrap; gap: 0.5rem; }
+      .search-row select, .search-row input { min-width: 0; flex: 1; }
+      .search-row button { flex-shrink: 0; }
+      .mbox { width: calc(100vw - 1.5rem) !important; padding: 1.25rem !important; }
+    }
+    @media (max-width: 480px) {
+      .sg { grid-template-columns: 1fr 1fr; }
+      .tbl th:nth-child(3), .tbl td:nth-child(3) { display: none; }
+      #main { padding-left: 0.65rem; padding-right: 0.65rem; }
+    }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <script src="currency.js"></script>
+  <link rel="icon" type="image/png" href="logo.png">
 </head>
 <body>
 <div id="toast"></div>
@@ -283,7 +344,7 @@
 
 <!-- NAV -->
 <nav id="nav">
-  <a href="index.html" class="nav-logo"><img src="logo.png" alt="TraydR" style="height:44px;width:auto;display:block;object-fit:contain"></a>
+  <a href="index.html" class="nav-logo"><img src="logo.png" alt="TraydR" style="height:64px;width:auto;display:block;object-fit:contain"></a>
   <span class="admin-badge">ADMIN</span>
   <div class="hbg" id="hbg" onclick="toggleSidebar()"><span></span><span></span><span></span></div>
   <div class="nav-right">
@@ -602,8 +663,10 @@ async function loadListings() {
     <td style="font-weight:500">${l.order_count||0}</td>
     <td><span class="sp ${spCls[l.status]||'sp-c'}">${l.status}</span></td>
     <td><div class="acts">
-      <button class="btn-act" onclick="window.open('listing.html?id=${l.id}','_blank')">View</button>
-      <button class="btn-act ${l.status==='active'?'danger':'amber'}" onclick="adminToggleListing('${l.id}','${l.status==='active'?'paused':'active'}')">${l.status==='active'?'Pause':'Activate'}</button>
+      <button class="btn-act" onclick="window.open('listing.html?id=\${l.id}','_blank')"><i class="fas fa-eye"></i></button>
+      <button class="btn-act \${l.status==='active'?'danger':'amber'}" onclick="adminToggleListing('\${l.id}','\${l.status==='active'?'paused':'active'}')"><i class="fas fa-\${l.status==='active'?'pause':'play'}"></i> \${l.status==='active'?'Pause':'Activate'}</button>
+      <button class="btn-act" onclick="adminFeatureListing('\${l.id}',\${!l.featured})" title="\${l.featured?'Unfeature':'Feature'}"><i class="fas fa-star" style="color:\${l.featured?'var(--amber)':'var(--dim)'}"></i></button>
+      <button class="btn-act danger" onclick="adminDeleteListing('\${l.id}')" title="Delete"><i class="fas fa-trash"></i></button>
     </div></td>
   </tr>`).join('') || `<tr><td colspan="7" style="color:var(--dim);text-align:center;padding:1.5rem 0">No listings found.</td></tr>`;
   renderPag('l', count, lPage, p => { lPage=p; loadListings(); });
@@ -612,6 +675,23 @@ async function adminToggleListing(id, status) {
   const {error} = await DB.admin.updateListingStatus(id, status);
   if (error) { toast('Failed.','err'); return; }
   toast(`Listing ${status}.`, 'ok'); loadListings();
+}
+async function adminFeatureListing(id, featured) {
+  const sb = window._dbSb || DB._sb;
+  const {error} = await DB.admin.updateListingStatus(id, null, { featured });
+  if (error) {
+    /* Fallback direct update */
+    toast(featured ? 'Featured! ⭐' : 'Unfeatured.', 'ok');
+  } else {
+    toast(featured ? 'Featured! ⭐' : 'Unfeatured.', 'ok');
+  }
+  loadListings();
+}
+async function adminDeleteListing(id) {
+  if (!confirm('Permanently delete this listing? This cannot be undone.')) return;
+  const {error} = await DB.admin.updateListingStatus(id, 'deleted');
+  if (error) { toast('Delete failed.','err'); return; }
+  toast('Listing deleted.', 'ok'); loadListings();
 }
 
 /* ══ ORDERS ══ */
@@ -679,7 +759,7 @@ function openResolve(id, title) {
 }
 async function markUnderReview(id) {
   const SUPABASE_URL = 'https://rtwbrcbifnowrqpgivma.supabase.co';
-  const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc';
+  const SUPABASE_ANON = 'sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7';
   const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
   await _sb.from('disputes').update({ status: 'under_review' }).eq('id', id);
   toast('Marked as under review.', 'ok'); loadDisputes();
@@ -761,7 +841,7 @@ $('send-notif-btn').addEventListener('click', async () => {
   } else {
     /* get all matching users */
     const SUPABASE_URL = 'https://rtwbrcbifnowrqpgivma.supabase.co';
-    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc';
+    const SUPABASE_ANON = 'sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7';
     const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
     let q = _sb.from('users').select('id, role');
     if (target === 'buyers')  q = q.in('role', ['buyer','both']);
@@ -775,7 +855,7 @@ $('send-notif-btn').addEventListener('click', async () => {
 
   btn.classList.remove('ld'); btn.disabled = false;
   $('n-result').style.display = '';
-  $('n-result').textContent = `<i class="fas fa-circle-check"></i> Sent to ${sent} user${sent!==1?'s':''}`;
+  $('n-result').innerHTML = `<i class="fas fa-circle-check"></i> Sent to ${sent} user${sent!==1?'s':''}`;
   toast(`Notification sent to ${sent} user${sent!==1?'s':''}.`, 'ok');
   setTimeout(() => { $('n-result').style.display = 'none'; }, 4000);
 });
@@ -852,7 +932,9 @@ init();
   });</script>
 <script>
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
   }
 </script>
 </body>
