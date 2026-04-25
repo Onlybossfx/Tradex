@@ -5,7 +5,7 @@
 if (!window._lSb) {
   window._lSb = supabase.createClient(
     'https://rtwbrcbifnowrqpgivma.supabase.co',
-    'sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7'
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc'
   );
 }
 

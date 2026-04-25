@@ -21,7 +21,7 @@
   /* ── Config ── */
 ;(function() {
 const _AUTH_URL  = window._AUTH_URL  || 'https://rtwbrcbifnowrqpgivma.supabase.co';
-const _AUTH_ANON = window._AUTH_ANON || 'sb_publishable_ydvrDDChpJ-pkeDLZlcJyA_Qqk0OUd7';
+const _AUTH_ANON = window._AUTH_ANON || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc';
 
 const { createClient } = supabase;
 const sb = createClient(_AUTH_URL, _AUTH_ANON);
