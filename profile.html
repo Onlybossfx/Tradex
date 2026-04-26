@@ -146,7 +146,20 @@ function showTab(t){
   document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('on',['listings','reviews'][i]===t));
 }
 
-async function db(path){ const r=await fetch(`${SUPA}/rest/v1/${path}`,{headers:H}); return r.ok?r.json():[]; }
+async function db(path){
+  try {
+    const r = await fetch(`${SUPA}/rest/v1/${path}`, {headers:H});
+    if (!r.ok) {
+      const err = await r.text().catch(()=>'');
+      console.warn(`DB [${r.status}] ${path}:`, err.slice(0,200));
+      return [];
+    }
+    return await r.json();
+  } catch(e) {
+    console.error('DB fetch:', path, e.message);
+    return [];
+  }
+}
 
 async function load(){
   if(!sid){
@@ -155,18 +168,37 @@ async function load(){
   }
 
   /* Load user + listings + reviews in parallel */
+  /* Note: users table needs public read RLS — see profile-rls.sql */
   const [users, listings, reviews] = await Promise.all([
-    db(`users?id=eq.${sid}&select=id,full_name,avatar_url,role,created_at,bio,location,is_verified`),
+    db(`users?id=eq.${sid}&select=id,full_name,avatar_url,role,created_at,bio,location,verified`),
     db(`listings?seller_id=eq.${sid}&status=eq.active&order=created_at.desc&select=id,title,price,images,rating,review_count,category`),
-    db(`reviews?reviewee_id=eq.${sid}&order=created_at.desc&limit=30&select=*,users!reviewer_id(full_name,avatar_url)`),
+    db(`reviews?reviewee_id=eq.${sid}&order=created_at.desc&limit=20&select=id,rating,comment,reviewer_id,created_at`),
   ]);
+
+  /* Enrich reviews with reviewer name (best-effort) */
+  for (const rv of reviews) {
+    if (rv.reviewer_id) {
+      const rdata = await db(`users?id=eq.${rv.reviewer_id}&select=full_name,avatar_url`);
+      rv.users = rdata?.[0] || {};
+    }
+  }
 
   $('p-skeleton').style.display = 'none';
   $('p-content').style.display  = 'block';
   $('p-tabs').style.display     = 'flex';
 
   const u = users?.[0];
-  if(!u){ $('p-content').innerHTML='<div class="empty"><i class="fas fa-ghost"></i><p>Profile not found.</p></div>'; return; }
+  if(!u){
+    console.warn('Profile not found for id:', sid);
+    $('p-content').innerHTML=`<div class="empty">
+      <i class="fas fa-ghost"></i>
+      <p style="font-weight:600;margin-bottom:0.3rem">Profile not available</p>
+      <p style="font-size:0.78rem;color:var(--dim)">This seller hasn't set up their public profile yet, or the profile ID is invalid.</p>
+      <a href="browse.html" style="color:var(--amber);font-size:0.82rem;font-weight:600;margin-top:0.75rem;display:inline-block">← Back to Marketplace</a>
+    </div>`;
+    $('p-tabs').style.display = 'none';
+    return;
+  }
 
   profile = u;
   const avgRat = reviews.length ? (reviews.reduce((a,r)=>a+(r.rating||0),0)/reviews.length).toFixed(1) : '—';
@@ -177,7 +209,7 @@ async function load(){
     <div class="ptop">
       <div class="pav">${av(u.avatar_url, u.full_name)}</div>
       <div class="pinfo">
-        <div class="pname">${u.full_name||'TraydR Seller'} ${u.is_verified?'<i class="fas fa-circle-check pvc" title="Verified"></i>':''}</div>
+        <div class="pname">${u.full_name||'TraydR Seller'} ${u.verified?'<i class="fas fa-circle-check pvc" title="Verified"></i>':''}</div>
         <div class="prole"><i class="fas fa-store" style="color:var(--amber);margin-right:0.3rem"></i>Seller · Member since ${since}</div>
         ${u.location?`<div class="ploc"><i class="fas fa-location-dot"></i>${u.location}</div>`:''}
         <div class="pacts">
@@ -190,7 +222,7 @@ async function load(){
       <div class="sb"><div class="sv">${listings.length}</div><div class="sl">Listings</div></div>
       <div class="sb"><div class="sv">${avgRat!=='—'?'★ '+avgRat:'—'}</div><div class="sl">Avg Rating</div></div>
       <div class="sb"><div class="sv">${reviews.length}</div><div class="sl">Reviews</div></div>
-      <div class="sb"><div class="sv">${u.is_verified?'<i class="fas fa-circle-check" style="color:var(--success);font-size:1.2rem"></i>':'—'}</div><div class="sl">Verified</div></div>
+      <div class="sb"><div class="sv">${u.verified?'<i class="fas fa-circle-check" style="color:var(--success);font-size:1.2rem"></i>':'—'}</div><div class="sl">Verified</div></div>
     </div>
     ${u.bio?`<div class="sec"><div class="sec-t">About</div><div class="bio">${u.bio}</div></div>`:''}`;
 
