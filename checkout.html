@@ -619,6 +619,17 @@ const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
 
 /* ── State ── */
+/* ── Seller plan fee — fetched when listing loads ── */
+let _sellerFeeRate = 0.08;
+async function fetchSellerFeeRate(sellerId) {
+  if (!sellerId || !window.DB) return 0.08;
+  try {
+    const { plan } = await DB.getPlan(sellerId);
+    _sellerFeeRate  = DB.getPlanFee(plan);
+    console.log('[checkout] seller plan:', plan, '→ fee:', (_sellerFeeRate*100)+'%');
+  } catch(e) { _sellerFeeRate = 0.08; }
+  return _sellerFeeRate;
+}
 let checkout  = null; /* from sessionStorage */
 let user      = null;
 let currentStep = 1;
@@ -691,8 +702,8 @@ async function init() {
 /* ── Summary ── */
 function renderSummary() {
   const c = checkout;
-  const fee   = c.price * 0.08;
-  const total = c.price + fee;
+  const fee   = +(c.price * _sellerFeeRate).toFixed(2);
+  const total = +(c.price + fee).toFixed(2);
 
   /* image */
   if (c.listing_image) {
@@ -711,8 +722,8 @@ function renderSummary() {
 /* ── Review detail (step 1) ── */
 function renderReviewDetail() {
   const c = checkout;
-  const fee   = c.price * 0.08;
-  const total = c.price + fee;
+  const fee   = +(c.price * _sellerFeeRate).toFixed(2);
+  const total = +(c.price + fee).toFixed(2);
   const catIcons = {physical:'<i class="fas fa-box"></i>',digital:'<i class="fas fa-floppy-disk"></i>',freelance:'<i class="fas fa-screwdriver-wrench"></i>',experience:'<i class="fas fa-graduation-cap"></i>'};
 
   $('review-detail').innerHTML = `
@@ -740,8 +751,8 @@ function renderReviewDetail() {
 /* ── Confirm detail (step 3) ── */
 function renderConfirmDetail() {
   const c = checkout;
-  const fee   = c.price * 0.08;
-  const total = c.price + fee;
+  const fee   = +(c.price * _sellerFeeRate).toFixed(2);
+  const total = +(c.price + fee).toFixed(2);
   const methodLabel = region === 'global'
     ? `<i class="fas fa-credit-card"></i> Card ending ····${($('card-num').value.replace(/\s/g,'')).slice(-4) || '••••'}`
     : fwMethod === 'card'         ? `<i class="fas fa-credit-card"></i> Card (Flutterwave)`
@@ -896,7 +907,7 @@ $('place-order-btn').addEventListener('click', async () => {
   $('step3-err').classList.remove('on');
 
   const c       = checkout;
-  const feeRate = 0.08;
+  const feeRate = _sellerFeeRate; /* set when listing loaded */
   const fee     = +(c.price * feeRate).toFixed(2);
   const total   = +(c.price + fee).toFixed(2);
   const payout  = +(c.price * (1 - feeRate)).toFixed(2);
