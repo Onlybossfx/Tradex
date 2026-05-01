@@ -465,6 +465,7 @@
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <script src="currency.js"></script>
+  <script src="push.js"></script>
 </head>
 <body>
 
@@ -819,6 +820,7 @@ async function init() {
   $('pf-loc').value   = U.user_metadata?.location || '';
   $('ps-since').textContent = fmtD(U.created_at);
   await Promise.all([loadOrders(), loadSaved()]);
+  setTimeout(() => PushNotif.subscribe(U.id), 2000);;
   renderAll();
   loadRecommended();
 }
@@ -1286,8 +1288,8 @@ $('rv-submit').addEventListener('click',async()=>{
 
 /* ══ PROFILE SAVE ══ */
 $('save-pf').addEventListener('click',async()=>{
-  const name=$('pf-name').value.trim(), loc=$('pf-loc').value.trim();
-  const {error}=await DB.updateProfile({full_name:name,location:loc});
+  const name=$('pf-name').value.trim(), loc=$('pf-loc').value.trim(), phone=$('pf-phone')?.value.trim()||'';
+  const {error}=await DB.updateProfile({full_name:name,location:loc,phone});
   if(error){toast('Failed to save.','err');return;}
   $('bname').textContent=name.split(' ')[0];
   $('nav-av').textContent=(name||'B')[0].toUpperCase();

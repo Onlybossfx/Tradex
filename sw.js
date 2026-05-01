@@ -44,25 +44,25 @@ self.addEventListener('fetch', e => {
       .catch(() => caches.match(e.request))
   );
 });
+
 /* ── Push Notifications ── */
 self.addEventListener('push', event => {
-  const data = event.data?.json() || {};
-  const title   = data.title   || 'TraydR';
-  const body    = data.body    || 'You have a new notification.';
-  const icon    = data.icon    || '/logo.png';
-  const badge   = data.badge   || '/logo.png';
-  const url     = data.url     || '/';
-  const tag     = data.tag     || 'traydr-notif';
+  let data = {};
+  try { data = event.data?.json() || {}; } catch {}
+
+  const title  = data.title  || 'TraydR';
+  const body   = data.body   || 'You have a new notification.';
+  const url    = data.url    || '/';
 
   event.waitUntil(
     self.registration.showNotification(title, {
       body,
-      icon,
-      badge,
-      tag,
+      icon:     '/logo.png',
+      badge:    '/logo.png',
+      tag:      data.tag || 'traydr-push',
       renotify: true,
-      data: { url },
-      actions: [
+      data:     { url },
+      actions:  [
         { action: 'open',    title: 'Open' },
         { action: 'dismiss', title: 'Dismiss' },
       ],
@@ -76,7 +76,7 @@ self.addEventListener('notificationclick', event => {
   const url = event.notification.data?.url || '/';
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(cls => {
-      const match = cls.find(c => c.url.includes(url) || c.url.includes('traydr'));
+      const match = cls.find(c => c.url.includes('traydr'));
       if (match) { match.focus(); match.navigate(url); }
       else clients.openWindow(url);
     })

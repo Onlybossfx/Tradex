@@ -39,6 +39,7 @@ window.DB = {
         ...(meta.avatar_url  ? { avatar_url:  meta.avatar_url  } : {}),
         ...(meta.payout_method ? { payout_method: meta.payout_method } : {}),
         ...(meta.payout_account ? { payout_account: meta.payout_account } : {}),
+        ...(meta.phone ? { phone: meta.phone } : {}),
       }).eq('id', user.id);
     }
     return { error };
