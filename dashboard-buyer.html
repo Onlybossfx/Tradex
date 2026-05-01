@@ -571,7 +571,7 @@
         <h3>Personal Info</h3>
         <div class="av-row">
           <div class="av-c" id="pav">B</div>
-          <div><div style="font-size:0.83rem;font-weight:600;margin-bottom:0.25rem" id="pav-name">Your Name</div><button style="background:var(--bg3);border:1px solid var(--border-md);color:var(--muted);padding:0.3rem 0.68rem;border-radius:6px;font-size:0.74rem">Change photo</button></div>
+          <div><div style="font-size:0.83rem;font-weight:600;margin-bottom:0.25rem" id="pav-name">Your Name</div><input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="uploadAvatar(this)"><button style="background:var(--bg3);border:1px solid var(--border-md);color:var(--muted);padding:0.3rem 0.68rem;border-radius:6px;font-size:0.74rem;cursor:pointer" onclick="document.getElementById('avatar-input').click()"><i class="fas fa-camera"></i> Change photo</button></div>
         </div>
         <div class="frow"><label>Full Name</label><input class="finp" id="pf-name" placeholder="Your full name" /></div>
         <div class="frow"><label>Email</label><input class="finp" id="pf-email" disabled /></div>
@@ -1307,10 +1307,76 @@ function switchP(id){
   if(id==='notifications')loadNotifPanel();
   if(id==='addresses')    loadAddresses();
   if(id==='disputes')     loadDisputes();
+  if(id==='profile')      loadBuyerProfile();
 }
 document.querySelectorAll('[data-p]').forEach(el=>el.addEventListener('click',()=>switchP(el.dataset.p)));
 $('hbg').addEventListener('click',()=>{$('hbg').classList.toggle('open');$('sb').classList.toggle('open');$('sbo').classList.toggle('show');});
 $('sbo').addEventListener('click',()=>{$('hbg').classList.remove('open');$('sb').classList.remove('open');$('sbo').classList.remove('show');});
+
+/* ══ LOAD BUYER PROFILE PANEL ══ */
+async function loadBuyerProfile() {
+  const name  = U.user_metadata?.full_name || '';
+  const email = U.email || '';
+  const pfn = $('pf-name');  if(pfn) pfn.value  = name;
+  const pfe = $('pf-email'); if(pfe) pfe.value  = email;
+  const pavN = $('pav-name'); if(pavN) pavN.textContent = name || email;
+  const pav  = $('pav');
+  if(pav && name) pav.textContent = name[0].toUpperCase();
+
+  /* Member since */
+  const since = new Date(U.created_at).toLocaleDateString('en-GB',{month:'short',year:'numeric'});
+  const pss = $('ps-since'); if(pss) pss.textContent = since;
+
+  /* Load DB profile */
+  try {
+    const { data } = await DB.getProfileData(U.id);
+    if (data) {
+      const pfl = $('pf-loc');   if(pfl  && data.location) pfl.value  = data.location;
+      const pfph= $('pf-phone'); if(pfph && data.phone)    pfph.value = data.phone;
+      if (data.avatar_url) {
+        if(pav) pav.innerHTML = `<img src="${data.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+        const sbAv = document.getElementById('sb-pav');
+        if(sbAv) sbAv.innerHTML = `<img src="${data.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+      }
+    }
+  } catch(e) { console.warn('loadBuyerProfile DB:', e); }
+
+  /* Stats */
+  try {
+    const [or_, sv] = await Promise.allSettled([
+      DB.getBuyerOrders ? DB.getBuyerOrders(U.id) : Promise.resolve({ data: [] }),
+      DB.getSaved       ? DB.getSaved(U.id)        : Promise.resolve({ data: [] }),
+    ]);
+    const orders = or_.value?.data || [];
+    const saved  = sv.value?.data  || [];
+    const pso = $('ps-ords');  if(pso) pso.textContent = orders.length;
+    const pssv= $('ps-saved'); if(pssv) pssv.textContent = saved.length;
+    const spent = orders
+      .filter(o=>o.status==='complete'||o.status==='delivered')
+      .reduce((s,o)=>s+Number(o.amount||0), 0);
+    const psp = $('ps-spent'); if(psp) psp.textContent = '$' + spent.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+    const reviewed = orders.filter(o=>o.reviewed).length;
+    const psrv = $('ps-rvs'); if(psrv) psrv.textContent = reviewed;
+  } catch(e) { console.warn('loadBuyerProfile stats:', e); }
+}
+
+async function uploadAvatar(input) {
+  const file = input.files[0];
+  if(!file) return;
+  if(file.size > 2*1024*1024){ toast('Image must be under 2MB','err'); return; }
+  const pav = $('pav');
+  if(pav) pav.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+  const { url, error } = await DB.uploadAvatar(U.id, file);
+  const name = U.user_metadata?.full_name || 'B';
+  if(error||!url){
+    if(pav) pav.textContent = name[0].toUpperCase();
+    toast('Upload failed. Try again.','err'); return;
+  }
+  if(pav) pav.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+  const sbAv = document.getElementById('sb-pav');
+  if(sbAv) sbAv.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+  toast('Photo updated! ✅','ok');
+}
 
 /* ══ TOAST ══ */
 function toast(msg,type='ok'){

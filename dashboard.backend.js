@@ -301,6 +301,25 @@ window.DB = {
   },
 
   /* ══ EARNINGS ══ */
+  getProfileData: async (userId) => {
+    const { data, error } = await _dbSb
+      .from('users')
+      .select('full_name,avatar_url,bio,location,phone,payout_method,payout_account,plan,verified,created_at')
+      .eq('id', userId)
+      .single();
+    return { data, error };
+  },
+
+  syncSession: async (session) => {
+    if (!session) return;
+    try {
+      await _dbSb.auth.setSession({
+        access_token:  session.access_token,
+        refresh_token: session.refresh_token,
+      });
+    } catch(e) { console.warn('[syncSession]', e); }
+  },
+
   getEarnings: async (userId) => {
     const { data: orders, error } = await _dbSb.from('orders')
       .select('amount, platform_fee, seller_payout, status, created_at, listing_title')

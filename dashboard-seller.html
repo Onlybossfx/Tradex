@@ -1587,10 +1587,66 @@ function switchP(id){
   if(id==='messages')     renderMessages();
   if(id==='analytics')    loadAnalytics();
   if(id==='notifications')loadNotifications();
+  if(id==='profile')      loadProfilePanel();
+  if(id==='settings')     loadPayoutMethod();
 }
 document.querySelectorAll('[data-p]').forEach(el=>el.addEventListener('click',()=>switchP(el.dataset.p)));
 $('hbg').addEventListener('click',()=>{$('hbg').classList.toggle('open');$('sb').classList.toggle('open');$('sbo').classList.toggle('show');});
 $('sbo').addEventListener('click',()=>{$('hbg').classList.remove('open');$('sb').classList.remove('open');$('sbo').classList.remove('show');});
+
+/* ══ LOAD PROFILE PANEL ══ */
+async function loadProfilePanel() {
+  /* Basic fields from session */
+  const name  = U.user_metadata?.full_name || '';
+  const email = U.email || '';
+  const pfn = $('pf-name');  if(pfn)  pfn.value  = name;
+  const pfe = $('pf-email'); if(pfe)  pfe.value  = email;
+
+  const pavN = $('pav-name');
+  if(pavN) pavN.textContent = name || email;
+
+  const pav = $('pav');
+  if(pav && name) pav.textContent = name[0].toUpperCase();
+
+  /* Load from DB */
+  try {
+    const { data } = await DB.getProfileData(U.id);
+    if (data) {
+      const pfl = $('pf-loc'); if(pfl && data.location) pfl.value = data.location;
+      const pfb = $('pf-bio'); if(pfb && data.bio)      pfb.value = data.bio;
+      if (data.avatar_url) {
+        if(pav) pav.innerHTML = `<img src="${data.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+        const sbAv = document.getElementById('sb-pav');
+        if(sbAv) sbAv.innerHTML = `<img src="${data.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+      }
+    }
+  } catch(e) { console.warn('loadProfilePanel DB:', e); }
+
+  /* Stats */
+  const since = new Date(U.created_at).toLocaleDateString('en-GB',{month:'short',year:'numeric'});
+  const pss = $('ps-since'); if(pss) pss.textContent = since;
+
+  try {
+    const [lr, or_, er] = await Promise.allSettled([
+      DB.getMyListings(U.id),
+      DB.getSellerOrders(U.id),
+      DB.getEarnings(U.id),
+    ]);
+    const listings = lr.value?.data || [];
+    const orders   = or_.value?.data || [];
+    const earnings = er.value || {};
+
+    const psl = $('ps-list'); if(psl) psl.textContent = listings.length;
+    const pso = $('ps-ords'); if(pso) pso.textContent = orders.length;
+    const pse = $('ps-earn'); if(pse) pse.textContent = '$' + Number(earnings.totalEarned||earnings.total||0).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+    const rated = listings.filter(l=>l.rating);
+    if(rated.length){
+      const avg = (rated.reduce((s,l)=>s+Number(l.rating),0)/rated.length).toFixed(1);
+      const psr = $('ps-rate'); if(psr) psr.textContent = '★ ' + avg;
+    }
+  } catch(e) { console.warn('loadProfilePanel stats:', e); }
+}
 
 /* ══ TOAST ══ */
 function toast(msg,type='ok'){
