@@ -8,876 +8,773 @@
   <meta name="keywords" content="marketplace, buy, sell, freelance, digital products, escrow, Africa, Nigeria, Ghana, Kenya" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://traydr.vercel.app/" />
-  <!-- Open Graph -->
-  <meta property="og:type"        content="website" />
-  <meta property="og:url"         content="https://traydr.vercel.app/" />
-  <meta property="og:title"       content="TraydR — One Marketplace. Every Kind of Trade." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://traydr.vercel.app/" />
+  <meta property="og:title" content="TraydR — One Marketplace. Every Kind of Trade." />
   <meta property="og:description" content="Buy and sell physical goods, digital products, freelance skills and experiences — all in one trusted marketplace with escrow payments and verified sellers." />
-  <meta property="og:image"       content="https://traydr.vercel.app/logo.png" />
-  <meta property="og:site_name"   content="TraydR" />
-  <!-- Twitter -->
-  <meta name="twitter:card"        content="summary_large_image" />
-  <meta name="twitter:title"       content="TraydR — One Marketplace. Every Kind of Trade." />
+  <meta property="og:image" content="https://traydr.vercel.app/logo.png" />
+  <meta property="og:site_name" content="TraydR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="TraydR — One Marketplace. Every Kind of Trade." />
   <meta name="twitter:description" content="Buy, sell, and trade anything — escrow-protected marketplace for Africa, Europe and beyond." />
-  <meta name="twitter:image"       content="https://traydr.vercel.app/logo.png" />
-  <!-- PWA -->
+  <meta name="twitter:image" content="https://traydr.vercel.app/logo.png" />
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#F59E0B" />
+  <meta name="theme-color" content="#C2690A" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="icon" type="image/png" href="logo.png" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
       --amber: #C2690A;
       --amber-light: #D97706;
+      --amber-soft: #F5E1CC;
       --bg: #FFF8F0;
       --bg2: #FFECD2;
-      --border: rgba(255,160,60,0.35);
-      --border-bright: rgba(255,140,40,0.5);
+      --bg-dark: #1C1208;
       --text: #1C1208;
-      --text-muted: rgba(28,18,8,0.55);
-      --text-dim: rgba(28,18,8,0.35);
+      --text-light: #FFF8F0;
+      --muted: rgba(28, 18, 8, 0.55);
+      --border: rgba(28, 18, 8, 0.08);
+      --border-amber: rgba(194, 105, 10, 0.25);
       --serif: 'Playfair Display', Georgia, serif;
       --sans: 'DM Sans', system-ui, sans-serif;
+      --nav-height: 60px;
     }
 
-    html { overflow-x: hidden; scroll-behavior: smooth; }
-    body { background: var(--bg); color: var(--text); font-family: var(--sans); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
-
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
+      padding-top: var(--nav-height);
+      overflow-x: hidden;
+    }
     a { text-decoration: none; color: inherit; }
-    button { cursor: pointer; font-family: var(--sans); }
-    img { max-width: 100%; }
+    button { cursor: pointer; font-family: var(--sans); border: none; background: none; }
+    img { max-width: 100%; display: block; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+    .container-sm { max-width: 960px; margin: 0 auto; padding: 0 2rem; }
+    section { padding: 5rem 2rem; }
 
-    /* ── scrollbar hide utility ── */
-    .scroll-x { overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-    .scroll-x::-webkit-scrollbar { display: none; }
+    /* ---------- Utility ---------- */
+    .section-tag {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      font-weight: 600;
+      color: var(--amber);
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+    }
+    .section-title {
+      font-family: var(--serif);
+      font-size: clamp(1.8rem, 4.5vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+    }
+    .fade-up {
+      opacity: 1;
+      transform: none;
+    }
 
-    /* ══════════════════ NAV ══════════════════ */
+    /* ---------- Navigation ---------- */
     #nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      height: 62px; padding: 0 1.5rem;
-      display: flex; align-items: center; justify-content: space-between;
-      transition: background 0.3s, backdrop-filter 0.3s, border-color 0.3s;
-      border-bottom: 1px solid transparent;
-    }
-    #nav.scrolled {
-      background: rgba(10,10,10,0.94);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 0.5rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255, 248, 240, 0.97);
       backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border-color: var(--border);
+      border-bottom: 1px solid var(--border);
+      transition: box-shadow 0.3s;
+      height: var(--nav-height);
     }
-    .nav-logo { display: flex; align-items: center; gap: 6px; }
-    .nav-logo span { font-family: var(--serif); font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; }
-    .nav-logo i { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); display: inline-block; margin-bottom: 2px; }
-    .nav-links { display: flex; align-items: center; gap: 1.75rem; }
-    .nav-links a { color: #1C1208; font-size: 0.875rem; transition: color 0.2s; font-weight: 500; }
-    .nav-links a:hover { color: #000; }
+    #nav.scrolled { box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .nav-logo img {
+      height: 32px;
+      width: auto;
+    }
+    .nav-links { display: flex; align-items: center; gap: 1.5rem; }
+    .nav-links a {
+      font-size: 0.9rem; font-weight: 500; color: var(--text);
+      transition: color 0.2s; letter-spacing: 0.01em;
+    }
+    .nav-links a:hover { color: var(--amber); }
     .btn-outline {
-      background: transparent; border: 1px solid rgba(28,18,8,0.3); color: #1C1208;
-      padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.85rem; transition: background 0.2s;
+      background: transparent; border: 1px solid rgba(28, 18, 8, 0.3); color: var(--text);
+      padding: 0.5rem 1.2rem; border-radius: 8px; font-size: 0.85rem; font-weight: 500;
+      transition: all 0.25s;
     }
-    .btn-outline:hover { background: rgba(28,18,8,0.08); }
+    .btn-outline:hover { background: rgba(28, 18, 8, 0.05); border-color: var(--amber); }
     .btn-amber {
-      background: var(--amber); border: none; color: #0a0a0a;
-      padding: 0.4rem 1.1rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600; transition: background 0.2s;
+      background: var(--amber); color: white; padding: 0.5rem 1.3rem;
+      border-radius: 8px; font-size: 0.85rem; font-weight: 600; transition: background 0.25s;
     }
     .btn-amber:hover { background: var(--amber-light); }
-
-    /* hamburger */
-    .hamburger { display: none; flex-direction: column; gap: 5px; background: transparent; border: none; padding: 6px; }
-    .hamburger span { display: block; width: 22px; height: 2px; background: var(--nav-text, #1C1208); border-radius: 2px; transition: transform 0.25s, opacity 0.25s; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; background: transparent; border: none; padding: 8px; z-index: 101; }
+    .hamburger span {
+      display: block; width: 24px; height: 2px; background: var(--text);
+      border-radius: 2px; transition: transform 0.3s, opacity 0.3s;
+    }
     .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
     .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
     .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
 
-    /* mobile menu */
+    /* ---------- Mobile Menu ---------- */
     #mobile-menu {
-      display: none; position: fixed; top: 62px; left: 0; right: 0; z-index: 99;
-      background: rgba(var(--bg-rgb,255,248,240),0.97); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-      border-bottom: 1px solid var(--border); padding: 1.5rem;
-      flex-direction: column; gap: 0;
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 99;
+      background: rgba(255, 248, 240, 0.99); backdrop-filter: blur(20px);
+      padding: calc(var(--nav-height) + 1rem) 2rem 2rem; flex-direction: column;
+      gap: 1.5rem; overflow-y: auto; transition: opacity 0.3s;
     }
     #mobile-menu.open { display: flex; }
-    #mobile-menu a { color: var(--text); font-size: 1.05rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border); }
-    .mobile-btns { display: flex; gap: 0.75rem; margin-top: 1rem; }
-    .mobile-btns button { flex: 1; padding: 0.7rem; border-radius: 8px; font-size: 0.9rem; }
+    #mobile-menu a { color: var(--text); font-size: 1.1rem; font-weight: 500; padding: 0.6rem 0; border-bottom: 1px solid var(--border); }
+    .mobile-btns { display: flex; gap: 0.75rem; margin-top: 1rem; flex-direction: column; }
+    .mobile-btns button { width: 100%; padding: 0.8rem; border-radius: 8px; font-size: 0.95rem; }
 
-    /* ══════════════════ HERO ══════════════════ */
+    /* ---------- Hero ---------- */
     #hero {
-      min-height: 100svh; background: var(--bg);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      position: relative; overflow: hidden;
-      padding: 7rem 1.5rem 4rem; text-align: center;
+      min-height: 90vh;
+      background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.4)), 
+                  url('https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?w=1920&q=80') center/cover no-repeat;
+      display: flex; align-items: center; justify-content: center; position: relative; padding: 2rem;
     }
-    .hero-glow {
-      position: absolute; top: 18%; left: 50%; transform: translateX(-50%);
-      width: min(600px, 100vw); height: 360px;
-      background: radial-gradient(ellipse, rgba(245,158,11,0.13) 0%, transparent 70%);
-      pointer-events: none;
+    .hero-inner {
+      width: 100%; max-width: 800px; text-align: center; color: #fff; z-index: 2;
+      margin-top: 2rem; overflow: hidden;
     }
-    .hero-grid {
-      position: absolute; inset: 0;
-      background-image: linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
-      background-size: 52px 52px; pointer-events: none;
+    .hero-inner h1 {
+      font-family: var(--serif); font-size: clamp(2rem, 6vw, 3.8rem);
+      font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 1.5rem;
     }
-    .hero-inner { position: relative; z-index: 2; max-width: 720px; width: 100%; }
-    .beta-pill {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.25);
-      border-radius: 100px; padding: 0.3rem 0.9rem; margin-bottom: 1.75rem;
+    .hero-inner h1 em { font-style: normal; color: var(--amber); }
+    .hero-inner p {
+      font-size: 1.05rem; line-height: 1.7; color: rgba(255,255,255,0.85);
+      max-width: 540px; margin: 0 auto 2.5rem;
     }
-    .beta-pill i { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); display: inline-block; }
-    .beta-pill span { color: var(--amber); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; }
-    #hero h1 {
-      font-family: var(--serif); font-size: clamp(2.3rem, 8vw, 4.8rem);
-      font-weight: 700; line-height: 1.1; margin-bottom: 1.25rem; letter-spacing: -0.03em;
-    }
-    #hero h1 em { color: var(--amber); font-style: normal; }
-    #hero p { color: var(--muted); font-size: clamp(0.92rem, 2.5vw, 1.1rem); line-height: 1.7; max-width: 480px; margin: 0 auto 2.25rem; }
-
     .search-bar {
-      display: flex; background: rgba(255,255,255,0.05); border: 1px solid var(--border-bright);
-      border-radius: 12px; overflow: hidden; max-width: 520px; margin: 0 auto 1.5rem; width: 100%;
+      display: flex; max-width: 460px; width: 100%; margin: 0 auto 1.8rem;
+      background: rgba(255,255,255,0.15); backdrop-filter: blur(8px);
+      border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.25);
     }
     .search-bar input {
-      flex: 1; background: transparent; border: none; outline: none;
-      padding: 0.9rem 1rem; color: var(--text); font-size: 0.9rem; font-family: var(--sans); min-width: 0;
+      flex: 1; background: transparent; border: none; padding: 0.9rem 1.2rem;
+      color: #fff; font-size: 0.92rem; outline: none; min-width: 0;
     }
-    .search-bar input::placeholder { color: var(--text-muted); }
-    .search-bar button { background: var(--amber); border: none; color: #0a0a0a; padding: 0 1.2rem; font-size: 0.88rem; font-weight: 600; white-space: nowrap; flex-shrink: 0; transition: background 0.2s; }
+    .search-bar input::placeholder { color: rgba(255,255,255,0.6); }
+    .search-bar button {
+      background: var(--amber); color: #fff; padding: 0 1.6rem; font-weight: 600;
+      font-size: 0.92rem; white-space: nowrap; transition: background 0.25s;
+    }
     .search-bar button:hover { background: var(--amber-light); }
+    .tags {
+      width: 100%; display: flex; gap: 0.6rem; align-items: center; margin-bottom: 2rem;
+      overflow-x: auto; white-space: nowrap; scrollbar-width: none;
+      -webkit-overflow-scrolling: touch; padding: 4px 0;
+      -webkit-mask-image: linear-gradient(to right, black 0%, black 85%, transparent 100%);
+      mask-image: linear-gradient(to right, black 0%, black 85%, transparent 100%);
+    }
+    .tags::-webkit-scrollbar { display: none; }
+    .tags .label { color: rgba(255,255,255,0.6); font-size: 0.8rem; margin-right: 0.5rem; flex-shrink: 0; }
+    .tag {
+      background: rgba(255,255,255,0.1); backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 0.35rem 1rem;
+      border-radius: 100px; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+    }
+    .tag:hover { background: rgba(255,255,255,0.25); border-color: var(--amber); }
+    .hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
 
-    .tags { display: flex; gap: 0.5rem; justify-content: flex-start; align-items: center; padding: 0 0.25rem; }
-    .tags .label { color: var(--muted); font-size: 0.78rem; flex-shrink: 0; }
-    .tag { background: var(--bg3); border: 1px solid var(--border); color: var(--muted); padding: 0.28rem 0.75rem; border-radius: 100px; font-size: 0.78rem; white-space: nowrap; flex-shrink: 0; transition: all 0.2s; }
-    .tag:hover { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.3); color: var(--amber); }
-
-    /* ══════════════════ STATS ══════════════════ */
+    /* ---------- Stats ---------- */
     #stats {
-      background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-      padding: 2.5rem 1.5rem;
+      background: var(--bg2); border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border); padding: 2.5rem 2rem;
     }
-    .stats-grid { max-width: 860px; margin: 0 auto; display: grid; grid-template-columns: repeat(4,1fr); gap: 1.5rem; text-align: center; }
-    .stat-val { font-family: var(--serif); font-size: clamp(1.6rem,4vw,2.2rem); font-weight: 700; color: var(--amber); }
-    .stat-label { color: var(--text-muted); font-size: 0.8rem; margin-top: 0.2rem; }
+    .stats-grid {
+      display: flex; justify-content: space-around; flex-wrap: wrap;
+      gap: 2rem; max-width: 1000px; margin: 0 auto; text-align: center;
+    }
+    .stat-item .stat-val {
+      font-family: var(--serif); font-size: 2.2rem; font-weight: 700;
+      color: var(--amber); line-height: 1.2;
+    }
+    .stat-item .stat-label {
+      color: var(--muted); font-size: 0.85rem; margin-top: 0.2rem;
+    }
 
-    /* ══════════════════ SECTION SHARED ══════════════════ */
-    section { padding: 5rem 1.5rem; }
-    .section-tag { color: var(--amber); font-size: 0.75rem; letter-spacing: 0.12em; font-weight: 600; margin-bottom: 0.6rem; }
-    .section-title { font-family: var(--serif); font-size: clamp(1.8rem,5vw,3rem); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0; }
-    .section-head { text-align: center; margin-bottom: 2.75rem; }
-    .container { max-width: 980px; margin: 0 auto; }
-    .container-sm { max-width: 900px; margin: 0 auto; }
-
-    /* ══════════════════ CATEGORIES ══════════════════ */
+    /* ---------- Categories ---------- */
     #categories { background: var(--bg); }
-    .cat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; }
+    .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
     .cat-card {
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: 14px; padding: 1.75rem 1.5rem; cursor: pointer; transition: all 0.3s;
+      position: relative; height: 220px; border-radius: 18px; overflow: hidden;
+      cursor: pointer; transition: transform 0.4s, box-shadow 0.4s;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
     }
-    .cat-card:hover { background: rgba(245,158,11,0.06); border-color: rgba(245,158,11,0.25); transform: translateY(-4px); }
-    .cat-icon { font-size: 2rem; margin-bottom: 0.85rem; color: var(--amber) !important; }
-    .cat-name { font-family: var(--serif); font-size: 1.05rem; font-weight: 600; margin-bottom: 0.4rem; color: #fff !important; }
-    .cat-desc { color: rgba(255,255,255,0.75) !important; font-size: 0.78rem; line-height: 1.5; margin-bottom: 0.8rem; }
-    .cat-count { color: rgba(255,255,255,0.85) !important; font-size: 0.75rem; font-weight: 500; }
+    .cat-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(194,105,10,0.15); }
+    .cat-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
+    .cat-card:hover img { transform: scale(1.08); }
+    .cat-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.8) 30%, rgba(0,0,0,0.2));
+      padding: 1.2rem; display: flex; flex-direction: column; justify-content: flex-end; color: #fff;
+    }
+    .cat-icon { font-size: 1.8rem; margin-bottom: 0.4rem; color: var(--amber); }
+    .cat-name { font-family: var(--serif); font-size: 1.2rem; font-weight: 600; margin-bottom: 0.2rem; }
+    .cat-desc { font-size: 0.8rem; opacity: 0.85; line-height: 1.4; }
+    .cat-count { font-size: 0.7rem; color: rgba(255,255,255,0.5); margin-top: 0.4rem; }
 
-    /* ══════════════════ LISTINGS ══════════════════ */
+    /* ---------- Featured Listings ---------- */
     #listings { background: var(--bg2); }
-    .filter-row { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
-    .filter-btn {
-      background: var(--bg3); border: 1px solid var(--border);
-      color: var(--muted); padding: 0.38rem 0.95rem; border-radius: 100px;
-      font-size: 0.8rem; white-space: nowrap; flex-shrink: 0; transition: all 0.2s;
-    }
-    .filter-btn.active { background: var(--amber); border-color: var(--amber); color: #0a0a0a; font-weight: 600; }
-    .listings-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
+    .listings-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.8rem; }
     .listing-card {
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: 14px; overflow: hidden; cursor: pointer; transition: all 0.3s;
+      background: #fff; border-radius: 16px; overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.03); transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
     }
-    .listing-card:hover { border-color: var(--amber); transform: translateY(-3px); box-shadow: 0 4px 20px rgba(194,105,10,0.15); }
-    .listing-thumb {
-      height: 110px; background: rgba(255,255,255,0.04);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 3rem; position: relative;
+    .listing-card:hover { transform: translateY(-6px); box-shadow: 0 12px 30px rgba(194,105,10,0.12); }
+    .listing-thumb { height: 160px; background: #f0ebe4; overflow: hidden; }
+    .listing-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+    .listing-card:hover .listing-thumb img { transform: scale(1.05); }
+    .listing-body { padding: 1.3rem; }
+    .listing-title {
+      font-weight: 600; font-size: 1rem; margin-bottom: 0.25rem; color: var(--text);
     }
-    .listing-badge {
-      position: absolute; top: 10px; right: 10px;
-      font-size: 0.65rem; padding: 0.18rem 0.55rem; border-radius: 100px; font-weight: 600;
+    .listing-seller {
+      color: var(--muted); font-size: 0.8rem; margin-bottom: 0.8rem;
     }
-    .badge-top { background: var(--amber); color: #0a0a0a; }
-    .badge-best { background: #6366F1; color: var(--text); }
-    .badge-other { background: rgba(255,255,255,0.12); color: var(--text); }
-    .listing-body { padding: 1rem; }
-    .listing-title { font-size: 0.88rem; font-weight: 600; margin-bottom: 0.28rem; line-height: 1.35; }
-    .listing-seller { color: rgba(255,255,255,0.38); font-size: 0.77rem; margin-bottom: 0.6rem; }
     .listing-foot { display: flex; justify-content: space-between; align-items: center; }
-    .listing-rating { display: flex; align-items: center; gap: 4px; }
-    .listing-rating .star { color: var(--amber); font-size: 0.8rem; }
-    .listing-rating .rv { color: var(--text); font-size: 0.8rem; font-weight: 500; }
-    .listing-rating .rc { color: rgba(255,255,255,0.3); font-size: 0.74rem; }
-    .listing-price { font-family: var(--serif); font-size: 0.98rem; font-weight: 700; color: var(--amber); }
-    .browse-more { text-align: center; margin-top: 2.5rem; }
-    .btn-ghost { background: transparent; border: 1px solid rgba(255,255,255,0.15); color: var(--text); padding: 0.75rem 2rem; border-radius: 8px; font-size: 0.88rem; transition: all 0.2s; }
-    .btn-ghost:hover { border-color: var(--amber); color: var(--amber); }
+    .listing-rating {
+      display: flex; align-items: center; gap: 4px; color: var(--amber); font-size: 0.85rem;
+    }
+    .listing-rating .rc { color: var(--muted); font-size: 0.75rem; margin-left: 4px; }
+    .listing-price {
+      font-family: var(--serif); font-weight: 700; font-size: 1.2rem; color: var(--amber);
+    }
 
-    /* ══════════════════ HOW IT WORKS ══════════════════ */
+    /* ---------- How It Works ---------- */
     #how { background: var(--bg); }
-    .steps-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; }
-    .step-card { text-align: center; padding: 0; }
+    .steps-grid { display: flex; justify-content: space-between; gap: 2rem; flex-wrap: wrap; }
+    .step { flex: 1; min-width: 180px; text-align: center; position: relative; }
+    .step::after {
+      content: ''; position: absolute; top: 30px; left: 60%; width: 80%; height: 1px;
+      background: var(--border-amber); z-index: 0;
+    }
+    .step:last-child::after { display: none; }
     .step-num {
-      width: 44px; height: 44px; border-radius: 50%;
-      background: var(--bg); border: 1px solid rgba(245,158,11,0.4);
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 1rem; font-family: var(--serif); color: var(--amber); font-size: 0.85rem; font-weight: 700;
+      width: 60px; height: 60px; border-radius: 50%; background: #fff;
+      border: 2px solid var(--amber); display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.2rem; font-family: var(--serif); font-weight: 700; font-size: 1.2rem;
+      color: var(--amber); position: relative; z-index: 1;
     }
-    .step-title { font-weight: 600; font-size: 0.92rem; margin-bottom: 0.4rem; }
-    .step-desc { color: var(--text-muted); font-size: 0.79rem; line-height: 1.6; }
+    .step-title { font-weight: 600; font-size: 1rem; margin-bottom: 0.4rem; }
+    .step-desc { color: var(--muted); font-size: 0.85rem; line-height: 1.5; }
 
-    /* ══════════════════ TRUST ══════════════════ */
-    #trust { background: var(--bg2); border-top: 1px solid rgba(255,255,255,0.05); }
-    .trust-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; }
-    .trust-card { text-align: center; padding: 1.25rem 0.75rem; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; }
-    .trust-icon { font-size: 1.75rem; margin-bottom: 0.6rem; color: var(--amber); }
-    .trust-title { font-weight: 600; font-size: 0.88rem; margin-bottom: 0.35rem; }
-    .trust-desc { color: var(--text-muted); font-size: 0.76rem; line-height: 1.5; }
+    /* ---------- Trust ---------- */
+    #trust { background: var(--bg2); }
+    .trust-grid { display: flex; justify-content: space-between; gap: 2rem; flex-wrap: wrap; }
+    .trust-card {
+      flex: 1; min-width: 160px; text-align: center; padding: 2rem 1rem;
+      background: rgba(255,255,255,0.5); border-radius: 16px; border: 1px solid var(--border);
+      backdrop-filter: blur(8px);
+    }
+    .trust-icon { font-size: 2rem; color: var(--amber); margin-bottom: 0.8rem; }
+    .trust-title { font-weight: 600; margin-bottom: 0.3rem; }
+    .trust-desc { color: var(--muted); font-size: 0.8rem; }
 
-    /* ══════════════════ PRICING ══════════════════ */
-    #pricing { background: var(--bg); border-top: 1px solid rgba(255,255,255,0.05); }
-    .pricing-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
+    /* ---------- Pricing ---------- */
+    #pricing { background: var(--bg); }
+    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
     .plan-card {
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: 16px; padding: 1.75rem 1.5rem; position: relative;
+      background: #fff; border-radius: 20px; padding: 2rem; border: 1px solid var(--border);
+      position: relative; transition: transform 0.3s, box-shadow 0.3s;
     }
-    .plan-card.highlight { background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.35); }
+    .plan-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.06); }
+    .plan-card.highlight {
+      border-color: var(--amber); background: #fffaf5; box-shadow: 0 0 0 1px var(--amber);
+    }
     .popular-pill {
-      position: absolute; top: -11px; left: 50%; transform: translateX(-50%);
-      background: var(--amber); color: #0a0a0a; font-size: 0.67rem; font-weight: 700;
-      padding: 0.22rem 0.9rem; border-radius: 100px; white-space: nowrap; letter-spacing: 0.05em;
+      position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+      background: var(--amber); color: white; font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.05em; padding: 0.25rem 1rem; border-radius: 100px; white-space: nowrap;
     }
-    .plan-name { font-weight: 700; font-size: 1rem; margin-bottom: 0.3rem; }
-    .plan-desc { color: rgba(255,255,255,0.38); font-size: 0.8rem; margin-bottom: 1.25rem; }
+    .plan-name { font-weight: 700; font-size: 1.2rem; margin-bottom: 0.2rem; }
+    .plan-desc { color: var(--muted); font-size: 0.85rem; margin-bottom: 1.5rem; }
     .plan-price { margin-bottom: 1.5rem; }
-    .plan-price strong { font-family: var(--serif); font-size: 2.2rem; font-weight: 700; }
-    .plan-card.highlight .plan-price strong { color: var(--amber); }
-    .plan-price span { color: rgba(255,255,255,0.3); font-size: 0.78rem; margin-left: 4px; }
-    .plan-features { margin-bottom: 1.75rem; display: flex; flex-direction: column; gap: 0.6rem; }
-    .plan-feature { display: flex; align-items: center; gap: 0.55rem; }
-    .plan-feature .check { color: var(--amber); font-size: 0.8rem; flex-shrink: 0; }
-    .plan-feature span { color: var(--muted); font-size: 0.82rem; }
-    .plan-btn { width: 100%; padding: 0.78rem; border-radius: 8px; font-size: 0.88rem; font-weight: 600; transition: opacity 0.2s; }
-    .plan-btn:hover { opacity: 0.85; }
-    .plan-btn.primary { background: var(--amber); border: none; color: #0a0a0a; }
-    .plan-btn.secondary { background: transparent; border: 1px solid var(--border-md); color: var(--text); }
-    .pricing-note { text-align: center; color: var(--text-dim); font-size: 0.78rem; margin-top: 1.75rem; }
+    .plan-price strong {
+      font-family: var(--serif); font-size: 2.4rem; font-weight: 700; color: var(--text);
+    }
+    .plan-price span { color: var(--muted); font-size: 0.85rem; margin-left: 4px; }
+    .plan-features { margin: 1.5rem 0; list-style: none; padding: 0; }
+    .plan-features li {
+      display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.7rem;
+      font-size: 0.9rem; color: var(--text);
+    }
+    .plan-features li i { color: var(--amber); font-size: 0.8rem; width: 16px; text-align: center; }
+    .plan-btn {
+      width: 100%; padding: 0.8rem; border-radius: 10px; font-weight: 600; font-size: 0.9rem;
+      transition: all 0.25s;
+    }
+    .plan-btn.primary { background: var(--amber); color: #fff; border: none; }
+    .plan-btn.primary:hover { background: var(--amber-light); }
+    .plan-btn.secondary { background: transparent; border: 1px solid var(--border-amber); color: var(--amber); }
+    .plan-btn.secondary:hover { background: rgba(194,105,10,0.05); }
 
-    /* ══════════════════ CTA ══════════════════ */
-    #cta { background: var(--bg2); border-top: 1px solid var(--border); position: relative; overflow: hidden; }
-    .cta-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: min(500px,100vw); height: 280px; background: radial-gradient(ellipse,rgba(245,158,11,0.1) 0%,transparent 70%); pointer-events: none; }
-    .cta-inner { max-width: 580px; margin: 0 auto; text-align: center; position: relative; z-index: 1; }
-    #cta h2 { font-family: var(--serif); font-size: clamp(1.9rem,6vw,3.2rem); font-weight: 700; margin-bottom: 1rem; letter-spacing: -0.03em; }
-    #cta p { color: var(--muted); font-size: 0.98rem; line-height: 1.7; margin-bottom: 2.25rem; }
-    .cta-btns { display: flex; gap: 0.85rem; justify-content: center; flex-wrap: wrap; }
-    .btn-amber-lg { background: var(--amber); border: none; color: #0a0a0a; padding: 0.85rem 2.25rem; border-radius: 8px; font-size: 0.95rem; font-weight: 700; transition: background 0.2s; }
+    /* ---------- CTA ---------- */
+    #cta { background: var(--bg-dark); color: var(--text-light); text-align: center; }
+    #cta .section-title { color: #fff; }
+    #cta p { color: rgba(255,248,240,0.7); max-width: 500px; margin: 0 auto 2rem; }
+    .cta-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-amber-lg {
+      background: var(--amber); color: #fff; padding: 0.9rem 2.4rem; border-radius: 10px;
+      font-weight: 600; font-size: 1rem; border: none; transition: background 0.25s;
+    }
     .btn-amber-lg:hover { background: var(--amber-light); }
-    .btn-outline-lg { background: transparent; border: 1px solid rgba(28,18,8,0.25); color: var(--text); padding: 0.85rem 2.25rem; border-radius: 8px; font-size: 0.95rem; transition: border-color 0.2s; }
-    .btn-outline-lg:hover { border-color: rgba(28,18,8,0.5); }
+    .btn-outline-lg {
+      background: transparent; border: 1px solid rgba(255,248,240,0.5);
+      color: var(--text-light); padding: 0.9rem 2.4rem; border-radius: 10px;
+      font-weight: 500; font-size: 1rem; transition: all 0.25s;
+    }
+    .btn-outline-lg:hover { border-color: var(--amber); color: var(--amber); }
 
-    /* ══════════════════ FOOTER ══════════════════ */
-    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 2.5rem 1.5rem; }
-    .footer-inner { max-width: 980px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.25rem; }
-    .footer-logo { display: flex; align-items: center; gap: 5px; }
-    .footer-logo span { font-family: var(--serif); font-weight: 700; font-size: 1.15rem; }
-    .footer-logo i { width: 5px; height: 5px; border-radius: 50%; background: var(--amber); display: inline-block; }
-    .footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
-    .footer-links a { color: var(--amber); font-size: 0.8rem; transition: color 0.2s; text-decoration: none; }
-    .footer-links a:hover { color: var(--amber-light); text-decoration: underline; }
-    .footer-copy { color: var(--text-dim); font-size: 0.75rem; }
+    /* ---------- Footer ---------- */
+    footer {
+      background: var(--bg-dark); color: rgba(255,248,240,0.6);
+      padding: 3rem 2rem; border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .footer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; max-width: 1000px; margin: 0 auto; }
+    .footer-col h4 {
+      font-family: var(--serif); font-size: 1rem; font-weight: 700; color: var(--amber); margin-bottom: 1rem;
+    }
+    .footer-col ul { list-style: none; padding: 0; }
+    .footer-col ul li { margin-bottom: 0.5rem; }
+    .footer-col ul li a { color: rgba(255,248,240,0.7); font-size: 0.85rem; transition: color 0.2s; }
+    .footer-col ul li a:hover { color: var(--amber); }
+    .footer-bottom {
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
+      gap: 1rem; max-width: 1000px; margin: 2rem auto 0; padding-top: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .footer-logo img { height: 28px; width: auto; }
+    .footer-copy { font-size: 0.8rem; color: rgba(255,248,240,0.4); }
 
-    /* ══════════════════ FADE-IN ANIMATION ══════════════════ */
-    .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.55s ease, transform 0.55s ease; }
-    .fade-up.visible { opacity: 1; transform: translateY(0); }
-
-    /* ══════════════════ RESPONSIVE ══════════════════ */
+    /* ---------- Responsive ---------- */
     @media (max-width: 768px) {
       .nav-links { display: none; }
       .hamburger { display: flex; }
-
-      .stats-grid { grid-template-columns: repeat(2,1fr); }
-      .cat-grid { grid-template-columns: repeat(2,1fr); }
-      .cat-card { padding: 1.25rem 1rem; }
-      .cat-icon { font-size: 1.6rem; }
-      .cat-name { font-size: 0.9rem; }
-
+      .container, .container-sm { padding: 0 1.2rem; }
+      section { padding-left: 1.2rem; padding-right: 1.2rem; }
+      .cat-grid { grid-template-columns: repeat(2, 1fr); }
+      .cat-card { height: 180px; }
       .listings-grid { grid-template-columns: 1fr; }
-
-      .steps-grid { grid-template-columns: 1fr; gap: 0.85rem; }
-      .step-card {
-        display: flex; align-items: flex-start; gap: 1rem;
-        text-align: left; background: rgba(255,255,255,0.03);
-        border: 1px solid var(--border); border-radius: 12px; padding: 1rem;
-      }
-      .step-num { margin: 0; flex-shrink: 0; }
-
-      .trust-grid { grid-template-columns: repeat(2,1fr); }
-
       .pricing-grid { grid-template-columns: 1fr; }
-      .plan-card.highlight { transform: none; }
-
-      section { padding: 4rem 1.25rem; }
-
-      .footer-inner { flex-direction: column; align-items: flex-start; }
+      .steps-grid { flex-direction: column; align-items: center; gap: 2.5rem; }
+      .step::after { display: none; }
+      .trust-grid { flex-direction: column; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
     }
-
     @media (max-width: 400px) {
-      #hero h1 { font-size: 2rem; }
-      .cat-grid { grid-template-columns: 1fr 1fr; }
-      .trust-grid { grid-template-columns: 1fr 1fr; }
-    }
-
-    /* ── Image Unavailable Placeholder ── */
-    .img-unavailable {
-      width: 100%; height: 100%;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      background: var(--bg3); border-radius: inherit;
-      color: var(--muted); gap: 0.5rem;
-      font-size: 0.78rem; text-align: center; padding: 1rem;
-    }
-    .img-unavailable i { font-size: 2rem; color: var(--dim); }
-    .img-unavailable span { font-size: 0.72rem; color: var(--dim); }
-
-    [data-theme="dark"] {
-      --amber: #F59E0B; --amber-light: #FBBF24; --amber-dim: rgba(245,158,11,0.1);
-      --bg: #0a0a0a; --bg2: #0f0f0f; --bg3: #141414; --bg4: #181818;
-      --border: rgba(255,255,255,0.07); --border-md: rgba(255,255,255,0.11);
-      --text: #fff; --muted: rgba(255,255,255,0.45); --dim: rgba(255,255,255,0.22);
-      --error: #EF4444; --success: #10B981; --info: #3B82F6;
-    }
-    [data-theme="dark"] #nav { background: rgba(10,10,10,0.97) !important; border-bottom: 1px solid rgba(255,255,255,0.07) !important; }
-    [data-theme="dark"] .nav-logo span { color: #fff !important; }
-    [data-theme="dark"] .nav-label { color: rgba(255,255,255,0.6) !important; }
-    [data-theme="dark"] .hbg span { background: #fff !important; }
-    [data-theme="dark"] #sb, [data-theme="dark"] aside { background: #0f0f0f !important; border-right-color: rgba(255,255,255,0.07) !important; }
-    [data-theme="dark"] .sc, [data-theme="dark"] .pcard, [data-theme="dark"] .card,
-    [data-theme="dark"] .listing-card, [data-theme="dark"] .order-card, [data-theme="dark"] .sg-card,
-    [data-theme="dark"] .chart-box, [data-theme="dark"] .ph { background: #141414 !important; border-color: rgba(255,255,255,0.08) !important; box-shadow: none !important; backdrop-filter: none !important; }
-    [data-theme="dark"] .mo .mbox { background: #141414 !important; border-color: rgba(255,255,255,0.1) !important; }
-    [data-theme="dark"] input, [data-theme="dark"] select, [data-theme="dark"] textarea { background: #141414 !important; border-color: rgba(255,255,255,0.11) !important; color: #fff !important; }
-    [data-theme="dark"] .btn-primary, [data-theme="dark"] .btn-new { background: #F59E0B !important; color: #0a0a0a !important; }
-
-    #nav { background: #FFB34E !important; border-bottom: 1px solid rgba(180,100,20,0.2) !important; }
-    .nav-logo span { color: #1C1208 !important; }
-    .nav-logo i { background: #1C1208 !important; }
-    .nav-label { color: rgba(28,18,8,0.7) !important; }
-    .hbg span { background: #1C1208 !important; }
-    .nav-sep { background: rgba(28,18,8,0.15) !important; }
-    .nav-av { border-color: rgba(28,18,8,0.2) !important; }
-
-    .sc, .pcard, .sg-card, .stat-card, .earnings-card, .chart-box, .ph {
-      background: rgba(255,236,210,0.65) !important;
-      border: 1px solid rgba(255,160,60,0.4) !important;
-      box-shadow: 0 4px 24px rgba(180,100,20,0.08), 0 1px 4px rgba(180,100,20,0.05) !important;
-      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-    }
-    .card, .listing-card, .order-card {
-      background: rgba(255,236,210,0.6) !important;
-      border: 1px solid rgba(255,160,60,0.35) !important;
-      box-shadow: 0 4px 20px rgba(180,100,20,0.07), 0 1px 3px rgba(180,100,20,0.04) !important;
-      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-    }
-    .mo .mbox { background: rgba(255,248,240,0.97) !important; border: 1px solid rgba(255,160,60,0.45) !important; box-shadow: 0 8px 40px rgba(180,100,20,0.15) !important; }
-    #sb, aside { background: rgba(255,248,240,0.98) !important; border-right: 1px solid rgba(255,160,60,0.3) !important; }
-    .ni.on { background: rgba(194,105,10,0.12) !important; color: #C2690A !important; }
-    input, select, textarea { background: rgba(255,255,255,0.8) !important; border-color: rgba(255,160,60,0.4) !important; color: #1C1208 !important; }
-    input:focus, select:focus, textarea:focus { border-color: rgba(194,105,10,0.6) !important; }
-    .btn-primary, .btn-new { background: #C2690A !important; color: #fff !important; }
-    .btn-primary:hover, .btn-new:hover { background: #D97706 !important; }
-    .btn-ghost { border-color: rgba(194,105,10,0.4) !important; color: #C2690A !important; }
-
-    /* ── Light Mode Text Fixes ── */
-    .muted, .text-muted, .dim { color: var(--muted) !important; }
-    .nav-label { color: rgba(28,18,8,0.75) !important; }
-    .ni .lb, .ns { color: var(--muted) !important; }
-    .ni.on .lb { color: var(--amber) !important; }
-    .ph h1, .ph p { color: var(--text) !important; }
-    .panel h1, .panel h2, .panel h3 { color: var(--text) !important; }
-    .stat-val { color: var(--amber) !important; } .stat-label { color: var(--muted) !important; }
-    .tbl th { color: var(--muted) !important; background: var(--bg3) !important; }
-    .tbl td { color: var(--text) !important; border-color: var(--border) !important; }
-    .card-title, .card-price { color: var(--text) !important; }
-    .card-cat, .card-seller, .seller-name { color: var(--muted) !important; }
-    .listing-title { color: var(--text) !important; }
-    .listing-price { color: var(--amber) !important; }
-    .section-title, .section-tag { color: var(--text) !important; }
-    .plan-name, .plan-price strong { color: var(--text) !important; }
-    .plan-desc, .plan-price span { color: var(--muted) !important; }
-    .plan-features li { color: var(--muted) !important; }
-    .how-num { color: var(--amber) !important; }
-    .how-title { color: var(--text) !important; }
-    .how-desc { color: var(--muted) !important; }
-    .footer-col h4 { color: var(--text) !important; }
-    .footer-col a { color: var(--muted) !important; }
-    .filter-label { color: var(--text) !important; }
-    .filter-item.active .filter-label { color: var(--amber) !important; }
-    .stars-display { color: var(--amber) !important; }
-    .section-label { color: var(--muted) !important; }
-    .empty h3 { color: var(--text) !important; }
-    .empty p { color: var(--muted) !important; }
-    .badge, .sp { color: var(--text) !important; }
-    .sm-name { color: var(--text) !important; }
-    .sm-tag { color: var(--muted) !important; }
-    .tab { color: var(--muted) !important; }
-    .tab.active { color: var(--text) !important; }
-    label { color: var(--text) !important; }
-    .frow label { color: var(--muted) !important; }
-    .listing-seller { color: var(--muted) !important; }
-    [data-theme="dark"] .nav-label { color: rgba(255,255,255,0.6) !important; }
-    [data-theme="dark"] .ni .lb { color: rgba(255,255,255,0.5) !important; }
-    [data-theme="dark"] .ni.on .lb { color: var(--amber) !important; }
-    [data-theme="dark"] .tbl th { background: var(--bg3) !important; color: var(--muted) !important; }
-    [data-theme="dark"] .filter-label { color: var(--muted) !important; }
-
-    [data-theme="dark"] #hero p { color: rgba(255,255,255,0.52) !important; }
-    [data-theme="dark"] #cta p { color: rgba(255,255,255,0.48) !important; }
-    [data-theme="dark"] .plan-feature span { color: rgba(255,255,255,0.58) !important; }
-    [data-theme="dark"] .tags .label { color: rgba(255,255,255,0.35) !important; }
-    [data-theme="dark"] .filter-btn { background: rgba(255,255,255,0.05) !important; color: rgba(255,255,255,0.6) !important; border-color: rgba(255,255,255,0.12) !important; }
-    [data-theme="dark"] #mobile-menu { background: rgba(10,10,10,0.98) !important; border-top-color: rgba(255,255,255,0.07) !important; }
-    [data-theme="dark"] #mobile-menu a { color: rgba(255,255,255,0.7) !important; }
-    [data-theme="dark"] .hamburger span { background: #fff !important; }
-
-    [data-theme="dark"] .nav-links a { color: rgba(255,255,255,0.75) !important; }
-    [data-theme="dark"] .nav-links a:hover { color: #fff !important; }
-    [data-theme="dark"] .btn-outline { border-color: rgba(255,255,255,0.25) !important; color: #fff !important; }
-    [data-theme="dark"] .btn-outline:hover { background: rgba(255,255,255,0.08) !important; }
-
-    [data-theme="dark"] .stat-val { color: var(--amber) !important; }
-    [data-theme="dark"] .stat-label { color: rgba(255,255,255,0.55) !important; }
-    [data-theme="dark"] .nav-logo span { color: var(--amber) !important; }
-    [data-theme="dark"] .trust-icon { color: var(--amber) !important; }
-    [data-theme="dark"] .trust-title { color: #fff !important; }
-    [data-theme="dark"] .trust-desc { color: rgba(255,255,255,0.55) !important; }
-    [data-theme="dark"] #trust { border-top-color: rgba(255,255,255,0.05) !important; }
-    [data-theme="dark"] .cat-icon { color: var(--amber) !important; }
-    [data-theme="dark"] .listing-card { background: rgba(255,255,255,0.03) !important; border-color: rgba(255,255,255,0.08) !important; }
-    [data-theme="dark"] .card-seller { color: rgba(255,255,255,0.45) !important; }
-
-    .btn-hero-login {
-      background: transparent;
-      border: 2px solid rgba(28,18,8,0.5);
-      color: #1C1208;
-      padding: 0.65rem 1.5rem;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .btn-hero-login:hover { background: rgba(28,18,8,0.08); }
-    [data-theme="dark"] .btn-hero-login {
-      border-color: rgba(255,255,255,0.6) !important;
-      color: #fff !important;
-    }
-    [data-theme="dark"] .btn-hero-login:hover {
-      background: rgba(255,255,255,0.1) !important;
+      .footer-grid { grid-template-columns: 1fr; }
     }
   </style>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link rel="icon" type="image/png" href="logo.png">
 </head>
 <body>
+  <nav id="nav">
+    <div class="nav-logo">
+      <img src="logo.png" alt="TraydR" />
+    </div>
+    <div class="nav-links">
+      <a href="browse.html">Browse</a>
+      <a href="dashboard-seller.html">Sell</a>
+      <a href="#pricing">Pricing</a>
+      <button class="btn-outline" onclick="window.location.href='traydr-auth.html'">Log In</button>
+      <button class="btn-amber" onclick="window.location.href='traydr-auth.html#signup'">Sign Up Free</button>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
 
-<!-- ══════════ NAV ══════════ -->
-<nav id="nav">
-  <div class="nav-logo">
-    <span>TraydR</span>
-    <i></i>
-  </div>
-  <div class="nav-links">
+  <div id="mobile-menu">
     <a href="browse.html">Browse</a>
     <a href="dashboard-seller.html">Sell</a>
     <a href="#pricing">Pricing</a>
-    <button class="btn-outline" onclick="window.location.href='traydr-auth.html'">Log In</button>
-    <button class="btn-amber" onclick="window.location.href='traydr-auth.html#signup'">Sign Up Free</button>
-  </div>
-  <button class="hamburger" id="hamburger" aria-label="Menu">
-    <span></span><span></span><span></span>
-  </button>
-</nav>
-
-<div id="mobile-menu">
-  <a href="#categories">Browse</a>
-  <a href="#listings">Sell</a>
-  <a href="#pricing">Pricing</a>
-  <div class="mobile-btns">
-    <button class="btn-outline" style="flex:1;padding:.7rem;border-radius:8px;font-size:.9rem;" onclick="window.location.href='traydr-auth.html'">Log In</button>
-    <button class="btn-amber" style="flex:1;padding:.7rem;border-radius:8px;font-size:.9rem;font-weight:600;" onclick="window.location.href='traydr-auth.html#signup'">Sign Up Free</button>
-  </div>
-</div>
-
-<!-- ══════════ HERO ══════════ -->
-<section id="hero">
-  <div class="hero-glow"></div>
-  <div class="hero-grid"></div>
-  <div class="hero-inner">
-      <div class="hero-logo" style="margin-bottom:1.5rem"><img src="logo.png" alt="TraydR" style="height:160px;width:auto"></div>
-    <div class="beta-pill">
-      <i></i>
-      <span>NOW IN BETA — JOIN FREE</span>
-    </div>
-    <h1>One marketplace.<br><em>Every</em> kind of trade.</h1>
-    <p>Buy and sell physical goods, digital products, and freelance skills — all in one trusted platform with escrow payments and verified sellers.</p>
-    <div class="search-bar">
-      <input type="text" id="hero-search" placeholder="Search products, services, skills..." onkeydown="if(event.key==='Enter') doHeroSearch()" />
-      <button onclick="doHeroSearch()">Search</button>
-    </div>
-    <div class="tags scroll-x">
-      <span class="label">Trending:</span>
-      <button class="tag" onclick="window.location.href='browse.html?q=Logo+Design'">Logo Design</button>
-      <button class="tag" onclick="window.location.href='browse.html?q=React+Dev'">React Dev</button>
-      <button class="tag" onclick="window.location.href='browse.html?q=Leather+Bag'">Leather Bag</button>
-      <button class="tag" onclick="window.location.href='browse.html?q=Photography'">Photography</button>
-      <button class="tag" onclick="window.location.href='browse.html?q=Figma+Kit'">Figma Kit</button>
-    </div>
-
-    <!-- Hero CTA buttons below tags -->
-    <div style="display:flex;gap:0.75rem;margin-top:1.5rem;justify-content:center;flex-wrap:wrap">
-      <button onclick="window.location.href='traydr-auth.html'" class="btn-hero-login">Log In</button>
-      <button onclick="window.location.href='traydr-auth.html#signup'" style="background:#C2690A;border:none;color:#fff;padding:0.65rem 1.75rem;border-radius:8px;font-size:0.9rem;font-weight:700;cursor:pointer;transition:all 0.2s">Sign Up Free →</button>
+    <div class="mobile-btns">
+      <button class="btn-outline" onclick="window.location.href='traydr-auth.html'">Log In</button>
+      <button class="btn-amber" onclick="window.location.href='traydr-auth.html#signup'">Sign Up Free</button>
     </div>
   </div>
-</section>
 
-<!-- ══════════ STATS ══════════ -->
-<div id="stats">
-  <div class="stats-grid">
-    <div class="fade-up"><div class="stat-val">43K+</div><div class="stat-label">Active Listings</div></div>
-    <div class="fade-up" style="transition-delay:.1s"><div class="stat-val">12K+</div><div class="stat-label">Verified Sellers</div></div>
-    <div class="fade-up" style="transition-delay:.2s"><div class="stat-val">$2.1M</div><div class="stat-label">Paid Out</div></div>
-    <div class="fade-up" style="transition-delay:.3s"><div class="stat-val">98%</div><div class="stat-label">Satisfaction</div></div>
-  </div>
-</div>
-
-<!-- ══════════ CATEGORIES ══════════ -->
-<section id="categories">
-  <div class="container">
-    <div class="section-head">
-      <p class="section-tag">EXPLORE</p>
-      <h2 class="section-title">Trade anything, with anyone.</h2>
+  <section id="hero">
+    <div class="hero-inner">
+      <h1>One Marketplace.<br><em>Every</em> Kind of Trade.</h1>
+      <p>Buy and sell physical goods, digital products, freelance skills, and experiences — all in one trusted marketplace with escrow payments and verified sellers.</p>
+      <div class="search-bar">
+        <input type="text" id="hero-search" placeholder="Search products, services, skills..." onkeydown="if(event.key==='Enter') doHeroSearch()" />
+        <button onclick="doHeroSearch()">Search</button>
+      </div>
+      <div class="tags">
+        <span class="label">Trending:</span>
+        <button class="tag" onclick="window.location.href='browse.html?q=Logo+Design'">Logo Design</button>
+        <button class="tag" onclick="window.location.href='browse.html?q=React+Dev'">React Dev</button>
+        <button class="tag" onclick="window.location.href='browse.html?q=Leather+Bag'">Leather Bag</button>
+        <button class="tag" onclick="window.location.href='browse.html?q=Photography'">Photography</button>
+        <button class="tag" onclick="window.location.href='browse.html?q=Figma+Kit'">Figma Kit</button>
+      </div>
+      <div class="hero-buttons">
+        <button class="btn-amber" onclick="window.location.href='traydr-auth.html#signup'" style="padding: 0.85rem 2.2rem; font-size: 1rem;">Get Started Free</button>
+        <button class="btn-outline" onclick="window.location.href='browse.html'" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 0.85rem 2.2rem; font-size: 1rem;">Browse Listings</button>
+      </div>
     </div>
-    <div class="cat-grid">
-      <div class="cat-card fade-up" onclick="window.location.href='browse.html?cat=physical'" style="cursor:pointer;background-image:linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.7)),url('https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80');background-size:cover;background-position:center">
-        <div class="cat-icon"><i class="fas fa-box"></i></div>
-        <div class="cat-name">Physical Goods</div>
-        <div class="cat-desc">Electronics, fashion, home & more</div>
-        <div class="cat-count" id="cnt-physical">— listings</div>
-      </div>
-      <div class="cat-card fade-up" style="transition-delay:.1s;cursor:pointer;background-image:linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.7)),url('https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&q=80');background-size:cover;background-position:center" onclick="window.location.href='browse.html?cat=digital'">
-        <div class="cat-icon"><i class="fas fa-floppy-disk"></i></div>
-        <div class="cat-name">Digital Products</div>
-        <div class="cat-desc">Templates, e-books, software, art</div>
-        <div class="cat-count" id="cnt-digital">— listings</div>
-      </div>
-      <div class="cat-card fade-up" style="transition-delay:.2s;cursor:pointer;background-image:linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.7)),url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&q=80');background-size:cover;background-position:center" onclick="window.location.href='browse.html?cat=freelance'">
-        <div class="cat-icon"><i class="fas fa-screwdriver-wrench"></i></div>
-        <div class="cat-name">Freelance Skills</div>
-        <div class="cat-desc">Design, code, writing, consulting</div>
-        <div class="cat-count" id="cnt-freelance">— listings</div>
-      </div>
-      <div class="cat-card fade-up" style="transition-delay:.3s;cursor:pointer;background-image:linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.7)),url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&q=80');background-size:cover;background-position:center" onclick="window.location.href='browse.html?cat=experience'">
-        <div class="cat-icon"><i class="fas fa-graduation-cap"></i></div>
-        <div class="cat-name">Experiences</div>
-        <div class="cat-desc">Classes, workshops & events</div>
-        <div class="cat-count" id="cnt-experience">— listings</div>
-      </div>
+  </section>
+
+  <div id="stats">
+    <div class="stats-grid">
+      <div class="stat-item fade-up"><div class="stat-val">43K+</div><div class="stat-label">Active Listings</div></div>
+      <div class="stat-item fade-up"><div class="stat-val">12K+</div><div class="stat-label">Verified Sellers</div></div>
+      <div class="stat-item fade-up"><div class="stat-val">$2.1M</div><div class="stat-label">Paid Out</div></div>
+      <div class="stat-item fade-up"><div class="stat-val">98%</div><div class="stat-label">Satisfaction</div></div>
     </div>
   </div>
-</section>
 
-<!-- ══════════ LISTINGS ══════════ -->
-<section id="listings">
-  <div class="container">
-    <p class="section-tag">FEATURED</p>
-    <h2 class="section-title" style="margin-bottom:1.1rem">Top listings this week</h2>
-    <div class="filter-row scroll-x" id="filters">
-      <button class="filter-btn active" data-filter="all">All</button>
-      <button class="filter-btn" data-filter="freelance">Freelance</button>
-      <button class="filter-btn" data-filter="physical">Physical</button>
-      <button class="filter-btn" data-filter="digital">Digital</button>
-      <button class="filter-btn" data-filter="experience">Experience</button>
-    </div>
-    <div class="listings-grid" id="listings-grid"></div>
-    <div class="browse-more">
-      <button class="btn-ghost">Browse all listings →</button>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════ HOW IT WORKS ══════════ -->
-<section id="how">
-  <div class="container-sm">
-    <div class="section-head">
-      <p class="section-tag">SIMPLE PROCESS</p>
-      <h2 class="section-title">How TraydR works</h2>
-    </div>
-    <div class="steps-grid">
-      <div class="step-card fade-up">
-        <div class="step-num">01</div>
-        <div><div class="step-title">Create Your Account</div><div class="step-desc">Sign up as a buyer, seller, or both. One account, full access.</div></div>
+  <section id="categories">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:3rem;">
+        <p class="section-tag">Explore</p>
+        <h2 class="section-title">Trade anything, with anyone.</h2>
       </div>
-      <div class="step-card fade-up" style="transition-delay:.1s">
-        <div class="step-num">02</div>
-        <div><div class="step-title">List or Browse</div><div class="step-desc">Sellers post in minutes. Buyers search and discover instantly.</div></div>
-      </div>
-      <div class="step-card fade-up" style="transition-delay:.2s">
-        <div class="step-num">03</div>
-        <div><div class="step-title">Transact Safely</div><div class="step-desc">Payments held in escrow. Released only when you're satisfied.</div></div>
-      </div>
-      <div class="step-card fade-up" style="transition-delay:.3s">
-        <div class="step-num">04</div>
-        <div><div class="step-title">Build & Grow</div><div class="step-desc">Leave reviews, earn badges, build your reputation and income.</div></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════ TRUST ══════════ -->
-<section id="trust">
-  <div class="container-sm">
-    <div class="section-head">
-      <h2 class="section-title">Built on trust</h2>
-    </div>
-    <div class="trust-grid">
-      <div class="trust-card fade-up"><div class="trust-icon"><i class="fas fa-lock"></i></div><div class="trust-title">Escrow Payments</div><div class="trust-desc">Funds held until delivery confirmed</div></div>
-      <div class="trust-card fade-up" style="transition-delay:.1s"><div class="trust-icon"><i class="fas fa-circle-check"></i></div><div class="trust-title">Verified Sellers</div><div class="trust-desc">ID & skill verification available</div></div>
-      <div class="trust-card fade-up" style="transition-delay:.2s"><div class="trust-icon"><i class="fas fa-shield-halved"></i></div><div class="trust-title">Buyer Protection</div><div class="trust-desc">Dispute coverage on every order</div></div>
-      <div class="trust-card fade-up" style="transition-delay:.3s"><div class="trust-icon"><i class="fas fa-comment-dots"></i></div><div class="trust-title">In-App Messaging</div><div class="trust-desc">All communication on-platform</div></div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════ PRICING ══════════ -->
-<section id="pricing">
-  <div class="container-sm">
-    <div class="section-head">
-      <p class="section-tag">PRICING</p>
-      <h2 class="section-title">Start free. Scale when ready.</h2>
-    </div>
-    <div class="pricing-grid">
-      <div class="plan-card fade-up">
-        <div class="plan-name">Free</div>
-        <div class="plan-desc">Perfect for getting started</div>
-        <div class="plan-price"><strong>$0</strong><span>forever</span></div>
-        <div class="plan-features">
-          <div class="plan-feature"><span class="check"><i class="fas fa-check"></i></span><span>Up to 5 listings</span></div>
-          <div class="plan-feature"><span class="check"><i class="fas fa-check"></i></span><span>Standard placement</span></div>
-          <div class="plan-feature"><span class="check"><i class="fas fa-check"></i></span><span>Basic analytics</span></div>
-          <div class="plan-feature"><span class="check"><i class="fas fa-check"></i></span><span>Community support</span></div>
-        </div>
-        <button class="plan-btn secondary" onclick="window.location.href='traydr-auth.html#signup'">Get Started</button>
-      </div>
-      <div class="plan-card highlight fade-up" style="transition-delay:.1s">
-        <div class="popular-pill">MOST POPULAR</div>
-        <div class="plan-name">Pro</div>
-        <div class="plan-desc">For serious sellers</div>
-        <div class="plan-price"><strong>$15</strong><span>per month</span></div>
-        <div class="plan-features">
-          <div class="plan-feature"><span class="check"><i class="fas fa-check"></i></span><span>Unlimited listings</span></div>
-          <div class="plan-feature"><span class="check"><i class="fas fa-check"></i></span><span>Priority placement</span></div>
-          <div class="plan-feature"><span class="check"><i class="fas fa-check"></i></span><span>Full analytics dashboard</span></div>
-          <div class="plan-feature"><span class="check"><i class="fas fa-check"></i></span><span>Lower transaction fees</span></div>
-          <div class="plan-feature"><span class="check"><i class="fas fa-check"></i></span><span>Priority support</span></div>
-        </div>
-        <button class="plan-btn primary" onclick="window.location.href='traydr-auth.html#signup?trial=1'">Start Free Trial</button>
-      </div>
-      <div class="plan-card fade-up" style="transition-delay:.2s">
-        <div class="plan-name">Business</div>
-        <div class="plan-desc">For high-volume sellers</div>
-        <div class="plan-price"><strong>$40</strong><span>per month</span></div>
-        <div class="plan-features">
-          <div class="plan-feature"><span class="check"><i class="fas fa-check"></i></span><span>Everything in Pro</span></div>
-          <div class="plan-feature"><span class="check"><i class="fas fa-check"></i></span><span>Featured homepage spot</span></div>
-          <div class="plan-feature"><span class="check"><i class="fas fa-check"></i></span><span>Lowest transaction fees</span></div>
-          <div class="plan-feature"><span class="check"><i class="fas fa-check"></i></span><span>Bulk listing tools</span></div>
-          <div class="plan-feature"><span class="check"><i class="fas fa-check"></i></span><span>Dedicated account manager</span></div>
-        </div>
-        <button class="plan-btn secondary" onclick="window.location.href='mailto:hello@traydr.market'">Contact Sales</button>
-      </div>
-    </div>
-    <p class="pricing-note">Transaction fees: Free 8% · Pro 5% · Business 3%</p>
-  </div>
-</section>
-
-<!-- ══════════ CTA ══════════ -->
-<section id="cta">
-  <div class="cta-glow"></div>
-  <div class="cta-inner">
-    <h2>Ready to start trading?</h2>
-    <p>Join thousands of buyers and sellers. Free to start, no credit card needed.</p>
-    <div class="cta-btns">
-      <button class="btn-amber-lg"   onclick="window.location.href='traydr-auth.html#signup'">Create Free Account</button>
-      <button class="btn-outline-lg" onclick="window.location.href='browse.html'">Browse Listings</button>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════ FOOTER ══════════ -->
-<footer>
-  <div class="footer-inner">
-    <div class="footer-logo"><img src="logo.png" alt="TraydR" style="height:70px;width:auto"></div>
-    <div class="footer-links">
-      <a href="about.html">About</a><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a><a href="support.html">Support</a><a href="blog.html">Blog</a>
-    </div>
-    <div class="footer-copy">© 2026 TraydR. All rights reserved.</div>
-  </div>
-</footer>
-
-<script>
-  /* ── Hero search ── */
-  function doHeroSearch() {
-    const q = document.getElementById('hero-search').value.trim();
-    if (q) window.location.href = 'browse.html?q=' + encodeURIComponent(q);
-    else   window.location.href = 'browse.html';
-  }
-
-  /* ── listings data ── */
-  const LISTINGS = [
-    { title:"Full-Stack Web App Development", seller:"Kira M.",  rating:4.9, reviews:214, price:299, badge:"top",  badgeText:"Top Seller", img:"laptop",    cat:"freelance"  },
-    { title:"Handcrafted Leather Wallet",      seller:"Amos J.",  rating:4.8, reviews:87,  price:45,  badge:"other",badgeText:"Verified",  img:"box",        cat:"physical"   },
-    { title:"Brand Identity Figma Kit",        seller:"Yuna S.",  rating:5.0, reviews:312, price:19,  badge:"best", badgeText:"Bestseller",img:"palette",    cat:"digital"    },
-    { title:"SEO Strategy & Audit",            seller:"Dele O.",  rating:4.7, reviews:56,  price:149, badge:null,   badgeText:null,         img:"chart-line", cat:"freelance"  },
-    { title:"Photography Masterclass",         seller:"Isla R.",  rating:4.9, reviews:128, price:79,  badge:"other",badgeText:"New",        img:"camera",     cat:"experience" },
-    { title:"Vintage Polaroid Camera",         seller:"Marco T.", rating:4.6, reviews:41,  price:120, badge:"other",badgeText:"Verified",   img:"camera",     cat:"physical"   },
-  ];
-
-  function badgeClass(b) { return b==="top"?"badge-top":b==="best"?"badge-best":"badge-other"; }
-
-  function renderListings(filter) {
-    const grid = document.getElementById("listings-grid");
-    const items = filter==="all" ? LISTINGS : LISTINGS.filter(l=>l.cat===filter);
-    grid.innerHTML = items.map((l,i) => `
-      <div class="listing-card fade-up" style="transition-delay:${i*0.07}s;cursor:pointer" onclick="window.location.href='browse.html?q=${encodeURIComponent(l.title)}'">
-        <div class="listing-thumb">
-          <i class="fas fa-${l.img}" style="font-size:2.5rem;color:var(--amber)"></i>
-          ${l.badge ? `<span class="listing-badge ${badgeClass(l.badge)}">${l.badgeText}</span>` : ""}
-        </div>
-        <div class="listing-body">
-          <div class="listing-title">${l.title}</div>
-          <div class="listing-seller">by ${l.seller}</div>
-          <div class="listing-foot">
-            <div class="listing-rating">
-              <span class="star">★</span>
-              <span class="rv">${l.rating}</span>
-              <span class="rc">(${l.reviews})</span>
-            </div>
-            <div class="listing-price">from $${l.price}</div>
+      <div class="cat-grid">
+        <div class="cat-card fade-up" onclick="window.location.href='browse.html?cat=physical'">
+          <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80" alt="Physical goods" loading="lazy" />
+          <div class="cat-overlay">
+            <div class="cat-icon"><i class="fas fa-box"></i></div>
+            <div class="cat-name">Physical Goods</div>
+            <div class="cat-desc">Electronics, fashion, home & more</div>
+            <div class="cat-count" id="cnt-physical">— listings</div>
           </div>
         </div>
-      </div>`).join("");
-    // trigger animations
-    requestAnimationFrame(() => {
-      grid.querySelectorAll(".fade-up").forEach(el => {
-        requestAnimationFrame(() => el.classList.add("visible"));
-      });
+        <div class="cat-card fade-up" onclick="window.location.href='browse.html?cat=digital'">
+          <img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&q=80" alt="Digital products" loading="lazy" />
+          <div class="cat-overlay">
+            <div class="cat-icon"><i class="fas fa-floppy-disk"></i></div>
+            <div class="cat-name">Digital Products</div>
+            <div class="cat-desc">Templates, e‑books, software, art</div>
+            <div class="cat-count" id="cnt-digital">— listings</div>
+          </div>
+        </div>
+        <div class="cat-card fade-up" onclick="window.location.href='browse.html?cat=freelance'">
+          <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&q=80" alt="Freelance skills" loading="lazy" />
+          <div class="cat-overlay">
+            <div class="cat-icon"><i class="fas fa-screwdriver-wrench"></i></div>
+            <div class="cat-name">Freelance Skills</div>
+            <div class="cat-desc">Design, code, writing, consulting</div>
+            <div class="cat-count" id="cnt-freelance">— listings</div>
+          </div>
+        </div>
+        <div class="cat-card fade-up" onclick="window.location.href='browse.html?cat=experience'">
+          <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&q=80" alt="Experiences" loading="lazy" />
+          <div class="cat-overlay">
+            <div class="cat-icon"><i class="fas fa-graduation-cap"></i></div>
+            <div class="cat-name">Experiences</div>
+            <div class="cat-desc">Classes, workshops & events</div>
+            <div class="cat-count" id="cnt-experience">— listings</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="listings">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:2.5rem;">
+        <p class="section-tag">Featured</p>
+        <h2 class="section-title">Top listings this week</h2>
+      </div>
+      <div class="listings-grid" id="listings-grid"></div>
+      <div style="text-align:center; margin-top:2.5rem;">
+        <button class="btn-outline" onclick="window.location.href='browse.html'" style="border-color:var(--amber); color:var(--amber); padding:0.8rem 2rem;">Browse all listings →</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="container-sm">
+      <div style="text-align:center; margin-bottom:3rem;">
+        <p class="section-tag">Simple Process</p>
+        <h2 class="section-title">How TraydR works</h2>
+      </div>
+      <div class="steps-grid">
+        <div class="step fade-up">
+          <div class="step-num">01</div>
+          <div class="step-title">Create Account</div>
+          <div class="step-desc">Sign up as buyer, seller, or both. One account, full access.</div>
+        </div>
+        <div class="step fade-up">
+          <div class="step-num">02</div>
+          <div class="step-title">List or Browse</div>
+          <div class="step-desc">Sellers post in minutes. Buyers search and discover instantly.</div>
+        </div>
+        <div class="step fade-up">
+          <div class="step-num">03</div>
+          <div class="step-title">Transact Safely</div>
+          <div class="step-desc">Payments held in escrow. Released only when you're satisfied.</div>
+        </div>
+        <div class="step fade-up">
+          <div class="step-num">04</div>
+          <div class="step-title">Build & Grow</div>
+          <div class="step-desc">Leave reviews, earn badges, build your reputation and income.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="trust">
+    <div class="container-sm">
+      <div style="text-align:center; margin-bottom:2.5rem;">
+        <h2 class="section-title">Built on trust</h2>
+      </div>
+      <div class="trust-grid">
+        <div class="trust-card fade-up"><div class="trust-icon"><i class="fas fa-lock"></i></div><div class="trust-title">Escrow Payments</div><div class="trust-desc">Funds held until delivery confirmed</div></div>
+        <div class="trust-card fade-up"><div class="trust-icon"><i class="fas fa-circle-check"></i></div><div class="trust-title">Verified Sellers</div><div class="trust-desc">ID & skill verification available</div></div>
+        <div class="trust-card fade-up"><div class="trust-icon"><i class="fas fa-shield-halved"></i></div><div class="trust-title">Buyer Protection</div><div class="trust-desc">Dispute coverage on every order</div></div>
+        <div class="trust-card fade-up"><div class="trust-icon"><i class="fas fa-comment-dots"></i></div><div class="trust-title">In-App Messaging</div><div class="trust-desc">All communication on-platform</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <div class="container-sm">
+      <div style="text-align:center; margin-bottom:3rem;">
+        <p class="section-tag">Pricing</p>
+        <h2 class="section-title">Start free. Scale when ready.</h2>
+      </div>
+      <div class="pricing-grid">
+        <div class="plan-card fade-up">
+          <div class="plan-name">Free</div>
+          <div class="plan-desc">For getting started</div>
+          <div class="plan-price"><strong>$0</strong><span>/month</span></div>
+          <ul class="plan-features">
+            <li><i class="fas fa-check"></i> Up to 5 listings</li>
+            <li><i class="fas fa-check"></i> Standard placement</li>
+            <li><i class="fas fa-check"></i> Basic analytics</li>
+            <li><i class="fas fa-check"></i> Community support</li>
+          </ul>
+          <button class="plan-btn secondary" onclick="window.location.href='traydr-auth.html#signup'">Get Started</button>
+        </div>
+        <div class="plan-card highlight fade-up">
+          <div class="popular-pill">Most Popular</div>
+          <div class="plan-name">Pro</div>
+          <div class="plan-desc">For serious sellers</div>
+          <div class="plan-price"><strong>$15</strong><span>/month</span></div>
+          <ul class="plan-features">
+            <li><i class="fas fa-check"></i> Unlimited listings</li>
+            <li><i class="fas fa-check"></i> Priority placement</li>
+            <li><i class="fas fa-check"></i> Full analytics</li>
+            <li><i class="fas fa-check"></i> Lower fees (5%)</li>
+            <li><i class="fas fa-check"></i> Priority support</li>
+          </ul>
+          <button class="plan-btn primary" onclick="window.location.href='traydr-auth.html#signup?trial=1'">Start Free Trial</button>
+        </div>
+        <div class="plan-card fade-up">
+          <div class="plan-name">Business</div>
+          <div class="plan-desc">For high‑volume sellers</div>
+          <div class="plan-price"><strong>$40</strong><span>/month</span></div>
+          <ul class="plan-features">
+            <li><i class="fas fa-check"></i> Everything in Pro</li>
+            <li><i class="fas fa-check"></i> Homepage feature</li>
+            <li><i class="fas fa-check"></i> Lowest fees (3%)</li>
+            <li><i class="fas fa-check"></i> Bulk tools</li>
+            <li><i class="fas fa-check"></i> Account manager</li>
+          </ul>
+          <button class="plan-btn secondary" onclick="window.location.href='mailto:hello@traydr.market'">Contact Sales</button>
+        </div>
+      </div>
+      <p style="text-align:center; color:var(--muted); margin-top:1.5rem; font-size:0.85rem;">Transaction fees: Free 8% · Pro 5% · Business 3%</p>
+    </div>
+  </section>
+
+  <section id="cta">
+    <div class="container-sm">
+      <h2 class="section-title">Ready to start trading?</h2>
+      <p>Join thousands of buyers and sellers. Free to start, no credit card needed.</p>
+      <div class="cta-buttons">
+        <button class="btn-amber-lg" onclick="window.location.href='traydr-auth.html#signup'">Create Free Account</button>
+        <button class="btn-outline-lg" onclick="window.location.href='browse.html'">Browse Listings</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4>Marketplace</h4>
+        <ul>
+          <li><a href="browse.html">Browse All</a></li>
+          <li><a href="browse.html?cat=physical">Physical Goods</a></li>
+          <li><a href="browse.html?cat=digital">Digital Products</a></li>
+          <li><a href="browse.html?cat=freelance">Freelance Skills</a></li>
+          <li><a href="browse.html?cat=experience">Experiences</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="careers.html">Careers</a></li>
+          <li><a href="press.html">Press</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="support.html">Help Center</a></li>
+          <li><a href="support.html">Contact Us</a></li>
+          <li><a href="terms.html">Terms of Service</a></li>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
+          <li><a href="#"><i class="fab fa-instagram"></i> Instagram</a></li>
+          <li><a href="#"><i class="fab fa-linkedin"></i> LinkedIn</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-logo">
+        <img src="logo.png" alt="TraydR" />
+      </div>
+      <div class="footer-copy">&copy; 2026 TraydR. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script>
+    function doHeroSearch() {
+      const q = document.getElementById('hero-search').value.trim();
+      window.location.href = q ? `browse.html?q=${encodeURIComponent(q)}` : 'browse.html';
+    }
+
+    const LISTINGS = [
+      { title:"Full-Stack Web App", seller:"Kira M.", rating:4.9, reviews:214, price:299, img:"https://images.unsplash.com/photo-1547658719-da2b51169166?w=400&q=80" },
+      { title:"Handcrafted Leather Wallet", seller:"Amos J.", rating:4.8, reviews:87, price:45, img:"https://images.unsplash.com/photo-1627123424574-724758594e93?w=400&q=80" },
+      { title:"Brand Identity Figma Kit", seller:"Yuna S.", rating:5.0, reviews:312, price:19, img:"https://images.unsplash.com/photo-1559028012-481c04fa702d?w=400&q=80" },
+      { title:"SEO Strategy & Audit", seller:"Dele O.", rating:4.7, reviews:56, price:149, img:"https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&q=80" },
+      { title:"Photography Masterclass", seller:"Isla R.", rating:4.9, reviews:128, price:79, img:"https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=400&q=80" },
+      { title:"Vintage Polaroid Camera", seller:"Marco T.", rating:4.6, reviews:41, price:120, img:"https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400&q=80" },
+    ];
+
+    function renderListings() {
+      const grid = document.getElementById('listings-grid');
+      if (!grid) return;
+      grid.innerHTML = LISTINGS.map((l,i) => `
+        <div class="listing-card" onclick="window.location.href='browse.html?q=${encodeURIComponent(l.title)}'">
+          <div class="listing-thumb"><img src="${l.img}" alt="${l.title}" loading="lazy" /></div>
+          <div class="listing-body">
+            <div class="listing-title">${l.title}</div>
+            <div class="listing-seller">by ${l.seller}</div>
+            <div class="listing-foot">
+              <div class="listing-rating"><i class="fas fa-star"></i> ${l.rating} <span class="rc">(${l.reviews})</span></div>
+              <div class="listing-price">from $${l.price}</div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Mobile menu
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobile-menu');
+    function closeMenu() {
+      hamburger.classList.remove('open');
+      mobileMenu.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    hamburger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (mobileMenu.classList.contains('open')) {
+        closeMenu();
+      } else {
+        hamburger.classList.add('open');
+        mobileMenu.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
     });
-  }
+    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+    mobileMenu.querySelectorAll('button').forEach(b => b.addEventListener('click', closeMenu));
 
-  /* ── filter buttons ── */
-  document.getElementById("filters").addEventListener("click", e => {
-    const btn = e.target.closest(".filter-btn");
-    if (!btn) return;
-    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    renderListings(btn.dataset.filter);
-  });
+    window.addEventListener('scroll', () => {
+      document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 10);
+    }, { passive: true });
 
-  renderListings("all");
+    document.addEventListener('DOMContentLoaded', renderListings);
+  </script>
 
-  /* ── nav scroll ── */
-  const nav = document.getElementById("nav");
-  window.addEventListener("scroll", () => {
-    nav.classList.toggle("scrolled", window.scrollY > 40);
-  }, { passive: true });
-
-  /* ── hamburger ── */
-  const hamburger = document.getElementById("hamburger");
-  const mobileMenu = document.getElementById("mobile-menu");
-  hamburger.addEventListener("click", () => {
-    hamburger.classList.toggle("open");
-    mobileMenu.classList.toggle("open");
-  });
-  // close menu on link click
-  mobileMenu.querySelectorAll("a").forEach(a => a.addEventListener("click", () => {
-    hamburger.classList.remove("open");
-    mobileMenu.classList.remove("open");
-  }));
-
-  /* ── intersection observer for fade-up ── */
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("visible"); });
-  }, { threshold: 0.1 });
-
-  function observeAll() {
-    document.querySelectorAll(".fade-up").forEach(el => observer.observe(el));
-  }
-  observeAll();
-
-  // re-observe after filter re-render
-  const listingsGrid = document.getElementById("listings-grid");
-  new MutationObserver(observeAll).observe(listingsGrid, { childList: true });
-</script>
+  <!-- ══════ Original app scripts ══════ -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="listings.js"></script>
   <script src="auth.backend.js"></script>
   <script src="auth.guard.js"></script>
-<script>
-/* ── Load real category counts ── */
-(async () => {
-  try {
-    if (window.Listings) {
-      const { data } = await Listings.getCounts();
-      if (data) {
-        ['physical','digital','freelance','experience'].forEach(cat => {
-          const el = document.getElementById('cnt-' + cat);
-          if (el) el.textContent = (data[cat] || 0).toLocaleString() + ' listings';
-        });
-      }
+  <script>
+    /* ── Load real category counts ── */
+    (async () => {
+      try {
+        if (window.Listings) {
+          const { data } = await Listings.getCounts();
+          if (data) {
+            ['physical','digital','freelance','experience'].forEach(cat => {
+              const el = document.getElementById('cnt-' + cat);
+              if (el) el.textContent = (data[cat] || 0).toLocaleString() + ' listings';
+            });
+          }
+        }
+      } catch(e) {}
+    })();
+  </script>
+  <script>
+    (function() {
+      var t = localStorage.getItem('traydr_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+    function toggleTheme() {
+      var cur  = document.documentElement.getAttribute('data-theme') || 'light';
+      var next = cur === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('traydr_theme', next);
+      var tog   = document.getElementById('dark-mode-toggle');
+      var thumb = document.getElementById('dark-mode-thumb');
+      if (tog)   tog.checked = next === 'dark';
+      if (thumb) thumb.style.transform = next === 'dark' ? 'translateX(20px)' : 'translateX(0)';
     }
-  } catch(e) {}
-})();
-</script>
-<script>
-  (function() {
-    var t = localStorage.getItem('traydr_theme') || 'light';
-    document.documentElement.setAttribute('data-theme', t);
-  })();
-  function toggleTheme() {
-    var cur  = document.documentElement.getAttribute('data-theme') || 'light';
-    var next = cur === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem('traydr_theme', next);
-    var tog   = document.getElementById('dark-mode-toggle');
-    var thumb = document.getElementById('dark-mode-thumb');
-    if (tog)   tog.checked = next === 'dark';
-    if (thumb) thumb.style.transform = next === 'dark' ? 'translateX(20px)' : 'translateX(0)';
-  }
-  document.addEventListener('DOMContentLoaded', function() {
-    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    var tog    = document.getElementById('dark-mode-toggle');
-    var thumb  = document.getElementById('dark-mode-thumb');
-    if (tog)   tog.checked = isDark;
-    if (thumb) thumb.style.transform = isDark ? 'translateX(20px)' : 'translateX(0)';
-  });</script>
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    document.addEventListener('DOMContentLoaded', function() {
+      var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      var tog    = document.getElementById('dark-mode-toggle');
+      var thumb  = document.getElementById('dark-mode-thumb');
+      if (tog)   tog.checked = isDark;
+      if (thumb) thumb.style.transform = isDark ? 'translateX(20px)' : 'translateX(0)';
     });
-  }
-</script>
+  </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
+  </script>
 </body>
 </html>
