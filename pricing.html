@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pricing — TraydR</title>
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#FFB34E">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root { --amber:#C2690A; --amber-light:#D97706; --bg:#FFF8F0; --bg2:#FFECD2; --border:rgba(255,160,60,0.35); --text:#1C1208; --muted:rgba(28,18,8,0.55); --serif:'Playfair Display',Georgia,serif; --sans:'DM Sans',system-ui,sans-serif; }
+    [data-theme="dark"] { --amber:#F59E0B; --bg:#0a0a0a; --bg2:#0f0f0f; --border:rgba(255,255,255,0.07); --text:#fff; --muted:rgba(255,255,255,0.45); }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:var(--sans); background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
+    nav { background:#FFB34E; padding:0 1.25rem; height:62px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
+    [data-theme="dark"] nav { background:rgba(10,10,10,0.97) !important; border-bottom:1px solid rgba(255,255,255,0.07); }
+    .nav-logo img { height:44px; width:auto; }
+    .nav-back { background:transparent; border:1px solid rgba(28,18,8,0.3); color:#1C1208; padding:0.4rem 1rem; border-radius:6px; font-size:0.85rem; font-weight:600; cursor:pointer; text-decoration:none; }
+    [data-theme="dark"] .nav-back { border-color:rgba(255,255,255,0.2); color:#fff; }
+    .container { max-width:720px; margin:0 auto; padding:3rem 1.5rem; }
+    h1 { font-family:var(--serif); font-size:clamp(1.8rem,5vw,2.5rem); font-weight:700; margin-bottom:1rem; letter-spacing:-0.03em; }
+    h2 { font-family:var(--serif); font-size:1.25rem; font-weight:700; margin:2rem 0 0.75rem; color:var(--amber); }
+    p { color:var(--muted); line-height:1.8; margin-bottom:1rem; font-size:0.93rem; }
+    ul { color:var(--muted); line-height:1.8; margin:0.5rem 0 1.5rem 1.5rem; }
+    li { font-size:0.93rem; margin-bottom:0.5rem; }
+    strong { color:var(--text); }
+    a { color:var(--amber); text-decoration:none; }
+    .section { margin-bottom:2rem; padding-bottom:2rem; border-bottom:1px solid var(--border); }
+    .section:last-child { border-bottom:none; }
+  </style>
+  <script src="currency.js"></script>
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="nav-logo"><img src="logo.png" alt="TraydR" style="height:44px;width:auto;display:block;object-fit:contain"></a>
+    <a href="index.html" class="nav-back"><i class="fas fa-arrow-left"></i> Back</a>
+  </nav>
+  <div class="container">
+    <h1>Pricing</h1>
+    <p style="color:var(--muted);font-size:0.82rem">Transparent plans for sellers. All prices in USD.</p>
+
+    <div class="section">
+      <h2>Free</h2>
+      <p><strong>$0/month</strong></p>
+      <ul>
+        <li>Up to 5 active listings</li>
+        <li>Standard placement in search</li>
+        <li>Basic analytics</li>
+        <li>Community support</li>
+        <li>8% transaction fee</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Pro</h2>
+      <p><strong>$15/month</strong></p>
+      <ul>
+        <li>Unlimited listings</li>
+        <li>Priority placement</li>
+        <li>Full analytics dashboard</li>
+        <li>5% transaction fee</li>
+        <li>Priority support</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Business</h2>
+      <p><strong>$40/month</strong></p>
+      <ul>
+        <li>Everything in Pro</li>
+        <li>Featured homepage spot</li>
+        <li>3% transaction fee</li>
+        <li>Bulk listing tools</li>
+        <li>Dedicated account manager</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Transaction Fees</h2>
+      <p>Transaction fees are calculated on the total order amount when a buyer pays. They are deducted from the seller’s earnings:</p>
+      <ul>
+        <li>Free plan – <strong>8%</strong></li>
+        <li>Pro plan – <strong>5%</strong></li>
+        <li>Business plan – <strong>3%</strong></li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Start Selling</h2>
+      <p><a href="traydr-auth.html#signup">Create your free account →</a></p>
+    </div>
+  </div>
+  <script>(function(){const t=localStorage.getItem('traydr_theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+    }
+  </script>
+</body>
+</html>

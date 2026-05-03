@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Refund Policy — TraydR</title>
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#FFB34E">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root { --amber:#C2690A; --amber-light:#D97706; --bg:#FFF8F0; --bg2:#FFECD2; --border:rgba(255,160,60,0.35); --text:#1C1208; --muted:rgba(28,18,8,0.55); --serif:'Playfair Display',Georgia,serif; --sans:'DM Sans',system-ui,sans-serif; }
+    [data-theme="dark"] { --amber:#F59E0B; --bg:#0a0a0a; --bg2:#0f0f0f; --border:rgba(255,255,255,0.07); --text:#fff; --muted:rgba(255,255,255,0.45); }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:var(--sans); background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
+    nav { background:#FFB34E; padding:0 1.25rem; height:62px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
+    [data-theme="dark"] nav { background:rgba(10,10,10,0.97) !important; border-bottom:1px solid rgba(255,255,255,0.07); }
+    .nav-logo img { height:44px; width:auto; }
+    .nav-back { background:transparent; border:1px solid rgba(28,18,8,0.3); color:#1C1208; padding:0.4rem 1rem; border-radius:6px; font-size:0.85rem; font-weight:600; cursor:pointer; text-decoration:none; }
+    [data-theme="dark"] .nav-back { border-color:rgba(255,255,255,0.2); color:#fff; }
+    .container { max-width:720px; margin:0 auto; padding:3rem 1.5rem; }
+    h1 { font-family:var(--serif); font-size:clamp(1.8rem,5vw,2.5rem); font-weight:700; margin-bottom:1rem; letter-spacing:-0.03em; }
+    h2 { font-family:var(--serif); font-size:1.25rem; font-weight:700; margin:2rem 0 0.75rem; color:var(--amber); }
+    p { color:var(--muted); line-height:1.8; margin-bottom:1rem; font-size:0.93rem; }
+    ul { color:var(--muted); line-height:1.8; margin:0.5rem 0 1.5rem 1.5rem; }
+    li { font-size:0.93rem; margin-bottom:0.5rem; }
+    strong { color:var(--text); }
+    a { color:var(--amber); text-decoration:none; }
+    .section { margin-bottom:2rem; padding-bottom:2rem; border-bottom:1px solid var(--border); }
+    .section:last-child { border-bottom:none; }
+  </style>
+  <script src="currency.js"></script>
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="nav-logo"><img src="logo.png" alt="TraydR" style="height:44px;width:auto;display:block;object-fit:contain"></a>
+    <a href="index.html" class="nav-back"><i class="fas fa-arrow-left"></i> Back</a>
+  </nav>
+  <div class="container">
+    <h1>Refund &amp; Cancellation Policy</h1>
+    <p style="color:var(--muted);font-size:0.82rem">Last updated: April 2026</p>
+
+    <div class="section">
+      <h2>Escrow Protection</h2>
+      <p>All payments on TraydR are held in a secure <strong>escrow system</strong>. Funds are not released to the seller until the buyer confirms the item or service has been delivered as described. This means your money is protected from the moment you pay until the transaction completes.</p>
+    </div>
+
+    <div class="section">
+      <h2>What Qualifies for a Refund</h2>
+      <p>You may request a refund before funds are released to the seller in any of these situations:</p>
+      <ul>
+        <li><strong>Item not received</strong> – the seller fails to deliver physical/digital goods or finish the agreed service within the specified timeframe.</li>
+        <li><strong>Significantly not as described</strong> – the delivered item or final work is materially different from the listing or agreed brief.</li>
+        <li><strong>Unauthorized transaction</strong> – a payment was made without your consent.</li>
+      </ul>
+      <p>Refund requests must be submitted within <strong>7 days</strong> of the expected delivery date via our support channel.</p>
+    </div>
+
+    <div class="section">
+      <h2>Digital Products &amp; Services</h2>
+      <p>For downloadable products (templates, e‑books, software), refunds are granted only if the file was not accessed or downloaded. For freelance services (design, coding, writing), disputes are resolved by reviewing the original brief, delivered work, and communication between both parties.</p>
+    </div>
+
+    <div class="section">
+      <h2>Subscription Plans</h2>
+      <p>Monthly subscription fees (Pro, Business) are <strong>non‑refundable</strong> once the billing cycle has started. You may cancel anytime to stop future charges; your plan remains active until the end of the current period.</p>
+    </div>
+
+    <div class="section">
+      <h2>Dispute Resolution</h2>
+      <p>If a buyer and seller cannot agree, the buyer can open a formal dispute. Our team will review evidence from both sides and may issue a partial or full refund. Repeated disputes may affect a seller’s account standing.</p>
+    </div>
+
+    <div class="section">
+      <h2>Refund Timelines</h2>
+      <ul>
+        <li><strong>Card payments, bank transfers, mobile money and USSD</strong> – 5–10 business days, depending on your bank.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Contact</h2>
+      <p>For refund issues: <a href="mailto:support@traydr.market">support@traydr.market</a></p>
+    </div>
+  </div>
+  <script>(function(){const t=localStorage.getItem('traydr_theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+    }
+  </script>
+</body>
+</html>
