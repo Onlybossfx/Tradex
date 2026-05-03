@@ -4,14 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TraydR — One Marketplace. Every Kind of Trade.</title>
-  <meta name="description" content="Buy and sell physical goods, digital products, freelance skills and experiences — all in one trusted marketplace with escrow payments and verified sellers." />
-  <meta name="keywords" content="marketplace, buy, sell, freelance, digital products, escrow, Africa, Nigeria, Ghana, Kenya" />
+  <meta name="description" content="Buy and sell physical goods, digital products, freelance skills, experiences, and find jobs — all in one trusted marketplace with escrow payments and verified sellers." />
+  <meta name="keywords" content="marketplace, buy, sell, freelance, digital products, escrow, Africa, Nigeria, Ghana, Kenya, jobs" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://traydr.vercel.app/" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://traydr.vercel.app/" />
   <meta property="og:title" content="TraydR — One Marketplace. Every Kind of Trade." />
-  <meta property="og:description" content="Buy and sell physical goods, digital products, freelance skills and experiences — all in one trusted marketplace with escrow payments and verified sellers." />
+  <meta property="og:description" content="Buy and sell physical goods, digital products, freelance skills, experiences, and find jobs — all in one trusted marketplace with escrow payments and verified sellers." />
   <meta property="og:image" content="https://traydr.vercel.app/logo.png" />
   <meta property="og:site_name" content="TraydR" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -63,52 +63,26 @@
 
     /* ---------- Utility ---------- */
     .section-tag {
-      font-size: 0.75rem;
-      letter-spacing: 0.2em;
-      font-weight: 600;
-      color: var(--amber);
-      margin-bottom: 1rem;
-      text-transform: uppercase;
+      font-size: 0.75rem; letter-spacing: 0.2em; font-weight: 600;
+      color: var(--amber); margin-bottom: 1rem; text-transform: uppercase;
     }
     .section-title {
-      font-family: var(--serif);
-      font-size: clamp(1.8rem, 4.5vw, 3rem);
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      line-height: 1.15;
+      font-family: var(--serif); font-size: clamp(1.8rem, 4.5vw, 3rem);
+      font-weight: 700; letter-spacing: -0.02em; line-height: 1.15;
     }
-    .fade-up {
-      opacity: 1;
-      transform: none;
-    }
+    .fade-up { opacity: 1; transform: none; }
 
     /* ---------- Navigation ---------- */
     #nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 100;
-      padding: 0.5rem 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(255, 248, 240, 0.97);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid var(--border);
-      transition: box-shadow 0.3s;
-      height: var(--nav-height);
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 0.5rem 2rem; display: flex; align-items: center;
+      justify-content: space-between; background: rgba(255, 248, 240, 0.97);
+      backdrop-filter: blur(14px); border-bottom: 1px solid var(--border);
+      transition: box-shadow 0.3s; height: var(--nav-height);
     }
     #nav.scrolled { box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
-    .nav-logo {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .nav-logo img {
-      height: 32px;
-      width: auto;
-    }
+    .nav-logo { display: flex; align-items: center; gap: 8px; }
+    .nav-logo img { height: 40px; width: auto; }
     .nav-links { display: flex; align-items: center; gap: 1.5rem; }
     .nav-links a {
       font-size: 0.9rem; font-weight: 500; color: var(--text);
@@ -212,13 +186,15 @@
       font-family: var(--serif); font-size: 2.2rem; font-weight: 700;
       color: var(--amber); line-height: 1.2;
     }
-    .stat-item .stat-label {
-      color: var(--muted); font-size: 0.85rem; margin-top: 0.2rem;
-    }
+    .stat-item .stat-label { color: var(--muted); font-size: 0.85rem; margin-top: 0.2rem; }
 
     /* ---------- Categories ---------- */
     #categories { background: var(--bg); }
-    .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
     .cat-card {
       position: relative; height: 220px; border-radius: 18px; overflow: hidden;
       cursor: pointer; transition: transform 0.4s, box-shadow 0.4s;
@@ -250,20 +226,12 @@
     .listing-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
     .listing-card:hover .listing-thumb img { transform: scale(1.05); }
     .listing-body { padding: 1.3rem; }
-    .listing-title {
-      font-weight: 600; font-size: 1rem; margin-bottom: 0.25rem; color: var(--text);
-    }
-    .listing-seller {
-      color: var(--muted); font-size: 0.8rem; margin-bottom: 0.8rem;
-    }
+    .listing-title { font-weight: 600; font-size: 1rem; margin-bottom: 0.25rem; color: var(--text); }
+    .listing-seller { color: var(--muted); font-size: 0.8rem; margin-bottom: 0.8rem; }
     .listing-foot { display: flex; justify-content: space-between; align-items: center; }
-    .listing-rating {
-      display: flex; align-items: center; gap: 4px; color: var(--amber); font-size: 0.85rem;
-    }
+    .listing-rating { display: flex; align-items: center; gap: 4px; color: var(--amber); font-size: 0.85rem; }
     .listing-rating .rc { color: var(--muted); font-size: 0.75rem; margin-left: 4px; }
-    .listing-price {
-      font-family: var(--serif); font-weight: 700; font-size: 1.2rem; color: var(--amber);
-    }
+    .listing-price { font-family: var(--serif); font-weight: 700; font-size: 1.2rem; color: var(--amber); }
 
     /* ---------- How It Works ---------- */
     #how { background: var(--bg); }
@@ -295,8 +263,27 @@
     .trust-title { font-weight: 600; margin-bottom: 0.3rem; }
     .trust-desc { color: var(--muted); font-size: 0.8rem; }
 
-    /* ---------- Pricing ---------- */
-    #pricing { background: var(--bg); }
+    /* ---------- Pricing Toggle ---------- */
+    .toggle-pill {
+      width: 48px; height: 26px; border-radius: 100px; position: relative;
+      border: none; padding: 0; cursor: pointer; background: var(--border);
+      transition: background 0.3s;
+    }
+    .toggle-pill.yearly { background: var(--amber); }
+    .toggle-pill::after {
+      content: '';
+      position: absolute; top: 3px; left: 3px;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      transition: transform 0.3s;
+    }
+    .toggle-pill.yearly::after { transform: translateX(22px); }
+    .save-badge {
+      background: var(--amber); color: #fff; font-size: 0.7rem;
+      padding: 0.2rem 0.6rem; border-radius: 100px; font-weight: 700;
+    }
+
+    /* ---------- Pricing Cards ---------- */
     .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
     .plan-card {
       background: #fff; border-radius: 20px; padding: 2rem; border: 1px solid var(--border);
@@ -318,6 +305,9 @@
       font-family: var(--serif); font-size: 2.4rem; font-weight: 700; color: var(--text);
     }
     .plan-price span { color: var(--muted); font-size: 0.85rem; margin-left: 4px; }
+    .plan-price .save-text {
+      font-size: 0.8rem; color: var(--amber); margin-left: 0.3rem; display: none;
+    }
     .plan-features { margin: 1.5rem 0; list-style: none; padding: 0; }
     .plan-features li {
       display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.7rem;
@@ -399,7 +389,7 @@
     <div class="nav-links">
       <a href="browse.html">Browse</a>
       <a href="dashboard-seller.html">Sell</a>
-      <a href="#pricing">Pricing</a>
+      <a href="pricing.html">Pricing</a>
       <button class="btn-outline" onclick="window.location.href='traydr-auth.html'">Log In</button>
       <button class="btn-amber" onclick="window.location.href='traydr-auth.html#signup'">Sign Up Free</button>
     </div>
@@ -411,7 +401,7 @@
   <div id="mobile-menu">
     <a href="browse.html">Browse</a>
     <a href="dashboard-seller.html">Sell</a>
-    <a href="#pricing">Pricing</a>
+    <a href="pricing.html">Pricing</a>
     <div class="mobile-btns">
       <button class="btn-outline" onclick="window.location.href='traydr-auth.html'">Log In</button>
       <button class="btn-amber" onclick="window.location.href='traydr-auth.html#signup'">Sign Up Free</button>
@@ -484,6 +474,16 @@
             <div class="cat-count" id="cnt-experience">— listings</div>
           </div>
         </div>
+        <!-- Jobs Category -->
+        <div class="cat-card fade-up" onclick="window.location.href='browse.html?cat=jobs'">
+          <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&q=80" alt="Jobs" loading="lazy" />
+          <div class="cat-overlay">
+            <div class="cat-icon"><i class="fas fa-briefcase"></i></div>
+            <div class="cat-name">Jobs</div>
+            <div class="cat-desc">Remote & on-site positions</div>
+            <div class="cat-count" id="cnt-jobs">— listings</div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -548,11 +548,21 @@
 
   <section id="pricing">
     <div class="container-sm">
-      <div style="text-align:center; margin-bottom:3rem;">
+      <div style="text-align:center; margin-bottom:2rem;">
         <p class="section-tag">Pricing</p>
         <h2 class="section-title">Start free. Scale when ready.</h2>
       </div>
+
+      <!-- Toggle -->
+      <div style="display:flex; justify-content:center; align-items:center; gap:0.8rem; margin-bottom:2.5rem;">
+        <span style="font-weight:600; font-size:0.9rem; color:var(--muted);">Monthly</span>
+        <button id="billing-toggle" class="toggle-pill" onclick="toggleBilling()"></button>
+        <span style="font-weight:600; font-size:0.9rem; color:var(--amber);">Annual</span>
+        <span class="save-badge">Save up to 37%</span>
+      </div>
+
       <div class="pricing-grid">
+        <!-- Free Plan -->
         <div class="plan-card fade-up">
           <div class="plan-name">Free</div>
           <div class="plan-desc">For getting started</div>
@@ -565,11 +575,17 @@
           </ul>
           <button class="plan-btn secondary" onclick="window.location.href='traydr-auth.html#signup'">Get Started</button>
         </div>
+
+        <!-- Pro Plan -->
         <div class="plan-card highlight fade-up">
           <div class="popular-pill">Most Popular</div>
           <div class="plan-name">Pro</div>
           <div class="plan-desc">For serious sellers</div>
-          <div class="plan-price"><strong>$15</strong><span>/month</span></div>
+          <div class="plan-price">
+            <strong id="pro-price">$5</strong>
+            <span id="pro-period">/month</span>
+            <span id="pro-save" class="save-text">Save $10</span>
+          </div>
           <ul class="plan-features">
             <li><i class="fas fa-check"></i> Unlimited listings</li>
             <li><i class="fas fa-check"></i> Priority placement</li>
@@ -577,12 +593,18 @@
             <li><i class="fas fa-check"></i> Lower fees (5%)</li>
             <li><i class="fas fa-check"></i> Priority support</li>
           </ul>
-          <button class="plan-btn primary" onclick="window.location.href='traydr-auth.html#signup?trial=1'">Start Free Trial</button>
+          <button class="plan-btn primary" onclick="handleProClick()">Start Free Trial</button>
         </div>
+
+        <!-- Business Plan -->
         <div class="plan-card fade-up">
           <div class="plan-name">Business</div>
           <div class="plan-desc">For high‑volume sellers</div>
-          <div class="plan-price"><strong>$40</strong><span>/month</span></div>
+          <div class="plan-price">
+            <strong id="business-price">$12</strong>
+            <span id="business-period">/month</span>
+            <span id="business-save" class="save-text">Save $44</span>
+          </div>
           <ul class="plan-features">
             <li><i class="fas fa-check"></i> Everything in Pro</li>
             <li><i class="fas fa-check"></i> Homepage feature</li>
@@ -590,10 +612,12 @@
             <li><i class="fas fa-check"></i> Bulk tools</li>
             <li><i class="fas fa-check"></i> Account manager</li>
           </ul>
-          <button class="plan-btn secondary" onclick="window.location.href='mailto:hello@traydr.market'">Contact Sales</button>
+          <button class="plan-btn secondary" onclick="handleBusinessClick()">Contact Sales</button>
         </div>
       </div>
-      <p style="text-align:center; color:var(--muted); margin-top:1.5rem; font-size:0.85rem;">Transaction fees: Free 8% · Pro 5% · Business 3%</p>
+      <p style="text-align:center; color:var(--muted); margin-top:1.5rem; font-size:0.85rem;">
+        Transaction fees: Free 8% · Pro 5% · Business 3%
+      </p>
     </div>
   </section>
 
@@ -715,7 +739,32 @@
       document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 10);
     }, { passive: true });
 
-    document.addEventListener('DOMContentLoaded', renderListings);
+    // Pricing toggle
+    let isAnnual = false;
+    function toggleBilling() {
+      isAnnual = !isAnnual;
+      const btn = document.getElementById('billing-toggle');
+      btn.classList.toggle('yearly', isAnnual);
+      document.getElementById('pro-price').textContent = isAnnual ? '$50' : '$5';
+      document.getElementById('pro-period').textContent = isAnnual ? '/year' : '/month';
+      document.getElementById('pro-save').style.display = isAnnual ? 'inline' : 'none';
+      document.getElementById('business-price').textContent = isAnnual ? '$100' : '$12';
+      document.getElementById('business-period').textContent = isAnnual ? '/year' : '/month';
+      document.getElementById('business-save').style.display = isAnnual ? 'inline' : 'none';
+    }
+    function handleProClick() {
+      window.location.href = isAnnual ? 'traydr-auth.html#signup?plan=pro-yearly' : 'traydr-auth.html#signup?trial=1';
+    }
+    function handleBusinessClick() {
+      window.location.href = isAnnual ? 'mailto:hello@traydr.market?subject=Business%20Annual' : 'mailto:hello@traydr.market';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderListings();
+      // ensure toggle starts in monthly state
+      const btn = document.getElementById('billing-toggle');
+      btn.classList.remove('yearly');
+    });
   </script>
 
   <!-- ══════ Original app scripts ══════ -->
@@ -724,13 +773,12 @@
   <script src="auth.backend.js"></script>
   <script src="auth.guard.js"></script>
   <script>
-    /* ── Load real category counts ── */
     (async () => {
       try {
         if (window.Listings) {
           const { data } = await Listings.getCounts();
           if (data) {
-            ['physical','digital','freelance','experience'].forEach(cat => {
+            ['physical','digital','freelance','experience','jobs'].forEach(cat => {
               const el = document.getElementById('cnt-' + cat);
               if (el) el.textContent = (data[cat] || 0).toLocaleString() + ' listings';
             });
