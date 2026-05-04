@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TraydR — Apply for Verification</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#F59E0B" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="icon" type="image/png" href="logo.png" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --amber:#C2690A;--amber-light:#D97706;--amber-dim:rgba(194,105,10,0.1);
+      --bg:#FFF8F0;--bg2:#FFECD2;--bg3:#FFE0B8;
+      --border:rgba(255,160,60,0.35);--border-focus:rgba(194,105,10,0.5);
+      --text:#1C1208;--muted:rgba(28,18,8,0.55);--dim:rgba(28,18,8,0.35);
+      --error:#DC2626;--success:#16A34A;
+      --serif:'Playfair Display',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif
+    }
+    [data-theme="dark"]{
+      --amber:#F59E0B;--amber-light:#FBBF24;--amber-dim:rgba(245,158,11,0.1);
+      --bg:#0a0a0a;--bg2:#0f0f0f;--bg3:#141414;--bg4:#181818;
+      --border:rgba(255,255,255,0.07);--border-focus:rgba(255,255,255,0.12);
+      --text:#fff;--muted:rgba(255,255,255,0.45);--dim:rgba(255,255,255,0.22);
+      --error:#EF4444;--success:#10B981;
+    }
+    html,body{height:100%;overflow-x:hidden}
+    body{
+      background:var(--bg);color:var(--text);
+      font-family:var(--sans);-webkit-font-smoothing:antialiased;
+      display:flex;align-items:center;justify-content:center;
+      min-height:100vh;padding:2rem 1.25rem
+    }
+
+    .card{
+      width:100%;max-width:500px;background:var(--bg2);
+      border:1px solid var(--border);border-radius:20px;
+      padding:2.5rem 2rem;position:relative;overflow:hidden
+    }
+    .card-glow{
+      position:absolute;top:-30%;left:50%;transform:translateX(-50%);
+      width:320px;height:200px;
+      background:radial-gradient(ellipse,rgba(245,158,11,0.1) 0%,transparent 70%);
+      pointer-events:none
+    }
+
+    .logo{display:flex;align-items:center;justify-content:center;margin-bottom:2rem}
+    .logo img{height:48px;width:auto}
+
+    .head{text-align:center;margin-bottom:2rem}
+    .icon-wrap{
+      width:72px;height:72px;background:var(--amber-dim);
+      border:1px solid rgba(245,158,11,0.25);border-radius:20px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:2.2rem;margin:0 auto 1.25rem
+    }
+    .head h1{
+      font-family:var(--serif);font-size:1.65rem;font-weight:700;
+      letter-spacing:-0.02em;margin-bottom:0.5rem
+    }
+    .head p{color:var(--muted);font-size:0.875rem;line-height:1.6}
+
+    .field{margin-bottom:1.2rem}
+    .field label{
+      display:block;font-size:0.8rem;font-weight:600;
+      color:var(--muted);margin-bottom:0.45rem
+    }
+    .wrap{position:relative}
+    .wrap .ico{
+      position:absolute;left:14px;top:50%;transform:translateY(-50%);
+      color:var(--dim);font-size:1rem;pointer-events:none
+    }
+    .wrap input, .wrap select{
+      width:100%;background:var(--bg3);border:1px solid var(--border);
+      border-radius:10px;padding:0.78rem 1rem 0.78rem 2.6rem;
+      color:var(--text);font-size:0.9rem;font-family:var(--sans);
+      outline:none;transition:border-color 0.2s,background 0.2s
+    }
+    .wrap input::placeholder,.wrap select::placeholder{
+      color:var(--dim)
+    }
+    .wrap input:focus,.wrap select:focus{
+      border-color:var(--border-focus);background:rgba(245,158,11,0.04)
+    }
+    select.finp{cursor:pointer}
+    select.finp option{background:var(--bg3)}
+
+    .ferr{color:var(--error);font-size:0.75rem;margin-top:0.35rem;display:none}
+    .ferr.on{display:block}
+
+    .upa{
+      border:2px dashed var(--border);border-radius:11px;
+      padding:1.25rem;text-align:center;cursor:pointer;
+      transition:all 0.2s;background:var(--bg3)
+    }
+    .upa:hover,.upa.drag{border-color:rgba(245,158,11,0.4);background:var(--amber-dim)}
+    .upa-icon{font-size:1.75rem;margin-bottom:0.4rem}
+    .upa-txt{font-size:0.82rem;color:var(--muted)}
+    .upa-txt strong{color:var(--amber)}
+    .upa-hint{font-size:0.72rem;color:var(--dim);margin-top:0.25rem}
+
+    .preview-row{display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.65rem}
+    .preview-item{
+      width:80px;height:80px;border-radius:8px;overflow:hidden;
+      border:1px solid var(--border);position:relative
+    }
+    .preview-item img{width:100%;height:100%;object-fit:cover}
+    .preview-item .rm-btn{
+      position:absolute;top:2px;right:2px;
+      background:rgba(0,0,0,0.7);border:none;color:#fff;
+      width:18px;height:18px;border-radius:3px;font-size:0.6rem;
+      display:flex;align-items:center;justify-content:center;cursor:pointer
+    }
+
+    .btn-primary{
+      width:100%;padding:0.88rem;background:var(--amber);
+      border:none;border-radius:10px;color:#0a0a0a;
+      font-size:0.95rem;font-weight:700;font-family:var(--sans);
+      cursor:pointer;transition:all 0.2s;position:relative;margin-top:1rem
+    }
+    .btn-primary:hover:not(:disabled){background:var(--amber-light);transform:translateY(-1px)}
+    .btn-primary:disabled{opacity:0.6;cursor:not-allowed}
+    .btn-primary.loading .lbl{visibility:hidden}
+    .btn-primary.loading::after{
+      content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+      width:18px;height:18px;border:2px solid rgba(10,10,10,0.3);
+      border-top-color:#0a0a0a;border-radius:50%;animation:spin 0.7s linear infinite
+    }
+    @keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+
+    .back-link{
+      display:block;text-align:center;margin-top:1rem;color:var(--muted);
+      font-size:0.83rem;text-decoration:none;transition:color 0.2s
+    }
+    .back-link:hover{color:var(--text)}
+
+    .success-box{text-align:center;padding:2rem 0}
+    .success-box i{font-size:3.5rem;margin-bottom:1rem;display:block}
+    .success-box h2{font-family:var(--serif);font-size:1.6rem;font-weight:700;margin-bottom:0.75rem}
+    .success-box p{color:var(--muted);font-size:0.9rem;line-height:1.7;margin-bottom:1.5rem}
+
+    @media(max-width:480px){
+      body{padding:1.25rem;align-items:flex-start;padding-top:2rem}
+      .card{padding:2rem 1.25rem;border-radius:16px;border:none;background:transparent}
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="card-glow"></div>
+    <div class="logo">
+      <img src="logo.png" alt="TraydR" />
+    </div>
+    <div class="head">
+      <div class="icon-wrap"><i class="fas fa-id-card"></i></div>
+      <h1>Get Verified</h1>
+      <p>Submit your identification to earn a verified badge on your profile and listings.</p>
+    </div>
+
+    <!-- The form -->
+    <form id="verify-form" novalidate>
+      <div class="field">
+        <label>Full Name *</label>
+        <div class="wrap">
+          <span class="ico"><i class="fas fa-user"></i></span>
+          <input type="text" id="full-name" placeholder="Your legal full name" autocomplete="name" required />
+        </div>
+        <div class="ferr" id="e-name">Required</div>
+      </div>
+
+      <div class="field">
+        <label>ID Type *</label>
+        <div class="wrap">
+          <span class="ico"><i class="fas fa-address-card"></i></span>
+          <select id="id-type" required>
+            <option value="">Select ID type</option>
+            <option value="national_id">National ID Card</option>
+            <option value="passport">International Passport</option>
+            <option value="drivers_license">Driver’s License</option>
+            <option value="voters_card">Voter’s Card</option>
+          </select>
+        </div>
+        <div class="ferr" id="e-idtype">Required</div>
+      </div>
+
+      <div class="field">
+        <label>ID Number *</label>
+        <div class="wrap">
+          <span class="ico"><i class="fas fa-hashtag"></i></span>
+          <input type="text" id="id-number" placeholder="Your ID number" required />
+        </div>
+        <div class="ferr" id="e-idnum">Required</div>
+      </div>
+
+      <div class="field">
+        <label>ID Photo (front) *</label>
+        <div class="upa" id="id-front-zone" onclick="document.getElementById('id-front-input').click()">
+          <div class="upa-icon"><i class="fas fa-camera"></i></div>
+          <div class="upa-txt">Click to upload <strong>ID front</strong></div>
+          <div class="upa-hint">JPG, PNG — max 2MB</div>
+        </div>
+        <input type="file" id="id-front-input" accept="image/*" style="display:none" onchange="handleUpload('id-front', this)" />
+        <div class="preview-row" id="id-front-preview"></div>
+        <div class="ferr" id="e-idfront">Required</div>
+      </div>
+
+      <div class="field">
+        <label>ID Photo (back) — if applicable</label>
+        <div class="upa" id="id-back-zone" onclick="document.getElementById('id-back-input').click()">
+          <div class="upa-icon"><i class="fas fa-camera"></i></div>
+          <div class="upa-txt">Click to upload <strong>ID back</strong></div>
+          <div class="upa-hint">JPG, PNG — max 2MB</div>
+        </div>
+        <input type="file" id="id-back-input" accept="image/*" style="display:none" onchange="handleUpload('id-back', this)" />
+        <div class="preview-row" id="id-back-preview"></div>
+      </div>
+
+      <div class="field">
+        <label>Proof of Address (optional)</label>
+        <div class="upa" id="addr-zone" onclick="document.getElementById('addr-input').click()">
+          <div class="upa-icon"><i class="fas fa-file-lines"></i></div>
+          <div class="upa-txt">Upload a utility bill or bank statement</div>
+          <div class="upa-hint">PDF or image — max 3MB</div>
+        </div>
+        <input type="file" id="addr-input" accept=".pdf,.jpg,.jpeg,.png" style="display:none" onchange="handleUpload('address', this)" />
+        <div class="preview-row" id="address-preview"></div>
+      </div>
+
+      <div class="field">
+        <label>Additional Notes (optional)</label>
+        <textarea style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:0.78rem;color:var(--text);font-size:0.9rem;font-family:var(--sans);outline:none;resize:vertical;min-height:80px;transition:border-color 0.2s" id="notes" placeholder="Any extra information..."></textarea>
+      </div>
+
+      <button type="submit" class="btn-primary" id="submit-btn">
+        <span class="lbl">Submit Verification</span>
+      </button>
+    </form>
+
+    <a href="dashboard-seller.html" class="back-link">← Back to Dashboard</a>
+  </div>
+
+  <script>
+    const SUPABASE_URL  = 'https://rtwbrcbifnowrqpgivma.supabase.co';
+    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc';
+
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+    let idFrontFile = null, idBackFile = null, addrFile = null;
+
+    async function getUserSession() {
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session?.user) {
+        window.location.href = 'traydr-auth.html';
+        return null;
+      }
+      return session.user;
+    }
+
+    // Pre-fill name from session
+    (async () => {
+      const user = await getUserSession();
+      if (user) {
+        document.getElementById('full-name').value = user.user_metadata?.full_name || '';
+      }
+    })();
+
+    function handleUpload(type, input) {
+      const file = input.files[0];
+      if (!file) return;
+      if (type === 'id-front') idFrontFile = file;
+      else if (type === 'id-back') idBackFile = file;
+      else if (type === 'address') addrFile = file;
+
+      // Show preview if image
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const preview = document.getElementById(type + '-preview');
+          preview.innerHTML = `<div class="preview-item">
+            <img src="${e.target.result}" />
+            <button class="rm-btn" onclick="removeFile('${type}')"><i class="fas fa-xmark"></i></button>
+          </div>`;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function removeFile(type) {
+      if (type === 'id-front') { idFrontFile = null; document.getElementById('id-front-input').value = ''; }
+      else if (type === 'id-back') { idBackFile = null; document.getElementById('id-back-input').value = ''; }
+      else if (type === 'address') { addrFile = null; document.getElementById('addr-input').value = ''; }
+      document.getElementById(type + '-preview').innerHTML = '';
+    }
+
+    async function uploadFile(file, folder) {
+      if (!file) return null;
+      const ext = file.name.split('.').pop();
+      const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const { error } = await sb.storage.from('verifications').upload(path, file, { upsert: true });
+      if (error) {
+        console.error('Upload error:', error);
+        return null;
+      }
+      const { data: { publicUrl } } = sb.storage.from('verifications').getPublicUrl(path);
+      return publicUrl;
+    }
+
+    document.getElementById('verify-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const user = await getUserSession();
+      if (!user) return;
+
+      const fullName = document.getElementById('full-name').value.trim();
+      const idType   = document.getElementById('id-type').value;
+      const idNumber = document.getElementById('id-number').value.trim();
+
+      // Basic validation
+      let valid = true;
+      document.getElementById('e-name').classList.toggle('on', !fullName);
+      document.getElementById('e-idtype').classList.toggle('on', !idType);
+      document.getElementById('e-idnum').classList.toggle('on', !idNumber);
+      if (!idFrontFile) {
+        document.getElementById('e-idfront').classList.add('on');
+        valid = false;
+      } else {
+        document.getElementById('e-idfront').classList.remove('on');
+      }
+      if (!fullName || !idType || !idNumber || !idFrontFile) valid = false;
+      if (!valid) return;
+
+      const btn = document.getElementById('submit-btn');
+      btn.classList.add('loading'); btn.disabled = true;
+
+      // Upload files
+      const idFrontUrl  = await uploadFile(idFrontFile, `user_${user.id}`);
+      const idBackUrl   = await uploadFile(idBackFile, `user_${user.id}`);
+      const addrDocUrl  = await uploadFile(addrFile, `user_${user.id}`);
+
+      if (!idFrontUrl) {
+        alert('Failed to upload ID. Please try again.');
+        btn.classList.remove('loading'); btn.disabled = false;
+        return;
+      }
+
+      // Insert into verification_requests
+      const { error: insertErr } = await sb.from('verification_requests').insert({
+        user_id:     user.id,
+        full_name:   fullName,
+        id_type:     idType,
+        id_number:   idNumber,
+        id_image_url: idFrontUrl,
+        id_image_back_url: idBackUrl,
+        address_doc_url: addrDocUrl,
+        notes:       document.getElementById('notes').value.trim() || null,
+        status:      'pending'
+      });
+
+      btn.classList.remove('loading'); btn.disabled = false;
+
+      if (insertErr) {
+        alert('There was an error submitting your request. Please try again.');
+        console.error(insertErr);
+        return;
+      }
+
+      // Success
+      document.querySelector('.card').innerHTML = `
+        <div class="card-glow"></div>
+        <div class="success-box">
+          <i class="fas fa-circle-check" style="color:var(--success)"></i>
+          <h2>Verification Submitted!</h2>
+          <p>We'll review your documents within 1-2 business days. You'll receive a notification when approved.</p>
+          <a href="dashboard-seller.html" class="btn-primary" style="display:inline-block;width:auto;padding:0.75rem 2rem;text-decoration:none;margin-top:0">Back to Dashboard</a>
+        </div>
+      `;
+    });
+  </script>
+
+  <script>
+    (function() {
+      var t = localStorage.getItem('traydr_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+</body>
+</html>
