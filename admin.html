@@ -166,9 +166,7 @@
     /* RESPONSIVE */
     .hbg { display:none; flex-direction:column; gap:4px; cursor:pointer; padding:6px; background:var(--bg3); border:1px solid var(--border); border-radius:7px; }
     .hbg span { width:18px; height:2px; background:var(--muted); border-radius:2px; display:block; }
-/* sbo in consolidated mobile CSS */
     .sbo.show { display:block; }
-/* mobile CSS consolidated below */
 
     [data-theme="dark"] {
       --amber: #F59E0B; --amber-light: #FBBF24; --amber-dim: rgba(245,158,11,0.1);
@@ -290,10 +288,6 @@
     .ph p { font-size: 0.82rem; }
     #main { padding-top: 1.25rem; }
 
-/* see consolidated mobile CSS */
-
-/* see consolidated mobile CSS */
-
     /* ═══════════════════════════════════════
        ADMIN MOBILE — Complete Responsive CSS
     ═══════════════════════════════════════ */
@@ -360,7 +354,6 @@
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
         border-radius: 8px;
-        /* Subtle gradient fade on right to hint scroll */
         background: linear-gradient(to right, transparent calc(100% - 40px), var(--bg2) 100%) no-repeat right;
         background-size: 40px 100%;
       }
@@ -435,6 +428,7 @@
   <div class="ni" data-p="orders">       <span class="ic"><i class="fas fa-shopping-cart"></i></span><span class="lb">Orders</span></div>
   <div class="ni" data-p="disputes">     <span class="ic"><i class="fas fa-scale-balanced"></i></span><span class="lb">Disputes</span><span class="bd" id="disp-badge">0</span></div>
   <div class="ni" data-p="payouts">      <span class="ic"><i class="fas fa-money-bill-transfer"></i></span><span class="lb">Payouts</span><span class="bd" id="pay-badge">0</span></div>
+  <div class="ni" data-p="verifications"><span class="ic"><i class="fas fa-id-card"></i></span><span class="lb">Verifications</span><span class="bd" id="ver-badge">0</span></div>
   <div class="ni" data-p="notify">       <span class="ic"><i class="fas fa-bell"></i></span><span class="lb">Send Notification</span></div>
   <div class="sb-bot">
     <div class="ni" onclick="window.location.href='index.html'"><span class="ic"><i class="fas fa-store"></i></span><span class="lb">View Site</span></div>
@@ -547,6 +541,21 @@
         <tbody id="payouts-body"></tbody>
       </table>
     </div>
+  </div>
+
+  <!-- VERIFICATIONS -->
+  <div class="panel" id="panel-verifications">
+    <div class="ph"><div><h1>Verification Requests</h1><p>Review and approve user verification submissions.</p></div></div>
+    <div class="ctrl">
+      <select class="fsel" id="v-status-filter">
+        <option value="">All</option>
+        <option value="pending">Pending</option>
+        <option value="approved">Approved</option>
+        <option value="rejected">Rejected</option>
+      </select>
+      <button onclick="loadVerifications()" style="background:var(--amber);border:none;color:#0a0a0a;padding:0.52rem 1rem;border-radius:8px;font-size:0.81rem;font-weight:700;cursor:pointer">Filter</button>
+    </div>
+    <div id="verification-list"></div>
   </div>
 
   <!-- NOTIFY -->
@@ -676,6 +685,9 @@ async function loadOverview() {
     $('rev-bars').innerHTML = entries.map(([,v])=>`<div class="bar-w"><div class="bar-f" style="height:${Math.max(3,(v/max)*100)}%" title="$${fmt(v)}"></div></div>`).join('');
     $('rev-lbls').innerHTML = entries.map(([k])=>`<span style="flex:1;text-align:center;font-size:0.56rem;color:var(--dim)">${k}</span>`).join('');
   }
+  /* Also update verification badge */
+  const { data: verData, error: verErr } = await sb.from('verification_requests').select('id', { count: 'exact', head: true }).eq('status', 'pending');
+  if (!verErr) $('ver-badge').textContent = verData?.count || 0;
 }
 
 /* ══ USERS ══ */
@@ -925,6 +937,76 @@ async function processPayout(id, status) {
   loadPayouts();
 }
 
+/* ══ VERIFICATIONS ══ */
+async function loadVerifications() {
+  const status = $('v-status-filter').value;
+  let query = sb.from('verification_requests').select('*, users(id, full_name, email, verified)').order('created_at', { ascending: false });
+  if (status) query = query.eq('status', status);
+  const { data, error } = await query;
+  const el = $('verification-list');
+  if (error) {
+    el.innerHTML = `<div style="text-align:center;padding:3rem 0;color:var(--muted)">Failed to load requests.</div>`;
+    return;
+  }
+  if (!data || data.length === 0) {
+    el.innerHTML = `<div style="text-align:center;padding:3rem 0;color:var(--muted)"><div style="font-size:2.5rem;margin-bottom:0.75rem"><i class="fas fa-id-card"></i></div><p>No verification requests${status?' for '+status:' yet'}.</p></div>`;
+    return;
+  }
+  el.innerHTML = data.map(r => {
+    const user = r.users || {};
+    return `
+    <div style="background:var(--bg2);border:1px solid ${r.status==='pending'?'rgba(245,158,11,0.3)':r.status==='approved'?'rgba(16,185,129,0.3)':r.status==='rejected'?'rgba(239,68,68,0.3)':'var(--border)'};border-radius:13px;padding:1.25rem;margin-bottom:0.85rem">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:0.75rem;flex-wrap:wrap;margin-bottom:0.85rem">
+        <div>
+          <div style="font-size:0.9rem;font-weight:600;margin-bottom:0.22rem">
+            ${r.full_name} (${user.email||'—'})
+            <span class="sp ${r.status==='approved'?'sp-a':r.status==='rejected'?'sp-r':'sp-p'}">${r.status}</span>
+          </div>
+          <div style="font-size:0.78rem;color:var(--muted)">ID: ${r.id_type} — ${r.id_number}</div>
+        </div>
+        <div style="font-size:0.75rem;color:var(--dim)">${fmtD(r.created_at)}</div>
+      </div>
+      ${r.id_image_url ? `<div style="margin-bottom:0.75rem"><a href="${r.id_image_url}" target="_blank" style="color:var(--amber);font-size:0.8rem;text-decoration:none"><i class="fas fa-image"></i> View ID front</a></div>` : ''}
+      ${r.id_image_back_url ? `<div style="margin-bottom:0.75rem"><a href="${r.id_image_back_url}" target="_blank" style="color:var(--amber);font-size:0.8rem;text-decoration:none"><i class="fas fa-image"></i> View ID back</a></div>` : ''}
+      ${r.address_doc_url ? `<div style="margin-bottom:0.75rem"><a href="${r.address_doc_url}" target="_blank" style="color:var(--amber);font-size:0.8rem;text-decoration:none"><i class="fas fa-file"></i> View address doc</a></div>` : ''}
+      ${r.notes ? `<div style="background:var(--bg3);border-radius:9px;padding:0.75rem;font-size:0.82rem;color:var(--muted);margin-bottom:0.85rem">${r.notes}</div>` : ''}
+      ${r.status === 'pending' ? `
+        <div style="display:flex;gap:0.5rem">
+          <button class="btn-act success" onclick="approveVerification(${r.id})"><i class="fas fa-circle-check"></i> Approve</button>
+          <button class="btn-act danger" onclick="rejectVerification(${r.id})"><i class="fas fa-xmark"></i> Reject</button>
+        </div>
+      ` : r.admin_notes ? `<div style="font-size:0.8rem;color:var(--muted);background:var(--bg3);border-radius:9px;padding:0.75rem">Admin note: ${r.admin_notes}</div>` : ''}
+    </div>`;
+  }).join('');
+
+  const pendingCount = data.filter(r => r.status === 'pending').length;
+  $('ver-badge').textContent = pendingCount || 0;
+}
+
+async function approveVerification(id) {
+  if (!confirm('Approve this verification request?')) return;
+  await sb.from('verification_requests').update({ status: 'approved', reviewed_at: new Date().toISOString(), admin_notes: null }).eq('id', id);
+  const { data: req } = await sb.from('verification_requests').select('user_id').eq('id', id).single();
+  if (req?.user_id) {
+    await sb.from('users').update({ verified: true }).eq('id', req.user_id);
+    await sb.from('listings').update({ seller_verified: true }).eq('seller_id', req.user_id);
+    await DB.createNotification(req.user_id, 'system', 'Verification Approved ✅', 'Your verification has been approved! You are now a verified seller.');
+  }
+  toast('Verification approved!', 'ok');
+  loadVerifications();
+}
+
+async function rejectVerification(id) {
+  const note = prompt('Reason for rejection (optional):') || '';
+  await sb.from('verification_requests').update({ status: 'rejected', reviewed_at: new Date().toISOString(), admin_notes: note }).eq('id', id);
+  const { data: req } = await sb.from('verification_requests').select('user_id').eq('id', id).single();
+  if (req?.user_id) {
+    await DB.createNotification(req.user_id, 'system', 'Verification Rejected', `Unfortunately, your verification was not approved. ${note ? 'Reason: ' + note : ''} You may re-apply.`);
+  }
+  toast('Verification rejected.', 'err');
+  loadVerifications();
+}
+
 /* ══ NOTIFICATIONS BROADCAST ══ */
 $('n-target').addEventListener('change', function() {
   $('n-userid-row').style.display = this.value === 'specific' ? '' : 'none';
@@ -947,7 +1029,6 @@ $('send-notif-btn').addEventListener('click', async () => {
     const { error } = await DB.createNotification(uid, type, title, body, link||null);
     if (!error) sent = 1;
   } else {
-    /* get all matching users */
     const SUPABASE_URL = 'https://rtwbrcbifnowrqpgivma.supabase.co';
     const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc';
     const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
@@ -1000,7 +1081,7 @@ function switchP(id) {
   document.querySelector(`[data-p="${id}"]`)?.classList.add('on');
   document.getElementById('sb')?.classList.remove('open');
   document.getElementById('sbo')?.classList.remove('show');
-  const loaders = { users: loadUsers, listings: loadListings, orders: loadOrders, disputes: loadDisputes, payouts: loadPayouts };
+  const loaders = { users: loadUsers, listings: loadListings, orders: loadOrders, disputes: loadDisputes, payouts: loadPayouts, verifications: loadVerifications };
   loaders[id]?.();
 }
 document.querySelectorAll('[data-p]').forEach(el => el.addEventListener('click', () => switchP(el.dataset.p)));

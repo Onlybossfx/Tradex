@@ -572,12 +572,26 @@
         <h3>Personal Info</h3>
         <div class="av-row">
           <div class="av-c" id="pav">B</div>
-          <div><div style="font-size:0.83rem;font-weight:600;margin-bottom:0.25rem" id="pav-name">Your Name</div><input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="uploadAvatar(this)"><button style="background:var(--bg3);border:1px solid var(--border-md);color:var(--muted);padding:0.3rem 0.68rem;border-radius:6px;font-size:0.74rem;cursor:pointer" onclick="document.getElementById('avatar-input').click()"><i class="fas fa-camera"></i> Change photo</button></div>
+          <div>
+            <div style="font-size:0.83rem;font-weight:600;margin-bottom:0.25rem" id="pav-name">Your Name</div>
+            <input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="uploadAvatar(this)">
+            <button style="background:var(--bg3);border:1px solid var(--border-md);color:var(--muted);padding:0.3rem 0.68rem;border-radius:6px;font-size:0.74rem;cursor:pointer" onclick="document.getElementById('avatar-input').click()"><i class="fas fa-camera"></i> Change photo</button>
+          </div>
         </div>
         <div class="frow"><label>Full Name</label><input class="finp" id="pf-name" placeholder="Your full name" /></div>
         <div class="frow"><label>Email</label><input class="finp" id="pf-email" disabled /></div>
         <div class="frow"><label>Phone</label><input class="finp" id="pf-phone" placeholder="+234 800 000 0000" /></div>
         <div class="frow"><label>Location</label><input class="finp" id="pf-loc" placeholder="City, Country" /></div>
+
+        <!-- ════ VERIFICATION SECTION (BUYER) ════ -->
+        <div style="margin-top:1rem" id="buyer-verify-section">
+          <button id="buyer-verify-btn" onclick="window.location.href='verify.html'"
+            style="background:var(--amber);border:none;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;font-size:0.82rem;font-weight:700;cursor:pointer;width:100%">
+            Get Verified
+          </button>
+        </div>
+        <!-- ════ END VERIFICATION SECTION ════ -->
+
         <button class="btn-sv" id="save-pf">Save Changes</button>
       </div>
       <div class="pcard">
@@ -1340,6 +1354,22 @@ async function loadBuyerProfile() {
         const sbAv = document.getElementById('sb-pav');
         if(sbAv) sbAv.innerHTML = `<img src="${data.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
       }
+
+      /* ════ VERIFICATION STATUS ════ */
+      const verifySec = document.getElementById('buyer-verify-section');
+      if (verifySec) {
+        if (data.verified) {
+          verifySec.innerHTML = `<span style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.5rem 1rem;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);border-radius:8px;color:var(--success);font-size:0.82rem;font-weight:600">
+            <i class="fas fa-circle-check"></i> Verified
+          </span>`;
+        } else {
+          verifySec.innerHTML = `<button id="buyer-verify-btn" onclick="window.location.href='verify.html'"
+            style="background:var(--amber);border:none;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;font-size:0.82rem;font-weight:700;cursor:pointer;width:100%">
+            Get Verified
+          </button>`;
+        }
+      }
+      /* ════ END VERIFICATION STATUS ════ */
     }
   } catch(e) { console.warn('loadBuyerProfile DB:', e); }
 
