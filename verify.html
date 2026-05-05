@@ -8,6 +8,8 @@
   <meta name="theme-color" content="#F59E0B" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="icon" type="image/png" href="logo.png" />
+  <!-- Supabase CDN — required for supabase.createClient -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
@@ -158,7 +160,6 @@
       <p>Submit your identification to earn a verified badge on your profile and listings.</p>
     </div>
 
-    <!-- The form -->
     <form id="verify-form" novalidate>
       <div class="field">
         <label>Full Name *</label>
@@ -177,8 +178,8 @@
             <option value="">Select ID type</option>
             <option value="national_id">National ID Card</option>
             <option value="passport">International Passport</option>
-            <option value="drivers_license">Driver’s License</option>
-            <option value="voters_card">Voter’s Card</option>
+            <option value="drivers_license">Driver's License</option>
+            <option value="voters_card">Voter's Card</option>
           </select>
         </div>
         <div class="ferr" id="e-idtype">Required</div>
@@ -256,7 +257,6 @@
       return session.user;
     }
 
-    // Pre-fill name from session
     (async () => {
       const user = await getUserSession();
       if (user) {
@@ -271,7 +271,6 @@
       else if (type === 'id-back') idBackFile = file;
       else if (type === 'address') addrFile = file;
 
-      // Show preview if image
       if (file.type.startsWith('image/')) {
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -314,7 +313,6 @@
       const idType   = document.getElementById('id-type').value;
       const idNumber = document.getElementById('id-number').value.trim();
 
-      // Basic validation
       let valid = true;
       document.getElementById('e-name').classList.toggle('on', !fullName);
       document.getElementById('e-idtype').classList.toggle('on', !idType);
@@ -331,7 +329,6 @@
       const btn = document.getElementById('submit-btn');
       btn.classList.add('loading'); btn.disabled = true;
 
-      // Upload files
       const idFrontUrl  = await uploadFile(idFrontFile, `user_${user.id}`);
       const idBackUrl   = await uploadFile(idBackFile, `user_${user.id}`);
       const addrDocUrl  = await uploadFile(addrFile, `user_${user.id}`);
@@ -342,7 +339,6 @@
         return;
       }
 
-      // Insert into verification_requests
       const { error: insertErr } = await sb.from('verification_requests').insert({
         user_id:     user.id,
         full_name:   fullName,
@@ -363,7 +359,6 @@
         return;
       }
 
-      // Success
       document.querySelector('.card').innerHTML = `
         <div class="card-glow"></div>
         <div class="success-box">
@@ -373,6 +368,13 @@
           <a href="dashboard-seller.html" class="btn-primary" style="display:inline-block;width:auto;padding:0.75rem 2rem;text-decoration:none;margin-top:0">Back to Dashboard</a>
         </div>
       `;
+    });
+  </script>
+
+  <!-- Simple error handler to alert if something breaks -->
+  <script>
+    window.addEventListener('error', function(e) {
+      alert('A script error occurred: ' + e.message + ' – check the browser console for details.');
     });
   </script>
 
