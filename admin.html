@@ -30,8 +30,14 @@
     button { cursor: pointer; font-family: var(--sans); }
     input, select, textarea { font-family: var(--sans); }
 
-    /* NAV */
-    #nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: var(--nh); padding: 0 1.25rem; background: rgba(10,10,10,0.97); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.85rem; }
+    /* NAV — always amber */
+    #nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: var(--nh); padding: 0 1.25rem;
+      background: #FFB34E !important;
+      border-bottom: 1px solid rgba(180,100,20,0.2) !important;
+      display: flex; align-items: center; gap: 0.85rem;
+    }
     .nav-logo { display: flex; align-items: center; text-decoration: none; }
     .nav-logo img { height: 42px; width: auto; display: block; object-fit: contain; }
     .admin-badge { background: var(--error); color: var(--text); font-size: 0.65rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 100px; letter-spacing: 0.04em; }
@@ -163,160 +169,21 @@
     .ti.inf { border-color: rgba(245,158,11,0.3); }
     @keyframes tin { from{opacity:0;transform:translateX(14px)} to{opacity:1;transform:translateX(0)} }
 
-    /* RESPONSIVE */
+    /* HAMBURGER & OVERLAY */
     .hbg { display:none; flex-direction:column; gap:4px; cursor:pointer; padding:6px; background:var(--bg3); border:1px solid var(--border); border-radius:7px; }
     .hbg span { width:18px; height:2px; background:var(--muted); border-radius:2px; display:block; }
+    .sbo { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.65); z-index:149; backdrop-filter:blur(2px); }
     .sbo.show { display:block; }
 
-    [data-theme="dark"] {
-      --amber: #F59E0B; --amber-light: #FBBF24; --amber-dim: rgba(245,158,11,0.1);
-      --bg: #0a0a0a; --bg2: #0f0f0f; --bg3: #141414; --bg4: #181818;
-      --border: rgba(255,255,255,0.07); --border-md: rgba(255,255,255,0.11);
-      --text: #fff; --muted: rgba(255,255,255,0.45); --dim: rgba(255,255,255,0.22);
-      --error: #EF4444; --success: #10B981; --info: #3B82F6;
-    }
-    [data-theme="dark"] #nav { background: rgba(10,10,10,0.97) !important; border-bottom: 1px solid rgba(255,255,255,0.07) !important; }
-    [data-theme="dark"] .nav-logo span { color: #fff !important; }
-    [data-theme="dark"] .nav-label { color: rgba(255,255,255,0.6) !important; }
-    [data-theme="dark"] .hbg span { background: #fff !important; }
-    [data-theme="dark"] #sb, [data-theme="dark"] aside { background: #0f0f0f !important; border-right-color: rgba(255,255,255,0.07) !important; }
-    [data-theme="dark"] .sc, [data-theme="dark"] .pcard, [data-theme="dark"] .card,
-    [data-theme="dark"] .listing-card, [data-theme="dark"] .order-card, [data-theme="dark"] .sg-card,
-    [data-theme="dark"] .chart-box, [data-theme="dark"] .ph { background: #141414 !important; border-color: rgba(255,255,255,0.08) !important; box-shadow: none !important; backdrop-filter: none !important; }
-    [data-theme="dark"] .mo .mbox { background: #141414 !important; border-color: rgba(255,255,255,0.1) !important; }
-    [data-theme="dark"] input, [data-theme="dark"] select, [data-theme="dark"] textarea { background: #141414 !important; border-color: rgba(255,255,255,0.11) !important; color: #fff !important; }
-    [data-theme="dark"] .btn-primary, [data-theme="dark"] .btn-new { background: #F59E0B !important; color: #0a0a0a !important; }
-
-    #nav { background: #FFB34E !important; border-bottom: 1px solid rgba(180,100,20,0.2) !important; }
-    .nav-logo span { color: #1C1208 !important; }
-    .nav-logo i { background: #1C1208 !important; }
-    .nav-label { color: rgba(28,18,8,0.7) !important; }
-    .hbg span { background: #1C1208 !important; }
-    .nav-sep { background: rgba(28,18,8,0.15) !important; }
-    .nav-av { border-color: rgba(28,18,8,0.2) !important; }
-
-    .sc, .pcard, .sg-card, .stat-card, .earnings-card, .chart-box, .ph {
-      background: rgba(255,236,210,0.65) !important;
-      border: 1px solid rgba(255,160,60,0.4) !important;
-      box-shadow: 0 4px 24px rgba(180,100,20,0.08), 0 1px 4px rgba(180,100,20,0.05) !important;
-      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-    }
-    .card, .listing-card, .order-card {
-      background: rgba(255,236,210,0.6) !important;
-      border: 1px solid rgba(255,160,60,0.35) !important;
-      box-shadow: 0 4px 20px rgba(180,100,20,0.07), 0 1px 3px rgba(180,100,20,0.04) !important;
-      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-    }
-    .mo .mbox { background: rgba(255,248,240,0.97) !important; border: 1px solid rgba(255,160,60,0.45) !important; box-shadow: 0 8px 40px rgba(180,100,20,0.15) !important; }
-    #sb, aside { background: rgba(255,248,240,0.98) !important; border-right: 1px solid rgba(255,160,60,0.3) !important; }
-    .ni.on { background: rgba(194,105,10,0.12) !important; color: #C2690A !important; }
-    input, select, textarea { background: rgba(255,255,255,0.8) !important; border-color: rgba(255,160,60,0.4) !important; color: #1C1208 !important; }
-    input:focus, select:focus, textarea:focus { border-color: rgba(194,105,10,0.6) !important; }
-    .btn-primary, .btn-new { background: #C2690A !important; color: #fff !important; }
-    .btn-primary:hover, .btn-new:hover { background: #D97706 !important; }
-    .btn-ghost { border-color: rgba(194,105,10,0.4) !important; color: #C2690A !important; }
-
-    /* ── Light Mode Text Fixes ── */
-    .muted, .text-muted, .dim { color: var(--muted) !important; }
-    .nav-label { color: rgba(28,18,8,0.75) !important; }
-    .ni .lb, .ns { color: var(--muted) !important; }
-    .ni.on .lb { color: var(--amber) !important; }
-    .ph h1, .ph p { color: var(--text) !important; }
-    .panel h1, .panel h2, .panel h3 { color: var(--text) !important; }
-    .stat-val, .stat-label { color: var(--text) !important; }
-    .tbl th { color: var(--muted) !important; background: var(--bg3) !important; }
-    .tbl td { color: var(--text) !important; border-color: var(--border) !important; }
-    .card-title, .card-price { color: var(--text) !important; }
-    .card-cat, .card-seller, .seller-name { color: var(--muted) !important; }
-    .listing-title { color: var(--text) !important; }
-    .listing-price { color: var(--amber) !important; }
-    .section-title, .section-tag { color: var(--text) !important; }
-    .plan-name, .plan-price strong { color: var(--text) !important; }
-    .plan-desc, .plan-price span { color: var(--muted) !important; }
-    .plan-features li { color: var(--muted) !important; }
-    .cat-name { color: var(--text) !important; }
-    .cat-desc { color: var(--muted) !important; }
-    .how-num { color: var(--amber) !important; }
-    .how-title { color: var(--text) !important; }
-    .how-desc { color: var(--muted) !important; }
-    .footer-col h4 { color: var(--text) !important; }
-    .footer-col a { color: var(--muted) !important; }
-    .filter-label { color: var(--text) !important; }
-    .filter-item.active .filter-label { color: var(--amber) !important; }
-    .stars-display { color: var(--amber) !important; }
-    .section-label { color: var(--muted) !important; }
-    .empty h3 { color: var(--text) !important; }
-    .empty p { color: var(--muted) !important; }
-    .badge, .sp { color: var(--text) !important; }
-    .sm-name { color: var(--text) !important; }
-    .sm-tag { color: var(--muted) !important; }
-    .tab { color: var(--muted) !important; }
-    .tab.active { color: var(--text) !important; }
-    label { color: var(--text) !important; }
-    .frow label { color: var(--muted) !important; }
-    .listing-seller { color: var(--muted) !important; }
-    [data-theme="dark"] .nav-label { color: rgba(255,255,255,0.6) !important; }
-    [data-theme="dark"] .ni .lb { color: rgba(255,255,255,0.5) !important; }
-    [data-theme="dark"] .ni.on .lb { color: var(--amber) !important; }
-    [data-theme="dark"] .tbl th { background: var(--bg3) !important; color: var(--muted) !important; }
-    [data-theme="dark"] .filter-label { color: var(--muted) !important; }
-
-    /* ══════════════════════════════════════
-       MOBILE FIRST — Full Responsive System
-    ══════════════════════════════════════ */
-    * { box-sizing: border-box; }
-    #nav, nav { padding-left: 0.85rem; padding-right: 0.85rem; }
-
-    /* Tables */
-    .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; }
-    .tbl { width: 100%; min-width: 480px; }
-
-    /* Cards */
-    .card, .listing-card { min-width: 0; }
-
-    /* Modals */
-    .mbox { width: calc(100vw - 2rem) !important; max-width: 100% !important; }
-
-    @media (max-width: 480px) {
-      .f2 { grid-template-columns: 1fr !important; }
-      .grid-2 { grid-template-columns: 1fr !important; }
-    }
-
-    /* ── Panel header fix — not hidden under nav ── */
-    .ph { padding: 0.5rem 0 1.25rem; margin-bottom: 1.25rem; }
-    .ph h1 { font-size: clamp(1.2rem, 4vw, 1.75rem); }
-    .ph p { font-size: 0.82rem; }
-    #main { padding-top: 1.25rem; }
-
-    /* ═══════════════════════════════════════
-       ADMIN MOBILE — Complete Responsive CSS
-    ═══════════════════════════════════════ */
-
-    /* Overlay for sidebar drawer */
-    .sbo {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.65);
-      z-index: 149;
-      backdrop-filter: blur(2px);
-    }
-
+    /* ════ Mobile improvements ════ */
     @media (max-width: 900px) {
-      /* Shell — single column */
       .shell { grid-template-columns: 1fr; }
-
-      /* Hamburger — show */
       .hbg { display: flex; }
-
-      /* Sidebar — slide-in drawer */
       #sb {
         display: flex;
         position: fixed;
-        top: 0;
-        left: -260px;
-        height: 100vh;
-        width: 240px;
+        top: 0; left: -260px;
+        height: 100vh; width: 240px;
         z-index: 150;
         transition: left 0.26s ease;
         padding-top: calc(var(--nh) + 0.75rem);
@@ -324,48 +191,36 @@
       }
       #sb.open { left: 0; }
 
-      /* Main content */
       #main {
         padding: 1rem 1rem;
         padding-top: calc(var(--nh) + 0.85rem);
         overflow-x: hidden;
       }
 
-      /* Page header */
       .ph { flex-wrap: wrap; gap: 0.65rem; }
       .ph h1 { font-size: 1.2rem; }
       .ph p  { font-size: 0.78rem; }
 
-      /* Stats grid */
       .sg { grid-template-columns: repeat(2, 1fr); gap: 0.65rem; }
       .sg-card { padding: 0.9rem; }
 
-      /* Charts */
       .chart-row { grid-template-columns: 1fr; }
 
-      /* Control row — filter/search */
-      .ctrl { flex-wrap: wrap; gap: 0.5rem; }
-      .ctrl .search-inp { flex: 1; min-width: 0; }
-      .ctrl .fsel { flex: 1; min-width: 110px; }
-      .ctrl button { width: 100%; }
+      .ctrl { flex-direction: column; }
+      .ctrl .search-inp, .ctrl .fsel, .ctrl button { width: 100%; }
 
-      /* Tables — horizontal scroll with visual cue */
       .tbl-wrap {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
         border-radius: 8px;
-        background: linear-gradient(to right, transparent calc(100% - 40px), var(--bg2) 100%) no-repeat right;
-        background-size: 40px 100%;
       }
       .tbl { min-width: 520px; font-size: 0.78rem; }
       .tbl th { font-size: 0.62rem; padding: 0 0 0.55rem; }
       .tbl td { padding: 0.6rem 0; }
 
-      /* Action buttons — compact */
       .acts { flex-wrap: wrap; gap: 0.28rem; }
       .btn-act { padding: 0.25rem 0.5rem; font-size: 0.7rem; }
 
-      /* Modals — full width */
       .mbox {
         width: calc(100vw - 1.5rem) !important;
         max-width: 100% !important;
@@ -374,27 +229,15 @@
         overflow-y: auto;
       }
 
-      /* Search row */
-      .search-row { flex-wrap: wrap; gap: 0.5rem; }
-      .search-row select,
-      .search-row input { flex: 1; min-width: 0; }
+      #verification-list > div { padding: 0.9rem; }
+      #verification-list .btn-act { width: 100%; margin-bottom: 0.35rem; }
     }
 
     @media (max-width: 480px) {
       #main { padding: 0.85rem; padding-top: calc(var(--nh) + 0.75rem); }
       .sg { grid-template-columns: 1fr 1fr; gap: 0.5rem; }
       .sg-card { padding: 0.75rem; }
-
-      /* Hide less critical table columns */
-      .tbl th:nth-child(3),
-      .tbl td:nth-child(3) { display: none; }
-
-      /* Quick action buttons in overview stack */
-      .quick-acts { flex-direction: column; }
-      .quick-acts button { width: 100%; }
-
-      /* Nav items smaller */
-      .ni { padding: 0.5rem 0.55rem; font-size: 0.8rem; }
+      .tbl th:nth-child(3), .tbl td:nth-child(3) { display: none; }
     }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
@@ -416,7 +259,6 @@
   </div>
 </nav>
 
-<div class="sbo" id="sbo" onclick="toggleSidebar()"></div>
 <div class="shell">
 <!-- SIDEBAR -->
 <aside id="sb">
@@ -562,8 +404,7 @@
   <div class="panel" id="panel-notify">
     <div class="ph"><div><h1>Send Notification</h1><p>Broadcast or target specific users.</p></div></div>
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:1.5rem;max-width:560px">
-      <div class="frow">
-        <label>Target</label>
+      <div class="frow"><label>Target</label>
         <select class="finp" id="n-target">
           <option value="all">All Users</option>
           <option value="buyers">All Buyers</option>
@@ -571,12 +412,8 @@
           <option value="specific">Specific User ID</option>
         </select>
       </div>
-      <div class="frow" id="n-userid-row" style="display:none">
-        <label>User ID</label>
-        <input class="finp" id="n-userid" placeholder="User UUID" />
-      </div>
-      <div class="frow">
-        <label>Type</label>
+      <div class="frow" id="n-userid-row" style="display:none"><label>User ID</label><input class="finp" id="n-userid" placeholder="User UUID" /></div>
+      <div class="frow"><label>Type</label>
         <select class="finp" id="n-type">
           <option value="system"><i class="fas fa-bullhorn"></i> Announcement</option>
           <option value="payout"><i class="fas fa-sack-dollar"></i> Payout Update</option>
@@ -584,18 +421,9 @@
           <option value="order_placed"><i class="fas fa-shopping-cart"></i> Order Update</option>
         </select>
       </div>
-      <div class="frow">
-        <label>Title *</label>
-        <input class="finp" id="n-title" placeholder="Notification title" maxlength="80" />
-      </div>
-      <div class="frow">
-        <label>Message *</label>
-        <textarea class="finp" id="n-body" rows="3" placeholder="Notification body text..."></textarea>
-      </div>
-      <div class="frow">
-        <label>Link (optional)</label>
-        <input class="finp" id="n-link" placeholder="e.g. dashboard-buyer.html" />
-      </div>
+      <div class="frow"><label>Title *</label><input class="finp" id="n-title" placeholder="Notification title" maxlength="80" /></div>
+      <div class="frow"><label>Message *</label><textarea class="finp" id="n-body" rows="3" placeholder="Notification body text..."></textarea></div>
+      <div class="frow"><label>Link (optional)</label><input class="finp" id="n-link" placeholder="e.g. dashboard-buyer.html" /></div>
       <div style="display:flex;align-items:center;gap:0.75rem">
         <button id="send-notif-btn" style="background:var(--amber);border:none;color:#0a0a0a;padding:0.72rem 1.5rem;border-radius:9px;font-size:0.88rem;font-weight:700;cursor:pointer;position:relative">
           <span class="lbl">Send Notification</span>
@@ -615,15 +443,13 @@
     <h2>Resolve Dispute</h2>
     <p class="msub" id="resolve-desc">Review the dispute and make a ruling.</p>
     <input type="hidden" id="resolve-id" />
-    <div class="frow">
-      <label>Rule in favour of</label>
+    <div class="frow"><label>Rule in favour of</label>
       <select class="finp" id="resolve-winner">
         <option value="buyer"><i class="fas fa-shopping-cart"></i> Buyer (issue refund)</option>
         <option value="seller"><i class="fas fa-store"></i> Seller (release payment)</option>
       </select>
     </div>
-    <div class="frow">
-      <label>Resolution note *</label>
+    <div class="frow"><label>Resolution note *</label>
       <textarea class="finp" id="resolve-note" rows="3" placeholder="Explain your decision to both parties..."></textarea>
     </div>
     <div class="mfoot">
@@ -644,13 +470,12 @@ const fmt  = n => Number(n||0).toLocaleString('en', { minimumFractionDigits: 2, 
 const fmtD = d => new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 const spCls = { active:'sp-a', paused:'sp-c', pending:'sp-p', escrowed:'sp-e', delivered:'sp-a', complete:'sp-c', disputed:'sp-r', paid:'sp-a', failed:'sp-r', processing:'sp-b', open:'sp-r', under_review:'sp-e', resolved_buyer:'sp-a', resolved_seller:'sp-c', both:'sp-b', buyer:'sp-b', seller:'sp-a' };
 
+const sb = supabase.createClient('https://rtwbrcbifnowrqpgivma.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc');
+
 /* ══ INIT ══ */
 async function init() {
-  /* Hard guard — logged in */
   U = await AuthGuard.require('admin.html');
   if (!U) return;
-
-  /* Admin check */
   const isAdmin = await DB.admin.isAdmin();
   if (!isAdmin) {
     document.body.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:1rem;font-family:sans-serif;color:var(--text);background:var(--bg2);text-align:center;padding:2rem">
@@ -661,10 +486,8 @@ async function init() {
     </div>`;
     return;
   }
-
   $('nav-av').textContent = (U.user_metadata?.full_name || U.email || 'A')[0].toUpperCase();
   $('last-updated').textContent = 'Updated: ' + new Date().toLocaleTimeString();
-
   loadOverview();
 }
 
@@ -678,16 +501,14 @@ async function loadOverview() {
   $('st-fees').textContent   = '$' + fmt(stats.platformFees);
   $('st-disps').textContent  = stats.openDisputes;
   $('disp-badge').textContent= stats.openDisputes;
-  /* Real revenue chart from orders grouped by month */
   if (stats.chart) {
     const entries = Object.entries(stats.chart);
     const max = Math.max(...entries.map(e=>e[1]), 1);
     $('rev-bars').innerHTML = entries.map(([,v])=>`<div class="bar-w"><div class="bar-f" style="height:${Math.max(3,(v/max)*100)}%" title="$${fmt(v)}"></div></div>`).join('');
     $('rev-lbls').innerHTML = entries.map(([k])=>`<span style="flex:1;text-align:center;font-size:0.56rem;color:var(--dim)">${k}</span>`).join('');
   }
-  /* Also update verification badge */
-  const { data: verData, error: verErr } = await sb.from('verification_requests').select('id', { count: 'exact', head: true }).eq('status', 'pending');
-  if (!verErr) $('ver-badge').textContent = verData?.count || 0;
+  const { count: verCount, error: verErr } = await sb.from('verification_requests').select('id', { count: 'exact', head: true }).eq('status', 'pending');
+  if (!verErr) $('ver-badge').textContent = verCount || 0;
 }
 
 /* ══ USERS ══ */
@@ -697,7 +518,6 @@ async function loadUsers() {
   const role   = $('u-role').value;
   const { data, count } = await DB.admin.getUsers({ search, role, page: uPage });
   if (window.innerWidth < 640) {
-    /* ── MOBILE CARD VIEW ── */
     document.getElementById('users-tbl-wrap').style.display = 'none';
     let cw = document.getElementById('users-cards');
     if (!cw) {
@@ -797,14 +617,8 @@ async function adminToggleListing(id, status) {
   toast(`Listing ${status}.`, 'ok'); loadListings();
 }
 async function adminFeatureListing(id, featured) {
-  const sb = window._dbSb || DB._sb;
-  const {error} = await DB.admin.updateListingStatus(id, null, { featured });
-  if (error) {
-    /* Fallback direct update */
-    toast(featured ? 'Featured! ⭐' : 'Unfeatured.', 'ok');
-  } else {
-    toast(featured ? 'Featured! ⭐' : 'Unfeatured.', 'ok');
-  }
+  await DB.admin.updateListingStatus(id, null, { featured });
+  toast(featured ? 'Featured! ⭐' : 'Unfeatured.', 'ok');
   loadListings();
 }
 async function adminDeleteListing(id) {
@@ -979,8 +793,7 @@ async function loadVerifications() {
     </div>`;
   }).join('');
 
-  const pendingCount = data.filter(r => r.status === 'pending').length;
-  $('ver-badge').textContent = pendingCount || 0;
+  $('ver-badge').textContent = data.filter(r => r.status === 'pending').length || 0;
 }
 
 async function approveVerification(id) {
@@ -1029,8 +842,6 @@ $('send-notif-btn').addEventListener('click', async () => {
     const { error } = await DB.createNotification(uid, type, title, body, link||null);
     if (!error) sent = 1;
   } else {
-    const SUPABASE_URL = 'https://rtwbrcbifnowrqpgivma.supabase.co';
-    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc';
     const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
     let q = _sb.from('users').select('id, role');
     if (target === 'buyers')  q = q.in('role', ['buyer','both']);
