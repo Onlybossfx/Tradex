@@ -10,7 +10,6 @@
   <link rel="icon" type="image/png" href="logo.png" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <style>
-    /* ===== Same styles as before, no changes ===== */
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
       --amber:#C2690A;--amber-light:#D97706;--amber-dim:rgba(194,105,10,0.1);
@@ -142,11 +141,11 @@
     .success-box h2{font-family:var(--serif);font-size:1.6rem;font-weight:700;margin-bottom:0.75rem}
     .success-box p{color:var(--muted);font-size:0.9rem;line-height:1.7;margin-bottom:1.5rem}
 
-    /* Debug panel (remove later) */
+    /* Debug panel */
     #debug-panel {
       position:fixed; bottom:0; left:0; right:0; z-index:999;
       background:rgba(0,0,0,0.85); color:#0f0; font-family:monospace;
-      font-size:12px; max-height:120px; overflow-y:auto; padding:8px;
+      font-size:12px; max-height:150px; overflow-y:auto; padding:8px;
       display:none;
     }
 
@@ -249,7 +248,7 @@
     <a href="dashboard-seller.html" class="back-link">← Back to Dashboard</a>
   </div>
 
-  <!-- Debug panel (appears at bottom) -->
+  <!-- Debug panel -->
   <div id="debug-panel"></div>
 
   <script>
@@ -259,31 +258,33 @@
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
     let idFrontFile = null, idBackFile = null, addrFile = null;
 
-    // ── Debug helper (visible on screen) ──
+    // Debug logger
     function debugLog(msg, type = 'info') {
       const panel = document.getElementById('debug-panel');
       panel.style.display = 'block';
       const color = type === 'error' ? '#f87171' : type === 'success' ? '#6ee7b7' : '#fbbf24';
       panel.innerHTML += `<div style="color:${color}">${msg}</div>`;
       panel.scrollTop = panel.scrollHeight;
-      // Also alert on critical errors
-      if (type === 'error') alert('[ERROR] ' + msg);
+      if (type === 'error') {
+        alert('[ERROR] ' + msg);
+      }
     }
 
+    // Session check
     async function getUserSession() {
       debugLog('Checking session...');
       try {
         const { data: { session }, error } = await sb.auth.getSession();
         if (error) { debugLog('Session error: ' + error.message, 'error'); return null; }
         if (!session?.user) {
-          debugLog('No session — redirecting to login', 'error');
+          debugLog('Not logged in — redirecting', 'error');
           window.location.href = 'traydr-auth.html';
           return null;
         }
         debugLog('Logged in as ' + session.user.email);
         return session.user;
       } catch (e) {
-        debugLog('getUserSession exception: ' + e.message, 'error');
+        debugLog('getUserSession error: ' + e.message, 'error');
         return null;
       }
     }
@@ -297,17 +298,17 @@
       }
     })();
 
+    // File selection with size check
     function handleUpload(type, input) {
       const file = input.files[0];
       if (!file) return;
-      // Size check
       const maxSize = (type === 'address') ? 3 * 1024 * 1024 : 2 * 1024 * 1024;
       if (file.size > maxSize) {
-        alert('File too large. Max size is ' + Math.round(maxSize/1024/1024) + 'MB');
+        alert('File too large. Maximum ' + Math.round(maxSize/1024/1024) + 'MB');
         input.value = '';
         return;
       }
-      debugLog('Selected file: ' + file.name + ' (' + Math.round(file.size/1024) + 'KB)');
+      debugLog('Selected: ' + file.name + ' (' + Math.round(file.size/1024) + 'KB)');
       if (type === 'id-front') idFrontFile = file;
       else if (type === 'id-back') idBackFile = file;
       else if (type === 'address') addrFile = file;
@@ -315,8 +316,7 @@
       if (file.type.startsWith('image/')) {
         const reader = new FileReader();
         reader.onload = (e) => {
-          const preview = document.getElementById(type + '-preview');
-          preview.innerHTML = `<div class="preview-item">
+          document.getElementById(type + '-preview').innerHTML = `<div class="preview-item">
             <img src="${e.target.result}" />
             <button class="rm-btn" onclick="removeFile('${type}')"><i class="fas fa-xmark"></i></button>
           </div>`;
@@ -333,22 +333,47 @@
       debugLog('Removed file: ' + type);
     }
 
+    // Raw fetch upload with error details
     async function uploadFile(file, folder) {
       if (!file) return null;
-      const ext = file.name.split('.').pop();
-      const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-      debugLog('Uploading to: ' + path);
-      const { data, error } = await sb.storage.from('verifications').upload(path, file, { upsert: true });
-      if (error) {
-        debugLog('Upload error: ' + error.message, 'error');
+      const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${file.name.split('.').pop()}`;
+      const url = `${SUPABASE_URL}/storage/v1/object/verifications/${path}`;
+
+      debugLog('Uploading to: ' + url);
+
+      const { data: { session } } = await sb.auth.getSession();
+      const token = session?.access_token;
+      if (!token) {
+        debugLog('No access token — try logging in again', 'error');
         return null;
       }
-      const { data: { publicUrl } } = sb.storage.from('verifications').getPublicUrl(path);
-      debugLog('Upload success: ' + publicUrl);
-      return publicUrl;
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` },
+          body: formData,
+        });
+
+        if (!res.ok) {
+          const errText = await res.text();
+          debugLog(`Upload failed – HTTP ${res.status}: ${errText}`, 'error');
+          return null;
+        }
+
+        const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/verifications/${path}`;
+        debugLog('Upload success: ' + publicUrl);
+        return publicUrl;
+      } catch (e) {
+        debugLog('Network error: ' + e.message, 'error');
+        return null;
+      }
     }
 
-    // ── Submit handler ──
+    // Form submit handler
     document.getElementById('verify-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       debugLog('--- Form submitted ---');
