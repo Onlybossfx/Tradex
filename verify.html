@@ -141,14 +141,6 @@
     .success-box h2{font-family:var(--serif);font-size:1.6rem;font-weight:700;margin-bottom:0.75rem}
     .success-box p{color:var(--muted);font-size:0.9rem;line-height:1.7;margin-bottom:1.5rem}
 
-    /* Debug panel */
-    #debug-panel {
-      position:fixed; bottom:0; left:0; right:0; z-index:999;
-      background:rgba(0,0,0,0.85); color:#0f0; font-family:monospace;
-      font-size:12px; max-height:150px; overflow-y:auto; padding:8px;
-      display:none;
-    }
-
     @media(max-width:480px){
       body{padding:1.25rem;align-items:flex-start;padding-top:2rem}
       .card{padding:2rem 1.25rem;border-radius:16px;border:none;background:transparent}
@@ -248,9 +240,6 @@
     <a href="dashboard-seller.html" class="back-link">← Back to Dashboard</a>
   </div>
 
-  <!-- Debug panel -->
-  <div id="debug-panel"></div>
-
   <script>
     const SUPABASE_URL  = 'https://rtwbrcbifnowrqpgivma.supabase.co';
     const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc';
@@ -258,47 +247,25 @@
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
     let idFrontFile = null, idBackFile = null, addrFile = null;
 
-    // Debug logger
-    function debugLog(msg, type = 'info') {
-      const panel = document.getElementById('debug-panel');
-      panel.style.display = 'block';
-      const color = type === 'error' ? '#f87171' : type === 'success' ? '#6ee7b7' : '#fbbf24';
-      panel.innerHTML += `<div style="color:${color}">${msg}</div>`;
-      panel.scrollTop = panel.scrollHeight;
-      if (type === 'error') {
-        alert('[ERROR] ' + msg);
-      }
-    }
-
-    // Session check
+    // ---------- Session ----------
     async function getUserSession() {
-      debugLog('Checking session...');
-      try {
-        const { data: { session }, error } = await sb.auth.getSession();
-        if (error) { debugLog('Session error: ' + error.message, 'error'); return null; }
-        if (!session?.user) {
-          debugLog('Not logged in — redirecting', 'error');
-          window.location.href = 'traydr-auth.html';
-          return null;
-        }
-        debugLog('Logged in as ' + session.user.email);
-        return session.user;
-      } catch (e) {
-        debugLog('getUserSession error: ' + e.message, 'error');
+      const { data: { session }, error } = await sb.auth.getSession();
+      if (error || !session?.user) {
+        window.location.href = 'traydr-auth.html';
         return null;
       }
+      return session.user;
     }
 
-    // Auto-fill name
+    // Auto‑fill name (no logs)
     (async () => {
       const user = await getUserSession();
       if (user) {
         document.getElementById('full-name').value = user.user_metadata?.full_name || '';
-        debugLog('Name auto-filled.');
       }
     })();
 
-    // File selection with size check
+    // ---------- File handling ----------
     function handleUpload(type, input) {
       const file = input.files[0];
       if (!file) return;
@@ -308,7 +275,6 @@
         input.value = '';
         return;
       }
-      debugLog('Selected: ' + file.name + ' (' + Math.round(file.size/1024) + 'KB)');
       if (type === 'id-front') idFrontFile = file;
       else if (type === 'id-back') idBackFile = file;
       else if (type === 'address') addrFile = file;
@@ -330,21 +296,19 @@
       else if (type === 'id-back') { idBackFile = null; document.getElementById('id-back-input').value = ''; }
       else if (type === 'address') { addrFile = null; document.getElementById('addr-input').value = ''; }
       document.getElementById(type + '-preview').innerHTML = '';
-      debugLog('Removed file: ' + type);
     }
 
-    // Raw fetch upload with error details
+    // ---------- Upload to storage ----------
     async function uploadFile(file, folder) {
       if (!file) return null;
       const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${file.name.split('.').pop()}`;
       const url = `${SUPABASE_URL}/storage/v1/object/verifications/${path}`;
 
-      debugLog('Uploading to: ' + url);
-
       const { data: { session } } = await sb.auth.getSession();
       const token = session?.access_token;
       if (!token) {
-        debugLog('No access token — try logging in again', 'error');
+        alert('Your session has expired. Please log in again.');
+        window.location.href = 'traydr-auth.html';
         return null;
       }
 
@@ -359,24 +323,22 @@
         });
 
         if (!res.ok) {
-          const errText = await res.text();
-          debugLog(`Upload failed – HTTP ${res.status}: ${errText}`, 'error');
-          return null;
+          console.error('Upload error', res.status);
+          throw new Error('Upload failed');
         }
 
         const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/verifications/${path}`;
-        debugLog('Upload success: ' + publicUrl);
         return publicUrl;
       } catch (e) {
-        debugLog('Network error: ' + e.message, 'error');
+        console.error('Upload error:', e);
+        alert('Failed to upload your document. Please check your connection and try again.');
         return null;
       }
     }
 
-    // Form submit handler
+    // ---------- Submit handler ----------
     document.getElementById('verify-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      debugLog('--- Form submitted ---');
 
       const user = await getUserSession();
       if (!user) return;
@@ -397,28 +359,24 @@
       }
       if (!fullName || !idType || !idNumber || !idFrontFile) valid = false;
       if (!valid) {
-        debugLog('Validation failed', 'error');
-        return;
+        return; // field errors already visible
       }
-      debugLog('Validation passed');
 
       const btn = document.getElementById('submit-btn');
       btn.classList.add('loading'); btn.disabled = true;
 
-      debugLog('Uploading ID front...');
+      // Upload front image (required)
       const idFrontUrl = await uploadFile(idFrontFile, `user_${user.id}`);
       if (!idFrontUrl) {
         btn.classList.remove('loading'); btn.disabled = false;
         return;
       }
 
-      debugLog('Uploading ID back...');
-      const idBackUrl  = await uploadFile(idBackFile, `user_${user.id}`);
+      // Upload optional back image & address doc
+      const idBackUrl  = idBackFile ? await uploadFile(idBackFile, `user_${user.id}`) : null;
+      const addrDocUrl = addrFile  ? await uploadFile(addrFile, `user_${user.id}`) : null;
 
-      debugLog('Uploading address doc...');
-      const addrDocUrl = await uploadFile(addrFile, `user_${user.id}`);
-
-      debugLog('Inserting verification request...');
+      // Insert database record
       const { error: insertErr } = await sb.from('verification_requests').insert({
         user_id:          user.id,
         full_name:        fullName,
@@ -432,21 +390,20 @@
       });
 
       if (insertErr) {
-        debugLog('Insert error: ' + insertErr.message, 'error');
+        console.error('Insert error:', insertErr);
+        alert('Could not submit your verification. Please try again.');
         btn.classList.remove('loading'); btn.disabled = false;
         return;
       }
 
-      debugLog('Verification request saved!', 'success');
+      // Success
       btn.classList.remove('loading'); btn.disabled = false;
-
-      // Show success screen
       document.querySelector('.card').innerHTML = `
         <div class="card-glow"></div>
         <div class="success-box">
           <i class="fas fa-circle-check" style="color:var(--success)"></i>
           <h2>Verification Submitted!</h2>
-          <p>We'll review your documents within 1-2 business days. You'll receive a notification when approved.</p>
+          <p>We'll review your documents within 1–2 business days. You'll receive a notification when approved.</p>
           <a href="dashboard-seller.html" class="btn-primary" style="display:inline-block;width:auto;padding:0.75rem 2rem;text-decoration:none;margin-top:0">Back to Dashboard</a>
         </div>
       `;
