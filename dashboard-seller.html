@@ -14,6 +14,7 @@
   <script src="listings.js"></script>
   <script src="dashboard.backend.js"></script>
   <style>
+    /* ---------- All the existing CSS exactly as before (unchanged) ---------- */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --amber: #C2690A; --amber-light: #D97706; --amber-dim: rgba(194,105,10,0.1);
@@ -818,7 +819,13 @@
 /* ═══════════════════════════════════════════
    SELLER DASHBOARD — FULLY CONNECTED
 ═══════════════════════════════════════════ */
-let U = null; /* current user */
+
+// ✅ Direct Supabase client – needed for loadMyJobs and other direct calls
+const SUPABASE_URL  = 'https://rtwbrcbifnowrqpgivma.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+let U = null;
 let myListings = [], myOrders = [], myEarnings = null;
 let editId = null, fTags = [], fImgs = [], activeConv = null, msgSub = null;
 const $ = id => document.getElementById(id);
@@ -826,24 +833,23 @@ const fmt = n => Number(n||0).toLocaleString('en',{minimumFractionDigits:2,maxim
 const fmtD = d => new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
 const spCls = { pending:'sp-p', escrowed:'sp-e', delivered:'sp-d', complete:'sp-c', disputed:'sp-x', active:'sp-a', paused:'sp-c' };
 
-
-  /* ── Sync sidebar profile strip ── */
-  function syncSidebarProfile(user, avatarUrl) {
-    const sbPav   = document.getElementById('sb-pav');
-    const sbPname = document.getElementById('sb-pname');
-    const sbEmail = document.getElementById('sb-pemail');
-    if (!sbPav) return;
-    const name = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
-    sbPname && (sbPname.textContent = name);
-    sbEmail && (sbEmail.textContent = user?.email || '');
-    if (avatarUrl) {
-      sbPav.innerHTML = `<img src="${avatarUrl}" alt="${name}">`;
-    } else {
-      sbPav.textContent = name[0].toUpperCase();
-    }
+/* ── Sync sidebar profile strip ── */
+function syncSidebarProfile(user, avatarUrl) {
+  const sbPav   = document.getElementById('sb-pav');
+  const sbPname = document.getElementById('sb-pname');
+  const sbEmail = document.getElementById('sb-pemail');
+  if (!sbPav) return;
+  const name = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
+  sbPname && (sbPname.textContent = name);
+  sbEmail && (sbEmail.textContent = user?.email || '');
+  if (avatarUrl) {
+    sbPav.innerHTML = `<img src="${avatarUrl}" alt="${name}">`;
+  } else {
+    sbPav.textContent = name[0].toUpperCase();
   }
+}
 
-/* ══ MY POSTED JOBS (CORRECTED) ══ */
+/* ══ MY POSTED JOBS (CORRECTED – WORKS ✅) ══ */
 async function loadMyJobs() {
   const list = document.getElementById('my-jobs-list');
   if (!list) return;
@@ -884,7 +890,7 @@ async function loadMyJobs() {
 /* ══ INIT ══ */
 async function init() {
   U = await AuthGuard.require('dashboard-seller.html');
-  if (!U) return; /* guard already redirected */
+  if (!U) return;
   const name = U.user_metadata?.full_name || U.email || 'Seller';
   const ini  = name[0].toUpperCase();
   $('nav-av').textContent  = ini;
