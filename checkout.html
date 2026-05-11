@@ -33,8 +33,7 @@
     /* ── NAV ── */
     #nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: var(--nav-h); padding: 0 1.25rem; background: rgba(10,10,10,0.97); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 1rem; }
     .nav-logo { display: flex; align-items: center; gap: 6px; text-decoration: none; }
-    .nav-logo span { font-family: var(--serif); font-size: 1.25rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
-    .nav-logo i { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); display: inline-block; }
+    .nav-logo img { height: 44px; width: auto; display: block; object-fit: contain; }
     .nav-sep { width: 1px; height: 18px; background: var(--border); }
     .nav-step { font-size: 0.8rem; color: var(--muted); }
     .nav-secure { margin-left: auto; display: flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; color: var(--success); }
@@ -285,7 +284,9 @@
 
 <!-- NAV -->
 <nav id="nav">
-  <a href="index.html" class="nav-logo"><span>TraydR</span><i></i></a>
+  <a href="index.html" class="nav-logo">
+    <img src="logo.png" alt="TraydR" style="height:44px;width:auto;display:block;object-fit:contain">
+  </a>
   <div class="nav-sep"></div>
   <span class="nav-step">Secure Checkout</span>
   <div class="nav-secure"><i class="fas fa-lock"></i> SSL Encrypted</div>
@@ -385,125 +386,69 @@
       </div>
     </div>
 
-    <!-- STEP 2: Payment -->
+    <!-- STEP 2: Payment (Flutterwave only) -->
     <div class="step-panel" id="step-payment">
       <div class="scard">
         <h2><span class="step-num">2</span> Choose Payment Method</h2>
 
-        <!-- Region tabs -->
-        <div class="region-tabs" id="region-tabs">
-          <button class="rtab on" data-region="global"><i class="fas fa-earth-africa"></i> Global (Card)</button>
-          <button class="rtab" data-region="africa"><i class="fas fa-earth-africa"></i> Africa (Local)</button>
+        <div class="fw-methods" id="fw-methods">
+          <div class="fw-method on" data-fw="card">       <div class="fw-icon"><i class="fas fa-credit-card"></i></div><div class="fw-lbl">Card</div></div>
+          <div class="fw-method" data-fw="mobile_money">  <div class="fw-icon"><i class="fas fa-mobile-screen"></i></div><div class="fw-lbl">Mobile Money</div></div>
+          <div class="fw-method" data-fw="bank_transfer"> <div class="fw-icon"><i class="fas fa-building-columns"></i></div><div class="fw-lbl">Bank Transfer</div></div>
+          <div class="fw-method" data-fw="ussd">          <div class="fw-icon"><i class="fas fa-mobile-screen"></i></div><div class="fw-lbl">USSD</div></div>
         </div>
 
-        <!-- Global: Stripe card -->
-        <div id="global-payment">
-          <div class="card-visual">
-            <div class="cv-chip"></div>
-            <div class="cv-num" id="cv-num">•••• •••• •••• ••••</div>
-            <div class="cv-bot">
-              <div>
-                <div class="cv-label">Card Holder</div>
-                <div class="cv-val" id="cv-name">Your Name</div>
-              </div>
-              <div>
-                <div class="cv-label">Expires</div>
-                <div class="cv-val" id="cv-exp">MM / YY</div>
-              </div>
-            </div>
-            <div class="cv-network"><i class="fas fa-credit-card"></i></div>
-          </div>
-
+        <!-- FW Card -->
+        <div id="fw-card-fields">
           <div class="frow">
             <label>Card Number *</label>
-            <input class="finp" id="card-num" placeholder="1234 5678 9012 3456" maxlength="19" inputmode="numeric" />
-            <div class="ferr" id="e-cardnum">Enter a valid 16-digit card number.</div>
-          </div>
-          <div class="frow">
-            <label>Cardholder Name *</label>
-            <input class="finp" id="card-name" placeholder="Name as on card" />
-            <div class="ferr" id="e-cardname">Required.</div>
+            <input class="finp" id="fw-cardnum" placeholder="1234 5678 9012 3456" maxlength="19" inputmode="numeric" />
           </div>
           <div class="f2">
-            <div class="frow">
-              <label>Expiry Date *</label>
-              <input class="finp" id="card-exp" placeholder="MM / YY" maxlength="7" inputmode="numeric" />
-              <div class="ferr" id="e-cardexp">Invalid expiry.</div>
-            </div>
-            <div class="frow">
-              <label>CVV *</label>
-              <input class="finp" id="card-cvv" placeholder="•••" maxlength="4" inputmode="numeric" type="password" />
-              <div class="ferr" id="e-cardcvv">Invalid CVV.</div>
-            </div>
-          </div>
-          <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.25rem">
-            <span style="font-size:0.72rem;color:var(--dim)">Powered by</span>
-            <span style="font-size:0.78rem;font-weight:700;color:#635BFF">Stripe</span>
-            <span style="font-size:0.72rem;color:var(--dim)">· 256-bit SSL · PCI DSS Compliant</span>
+            <div class="frow"><label>Expiry *</label><input class="finp" id="fw-exp" placeholder="MM / YY" maxlength="7" /></div>
+            <div class="frow"><label>CVV *</label><input class="finp" id="fw-cvv" placeholder="•••" maxlength="4" type="password" /></div>
           </div>
         </div>
 
-        <!-- Africa: Flutterwave -->
-        <div id="africa-payment" style="display:none">
-          <div class="fw-methods" id="fw-methods">
-            <div class="fw-method on" data-fw="card">       <div class="fw-icon"><i class="fas fa-credit-card"></i></div><div class="fw-lbl">Card</div></div>
-            <div class="fw-method" data-fw="mobile_money">  <div class="fw-icon"><i class="fas fa-mobile-screen"></i></div><div class="fw-lbl">Mobile Money</div></div>
-            <div class="fw-method" data-fw="bank_transfer"> <div class="fw-icon"><i class="fas fa-building-columns"></i></div><div class="fw-lbl">Bank Transfer</div></div>
-            <div class="fw-method" data-fw="ussd">          <div class="fw-icon"><i class="fas fa-mobile-screen"></i></div><div class="fw-lbl">USSD</div></div>
+        <!-- FW Mobile Money -->
+        <div id="fw-mobile-fields" style="display:none">
+          <div class="frow">
+            <label>Network *</label>
+            <select class="finp" id="fw-network">
+              <option value="">Select network</option>
+              <option value="MTN">MTN Mobile Money</option>
+              <option value="VODAFONE">Vodafone Cash</option>
+              <option value="AIRTEL">Airtel Money</option>
+              <option value="MPESA">M-Pesa</option>
+              <option value="TIGO">Tigo Cash</option>
+            </select>
           </div>
+          <div class="frow">
+            <label>Phone Number *</label>
+            <input class="finp" id="fw-phone" placeholder="+234 800 000 0000" inputmode="tel" />
+          </div>
+        </div>
 
-          <!-- FW Card -->
-          <div id="fw-card-fields">
-            <div class="frow">
-              <label>Card Number *</label>
-              <input class="finp" id="fw-cardnum" placeholder="1234 5678 9012 3456" maxlength="19" inputmode="numeric" />
-            </div>
-            <div class="f2">
-              <div class="frow"><label>Expiry *</label><input class="finp" id="fw-exp" placeholder="MM / YY" maxlength="7" /></div>
-              <div class="frow"><label>CVV *</label><input class="finp" id="fw-cvv" placeholder="•••" maxlength="4" type="password" /></div>
-            </div>
-          </div>
+        <!-- FW Bank Transfer -->
+        <div id="fw-bank-fields" style="display:none">
+          <div class="alert info on" style="margin-bottom:0"><span>ℹ️</span><span>We'll generate a dedicated account number for this transaction. Funds must be transferred within 30 minutes.</span></div>
+        </div>
 
-          <!-- FW Mobile Money -->
-          <div id="fw-mobile-fields" style="display:none">
-            <div class="frow">
-              <label>Network *</label>
-              <select class="finp" id="fw-network">
-                <option value="">Select network</option>
-                <option value="MTN">MTN Mobile Money</option>
-                <option value="VODAFONE">Vodafone Cash</option>
-                <option value="AIRTEL">Airtel Money</option>
-                <option value="MPESA">M-Pesa</option>
-                <option value="TIGO">Tigo Cash</option>
-              </select>
-            </div>
-            <div class="frow">
-              <label>Phone Number *</label>
-              <input class="finp" id="fw-phone" placeholder="+234 800 000 0000" inputmode="tel" />
-            </div>
+        <!-- FW USSD -->
+        <div id="fw-ussd-fields" style="display:none">
+          <div class="frow"><label>Bank *</label>
+            <select class="finp" id="fw-bank">
+              <option value="">Select your bank</option>
+              <option>Access Bank</option><option>GTBank</option><option>UBA</option>
+              <option>First Bank</option><option>Zenith Bank</option><option>Sterling Bank</option>
+            </select>
           </div>
+        </div>
 
-          <!-- FW Bank Transfer -->
-          <div id="fw-bank-fields" style="display:none">
-            <div class="alert info on" style="margin-bottom:0"><span>ℹ️</span><span>We'll generate a dedicated account number for this transaction. Funds must be transferred within 30 minutes.</span></div>
-          </div>
-
-          <!-- FW USSD -->
-          <div id="fw-ussd-fields" style="display:none">
-            <div class="frow"><label>Bank *</label>
-              <select class="finp" id="fw-bank">
-                <option value="">Select your bank</option>
-                <option>Access Bank</option><option>GTBank</option><option>UBA</option>
-                <option>First Bank</option><option>Zenith Bank</option><option>Sterling Bank</option>
-              </select>
-            </div>
-          </div>
-
-          <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.85rem">
-            <span style="font-size:0.72rem;color:var(--dim)">Powered by</span>
-            <span style="font-size:0.78rem;font-weight:700;color:#F5A623">Flutterwave</span>
-            <span style="font-size:0.72rem;color:var(--dim)">· PCI DSS Compliant</span>
-          </div>
+        <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.85rem">
+          <span style="font-size:0.72rem;color:var(--dim)">Powered by</span>
+          <span style="font-size:0.78rem;font-weight:700;color:#F5A623">Flutterwave</span>
+          <span style="font-size:0.72rem;color:var(--dim)">· PCI DSS Compliant</span>
         </div>
       </div>
 
@@ -598,53 +543,35 @@
 <script>
 /*
   ============================================================
-  checkout.html — TraydR CHECKOUT
-  
-  Reads order data from sessionStorage (set by listing.html)
-  Creates order in Supabase on confirmation
-  
-  Payment processors:
-    Stripe  → Global (card payments) 
-    Flutterwave → Africa (card, mobile money, bank, USSD)
-  
-  NOTE: In production, payment processing MUST happen server-side
-  via Supabase Edge Functions. The UI here collects payment intent
-  and passes to your backend. Card details never touch your server.
+  checkout.html — TraydR CHECKOUT (Flutterwave only)
   ============================================================
 */
-
 const SUPABASE_URL  = 'https://rtwbrcbifnowrqpgivma.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc';
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
 
 /* ── State ── */
-/* ── Seller plan fee — fetched when listing loads ── */
 let _sellerFeeRate = 0.08;
 async function fetchSellerFeeRate(sellerId) {
   if (!sellerId || !window.DB) return 0.08;
   try {
     const { plan } = await DB.getPlan(sellerId);
     _sellerFeeRate  = DB.getPlanFee(plan);
-    console.log('[checkout] seller plan:', plan, '→ fee:', (_sellerFeeRate*100)+'%');
   } catch(e) { _sellerFeeRate = 0.08; }
   return _sellerFeeRate;
 }
-let checkout  = null; /* from sessionStorage */
+let checkout  = null;
 let user      = null;
 let currentStep = 1;
-let region    = 'global';
 let fwMethod  = 'card';
 
-/* delivery info */
 let delivery  = {};
 
 const $ = id => document.getElementById(id);
 const isEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 const fmt = n => Number(n||0).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
 
-/* ── Load checkout data ── */
-/* ── Address helpers ── */
 function applyAddr(id) {
   const addrs = window._savedAddrs || [];
   const a = addrs.find(x => String(x.id) === String(id));
@@ -660,23 +587,16 @@ function applyAddrObj(a) {
 }
 
 async function init() {
-  /* Hard guard — must be logged in to checkout */
   user = await AuthGuard.require('checkout.html');
   if (!user) return;
 
-  /* Load checkout data from sessionStorage */
   const raw = sessionStorage.getItem('traydr_checkout');
-  if (!raw) {
-    showGlobalError('No order data found. Please go back and select a package.');
-    return;
-  }
+  if (!raw) { showGlobalError('No order data found. Please go back and select a package.'); return; }
   checkout = JSON.parse(raw);
 
-  /* Pre-fill delivery info from account */
   $('d-name').value  = user.user_metadata?.full_name || '';
   $('d-email').value = user.email || '';
 
-  /* Load saved addresses */
   try {
     const { data: addrs } = await DB.getAddresses(user.id);
     if (addrs && addrs.length > 0) {
@@ -688,7 +608,6 @@ async function init() {
         sel.appendChild(opt);
       });
       $('saved-addr-wrap').style.display = '';
-      /* auto-select default */
       const def = addrs.find(a => a.is_default) || addrs[0];
       if (def) { sel.value = def.id; applyAddrObj(def); }
       window._savedAddrs = addrs;
@@ -699,13 +618,11 @@ async function init() {
   renderReviewDetail();
 }
 
-/* ── Summary ── */
 function renderSummary() {
   const c = checkout;
   const fee   = +(c.price * _sellerFeeRate).toFixed(2);
   const total = +(c.price + fee).toFixed(2);
 
-  /* image */
   if (c.listing_image) {
     $('sum-img').innerHTML = `<img src="${c.listing_image}" alt="" onerror="this.style.display='none'" style="width:100%;height:100%;object-fit:cover;display:block" />`;
   }
@@ -719,7 +636,6 @@ function renderSummary() {
   $('confirm-price').textContent= fmt(total);
 }
 
-/* ── Review detail (step 1) ── */
 function renderReviewDetail() {
   const c = checkout;
   const fee   = +(c.price * _sellerFeeRate).toFixed(2);
@@ -748,14 +664,11 @@ function renderReviewDetail() {
     </div>`;
 }
 
-/* ── Confirm detail (step 3) ── */
 function renderConfirmDetail() {
   const c = checkout;
   const fee   = +(c.price * _sellerFeeRate).toFixed(2);
   const total = +(c.price + fee).toFixed(2);
-  const methodLabel = region === 'global'
-    ? `<i class="fas fa-credit-card"></i> Card ending ····${($('card-num').value.replace(/\s/g,'')).slice(-4) || '••••'}`
-    : fwMethod === 'card'         ? `<i class="fas fa-credit-card"></i> Card (Flutterwave)`
+  const methodLabel = fwMethod === 'card'         ? `<i class="fas fa-credit-card"></i> Card (Flutterwave)`
     : fwMethod === 'mobile_money' ? `<i class="fas fa-mobile-screen"></i> Mobile Money — ${$('fw-network').value||'—'}`
     : fwMethod === 'bank_transfer'? `<i class="fas fa-building-columns"></i> Bank Transfer`
     : `<i class="fas fa-mobile-screen"></i> USSD — ${$('fw-bank').value||'—'}`;
@@ -771,14 +684,12 @@ function renderConfirmDetail() {
   $('success-seller').textContent = c.seller_name;
 }
 
-/* ── Step management ── */
 function goStep(n) {
   currentStep = n;
   document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
   const panels = ['step-review','step-payment','step-confirm','step-success'];
   $(panels[n-1])?.classList.add('active');
 
-  /* update progress dots */
   [1,2,3].forEach(i => {
     const dot = $(`ps${i}`);
     dot.classList.remove('done','active');
@@ -787,12 +698,10 @@ function goStep(n) {
     if ($(`pl${i}`)) $(`pl${i}`).classList.toggle('done', i < n);
   });
 
-  /* hide summary on success */
   $('order-summary').style.display = n === 4 ? 'none' : '';
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-/* ── STEP 1: Validate delivery info ── */
 $('step1-next').addEventListener('click', () => {
   const name    = $('d-name').value.trim();
   const email   = $('d-email').value.trim();
@@ -809,105 +718,57 @@ $('step1-next').addEventListener('click', () => {
 
   delivery = { name, email, country, phone: $('d-phone').value, address: $('d-address').value };
 
-  /* Auto-select region based on country */
-  const africaCountries = ['NG','GH','KE','ZA','EG','ET','TZ','UG'];
-  if (africaCountries.includes(country)) {
-    setRegion('africa');
-  } else {
-    setRegion('global');
-  }
-
   goStep(2);
 });
 
-/* ── STEP 2: Payment ── */
-
-/* Region tabs */
-$('region-tabs').addEventListener('click', e => {
-  const tab = e.target.closest('.rtab'); if(!tab) return;
-  setRegion(tab.dataset.region);
-});
-
-function setRegion(r) {
-  region = r;
-  document.querySelectorAll('.rtab').forEach(t => t.classList.toggle('on', t.dataset.region === r));
-  $('global-payment').style.display  = r === 'global' ? '' : 'none';
-  $('africa-payment').style.display  = r === 'africa' ? '' : 'none';
-}
-
-/* Flutterwave method tabs */
 $('fw-methods').addEventListener('click', e => {
   const m = e.target.closest('.fw-method'); if(!m) return;
   document.querySelectorAll('.fw-method').forEach(x => x.classList.remove('on'));
   m.classList.add('on'); fwMethod = m.dataset.fw;
-  /* show correct fields */
   ['card','mobile_money','bank_transfer','ussd'].forEach(k => {
     const el = $(`fw-${k.replace('_','-')}-fields`);
     if(el) el.style.display = k===fwMethod ? '' : 'none';
   });
 });
 
-/* Card number formatting */
-[$('card-num'), $('fw-cardnum')].forEach(inp => {
-  if(!inp) return;
-  inp.addEventListener('input', function() {
+const fwCard = $('fw-cardnum');
+if (fwCard) {
+  fwCard.addEventListener('input', function() {
     let v = this.value.replace(/\D/g,'').slice(0,16);
     this.value = v.match(/.{1,4}/g)?.join(' ') || v;
-    if(this.id==='card-num') {
-      $('cv-num').textContent = v.padEnd(16,'•').match(/.{1,4}/g).join(' ');
-    }
   });
-});
+}
 
-/* Card name live update */
-$('card-name').addEventListener('input', function() {
-  $('cv-name').textContent = this.value || 'Your Name';
-});
-
-/* Expiry formatting */
-[$('card-exp'), $('fw-exp')].forEach(inp => {
-  if(!inp) return;
-  inp.addEventListener('input', function() {
+const fwExp = $('fw-exp');
+if (fwExp) {
+  fwExp.addEventListener('input', function() {
     let v = this.value.replace(/\D/g,'').slice(0,4);
     if(v.length > 2) v = v.slice(0,2) + ' / ' + v.slice(2);
     this.value = v;
-    if(this.id==='card-exp') $('cv-exp').textContent = v || 'MM / YY';
   });
-});
+}
 
 $('step2-next').addEventListener('click', () => {
   $('step2-err').classList.remove('on');
-  if (region === 'global') {
-    const num  = $('card-num').value.replace(/\s/g,'');
-    const name = $('card-name').value.trim();
-    const exp  = $('card-exp').value.trim();
-    const cvv  = $('card-cvv').value.trim();
-    if (num.length < 16)  { showAlert('step2-err','Please enter a valid card number.'); return; }
-    if (!name)             { showAlert('step2-err','Please enter the cardholder name.'); return; }
-    if (exp.length < 7)   { showAlert('step2-err','Please enter a valid expiry date.'); return; }
-    if (cvv.length < 3)   { showAlert('step2-err','Please enter a valid CVV.'); return; }
-  } else {
-    if (fwMethod === 'mobile_money') {
-      if (!$('fw-network').value) { showAlert('step2-err','Please select a network.'); return; }
-      if (!$('fw-phone').value)   { showAlert('step2-err','Please enter your phone number.'); return; }
-    }
-    if (fwMethod === 'card') {
-      const num = $('fw-cardnum').value.replace(/\s/g,'');
-      if (num.length < 16) { showAlert('step2-err','Please enter a valid card number.'); return; }
-    }
+  if (fwMethod === 'card') {
+    const num = ($('fw-cardnum')?.value || '').replace(/\s/g,'');
+    if (num.length < 16) { showAlert('step2-err','Please enter a valid card number.'); return; }
+  }
+  if (fwMethod === 'mobile_money') {
+    if (!$('fw-network').value) { showAlert('step2-err','Please select a network.'); return; }
+    if (!$('fw-phone').value)   { showAlert('step2-err','Please enter your phone number.'); return; }
   }
   renderConfirmDetail();
   goStep(3);
 });
 
-/* ── STEP 3: Place order ── */
 $('place-order-btn').addEventListener('click', async () => {
   const btn = $('place-order-btn');
   btn.classList.add('ld'); btn.disabled = true;
   $('step3-err').classList.remove('on');
 
   const c       = checkout;
-  const feeRate = _sellerFeeRate; /* set when listing loaded */
+  const feeRate = _sellerFeeRate;
   const fee     = +(c.price * feeRate).toFixed(2);
   const total   = +(c.price + fee).toFixed(2);
   const payout  = +(c.price * (1 - feeRate)).toFixed(2);
@@ -918,7 +779,6 @@ $('place-order-btn').addEventListener('click', async () => {
 
   btn.querySelector('.lbl').textContent = 'Opening payment...';
 
-  /* Save checkout data for after payment */
   const checkoutData = {
     buyer_id:      user.id,
     seller_id:     c.seller_id,
@@ -937,13 +797,11 @@ $('place-order-btn').addEventListener('click', async () => {
   const tx_ref = 'TRADDR-' + Date.now() + '-' + Math.random().toString(36).slice(2,7).toUpperCase();
   sessionStorage.setItem('traydr_tx_ref', tx_ref);
 
-  /* Always use NGN for Nigerian users — required for bank transfer */
   const country  = delivery.country || 'NG';
   const currency = country === 'GH' ? 'GHS' : country === 'KE' ? 'KES' : country === 'ZA' ? 'ZAR' : 'NGN';
 
-  /* Convert to NGN if listing is in USD */
   const displayAmount = currency === 'NGN' && c.currency !== 'NGN'
-    ? total * 1600  /* approx NGN rate — update as needed */
+    ? total * 1600
     : total;
 
   try {
@@ -967,7 +825,6 @@ $('place-order-btn').addEventListener('click', async () => {
         logo:        window.location.origin + '/logo.png',
       },
       callback: async (response) => {
-        console.log('FLW callback:', response);
         if (response.status === 'successful' || response.status === 'completed') {
           await handlePaymentSuccess(response.transaction_id, tx_ref, checkoutData);
         } else {
@@ -982,7 +839,6 @@ $('place-order-btn').addEventListener('click', async () => {
       },
     });
   } catch(e) {
-    console.error('FLW error:', e);
     btn.classList.remove('ld'); btn.disabled = false;
     btn.querySelector('.lbl').textContent = 'Place Order & Pay';
     showAlert('step3-err', 'Could not open payment. Please try again.');
@@ -990,8 +846,6 @@ $('place-order-btn').addEventListener('click', async () => {
 });
 
 async function handlePaymentSuccess(transaction_id, tx_ref, checkoutData) {
-  console.log('Verifying:', transaction_id, tx_ref);
-  /* Show verifying state */
   document.querySelectorAll('.step-panel').forEach(p => p.style.display = 'none');
   document.querySelector('.page') && (document.querySelector('.page').style.minHeight = '60vh');
 
@@ -1017,7 +871,6 @@ async function handlePaymentSuccess(transaction_id, tx_ref, checkoutData) {
     );
     clearTimeout(timeout);
     const data = await res.json();
-    console.log('Verify result:', data);
     sessionStorage.removeItem('traydr_pending_checkout');
     sessionStorage.removeItem('traydr_tx_ref');
     goStep(4);
@@ -1025,8 +878,6 @@ async function handlePaymentSuccess(transaction_id, tx_ref, checkoutData) {
       ? '#TRX-' + String(data.order_id).padStart(6,'0')
       : '#TRX-' + tx_ref.slice(-6);
   } catch(e) {
-    console.error('Verify error:', e);
-    /* Payment went through — show success, webhook creates order */
     sessionStorage.removeItem('traydr_pending_checkout');
     sessionStorage.removeItem('traydr_tx_ref');
     goStep(4);
@@ -1034,7 +885,6 @@ async function handlePaymentSuccess(transaction_id, tx_ref, checkoutData) {
   }
 }
 
-/* ── Handle Flutterwave redirect return (for mobile/redirect flow) ── */
 (async () => {
   const urlP           = new URLSearchParams(window.location.search);
   if (urlP.get('status') === 'successful' || urlP.get('flw') === 'success') {
@@ -1049,7 +899,6 @@ async function handlePaymentSuccess(transaction_id, tx_ref, checkoutData) {
   }
 })();
 
-/* ── Login prompt/* ── Login prompt (shown when user hits checkout without being logged in) ── */
 function showAlert(id, msg) {
   const el = $(id); el.classList.add('on');
   el.querySelectorAll('span')[1].textContent = msg;
@@ -1064,8 +913,6 @@ function showGlobalError(msg) {
     </div>`;
 }
 
-/* ── Address helpers ── */
-/* ── Init ── */
 init();
 </script>
 <script>
