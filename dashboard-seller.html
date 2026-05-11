@@ -35,7 +35,6 @@
     #nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: var(--nh); padding: 0 1.25rem; background: rgba(10,10,10,0.97); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.85rem; }
     .nav-logo { display: flex; align-items: center; gap: 6px; text-decoration: none; flex-shrink: 0; }
     .nav-logo img { height: 44px; width: auto; display: block; object-fit: contain; }
-    .nav-logo i { display: none; }
     .nav-sep { width: 1px; height: 18px; background: var(--border); flex-shrink: 0; }
     .nav-label { font-size: 0.8rem; color: var(--muted); flex-shrink: 0; }
     .nav-right { display: flex; align-items: center; gap: 0.65rem; margin-left: auto; }
@@ -410,16 +409,12 @@
     .of   { -webkit-overflow-scrolling: touch; padding-right: 1rem; }
     .of::-webkit-scrollbar { display: none; }
     .panel { overflow-x: hidden; width: 100%; box-sizing: border-box; }
-    /* Address book + misc cards */
     .addr-card, .oc, .scard, .pcard { max-width: 100%; box-sizing: border-box; }
-    /* Prevent any child from overflowing */
     @media (max-width: 900px) {
       #main  { padding: 1rem !important; padding-top: calc(var(--nh) + 1rem) !important; }
       .ph    { margin-bottom: 1rem; }
       .ph h1 { font-size: 1.5rem; }
-      /* Address card actions should wrap */
       .addr-actions { flex-wrap: wrap; gap: 0.4rem; }
-      /* Order card should not overflow */
       .oc   { padding: 0.9rem; }
       .oc-top { gap: 0.6rem; }
     }
@@ -772,7 +767,6 @@
   </div>
 
 <!-- JOBS PANEL -->
-  
   <div class="panel" id="panel-jobs">
     <div class="ph"><div><h1>My Posted Jobs</h1><p>Manage jobs you've posted and review proposals.</p></div>
       <a href="jobs.html" style="font-size:0.82rem;color:var(--amber);font-weight:600;text-decoration:none">+ Post New Job →</a>
@@ -849,36 +843,41 @@ const spCls = { pending:'sp-p', escrowed:'sp-e', delivered:'sp-d', complete:'sp-
     }
   }
 
-/* ══ MY POSTED JOBS ══ */
+/* ══ MY POSTED JOBS (CORRECTED) ══ */
 async function loadMyJobs() {
-  const list = $('my-jobs-list'); if (!list) return;
+  const list = document.getElementById('my-jobs-list');
+  if (!list) return;
   try {
-    const res = await fetch(
-      `https://rtwbrcbifnowrqpgivma.supabase.co/rest/v1/jobs?client_id=eq.${U.id}&order=created_at.desc`,
-      { headers: { 'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc', 'Authorization': `Bearer ${_dbSb.auth?.session?.()?.access_token || ''}` } }
-    );
-    const jobs = res.ok ? await res.json() : [];
-    if (!jobs.length) {
-      list.innerHTML = '<div style="text-align:center;padding:3rem 1rem;color:var(--muted)"><i class="fas fa-briefcase" style="font-size:2rem;opacity:0.3;display:block;margin-bottom:0.75rem"></i><p>No jobs posted yet.</p><a href="jobs.html" style="color:var(--amber);font-weight:600">Post your first job →</a></div>';
+    const { data: jobs, error } = await sb
+      .from('jobs')
+      .select('*')
+      .eq('client_id', U.id)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    if (!jobs || jobs.length === 0) {
+      list.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--muted)"><i class="fas fa-briefcase" style="font-size:2rem;opacity:0.3;display:block;margin-bottom:0.75rem"></i><p>No jobs posted yet.</p><a href="jobs.html" style="color:var(--amber);font-weight:600">Post your first job →</a></div>`;
       return;
     }
+
     list.innerHTML = jobs.map(j => `
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1rem 1.15rem;margin-bottom:0.75rem">
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:0.75rem;flex-wrap:wrap">
           <div>
             <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.2rem">${j.title}</div>
-            <div style="font-size:0.75rem;color:var(--muted)">${j.category} · ${j.status} · ${j.proposal_count||0} proposals</div>
+            <div style="font-size:0.75rem;color:var(--muted)">${j.category} · ${j.status} · ${j.proposal_count || 0} proposals</div>
           </div>
           <div style="display:flex;gap:0.4rem;flex-wrap:wrap">
             <a href="jobs.html" style="font-size:0.75rem;color:var(--amber);font-weight:600;text-decoration:none">View on Jobs →</a>
           </div>
         </div>
         <div style="margin-top:0.65rem;font-size:0.8rem;font-weight:600;color:var(--muted)">
-          Budget: <span style="color:var(--text)">$${j.budget_min||0}${j.budget_max?' – $'+j.budget_max:''}</span>
+          Budget: <span style="color:var(--text)">$${j.budget_min || 0}${j.budget_max ? ' – $' + j.budget_max : ''}</span>
         </div>
       </div>`).join('');
-  } catch(e) {
-    list.innerHTML = '<div style="color:var(--muted);padding:1.5rem;text-align:center;font-size:0.83rem">Could not load jobs. Make sure jobs-setup.sql has been run.</div>';
+  } catch (e) {
+    list.innerHTML = `<div style="color:var(--muted);padding:1.5rem;text-align:center;font-size:0.83rem">Could not load jobs. ${e.message}</div>`;
   }
 }
 
@@ -1164,7 +1163,6 @@ async function openConv(conv) {
   const { data: msgs } = await DB.getMessages(conv.order_id);
   renderMsgWindow(conv, msgs || []);
   await renderMessages();
-  /* realtime subscription */
   msgSub = DB.subscribeToMessages(conv.order_id, payload => {
     const msg = payload.new;
     appendMsg(msg, msg.sender_id === U.id);
@@ -1460,19 +1458,14 @@ $('sbo').addEventListener('click',()=>{$('hbg').classList.remove('open');$('sb')
 
 /* ══ LOAD PROFILE PANEL ══ */
 async function loadProfilePanel() {
-  /* Basic fields from session */
   const name  = U.user_metadata?.full_name || '';
   const email = U.email || '';
   const pfn = $('pf-name');  if(pfn)  pfn.value  = name;
   const pfe = $('pf-email'); if(pfe)  pfe.value  = email;
-
   const pavN = $('pav-name');
   if(pavN) pavN.textContent = name || email;
-
   const pav = $('pav');
   if(pav && name) pav.textContent = name[0].toUpperCase();
-
-  /* Load from DB */
   try {
     const { data } = await DB.getProfileData(U.id);
     if (data) {
@@ -1480,11 +1473,8 @@ async function loadProfilePanel() {
       const pfb = $('pf-bio'); if(pfb && data.bio)      pfb.value = data.bio;
       if (data.avatar_url) {
         if(pav) pav.innerHTML = `<img src="${data.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
-        const sbAv = document.getElementById('sb-pav');
-        if(sbAv) sbAv.innerHTML = `<img src="${data.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
       }
-
-      /* ════ VERIFICATION STATUS ════ */
+      /* Verification status */
       const verifySection = document.getElementById('seller-verify-section');
       if (verifySection) {
         if (data.verified) {
@@ -1498,12 +1488,9 @@ async function loadProfilePanel() {
           </button>`;
         }
       }
-      /* ════ END VERIFICATION STATUS ════ */
-
     }
   } catch(e) { console.warn('loadProfilePanel DB:', e); }
 
-  /* Stats */
   const since = new Date(U.created_at).toLocaleDateString('en-GB',{month:'short',year:'numeric'});
   const pss = $('ps-since'); if(pss) pss.textContent = since;
 
@@ -1546,56 +1533,6 @@ async function uploadAvatar(input) {
   if (error || !url) { toast('Upload failed. Try again.','err'); pav.textContent = (U.user_metadata?.full_name||'S')[0].toUpperCase(); return; }
   pav.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
   toast('Profile photo updated! ✅','ok');
-}
-
-
-  /* ── Sync sidebar profile strip ── */
-  function syncSidebarProfile(user, avatarUrl) {
-    const sbPav   = document.getElementById('sb-pav');
-    const sbPname = document.getElementById('sb-pname');
-    const sbEmail = document.getElementById('sb-pemail');
-    if (!sbPav) return;
-    const name = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
-    sbPname && (sbPname.textContent = name);
-    sbEmail && (sbEmail.textContent = user?.email || '');
-    if (avatarUrl) {
-      sbPav.innerHTML = `<img src="${avatarUrl}" alt="${name}">`;
-    } else {
-      sbPav.textContent = name[0].toUpperCase();
-    }
-  }
-
-/* ══ MY POSTED JOBS ══ */
-async function loadMyJobs() {
-  const list = $('my-jobs-list'); if (!list) return;
-  try {
-    const res = await fetch(
-      `https://rtwbrcbifnowrqpgivma.supabase.co/rest/v1/jobs?client_id=eq.${U.id}&order=created_at.desc`,
-      { headers: { 'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc', 'Authorization': `Bearer ${_dbSb.auth?.session?.()?.access_token || ''}` } }
-    );
-    const jobs = res.ok ? await res.json() : [];
-    if (!jobs.length) {
-      list.innerHTML = '<div style="text-align:center;padding:3rem 1rem;color:var(--muted)"><i class="fas fa-briefcase" style="font-size:2rem;opacity:0.3;display:block;margin-bottom:0.75rem"></i><p>No jobs posted yet.</p><a href="jobs.html" style="color:var(--amber);font-weight:600">Post your first job →</a></div>';
-      return;
-    }
-    list.innerHTML = jobs.map(j => `
-      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1rem 1.15rem;margin-bottom:0.75rem">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:0.75rem;flex-wrap:wrap">
-          <div>
-            <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.2rem">${j.title}</div>
-            <div style="font-size:0.75rem;color:var(--muted)">${j.category} · ${j.status} · ${j.proposal_count||0} proposals</div>
-          </div>
-          <div style="display:flex;gap:0.4rem;flex-wrap:wrap">
-            <a href="jobs.html" style="font-size:0.75rem;color:var(--amber);font-weight:600;text-decoration:none">View on Jobs →</a>
-          </div>
-        </div>
-        <div style="margin-top:0.65rem;font-size:0.8rem;font-weight:600;color:var(--muted)">
-          Budget: <span style="color:var(--text)">$${j.budget_min||0}${j.budget_max?' – $'+j.budget_max:''}</span>
-        </div>
-      </div>`).join('');
-  } catch(e) {
-    list.innerHTML = '<div style="color:var(--muted);padding:1.5rem;text-align:center;font-size:0.83rem">Could not load jobs. Make sure jobs-setup.sql has been run.</div>';
-  }
 }
 
 /* ══ INIT ══ */
