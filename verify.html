@@ -257,7 +257,6 @@
       return session.user;
     }
 
-    // Auto‑fill name
     (async () => {
       const user = await getUserSession();
       if (user) {
@@ -265,7 +264,6 @@
       }
     })();
 
-    // ── File handling (with 2MB / 3MB limits) ──
     function handleUpload(type, input) {
       const file = input.files[0];
       if (!file) return;
@@ -298,7 +296,6 @@
       document.getElementById(type + '-preview').innerHTML = '';
     }
 
-    // Convert File → base64
     function fileToBase64(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -336,46 +333,37 @@
       btn.classList.add('loading'); btn.disabled = true;
 
       try {
-        // Convert images to base64
         const idFrontBase64 = await fileToBase64(idFrontFile);
         let idBackBase64 = null, addrBase64 = null;
         if (idBackFile) idBackBase64 = await fileToBase64(idBackFile);
         if (addrFile)   addrBase64   = await fileToBase64(addrFile);
 
-        // Insert with a 40‑second timeout on fetch
-        const controller = new AbortController();
-        const timeoutId  = setTimeout(() => controller.abort(), 40000);
-
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/verification_requests`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': SUPABASE_ANON,
-            'Authorization': `Bearer ${(await sb.auth.getSession()).data.session.access_token}`,
-            'Prefer': 'return=minimal',
-          },
-          body: JSON.stringify({
-            user_id:           user.id,
-            full_name:         fullName,
-            id_type:           idType,
-            id_number:         idNumber,
-            id_image_url:      null,
-            id_image_data:     idFrontBase64,
-            id_image_back_url: null,
+        // Wrap the Supabase insert with a 40‑second timeout
+        const insertPromise = sb
+          .from('verification_requests')
+          .insert({
+            user_id:            user.id,
+            full_name:          fullName,
+            id_type:            idType,
+            id_number:          idNumber,
+            id_image_url:       null,
+            id_image_data:      idFrontBase64,
+            id_image_back_url:  null,
             id_image_back_data: idBackBase64,
-            address_doc_url:   null,
-            address_doc_data:  addrBase64,
-            notes:             document.getElementById('notes').value.trim() || null,
-            status:            'pending'
-          }),
-          signal: controller.signal,
-        });
+            address_doc_url:    null,
+            address_doc_data:   addrBase64,
+            notes:              document.getElementById('notes').value.trim() || null,
+            status:             'pending'
+          });
 
-        clearTimeout(timeoutId);
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('TIMEOUT')), 40000)
+        );
 
-        if (!res.ok) {
-          const errText = await res.text();
-          console.error('Insert error:', errText);
+        const result = await Promise.race([insertPromise, timeoutPromise]);
+
+        if (result.error) {
+          console.error('Insert error:', result.error);
           alert('Could not submit your verification. Please try again.');
           btn.classList.remove('loading'); btn.disabled = false;
           return;
@@ -392,7 +380,7 @@
           </div>
         `;
       } catch (e) {
-        if (e.name === 'AbortError') {
+        if (e.message === 'TIMEOUT') {
           alert('Request timed out. Please check your connection and try again.');
         } else {
           console.error('Verification error:', e);
