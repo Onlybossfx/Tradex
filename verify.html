@@ -247,17 +247,17 @@
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
     let idFrontFile = null, idBackFile = null, addrFile = null;
 
-    // ---------- Session ----------
+    // ── Session ──
     async function getUserSession() {
-      const { data: { session }, error } = await sb.auth.getSession();
-      if (error || !session?.user) {
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session?.user) {
         window.location.href = 'traydr-auth.html';
         return null;
       }
       return session.user;
     }
 
-    // Auto‑fill name (no logs)
+    // Auto‑fill name
     (async () => {
       const user = await getUserSession();
       if (user) {
@@ -265,7 +265,7 @@
       }
     })();
 
-    // ---------- File handling ----------
+    // ── File handling (with 2MB / 3MB limits) ──
     function handleUpload(type, input) {
       const file = input.files[0];
       if (!file) return;
@@ -298,45 +298,17 @@
       document.getElementById(type + '-preview').innerHTML = '';
     }
 
-    // ---------- Upload to storage ----------
-    async function uploadFile(file, folder) {
-      if (!file) return null;
-      const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${file.name.split('.').pop()}`;
-      const url = `${SUPABASE_URL}/storage/v1/object/verifications/${path}`;
-
-      const { data: { session } } = await sb.auth.getSession();
-      const token = session?.access_token;
-      if (!token) {
-        alert('Your session has expired. Please log in again.');
-        window.location.href = 'traydr-auth.html';
-        return null;
-      }
-
-      const formData = new FormData();
-      formData.append('file', file);
-
-      try {
-        const res = await fetch(url, {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${token}` },
-          body: formData,
-        });
-
-        if (!res.ok) {
-          console.error('Upload error', res.status);
-          throw new Error('Upload failed');
-        }
-
-        const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/verifications/${path}`;
-        return publicUrl;
-      } catch (e) {
-        console.error('Upload error:', e);
-        alert('Failed to upload your document. Please check your connection and try again.');
-        return null;
-      }
+    // Convert File → base64
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
     }
 
-    // ---------- Submit handler ----------
+    // ── Submit ──
     document.getElementById('verify-form').addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -358,55 +330,76 @@
         document.getElementById('e-idfront').classList.remove('on');
       }
       if (!fullName || !idType || !idNumber || !idFrontFile) valid = false;
-      if (!valid) {
-        return; // field errors already visible
-      }
+      if (!valid) return;
 
       const btn = document.getElementById('submit-btn');
       btn.classList.add('loading'); btn.disabled = true;
 
-      // Upload front image (required)
-      const idFrontUrl = await uploadFile(idFrontFile, `user_${user.id}`);
-      if (!idFrontUrl) {
+      try {
+        // Convert images to base64
+        const idFrontBase64 = await fileToBase64(idFrontFile);
+        let idBackBase64 = null, addrBase64 = null;
+        if (idBackFile) idBackBase64 = await fileToBase64(idBackFile);
+        if (addrFile)   addrBase64   = await fileToBase64(addrFile);
+
+        // Insert with a 40‑second timeout on fetch
+        const controller = new AbortController();
+        const timeoutId  = setTimeout(() => controller.abort(), 40000);
+
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/verification_requests`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON,
+            'Authorization': `Bearer ${(await sb.auth.getSession()).data.session.access_token}`,
+            'Prefer': 'return=minimal',
+          },
+          body: JSON.stringify({
+            user_id:           user.id,
+            full_name:         fullName,
+            id_type:           idType,
+            id_number:         idNumber,
+            id_image_url:      null,
+            id_image_data:     idFrontBase64,
+            id_image_back_url: null,
+            id_image_back_data: idBackBase64,
+            address_doc_url:   null,
+            address_doc_data:  addrBase64,
+            notes:             document.getElementById('notes').value.trim() || null,
+            status:            'pending'
+          }),
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!res.ok) {
+          const errText = await res.text();
+          console.error('Insert error:', errText);
+          alert('Could not submit your verification. Please try again.');
+          btn.classList.remove('loading'); btn.disabled = false;
+          return;
+        }
+
+        // Success
+        document.querySelector('.card').innerHTML = `
+          <div class="card-glow"></div>
+          <div class="success-box">
+            <i class="fas fa-circle-check" style="color:var(--success)"></i>
+            <h2>Verification Submitted!</h2>
+            <p>We'll review your documents within 1–2 business days. You'll receive a notification when approved.</p>
+            <a href="dashboard-seller.html" class="btn-primary" style="display:inline-block;width:auto;padding:0.75rem 2rem;text-decoration:none;margin-top:0">Back to Dashboard</a>
+          </div>
+        `;
+      } catch (e) {
+        if (e.name === 'AbortError') {
+          alert('Request timed out. Please check your connection and try again.');
+        } else {
+          console.error('Verification error:', e);
+          alert('Something went wrong. Please try again.');
+        }
         btn.classList.remove('loading'); btn.disabled = false;
-        return;
       }
-
-      // Upload optional back image & address doc
-      const idBackUrl  = idBackFile ? await uploadFile(idBackFile, `user_${user.id}`) : null;
-      const addrDocUrl = addrFile  ? await uploadFile(addrFile, `user_${user.id}`) : null;
-
-      // Insert database record
-      const { error: insertErr } = await sb.from('verification_requests').insert({
-        user_id:          user.id,
-        full_name:        fullName,
-        id_type:          idType,
-        id_number:        idNumber,
-        id_image_url:     idFrontUrl,
-        id_image_back_url: idBackUrl,
-        address_doc_url:  addrDocUrl,
-        notes:            document.getElementById('notes').value.trim() || null,
-        status:           'pending'
-      });
-
-      if (insertErr) {
-        console.error('Insert error:', insertErr);
-        alert('Could not submit your verification. Please try again.');
-        btn.classList.remove('loading'); btn.disabled = false;
-        return;
-      }
-
-      // Success
-      btn.classList.remove('loading'); btn.disabled = false;
-      document.querySelector('.card').innerHTML = `
-        <div class="card-glow"></div>
-        <div class="success-box">
-          <i class="fas fa-circle-check" style="color:var(--success)"></i>
-          <h2>Verification Submitted!</h2>
-          <p>We'll review your documents within 1–2 business days. You'll receive a notification when approved.</p>
-          <a href="dashboard-seller.html" class="btn-primary" style="display:inline-block;width:auto;padding:0.75rem 2rem;text-decoration:none;margin-top:0">Back to Dashboard</a>
-        </div>
-      `;
     });
   </script>
 
