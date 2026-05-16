@@ -92,14 +92,14 @@
 
     .upa{
       border:2px dashed var(--border);border-radius:11px;
-      padding:1.25rem;text-align:center;cursor:pointer;
+      padding:1rem;text-align:center;cursor:pointer;
       transition:all 0.2s;background:var(--bg3)
     }
     .upa:hover,.upa.drag{border-color:rgba(245,158,11,0.4);background:var(--amber-dim)}
-    .upa-icon{font-size:1.75rem;margin-bottom:0.4rem}
-    .upa-txt{font-size:0.82rem;color:var(--muted)}
+    .upa-icon{font-size:1.5rem;margin-bottom:0.2rem}
+    .upa-txt{font-size:0.78rem;color:var(--muted)}
     .upa-txt strong{color:var(--amber)}
-    .upa-hint{font-size:0.72rem;color:var(--dim);margin-top:0.25rem}
+    .upa-hint{font-size:0.68rem;color:var(--dim);margin-top:0.2rem}
 
     .preview-row{display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.65rem}
     .preview-item{
@@ -140,6 +140,8 @@
     .success-box i{font-size:3.5rem;margin-bottom:1rem;display:block}
     .success-box h2{font-family:var(--serif);font-size:1.6rem;font-weight:700;margin-bottom:0.75rem}
     .success-box p{color:var(--muted);font-size:0.9rem;line-height:1.7;margin-bottom:1.5rem}
+
+    .loading-small{display:inline-block;width:14px;height:14px;border:2px solid rgba(0,0,0,0.2);border-top-color:var(--amber);border-radius:50%;animation:spin 0.6s linear infinite;vertical-align:middle;margin-left:6px}
 
     @media(max-width:480px){
       body{padding:1.25rem;align-items:flex-start;padding-top:2rem}
@@ -200,7 +202,7 @@
           <div class="upa-txt">Click to upload <strong>ID front</strong></div>
           <div class="upa-hint">JPG, PNG — max 2MB</div>
         </div>
-        <input type="file" id="id-front-input" accept="image/*" style="display:none" onchange="handleUpload('id-front', this)" />
+        <input type="file" id="id-front-input" accept="image/*" style="display:none" />
         <div class="preview-row" id="id-front-preview"></div>
         <div class="ferr" id="e-idfront">Required</div>
       </div>
@@ -212,7 +214,7 @@
           <div class="upa-txt">Click to upload <strong>ID back</strong></div>
           <div class="upa-hint">JPG, PNG — max 2MB</div>
         </div>
-        <input type="file" id="id-back-input" accept="image/*" style="display:none" onchange="handleUpload('id-back', this)" />
+        <input type="file" id="id-back-input" accept="image/*" style="display:none" />
         <div class="preview-row" id="id-back-preview"></div>
       </div>
 
@@ -223,14 +225,16 @@
           <div class="upa-txt">Upload a utility bill or bank statement</div>
           <div class="upa-hint">PDF or image — max 3MB</div>
         </div>
-        <input type="file" id="addr-input" accept=".pdf,.jpg,.jpeg,.png" style="display:none" onchange="handleUpload('address', this)" />
+        <input type="file" id="addr-input" accept=".pdf,.jpg,.jpeg,.png" style="display:none" />
         <div class="preview-row" id="address-preview"></div>
       </div>
 
       <div class="field">
         <label>Additional Notes (optional)</label>
-        <textarea style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:0.78rem;color:var(--text);font-size:0.9rem;font-family:var(--sans);outline:none;resize:vertical;min-height:80px;transition:border-color 0.2s" id="notes" placeholder="Any extra information..."></textarea>
+        <textarea style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:0.78rem;color:var(--text);font-size:0.9rem;font-family:var(--sans);outline:none;resize:vertical;min-height:80px" id="notes" placeholder="Any extra information..."></textarea>
       </div>
+
+      <div id="form-error" class="ferr" style="text-align:center;margin-bottom:0.5rem;display:none"></div>
 
       <button type="submit" class="btn-primary" id="submit-btn">
         <span class="lbl">Submit Verification</span>
@@ -247,29 +251,38 @@
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
     let idFrontFile = null, idBackFile = null, addrFile = null;
 
-    // ── Session ──
-    async function getUserSession() {
-      const { data: { session } } = await sb.auth.getSession();
-      if (!session?.user) {
+    // Helper: show/hide form error
+    function showFormError(msg) {
+      const errDiv = document.getElementById('form-error');
+      errDiv.textContent = msg;
+      errDiv.style.display = 'block';
+      setTimeout(() => { errDiv.style.display = 'none'; }, 5000);
+    }
+
+    // Get current user and ensure logged in
+    async function getUser() {
+      const { data: { user } } = await sb.auth.getUser();
+      if (!user) {
         window.location.href = 'traydr-auth.html';
         return null;
       }
-      return session.user;
+      return user;
     }
 
     (async () => {
-      const user = await getUserSession();
-      if (user) {
-        document.getElementById('full-name').value = user.user_metadata?.full_name || '';
+      const user = await getUser();
+      if (user && user.user_metadata?.full_name) {
+        document.getElementById('full-name').value = user.user_metadata.full_name;
       }
     })();
 
+    // File preview & storage
     function handleUpload(type, input) {
       const file = input.files[0];
       if (!file) return;
       const maxSize = (type === 'address') ? 3 * 1024 * 1024 : 2 * 1024 * 1024;
       if (file.size > maxSize) {
-        alert('File too large. Maximum ' + Math.round(maxSize/1024/1024) + 'MB');
+        alert(`File too large. Max ${maxSize / 1024 / 1024}MB`);
         input.value = '';
         return;
       }
@@ -280,41 +293,54 @@
       if (file.type.startsWith('image/')) {
         const reader = new FileReader();
         reader.onload = (e) => {
-          document.getElementById(type + '-preview').innerHTML = `<div class="preview-item">
+          const previewDiv = document.getElementById(type + '-preview');
+          previewDiv.innerHTML = `<div class="preview-item">
             <img src="${e.target.result}" />
             <button class="rm-btn" onclick="removeFile('${type}')"><i class="fas fa-xmark"></i></button>
           </div>`;
         };
         reader.readAsDataURL(file);
+      } else {
+        // For PDF, just show file name
+        const previewDiv = document.getElementById(type + '-preview');
+        previewDiv.innerHTML = `<div class="preview-item" style="display:flex;align-items:center;justify-content:center;background:var(--bg3)">
+          <span style="font-size:0.7rem">${file.name.slice(0,10)}</span>
+          <button class="rm-btn" onclick="removeFile('${type}')"><i class="fas fa-xmark"></i></button>
+        </div>`;
       }
     }
 
-    function removeFile(type) {
+    window.removeFile = function(type) {
       if (type === 'id-front') { idFrontFile = null; document.getElementById('id-front-input').value = ''; }
       else if (type === 'id-back') { idBackFile = null; document.getElementById('id-back-input').value = ''; }
       else if (type === 'address') { addrFile = null; document.getElementById('addr-input').value = ''; }
       document.getElementById(type + '-preview').innerHTML = '';
+    };
+
+    // Upload a file to Supabase Storage (bucket "verifications")
+    async function uploadFile(userId, file, pathPrefix) {
+      if (!file) return null;
+      const ext = file.name.split('.').pop();
+      const fileName = `${userId}/${pathPrefix}_${Date.now()}.${ext}`;
+      const { data, error } = await sb.storage
+        .from('verifications')
+        .upload(fileName, file, { cacheControl: '3600', upsert: false });
+      if (error) throw error;
+      const { data: { publicUrl } } = sb.storage.from('verifications').getPublicUrl(fileName);
+      return publicUrl;
     }
 
-    function fileToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
-
-    // ── Submit ──
+    // Submit form
     document.getElementById('verify-form').addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const user = await getUserSession();
+      const user = await getUser();
       if (!user) return;
 
       const fullName = document.getElementById('full-name').value.trim();
       const idType   = document.getElementById('id-type').value;
       const idNumber = document.getElementById('id-number').value.trim();
+      const notes    = document.getElementById('notes').value.trim() || null;
 
       let valid = true;
       document.getElementById('e-name').classList.toggle('on', !fullName);
@@ -331,43 +357,35 @@
 
       const btn = document.getElementById('submit-btn');
       btn.classList.add('loading'); btn.disabled = true;
+      const originalText = btn.querySelector('.lbl');
+      originalText.textContent = 'Uploading files...';
 
       try {
-        const idFrontBase64 = await fileToBase64(idFrontFile);
-        let idBackBase64 = null, addrBase64 = null;
-        if (idBackFile) idBackBase64 = await fileToBase64(idBackFile);
-        if (addrFile)   addrBase64   = await fileToBase64(addrFile);
+        // Upload files to Storage
+        const idFrontUrl = await uploadFile(user.id, idFrontFile, 'id_front');
+        let idBackUrl = null;
+        if (idBackFile) idBackUrl = await uploadFile(user.id, idBackFile, 'id_back');
+        let addrUrl = null;
+        if (addrFile) addrUrl = await uploadFile(user.id, addrFile, 'address');
 
-        // Wrap the Supabase insert with a 40‑second timeout
-        const insertPromise = sb
+        originalText.textContent = 'Saving to database...';
+
+        // Insert into verification_requests table (using URL columns)
+        const { error: insertError } = await sb
           .from('verification_requests')
           .insert({
-            user_id:            user.id,
-            full_name:          fullName,
-            id_type:            idType,
-            id_number:          idNumber,
-            id_image_url:       null,
-            id_image_data:      idFrontBase64,
-            id_image_back_url:  null,
-            id_image_back_data: idBackBase64,
-            address_doc_url:    null,
-            address_doc_data:   addrBase64,
-            notes:              document.getElementById('notes').value.trim() || null,
-            status:             'pending'
+            user_id:          user.id,
+            full_name:        fullName,
+            id_type:          idType,
+            id_number:        idNumber,
+            id_image_url:     idFrontUrl,
+            id_image_back_url: idBackUrl,
+            address_doc_url:  addrUrl,
+            notes:            notes,
+            status:           'pending'
           });
 
-        const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('TIMEOUT')), 40000)
-        );
-
-        const result = await Promise.race([insertPromise, timeoutPromise]);
-
-        if (result.error) {
-          console.error('Insert error:', result.error);
-          alert('Could not submit your verification. Please try again.');
-          btn.classList.remove('loading'); btn.disabled = false;
-          return;
-        }
+        if (insertError) throw insertError;
 
         // Success
         document.querySelector('.card').innerHTML = `
@@ -379,16 +397,43 @@
             <a href="dashboard-seller.html" class="btn-primary" style="display:inline-block;width:auto;padding:0.75rem 2rem;text-decoration:none;margin-top:0">Back to Dashboard</a>
           </div>
         `;
-      } catch (e) {
-        if (e.message === 'TIMEOUT') {
-          alert('Request timed out. Please check your connection and try again.');
-        } else {
-          console.error('Verification error:', e);
-          alert('Something went wrong. Please try again.');
+      } catch (err) {
+        console.error('Verification error:', err);
+        let msg = err.message || 'Could not submit verification. Please try again.';
+        if (msg.includes('storage/object') || msg.includes('bucket')) {
+          msg = 'Storage bucket not configured. Please contact support (verifications bucket missing).';
         }
+        showFormError(msg);
         btn.classList.remove('loading'); btn.disabled = false;
+        originalText.textContent = 'Submit Verification';
       }
     });
+
+    // Attach file input handlers
+    document.getElementById('id-front-input').addEventListener('change', (e) => handleUpload('id-front', e.target));
+    document.getElementById('id-back-input').addEventListener('change', (e) => handleUpload('id-back', e.target));
+    document.getElementById('addr-input').addEventListener('change', (e) => handleUpload('address', e.target));
+
+    // Drag & drop enhancements (optional)
+    function setupDragZone(zoneId, inputId, type) {
+      const zone = document.getElementById(zoneId);
+      const input = document.getElementById(inputId);
+      zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('drag'); });
+      zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+      zone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        zone.classList.remove('drag');
+        const file = e.dataTransfer.files[0];
+        if (file) {
+          input.files = e.dataTransfer.files;
+          const event = new Event('change');
+          input.dispatchEvent(event);
+        }
+      });
+    }
+    setupDragZone('id-front-zone', 'id-front-input', 'id-front');
+    setupDragZone('id-back-zone', 'id-back-input', 'id-back');
+    setupDragZone('addr-zone', 'addr-input', 'address');
   </script>
 
   <script>
