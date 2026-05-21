@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subscribe to TraydR Pro</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="https://checkout.flutterwave.com/v3.js"></script>
+  <style>
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: #FFF8F0;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .card {
+      background: #FFECD2;
+      border: 1px solid rgba(255,160,60,0.35);
+      border-radius: 20px;
+      max-width: 480px;
+      width: 100%;
+      padding: 2rem;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+    h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+      color: #1C1208;
+    }
+    .price {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #C2690A;
+      margin: 0.5rem 0;
+    }
+    .trial-note {
+      background: rgba(194,105,10,0.1);
+      border-radius: 12px;
+      padding: 0.75rem;
+      font-size: 0.85rem;
+      color: #C2690A;
+      margin: 1rem 0;
+    }
+    button {
+      background: #C2690A;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 0.9rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      width: 100%;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 1rem;
+    }
+    button:hover { background: #D97706; }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
+    .loader {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #fff;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .status { margin-top: 1rem; font-size: 0.85rem; color: #1C1208; }
+    .error { color: #DC2626; }
+    .success { color: #16A34A; }
+    a { color: #C2690A; text-decoration: none; }
+    .back-link { display: inline-block; margin-top: 1rem; font-size: 0.8rem; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <h1>Start your free trial</h1>
+  <div class="price" id="plan-price">Pro · $5/month</div>
+  <p>14‑day free trial · No automatic charge until trial ends</p>
+  <div class="trial-note">
+    <strong>🔒 Your card will be authorized for $0.50</strong><br>
+    This is just to verify your card. No actual charge.
+  </div>
+  <button id="subscribe-btn">Enter card details →</button>
+  <div id="status" class="status"></div>
+  <a href="pricing.html" class="back-link">← Back to pricing</a>
+</div>
+
+<script>
+  // Create Supabase client instance
+  const supabaseUrl = 'https://rtwbrcbifnowrqpgivma.supabase.co';
+  const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc';
+  const sb = supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+  // Get plan from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const plan = urlParams.get('plan') || 'pro';
+  const period = urlParams.get('period') || 'monthly';
+
+  const prices = {
+    pro: { monthly: 5, yearly: 50 },
+    business: { monthly: 12, yearly: 100 }
+  };
+  const price = prices[plan]?.[period] || 5;
+  const priceText = plan === 'pro' ? 'Pro' : 'Business';
+  document.getElementById('plan-price').innerHTML = `${priceText} · $${price}/${period === 'monthly' ? 'month' : 'year'}`;
+
+  const btn = document.getElementById('subscribe-btn');
+  const statusDiv = document.getElementById('status');
+
+  btn.addEventListener('click', async () => {
+    btn.disabled = true;
+    btn.innerHTML = 'Processing... <span class="loader"></span>';
+    statusDiv.innerHTML = 'Checking your account...';
+
+    // Get current user using our client instance
+    const { data: { user }, error: userError } = await sb.auth.getUser();
+    if (userError || !user) {
+      statusDiv.innerHTML = '<span class="error">Please log in first.</span>';
+      btn.disabled = false;
+      btn.innerHTML = 'Enter card details →';
+      sessionStorage.setItem('traydr_return_to', window.location.href);
+      window.location.href = 'traydr-auth.html';
+      return;
+    }
+
+    statusDiv.innerHTML = 'Opening secure payment form...';
+
+    const authAmount = plan === 'pro' ? 0.5 : 1.0;
+
+    FlutterwaveCheckout({
+      public_key: 'FLWPUBK_TEST-33416ff627c0b774941dee0bb4e97470-X',
+      tx_ref: 'TRIAL-' + user.id + '-' + Date.now(),
+      amount: authAmount,
+      currency: 'USD',
+      payment_options: 'card',
+      customer: {
+        email: user.email,
+        name: user.user_metadata?.full_name || user.email.split('@')[0],
+      },
+      callback: async (response) => {
+        if (response.status !== 'successful') {
+          statusDiv.innerHTML = '<span class="error">Payment authorization failed. Please try again.</span>';
+          btn.disabled = false;
+          btn.innerHTML = 'Enter card details →';
+          return;
+        }
+
+        statusDiv.innerHTML = 'Verifying card and setting up trial...';
+
+        try {
+          const tokenRes = await fetch('https://rtwbrcbifnowrqpgivma.supabase.co/functions/v1/bright-processor', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ transaction_id: response.transaction_id })
+          });
+          const tokenData = await tokenRes.json();
+          if (!tokenData.token) throw new Error('No token returned');
+
+          const subRes = await fetch('https://rtwbrcbifnowrqpgivma.supabase.co/functions/v1/smooth-service', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              user_id: user.id,
+              email: user.email,
+              plan: plan,
+              billing_period: period,
+              card_token: tokenData.token,
+            })
+          });
+          const subResult = await subRes.json();
+          if (subResult.error) throw new Error(subResult.error);
+
+          statusDiv.innerHTML = '<span class="success">✓ Trial activated! Redirecting to dashboard...</span>';
+          setTimeout(() => {
+            window.location.href = 'dashboard-seller.html';
+          }, 2000);
+        } catch (err) {
+          console.error(err);
+          statusDiv.innerHTML = '<span class="error">Failed to set up subscription: ' + err.message + '. Please contact support.</span>';
+          btn.disabled = false;
+          btn.innerHTML = 'Enter card details →';
+        }
+      },
+      onclose: () => {
+        if (btn.disabled) {
+          btn.disabled = false;
+          btn.innerHTML = 'Enter card details →';
+          statusDiv.innerHTML = '';
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>

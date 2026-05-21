@@ -25,202 +25,82 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="icon" type="image/png" href="logo.png" />
   <style>
+    /* ========== ALL CSS FROM PREVIOUS VERSION (unchanged) ========== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --amber: #C2690A;
-      --amber-light: #D97706;
-      --amber-soft: #F5E1CC;
-      --bg: #FFF8F0;
-      --bg2: #FFECD2;
-      --bg-dark: #1C1208;
-      --text: #1C1208;
-      --text-light: #FFF8F0;
-      --muted: rgba(28, 18, 8, 0.55);
-      --border: rgba(28, 18, 8, 0.08);
-      --border-amber: rgba(194, 105, 10, 0.25);
-      --serif: 'Playfair Display', Georgia, serif;
-      --sans: 'DM Sans', system-ui, sans-serif;
+      --amber: #C2690A; --amber-light: #D97706; --amber-soft: #F5E1CC;
+      --bg: #FFF8F0; --bg2: #FFECD2; --bg-dark: #1C1208;
+      --text: #1C1208; --text-light: #FFF8F0; --muted: rgba(28, 18, 8, 0.55);
+      --border: rgba(28, 18, 8, 0.08); --border-amber: rgba(194, 105, 10, 0.25);
+      --serif: 'Playfair Display', Georgia, serif; --sans: 'DM Sans', system-ui, sans-serif;
       --nav-height: 60px;
     }
-
     html { scroll-behavior: smooth; }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--sans);
-      -webkit-font-smoothing: antialiased;
-      line-height: 1.5;
-      padding-top: var(--nav-height);
-      overflow-x: hidden;
-    }
+    body { background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; line-height: 1.5; padding-top: var(--nav-height); overflow-x: hidden; }
     a { text-decoration: none; color: inherit; }
     button { cursor: pointer; font-family: var(--sans); border: none; background: none; }
     img { max-width: 100%; display: block; }
     .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
     .container-sm { max-width: 960px; margin: 0 auto; padding: 0 2rem; }
     section { padding: 5rem 2rem; }
-
-    /* ---------- Utility ---------- */
-    .section-tag {
-      font-size: 0.75rem; letter-spacing: 0.2em; font-weight: 600;
-      color: var(--amber); margin-bottom: 1rem; text-transform: uppercase;
-    }
-    .section-title {
-      font-family: var(--serif); font-size: clamp(1.8rem, 4.5vw, 3rem);
-      font-weight: 700; letter-spacing: -0.02em; line-height: 1.15;
-    }
+    .section-tag { font-size: 0.75rem; letter-spacing: 0.2em; font-weight: 600; color: var(--amber); margin-bottom: 1rem; text-transform: uppercase; }
+    .section-title { font-family: var(--serif); font-size: clamp(1.8rem, 4.5vw, 3rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
     .fade-up { opacity: 1; transform: none; }
-
-    /* ---------- Navigation ---------- */
-    #nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      padding: 0.5rem 2rem; display: flex; align-items: center;
-      justify-content: space-between; background: rgba(255, 248, 240, 0.97);
-      backdrop-filter: blur(14px); border-bottom: 1px solid var(--border);
-      transition: box-shadow 0.3s; height: var(--nav-height);
-    }
+    #nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 0.5rem 2rem; display: flex; align-items: center; justify-content: space-between; background: rgba(255, 248, 240, 0.97); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); transition: box-shadow 0.3s; height: var(--nav-height); }
     #nav.scrolled { box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
     .nav-logo { display: flex; align-items: center; gap: 8px; }
     .nav-logo img { height: 60px; width: auto; }
     .nav-links { display: flex; align-items: center; gap: 1.5rem; }
-    .nav-links a {
-      font-size: 0.9rem; font-weight: 500; color: var(--text);
-      transition: color 0.2s; letter-spacing: 0.01em;
-    }
+    .nav-links a { font-size: 0.9rem; font-weight: 500; color: var(--text); transition: color 0.2s; letter-spacing: 0.01em; }
     .nav-links a:hover { color: var(--amber); }
-    .btn-outline {
-      background: transparent; border: 1px solid rgba(28, 18, 8, 0.3); color: var(--text);
-      padding: 0.5rem 1.2rem; border-radius: 8px; font-size: 0.85rem; font-weight: 500;
-      transition: all 0.25s;
-    }
+    .btn-outline { background: transparent; border: 1px solid rgba(28, 18, 8, 0.3); color: var(--text); padding: 0.5rem 1.2rem; border-radius: 8px; font-size: 0.85rem; font-weight: 500; transition: all 0.25s; }
     .btn-outline:hover { background: rgba(28, 18, 8, 0.05); border-color: var(--amber); }
-    .btn-amber {
-      background: var(--amber); color: white; padding: 0.5rem 1.3rem;
-      border-radius: 8px; font-size: 0.85rem; font-weight: 600; transition: background 0.25s;
-    }
+    .btn-amber { background: var(--amber); color: white; padding: 0.5rem 1.3rem; border-radius: 8px; font-size: 0.85rem; font-weight: 600; transition: background 0.25s; }
     .btn-amber:hover { background: var(--amber-light); }
     .hamburger { display: none; flex-direction: column; gap: 5px; background: transparent; border: none; padding: 8px; z-index: 101; }
-    .hamburger span {
-      display: block; width: 24px; height: 2px; background: var(--text);
-      border-radius: 2px; transition: transform 0.3s, opacity 0.3s;
-    }
-    .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--text); border-radius: 2px; transition: transform 0.3s, opacity 0.3s; }
+    .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
     .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
-    .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
-
-    /* ---------- Mobile Menu ---------- */
-    #mobile-menu {
-      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 99;
-      background: rgba(255, 248, 240, 0.99); backdrop-filter: blur(20px);
-      padding: calc(var(--nav-height) + 1rem) 2rem 2rem; flex-direction: column;
-      gap: 1.5rem; overflow-y: auto; transition: opacity 0.3s;
-    }
+    .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
+    #mobile-menu { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 99; background: rgba(255, 248, 240, 0.99); backdrop-filter: blur(20px); padding: calc(var(--nav-height) + 1rem) 2rem 2rem; flex-direction: column; gap: 1.5rem; overflow-y: auto; transition: opacity 0.3s; }
     #mobile-menu.open { display: flex; }
     #mobile-menu a { color: var(--text); font-size: 1.1rem; font-weight: 500; padding: 0.6rem 0; border-bottom: 1px solid var(--border); }
     .mobile-btns { display: flex; gap: 0.75rem; margin-top: 1rem; flex-direction: column; }
     .mobile-btns button { width: 100%; padding: 0.8rem; border-radius: 8px; font-size: 0.95rem; }
-
-    /* ---------- Hero ---------- */
-    #hero {
-      min-height: 90vh;
-      background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.4)), 
-                  url('https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?w=1920&q=80') center/cover no-repeat;
-      display: flex; align-items: center; justify-content: center; position: relative; padding: 2rem;
-    }
-    .hero-inner {
-      width: 100%; max-width: 800px; text-align: center; color: #fff; z-index: 2;
-      margin-top: 2rem; overflow: hidden;
-    }
-    .hero-inner h1 {
-      font-family: var(--serif); font-size: clamp(2rem, 6vw, 3.8rem);
-      font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 1.5rem;
-    }
+    #hero { min-height: 90vh; background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?w=1920&q=80') center/cover no-repeat; display: flex; align-items: center; justify-content: center; position: relative; padding: 2rem; }
+    .hero-inner { width: 100%; max-width: 800px; text-align: center; color: #fff; z-index: 2; margin-top: 2rem; overflow: hidden; }
+    .hero-inner h1 { font-family: var(--serif); font-size: clamp(2rem, 6vw, 3.8rem); font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 1.5rem; }
     .hero-inner h1 em { font-style: normal; color: var(--amber); }
-    .hero-inner p {
-      font-size: 1.05rem; line-height: 1.7; color: rgba(255,255,255,0.85);
-      max-width: 540px; margin: 0 auto 2.5rem;
-    }
-    .search-bar {
-      display: flex; max-width: 460px; width: 100%; margin: 0 auto 1.8rem;
-      background: rgba(255,255,255,0.15); backdrop-filter: blur(8px);
-      border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.25);
-    }
-    .search-bar input {
-      flex: 1; background: transparent; border: none; padding: 0.9rem 1.2rem;
-      color: #fff; font-size: 0.92rem; outline: none; min-width: 0;
-    }
+    .hero-inner p { font-size: 1.05rem; line-height: 1.7; color: rgba(255,255,255,0.85); max-width: 540px; margin: 0 auto 2.5rem; }
+    .search-bar { display: flex; max-width: 460px; width: 100%; margin: 0 auto 1.8rem; background: rgba(255,255,255,0.15); backdrop-filter: blur(8px); border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.25); }
+    .search-bar input { flex: 1; background: transparent; border: none; padding: 0.9rem 1.2rem; color: #fff; font-size: 0.92rem; outline: none; min-width: 0; }
     .search-bar input::placeholder { color: rgba(255,255,255,0.6); }
-    .search-bar button {
-      background: var(--amber); color: #fff; padding: 0 1.6rem; font-weight: 600;
-      font-size: 0.92rem; white-space: nowrap; transition: background 0.25s;
-    }
+    .search-bar button { background: var(--amber); color: #fff; padding: 0 1.6rem; font-weight: 600; font-size: 0.92rem; white-space: nowrap; transition: background 0.25s; }
     .search-bar button:hover { background: var(--amber-light); }
-    .tags {
-      width: 100%; display: flex; gap: 0.6rem; align-items: center; margin-bottom: 2rem;
-      overflow-x: auto; white-space: nowrap; scrollbar-width: none;
-      -webkit-overflow-scrolling: touch; padding: 4px 0;
-      -webkit-mask-image: linear-gradient(to right, black 0%, black 85%, transparent 100%);
-      mask-image: linear-gradient(to right, black 0%, black 85%, transparent 100%);
-    }
+    .tags { width: 100%; display: flex; gap: 0.6rem; align-items: center; margin-bottom: 2rem; overflow-x: auto; white-space: nowrap; scrollbar-width: none; -webkit-overflow-scrolling: touch; padding: 4px 0; -webkit-mask-image: linear-gradient(to right, black 0%, black 85%, transparent 100%); mask-image: linear-gradient(to right, black 0%, black 85%, transparent 100%); }
     .tags::-webkit-scrollbar { display: none; }
     .tags .label { color: rgba(255,255,255,0.6); font-size: 0.8rem; margin-right: 0.5rem; flex-shrink: 0; }
-    .tag {
-      background: rgba(255,255,255,0.1); backdrop-filter: blur(4px);
-      border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 0.35rem 1rem;
-      border-radius: 100px; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
-    }
+    .tag { background: rgba(255,255,255,0.1); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 0.35rem 1rem; border-radius: 100px; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; flex-shrink: 0; }
     .tag:hover { background: rgba(255,255,255,0.25); border-color: var(--amber); }
     .hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-
-    /* ---------- Stats ---------- */
-    #stats {
-      background: var(--bg2); border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border); padding: 2.5rem 2rem;
-    }
-    .stats-grid {
-      display: flex; justify-content: space-around; flex-wrap: wrap;
-      gap: 2rem; max-width: 1000px; margin: 0 auto; text-align: center;
-    }
-    .stat-item .stat-val {
-      font-family: var(--serif); font-size: 2.2rem; font-weight: 700;
-      color: var(--amber); line-height: 1.2;
-    }
+    #stats { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 2.5rem 2rem; }
+    .stats-grid { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 2rem; max-width: 1000px; margin: 0 auto; text-align: center; }
+    .stat-item .stat-val { font-family: var(--serif); font-size: 2.2rem; font-weight: 700; color: var(--amber); line-height: 1.2; }
     .stat-item .stat-label { color: var(--muted); font-size: 0.85rem; margin-top: 0.2rem; }
-
-    /* ---------- Categories ---------- */
     #categories { background: var(--bg); }
-    .cat-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 1.5rem;
-    }
-    .cat-card {
-      position: relative; height: 220px; border-radius: 18px; overflow: hidden;
-      cursor: pointer; transition: transform 0.4s, box-shadow 0.4s;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-    }
+    .cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; }
+    .cat-card { position: relative; height: 220px; border-radius: 18px; overflow: hidden; cursor: pointer; transition: transform 0.4s, box-shadow 0.4s; box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
     .cat-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(194,105,10,0.15); }
     .cat-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
     .cat-card:hover img { transform: scale(1.08); }
-    .cat-overlay {
-      position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.8) 30%, rgba(0,0,0,0.2));
-      padding: 1.2rem; display: flex; flex-direction: column; justify-content: flex-end; color: #fff;
-    }
+    .cat-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8) 30%, rgba(0,0,0,0.2)); padding: 1.2rem; display: flex; flex-direction: column; justify-content: flex-end; color: #fff; }
     .cat-icon { font-size: 1.8rem; margin-bottom: 0.4rem; color: var(--amber); }
     .cat-name { font-family: var(--serif); font-size: 1.2rem; font-weight: 600; margin-bottom: 0.2rem; }
     .cat-desc { font-size: 0.8rem; opacity: 0.85; line-height: 1.4; }
     .cat-count { font-size: 0.7rem; color: rgba(255,255,255,0.5); margin-top: 0.4rem; }
-
-    /* ---------- Featured Listings ---------- */
     #listings { background: var(--bg2); }
     .listings-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.8rem; }
-    .listing-card {
-      background: #fff; border-radius: 16px; overflow: hidden;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.03); transition: transform 0.3s, box-shadow 0.3s;
-      cursor: pointer;
-    }
+    .listing-card { background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.03); transition: transform 0.3s, box-shadow 0.3s; cursor: pointer; }
     .listing-card:hover { transform: translateY(-6px); box-shadow: 0 12px 30px rgba(194,105,10,0.12); }
     .listing-thumb { height: 160px; background: #f0ebe4; overflow: hidden; }
     .listing-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
@@ -232,136 +112,65 @@
     .listing-rating { display: flex; align-items: center; gap: 4px; color: var(--amber); font-size: 0.85rem; }
     .listing-rating .rc { color: var(--muted); font-size: 0.75rem; margin-left: 4px; }
     .listing-price { font-family: var(--serif); font-weight: 700; font-size: 1.2rem; color: var(--amber); }
-
-    /* ---------- How It Works ---------- */
     #how { background: var(--bg); }
     .steps-grid { display: flex; justify-content: space-between; gap: 2rem; flex-wrap: wrap; }
     .step { flex: 1; min-width: 180px; text-align: center; position: relative; }
-    .step::after {
-      content: ''; position: absolute; top: 30px; left: 60%; width: 80%; height: 1px;
-      background: var(--border-amber); z-index: 0;
-    }
+    .step::after { content: ''; position: absolute; top: 30px; left: 60%; width: 80%; height: 1px; background: var(--border-amber); z-index: 0; }
     .step:last-child::after { display: none; }
-    .step-num {
-      width: 60px; height: 60px; border-radius: 50%; background: #fff;
-      border: 2px solid var(--amber); display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 1.2rem; font-family: var(--serif); font-weight: 700; font-size: 1.2rem;
-      color: var(--amber); position: relative; z-index: 1;
-    }
+    .step-num { width: 60px; height: 60px; border-radius: 50%; background: #fff; border: 2px solid var(--amber); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.2rem; font-family: var(--serif); font-weight: 700; font-size: 1.2rem; color: var(--amber); position: relative; z-index: 1; }
     .step-title { font-weight: 600; font-size: 1rem; margin-bottom: 0.4rem; }
     .step-desc { color: var(--muted); font-size: 0.85rem; line-height: 1.5; }
-
-    /* ---------- Trust ---------- */
     #trust { background: var(--bg2); }
     .trust-grid { display: flex; justify-content: space-between; gap: 2rem; flex-wrap: wrap; }
-    .trust-card {
-      flex: 1; min-width: 160px; text-align: center; padding: 2rem 1rem;
-      background: rgba(255,255,255,0.5); border-radius: 16px; border: 1px solid var(--border);
-      backdrop-filter: blur(8px);
-    }
+    .trust-card { flex: 1; min-width: 160px; text-align: center; padding: 2rem 1rem; background: rgba(255,255,255,0.5); border-radius: 16px; border: 1px solid var(--border); backdrop-filter: blur(8px); }
     .trust-icon { font-size: 2rem; color: var(--amber); margin-bottom: 0.8rem; }
     .trust-title { font-weight: 600; margin-bottom: 0.3rem; }
     .trust-desc { color: var(--muted); font-size: 0.8rem; }
-
-    /* ---------- Pricing Toggle ---------- */
-    .toggle-pill {
-      width: 48px; height: 26px; border-radius: 100px; position: relative;
-      border: none; padding: 0; cursor: pointer; background: var(--border);
-      transition: background 0.3s;
-    }
+    .toggle-pill { width: 48px; height: 26px; border-radius: 100px; position: relative; border: none; padding: 0; cursor: pointer; background: var(--border); transition: background 0.3s; }
     .toggle-pill.yearly { background: var(--amber); }
-    .toggle-pill::after {
-      content: '';
-      position: absolute; top: 3px; left: 3px;
-      width: 20px; height: 20px; border-radius: 50%;
-      background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-      transition: transform 0.3s;
-    }
+    .toggle-pill::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.15); transition: transform 0.3s; }
     .toggle-pill.yearly::after { transform: translateX(22px); }
-    .save-badge {
-      background: var(--amber); color: #fff; font-size: 0.7rem;
-      padding: 0.2rem 0.6rem; border-radius: 100px; font-weight: 700;
-    }
-
-    /* ---------- Pricing Cards ---------- */
+    .save-badge { background: var(--amber); color: #fff; font-size: 0.7rem; padding: 0.2rem 0.6rem; border-radius: 100px; font-weight: 700; }
     .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
-    .plan-card {
-      background: #fff; border-radius: 20px; padding: 2rem; border: 1px solid var(--border);
-      position: relative; transition: transform 0.3s, box-shadow 0.3s;
-    }
+    .plan-card { background: #fff; border-radius: 20px; padding: 2rem; border: 1px solid var(--border); position: relative; transition: transform 0.3s, box-shadow 0.3s; }
     .plan-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.06); }
-    .plan-card.highlight {
-      border-color: var(--amber); background: #fffaf5; box-shadow: 0 0 0 1px var(--amber);
-    }
-    .popular-pill {
-      position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
-      background: var(--amber); color: white; font-size: 0.7rem; font-weight: 700;
-      letter-spacing: 0.05em; padding: 0.25rem 1rem; border-radius: 100px; white-space: nowrap;
-    }
+    .plan-card.highlight { border-color: var(--amber); background: #fffaf5; box-shadow: 0 0 0 1px var(--amber); }
+    .popular-pill { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: var(--amber); color: white; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em; padding: 0.25rem 1rem; border-radius: 100px; white-space: nowrap; }
     .plan-name { font-weight: 700; font-size: 1.2rem; margin-bottom: 0.2rem; }
     .plan-desc { color: var(--muted); font-size: 0.85rem; margin-bottom: 1.5rem; }
     .plan-price { margin-bottom: 1.5rem; }
-    .plan-price strong {
-      font-family: var(--serif); font-size: 2.4rem; font-weight: 700; color: var(--text);
-    }
+    .plan-price strong { font-family: var(--serif); font-size: 2.4rem; font-weight: 700; color: var(--text); }
     .plan-price span { color: var(--muted); font-size: 0.85rem; margin-left: 4px; }
-    .plan-price .save-text {
-      font-size: 0.8rem; color: var(--amber); margin-left: 0.3rem; display: none;
-    }
+    .plan-price .save-text { font-size: 0.8rem; color: var(--amber); margin-left: 0.3rem; display: none; }
     .plan-features { margin: 1.5rem 0; list-style: none; padding: 0; }
-    .plan-features li {
-      display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.7rem;
-      font-size: 0.9rem; color: var(--text);
-    }
+    .plan-features li { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.7rem; font-size: 0.9rem; color: var(--text); }
     .plan-features li i { color: var(--amber); font-size: 0.8rem; width: 16px; text-align: center; }
-    .plan-btn {
-      width: 100%; padding: 0.8rem; border-radius: 10px; font-weight: 600; font-size: 0.9rem;
-      transition: all 0.25s;
-    }
+    .plan-btn { width: 100%; padding: 0.8rem; border-radius: 10px; font-weight: 600; font-size: 0.9rem; transition: all 0.25s; }
     .plan-btn.primary { background: var(--amber); color: #fff; border: none; }
     .plan-btn.primary:hover { background: var(--amber-light); }
     .plan-btn.secondary { background: transparent; border: 1px solid var(--border-amber); color: var(--amber); }
     .plan-btn.secondary:hover { background: rgba(194,105,10,0.05); }
-
-    /* ---------- CTA ---------- */
+    .current-plan-banner { background: var(--amber-dim); border: 1px solid var(--border); border-radius: 12px; padding: 0.8rem 1.2rem; margin-bottom: 1.5rem; text-align: center; font-size: 0.85rem; }
+    .current-plan-banner strong { color: var(--amber); }
+    .upgrade-link { color: var(--amber); font-weight: 600; margin-left: 0.5rem; text-decoration: underline; cursor: pointer; }
     #cta { background: var(--bg-dark); color: var(--text-light); text-align: center; }
     #cta .section-title { color: #fff; }
     #cta p { color: rgba(255,248,240,0.7); max-width: 500px; margin: 0 auto 2rem; }
     .cta-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-    .btn-amber-lg {
-      background: var(--amber); color: #fff; padding: 0.9rem 2.4rem; border-radius: 10px;
-      font-weight: 600; font-size: 1rem; border: none; transition: background 0.25s;
-    }
+    .btn-amber-lg { background: var(--amber); color: #fff; padding: 0.9rem 2.4rem; border-radius: 10px; font-weight: 600; font-size: 1rem; border: none; transition: background 0.25s; }
     .btn-amber-lg:hover { background: var(--amber-light); }
-    .btn-outline-lg {
-      background: transparent; border: 1px solid rgba(255,248,240,0.5);
-      color: var(--text-light); padding: 0.9rem 2.4rem; border-radius: 10px;
-      font-weight: 500; font-size: 1rem; transition: all 0.25s;
-    }
+    .btn-outline-lg { background: transparent; border: 1px solid rgba(255,248,240,0.5); color: var(--text-light); padding: 0.9rem 2.4rem; border-radius: 10px; font-weight: 500; font-size: 1rem; transition: all 0.25s; }
     .btn-outline-lg:hover { border-color: var(--amber); color: var(--amber); }
-
-    /* ---------- Footer ---------- */
-    footer {
-      background: var(--bg-dark); color: rgba(255,248,240,0.6);
-      padding: 3rem 2rem; border-top: 1px solid rgba(255,255,255,0.08);
-    }
+    footer { background: var(--bg-dark); color: rgba(255,248,240,0.6); padding: 3rem 2rem; border-top: 1px solid rgba(255,255,255,0.08); }
     .footer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; max-width: 1000px; margin: 0 auto; }
-    .footer-col h4 {
-      font-family: var(--serif); font-size: 1rem; font-weight: 700; color: var(--amber); margin-bottom: 1rem;
-    }
+    .footer-col h4 { font-family: var(--serif); font-size: 1rem; font-weight: 700; color: var(--amber); margin-bottom: 1rem; }
     .footer-col ul { list-style: none; padding: 0; }
     .footer-col ul li { margin-bottom: 0.5rem; }
     .footer-col ul li a { color: rgba(255,248,240,0.7); font-size: 0.85rem; transition: color 0.2s; }
     .footer-col ul li a:hover { color: var(--amber); }
-    .footer-bottom {
-      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
-      gap: 1rem; max-width: 1000px; margin: 2rem auto 0; padding-top: 1.5rem;
-      border-top: 1px solid rgba(255,255,255,0.1);
-    }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; max-width: 1000px; margin: 2rem auto 0; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1); }
     .footer-logo img { height: 28px; width: auto; }
     .footer-copy { font-size: 0.8rem; color: rgba(255,248,240,0.4); }
-
-    /* ---------- Responsive ---------- */
     @media (max-width: 768px) {
       .nav-links { display: none; }
       .hamburger { display: flex; }
@@ -376,16 +185,12 @@
       .trust-grid { flex-direction: column; }
       .footer-grid { grid-template-columns: 1fr 1fr; }
     }
-    @media (max-width: 400px) {
-      .footer-grid { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 400px) { .footer-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
   <nav id="nav">
-    <div class="nav-logo">
-      <img src="logo.png" alt="TraydR" />
-    </div>
+    <div class="nav-logo"><img src="logo.png" alt="TraydR" /></div>
     <div class="nav-links">
       <a href="browse.html">Browse</a>
       <a href="dashboard-seller.html">Sell</a>
@@ -393,9 +198,7 @@
       <button class="btn-outline" onclick="window.location.href='traydr-auth.html'">Log In</button>
       <button class="btn-amber" onclick="window.location.href='traydr-auth.html#signup'">Sign Up Free</button>
     </div>
-    <button class="hamburger" id="hamburger" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
+    <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
   </nav>
 
   <div id="mobile-menu">
@@ -433,56 +236,27 @@
 
   <section id="categories">
     <div class="container">
-      <div style="text-align:center; margin-bottom:3rem;">
-        <p class="section-tag">Explore</p>
-        <h2 class="section-title">Trade anything, with anyone.</h2>
-      </div>
+      <div style="text-align:center; margin-bottom:3rem;"><p class="section-tag">Explore</p><h2 class="section-title">Trade anything, with anyone.</h2></div>
       <div class="cat-grid">
         <div class="cat-card fade-up" onclick="window.location.href='browse.html?cat=physical'">
           <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80" alt="Physical goods" loading="lazy" />
-          <div class="cat-overlay">
-            <div class="cat-icon"><i class="fas fa-box"></i></div>
-            <div class="cat-name">Physical Goods</div>
-            <div class="cat-desc">Electronics, fashion, home & more</div>
-            <div class="cat-count" id="cnt-physical">— listings</div>
-          </div>
+          <div class="cat-overlay"><div class="cat-icon"><i class="fas fa-box"></i></div><div class="cat-name">Physical Goods</div><div class="cat-desc">Electronics, fashion, home & more</div><div class="cat-count" id="cnt-physical">— listings</div></div>
         </div>
         <div class="cat-card fade-up" onclick="window.location.href='browse.html?cat=digital'">
           <img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&q=80" alt="Digital products" loading="lazy" />
-          <div class="cat-overlay">
-            <div class="cat-icon"><i class="fas fa-floppy-disk"></i></div>
-            <div class="cat-name">Digital Products</div>
-            <div class="cat-desc">Templates, e‑books, software, art</div>
-            <div class="cat-count" id="cnt-digital">— listings</div>
-          </div>
+          <div class="cat-overlay"><div class="cat-icon"><i class="fas fa-floppy-disk"></i></div><div class="cat-name">Digital Products</div><div class="cat-desc">Templates, e‑books, software, art</div><div class="cat-count" id="cnt-digital">— listings</div></div>
         </div>
         <div class="cat-card fade-up" onclick="window.location.href='browse.html?cat=freelance'">
           <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&q=80" alt="Freelance skills" loading="lazy" />
-          <div class="cat-overlay">
-            <div class="cat-icon"><i class="fas fa-screwdriver-wrench"></i></div>
-            <div class="cat-name">Freelance Skills</div>
-            <div class="cat-desc">Design, code, writing, consulting</div>
-            <div class="cat-count" id="cnt-freelance">— listings</div>
-          </div>
+          <div class="cat-overlay"><div class="cat-icon"><i class="fas fa-screwdriver-wrench"></i></div><div class="cat-name">Freelance Skills</div><div class="cat-desc">Design, code, writing, consulting</div><div class="cat-count" id="cnt-freelance">— listings</div></div>
         </div>
         <div class="cat-card fade-up" onclick="window.location.href='browse.html?cat=experience'">
           <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&q=80" alt="Experiences" loading="lazy" />
-          <div class="cat-overlay">
-            <div class="cat-icon"><i class="fas fa-graduation-cap"></i></div>
-            <div class="cat-name">Experiences</div>
-            <div class="cat-desc">Classes, workshops & events</div>
-            <div class="cat-count" id="cnt-experience">— listings</div>
-          </div>
+          <div class="cat-overlay"><div class="cat-icon"><i class="fas fa-graduation-cap"></i></div><div class="cat-name">Experiences</div><div class="cat-desc">Classes, workshops & events</div><div class="cat-count" id="cnt-experience">— listings</div></div>
         </div>
-        <!-- Jobs Category -->
         <div class="cat-card fade-up" onclick="window.location.href='browse.html?cat=jobs'">
           <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&q=80" alt="Jobs" loading="lazy" />
-          <div class="cat-overlay">
-            <div class="cat-icon"><i class="fas fa-briefcase"></i></div>
-            <div class="cat-name">Jobs</div>
-            <div class="cat-desc">Remote & on-site positions</div>
-            <div class="cat-count" id="cnt-jobs">— listings</div>
-          </div>
+          <div class="cat-overlay"><div class="cat-icon"><i class="fas fa-briefcase"></i></div><div class="cat-name">Jobs</div><div class="cat-desc">Remote & on-site positions</div><div class="cat-count" id="cnt-jobs">— listings</div></div>
         </div>
       </div>
     </div>
@@ -490,53 +264,27 @@
 
   <section id="listings">
     <div class="container">
-      <div style="text-align:center; margin-bottom:2.5rem;">
-        <p class="section-tag">Featured</p>
-        <h2 class="section-title">Top listings this week</h2>
-      </div>
-      <div class="listings-grid" id="listings-grid"></div>
-      <div style="text-align:center; margin-top:2.5rem;">
-        <button class="btn-outline" onclick="window.location.href='browse.html'" style="border-color:var(--amber); color:var(--amber); padding:0.8rem 2rem;">Browse all listings →</button>
-      </div>
+      <div style="text-align:center; margin-bottom:2.5rem;"><p class="section-tag">Featured</p><h2 class="section-title">Top listings this week</h2></div>
+      <div class="listings-grid" id="listings-grid"><div style="text-align:center; padding:3rem;">Loading featured listings...</div></div>
+      <div style="text-align:center; margin-top:2.5rem;"><button class="btn-outline" onclick="window.location.href='browse.html'" style="border-color:var(--amber); color:var(--amber); padding:0.8rem 2rem;">Browse all listings →</button></div>
     </div>
   </section>
 
   <section id="how">
     <div class="container-sm">
-      <div style="text-align:center; margin-bottom:3rem;">
-        <p class="section-tag">Simple Process</p>
-        <h2 class="section-title">How TraydR works</h2>
-      </div>
+      <div style="text-align:center; margin-bottom:3rem;"><p class="section-tag">Simple Process</p><h2 class="section-title">How TraydR works</h2></div>
       <div class="steps-grid">
-        <div class="step fade-up">
-          <div class="step-num">01</div>
-          <div class="step-title">Create Account</div>
-          <div class="step-desc">Sign up as buyer, seller, or both. One account, full access.</div>
-        </div>
-        <div class="step fade-up">
-          <div class="step-num">02</div>
-          <div class="step-title">List or Browse</div>
-          <div class="step-desc">Sellers post in minutes. Buyers search and discover instantly.</div>
-        </div>
-        <div class="step fade-up">
-          <div class="step-num">03</div>
-          <div class="step-title">Transact Safely</div>
-          <div class="step-desc">Payments held in escrow. Released only when you're satisfied.</div>
-        </div>
-        <div class="step fade-up">
-          <div class="step-num">04</div>
-          <div class="step-title">Build & Grow</div>
-          <div class="step-desc">Leave reviews, earn badges, build your reputation and income.</div>
-        </div>
+        <div class="step fade-up"><div class="step-num">01</div><div class="step-title">Create Account</div><div class="step-desc">Sign up as buyer, seller, or both. One account, full access.</div></div>
+        <div class="step fade-up"><div class="step-num">02</div><div class="step-title">List or Browse</div><div class="step-desc">Sellers post in minutes. Buyers search and discover instantly.</div></div>
+        <div class="step fade-up"><div class="step-num">03</div><div class="step-title">Transact Safely</div><div class="step-desc">Payments held in escrow. Released only when you're satisfied.</div></div>
+        <div class="step fade-up"><div class="step-num">04</div><div class="step-title">Build & Grow</div><div class="step-desc">Leave reviews, earn badges, build your reputation and income.</div></div>
       </div>
     </div>
   </section>
 
   <section id="trust">
     <div class="container-sm">
-      <div style="text-align:center; margin-bottom:2.5rem;">
-        <h2 class="section-title">Built on trust</h2>
-      </div>
+      <div style="text-align:center; margin-bottom:2.5rem;"><h2 class="section-title">Built on trust</h2></div>
       <div class="trust-grid">
         <div class="trust-card fade-up"><div class="trust-icon"><i class="fas fa-lock"></i></div><div class="trust-title">Escrow Payments</div><div class="trust-desc">Funds held until delivery confirmed</div></div>
         <div class="trust-card fade-up"><div class="trust-icon"><i class="fas fa-circle-check"></i></div><div class="trust-title">Verified Sellers</div><div class="trust-desc">ID & skill verification available</div></div>
@@ -548,76 +296,39 @@
 
   <section id="pricing">
     <div class="container-sm">
-      <div style="text-align:center; margin-bottom:2rem;">
-        <p class="section-tag">Pricing</p>
-        <h2 class="section-title">Start free. Scale when ready.</h2>
-      </div>
-
-      <!-- Toggle -->
+      <div style="text-align:center; margin-bottom:2rem;"><p class="section-tag">Pricing</p><h2 class="section-title">Start free. Scale when ready.</h2></div>
+      <div id="plan-indicator" class="current-plan-banner" style="display:none"></div>
       <div style="display:flex; justify-content:center; align-items:center; gap:0.8rem; margin-bottom:2.5rem;">
         <span style="font-weight:600; font-size:0.9rem; color:var(--muted);">Monthly</span>
         <button id="billing-toggle" class="toggle-pill" onclick="toggleBilling()"></button>
         <span style="font-weight:600; font-size:0.9rem; color:var(--amber);">Annual</span>
-        <span class="save-badge">Save up to 37%</span>
+        <span id="save-badge" class="save-badge">Save up to 31%</span>
       </div>
-
       <div class="pricing-grid">
-        <!-- Free Plan -->
         <div class="plan-card fade-up">
           <div class="plan-name">Free</div>
           <div class="plan-desc">For getting started</div>
           <div class="plan-price"><strong>$0</strong><span>/month</span></div>
-          <ul class="plan-features">
-            <li><i class="fas fa-check"></i> Up to 5 listings</li>
-            <li><i class="fas fa-check"></i> Standard placement</li>
-            <li><i class="fas fa-check"></i> Basic analytics</li>
-            <li><i class="fas fa-check"></i> Community support</li>
-          </ul>
+          <ul class="plan-features"><li><i class="fas fa-check"></i> Up to 5 listings</li><li><i class="fas fa-check"></i> Standard placement</li><li><i class="fas fa-check"></i> Basic analytics</li><li><i class="fas fa-check"></i> Community support</li></ul>
           <button class="plan-btn secondary" onclick="window.location.href='traydr-auth.html#signup'">Get Started</button>
         </div>
-
-        <!-- Pro Plan -->
         <div class="plan-card highlight fade-up">
           <div class="popular-pill">Most Popular</div>
           <div class="plan-name">Pro</div>
           <div class="plan-desc">For serious sellers</div>
-          <div class="plan-price">
-            <strong id="pro-price">$5</strong>
-            <span id="pro-period">/month</span>
-            <span id="pro-save" class="save-text">Save $10</span>
-          </div>
-          <ul class="plan-features">
-            <li><i class="fas fa-check"></i> Unlimited listings</li>
-            <li><i class="fas fa-check"></i> Priority placement</li>
-            <li><i class="fas fa-check"></i> Full analytics</li>
-            <li><i class="fas fa-check"></i> Lower fees (5%)</li>
-            <li><i class="fas fa-check"></i> Priority support</li>
-          </ul>
-          <button class="plan-btn primary" onclick="handleProClick()">Start Free Trial</button>
+          <div class="plan-price"><strong id="pro-price">$5</strong><span id="pro-period">/month</span><span id="pro-save" class="save-text">Save $10</span></div>
+          <ul class="plan-features"><li><i class="fas fa-check"></i> Unlimited listings</li><li><i class="fas fa-check"></i> Priority placement</li><li><i class="fas fa-check"></i> Full analytics</li><li><i class="fas fa-check"></i> Lower fees (5%)</li><li><i class="fas fa-check"></i> Priority support</li></ul>
+          <button class="plan-btn primary" id="pro-cta" onclick="window.location.href='subscribe.html?plan=pro&period=monthly'">Start Free Trial</button>
         </div>
-
-        <!-- Business Plan -->
         <div class="plan-card fade-up">
           <div class="plan-name">Business</div>
           <div class="plan-desc">For high‑volume sellers</div>
-          <div class="plan-price">
-            <strong id="business-price">$12</strong>
-            <span id="business-period">/month</span>
-            <span id="business-save" class="save-text">Save $44</span>
-          </div>
-          <ul class="plan-features">
-            <li><i class="fas fa-check"></i> Everything in Pro</li>
-            <li><i class="fas fa-check"></i> Homepage feature</li>
-            <li><i class="fas fa-check"></i> Lowest fees (3%)</li>
-            <li><i class="fas fa-check"></i> Bulk tools</li>
-            <li><i class="fas fa-check"></i> Account manager</li>
-          </ul>
-          <button class="plan-btn secondary" onclick="handleBusinessClick()">Contact Sales</button>
+          <div class="plan-price"><strong id="business-price">$12</strong><span id="business-period">/month</span><span id="business-save" class="save-text">Save $44</span></div>
+          <ul class="plan-features"><li><i class="fas fa-check"></i> Everything in Pro</li><li><i class="fas fa-check"></i> Homepage feature</li><li><i class="fas fa-check"></i> Lowest fees (3%)</li><li><i class="fas fa-check"></i> Bulk tools</li><li><i class="fas fa-check"></i> Account manager</li></ul>
+          <button class="plan-btn secondary" id="business-cta" onclick="window.location.href='mailto:hello@traydr.market'">Contact Sales</button>
         </div>
       </div>
-      <p style="text-align:center; color:var(--muted); margin-top:1.5rem; font-size:0.85rem;">
-        Transaction fees: Free 8% · Pro 5% · Business 3%
-      </p>
+      <p style="text-align:center; color:var(--muted); margin-top:1.5rem; font-size:0.85rem;">Transaction fees: Free 8% · Pro 5% · Business 3%</p>
     </div>
   </section>
 
@@ -634,186 +345,179 @@
 
   <footer>
     <div class="footer-grid">
-      <div class="footer-col">
-        <h4>Marketplace</h4>
-        <ul>
-          <li><a href="browse.html">Browse All</a></li>
-          <li><a href="browse.html?cat=physical">Physical Goods</a></li>
-          <li><a href="browse.html?cat=digital">Digital Products</a></li>
-          <li><a href="browse.html?cat=freelance">Freelance Skills</a></li>
-          <li><a href="jobs.html">Jobs</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Company</h4>
-        <ul>
-          <li><a href="about.html">About</a></li>
-          <li><a href="blog.html">Blog</a></li>
-          <li><a href="careers.html">Careers</a></li>
-          <li><a href="press.html">Press</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Support</h4>
-        <ul>
-          <li><a href="support.html">Help Center</a></li>
-          <li><a href="support.html">Contact Us</a></li>
-          <li><a href="terms.html">Terms of Service</a></li>
-          <li><a href="privacy.html">Privacy Policy</a></li>
-          <li><a href="pricing.html">Pricing</a></li>
-          <li><a href="refund-policy.html">Refund Policy</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Connect</h4>
-        <ul>
-          <li><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
-          <li><a href="https://www.instagram.com/traydr_hq?igsh=aDNibHpxcHo4ZnJh"><i class="fab fa-instagram"></i> Instagram</a></li>
-          <li><a href="#"><i class="fab fa-linkedin"></i> LinkedIn</a></li>
-        </ul>
-      </div>
+      <div class="footer-col"><h4>Marketplace</h4><ul><li><a href="browse.html">Browse All</a></li><li><a href="browse.html?cat=physical">Physical Goods</a></li><li><a href="browse.html?cat=digital">Digital Products</a></li><li><a href="browse.html?cat=freelance">Freelance Skills</a></li><li><a href="jobs.html">Jobs</a></li></ul></div>
+      <div class="footer-col"><h4>Company</h4><ul><li><a href="about.html">About</a></li><li><a href="blog.html">Blog</a></li><li><a href="careers.html">Careers</a></li><li><a href="press.html">Press</a></li></ul></div>
+      <div class="footer-col"><h4>Support</h4><ul><li><a href="support.html">Help Center</a></li><li><a href="support.html">Contact Us</a></li><li><a href="terms.html">Terms of Service</a></li><li><a href="privacy.html">Privacy Policy</a></li><li><a href="pricing.html">Pricing</a></li><li><a href="refund-policy.html">Refund Policy</a></li></ul></div>
+      <div class="footer-col"><h4>Connect</h4><ul><li><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li><li><a href="https://www.instagram.com/traydr_hq?igsh=aDNibHpxcHo4ZnJh"><i class="fab fa-instagram"></i> Instagram</a></li><li><a href="#"><i class="fab fa-linkedin"></i> LinkedIn</a></li></ul></div>
     </div>
-    <div class="footer-bottom">
-      <div class="footer-logo">
-        <img src="logo.png" alt="TraydR" />
-      </div>
-      <div class="footer-copy">&copy; 2026 TraydR. All rights reserved.</div>
-    </div>
+    <div class="footer-bottom"><div class="footer-logo"><img src="logo.png" alt="TraydR" /></div><div class="footer-copy">&copy; 2026 TraydR. All rights reserved.</div></div>
   </footer>
 
   <script>
     function doHeroSearch() {
-      const q = document.getElementById('hero-search').value.trim();
-      window.location.href = q ? `browse.html?q=${encodeURIComponent(q)}` : 'browse.html';
+      var q = document.getElementById('hero-search').value.trim();
+      window.location.href = q ? 'browse.html?q=' + encodeURIComponent(q) : 'browse.html';
     }
 
-    const LISTINGS = [
-      { title:"Full-Stack Web App", seller:"Kira M.", rating:4.9, reviews:214, price:299, img:"https://images.unsplash.com/photo-1547658719-da2b51169166?w=400&q=80" },
-      { title:"Handcrafted Leather Wallet", seller:"Amos J.", rating:4.8, reviews:87, price:45, img:"https://images.unsplash.com/photo-1627123424574-724758594e93?w=400&q=80" },
-      { title:"Brand Identity Figma Kit", seller:"Yuna S.", rating:5.0, reviews:312, price:19, img:"https://images.unsplash.com/photo-1559028012-481c04fa702d?w=400&q=80" },
-      { title:"SEO Strategy & Audit", seller:"Dele O.", rating:4.7, reviews:56, price:149, img:"https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&q=80" },
-      { title:"Photography Masterclass", seller:"Isla R.", rating:4.9, reviews:128, price:79, img:"https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=400&q=80" },
-      { title:"Vintage Polaroid Camera", seller:"Marco T.", rating:4.6, reviews:41, price:120, img:"https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400&q=80" },
-    ];
+    var isAnnual = false;
+    function toggleBilling() {
+      isAnnual = !isAnnual;
+      var btn = document.getElementById('billing-toggle');
+      var proPrice = document.getElementById('pro-price');
+      var proPeriod = document.getElementById('pro-period');
+      var proSave = document.getElementById('pro-save');
+      var proCta = document.getElementById('pro-cta');
+      var businessPrice = document.getElementById('business-price');
+      var businessPeriod = document.getElementById('business-period');
+      var businessSave = document.getElementById('business-save');
+      var businessCta = document.getElementById('business-cta');
+      var saveBadge = document.getElementById('save-badge');
 
-    function renderListings() {
-      const grid = document.getElementById('listings-grid');
-      if (!grid) return;
-      grid.innerHTML = LISTINGS.map((l,i) => `
-        <div class="listing-card" onclick="window.location.href='browse.html?q=${encodeURIComponent(l.title)}'">
-          <div class="listing-thumb"><img src="${l.img}" alt="${l.title}" loading="lazy" /></div>
-          <div class="listing-body">
-            <div class="listing-title">${l.title}</div>
-            <div class="listing-seller">by ${l.seller}</div>
-            <div class="listing-foot">
-              <div class="listing-rating"><i class="fas fa-star"></i> ${l.rating} <span class="rc">(${l.reviews})</span></div>
-              <div class="listing-price">from $${l.price}</div>
-            </div>
-          </div>
-        </div>
-      `).join('');
+      if (isAnnual) {
+        btn.classList.add('yearly');
+        proPrice.textContent = '$50';
+        proPeriod.textContent = '/year';
+        proSave.style.display = 'inline';
+        proCta.onclick = function() { window.location.href = 'subscribe.html?plan=pro&period=yearly'; };
+        proCta.textContent = 'Start Annual Plan →';
+        businessPrice.textContent = '$100';
+        businessPeriod.textContent = '/year';
+        businessSave.style.display = 'inline';
+        businessCta.onclick = function() { window.location.href = 'mailto:hello@traydr.market?subject=Business%20Annual%20Plan'; };
+        saveBadge.textContent = 'Save up to 31%';
+      } else {
+        btn.classList.remove('yearly');
+        proPrice.textContent = '$5';
+        proPeriod.textContent = '/month';
+        proSave.style.display = 'none';
+        proCta.onclick = function() { window.location.href = 'subscribe.html?plan=pro&period=monthly'; };
+        proCta.textContent = 'Start Free Trial';
+        businessPrice.textContent = '$12';
+        businessPeriod.textContent = '/month';
+        businessSave.style.display = 'none';
+        businessCta.onclick = function() { window.location.href = 'mailto:hello@traydr.market'; };
+        saveBadge.textContent = 'Save up to 31%';
+      }
     }
 
-    // Mobile menu
-    const hamburger = document.getElementById('hamburger');
-    const mobileMenu = document.getElementById('mobile-menu');
+    async function showCurrentPlan() {
+      if (!window.DB) return;
+      try {
+        var supabaseClient = supabase;
+        if (!supabaseClient) return;
+        var { data: { user } } = await supabaseClient.auth.getUser();
+        if (!user) return;
+        var planData = await DB.getPlan(user.id);
+        var plan = planData.plan || 'free';
+        var trialText = '';
+        if (planData.isTrialActive) trialText = ' <span style="color:var(--success)">(Trial – ' + planData.daysLeft + ' days left)</span>';
+        var planName = plan.charAt(0).toUpperCase() + plan.slice(1);
+        var upgradeHtml = '';
+        if (plan === 'free') upgradeHtml = '<span class="upgrade-link" onclick="window.location.href=\'subscribe.html?plan=pro&period=monthly\'">Upgrade now →</span>';
+        var banner = document.getElementById('plan-indicator');
+        banner.style.display = 'block';
+        banner.innerHTML = '<i class="fas fa-info-circle"></i> Your current plan: <strong>' + planName + '</strong>' + trialText + ' ' + upgradeHtml;
+      } catch(e) { console.warn('Plan indicator error:', e); }
+    }
+
+    var hamburger = document.getElementById('hamburger');
+    var mobileMenu = document.getElementById('mobile-menu');
     function closeMenu() {
       hamburger.classList.remove('open');
       mobileMenu.classList.remove('open');
       document.body.style.overflow = '';
     }
-    hamburger.addEventListener('click', (e) => {
+    hamburger.addEventListener('click', function(e) {
       e.stopPropagation();
-      if (mobileMenu.classList.contains('open')) {
-        closeMenu();
-      } else {
+      if (mobileMenu.classList.contains('open')) closeMenu();
+      else {
         hamburger.classList.add('open');
         mobileMenu.classList.add('open');
         document.body.style.overflow = 'hidden';
       }
     });
-    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
-    mobileMenu.querySelectorAll('button').forEach(b => b.addEventListener('click', closeMenu));
+    mobileMenu.querySelectorAll('a').forEach(function(a) { a.addEventListener('click', closeMenu); });
+    mobileMenu.querySelectorAll('button').forEach(function(b) { b.addEventListener('click', closeMenu); });
 
-    window.addEventListener('scroll', () => {
-      document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 10);
+    window.addEventListener('scroll', function() {
+      var nav = document.getElementById('nav');
+      if (nav) nav.classList.toggle('scrolled', window.scrollY > 10);
     }, { passive: true });
 
-    // Pricing toggle
-    let isAnnual = false;
-    function toggleBilling() {
-      isAnnual = !isAnnual;
-      const btn = document.getElementById('billing-toggle');
-      btn.classList.toggle('yearly', isAnnual);
-      document.getElementById('pro-price').textContent = isAnnual ? '$50' : '$5';
-      document.getElementById('pro-period').textContent = isAnnual ? '/year' : '/month';
-      document.getElementById('pro-save').style.display = isAnnual ? 'inline' : 'none';
-      document.getElementById('business-price').textContent = isAnnual ? '$100' : '$12';
-      document.getElementById('business-period').textContent = isAnnual ? '/year' : '/month';
-      document.getElementById('business-save').style.display = isAnnual ? 'inline' : 'none';
-    }
-    function handleProClick() {
-      window.location.href = isAnnual ? 'traydr-auth.html#signup?plan=pro-yearly' : 'traydr-auth.html#signup?trial=1';
-    }
-    function handleBusinessClick() {
-      window.location.href = isAnnual ? 'mailto:hello@traydr.market?subject=Business%20Annual' : 'mailto:hello@traydr.market';
+    async function loadFeaturedListings() {
+      var grid = document.getElementById('listings-grid');
+      if (!window.Listings) {
+        grid.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted)">Loading marketplace...</div>';
+        return;
+      }
+      var result = await Listings.getFeatured(6);
+      var data = result.data;
+      if (result.error || !data || data.length === 0) {
+        grid.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted)">No featured listings right now. Check back soon!</div>';
+        return;
+      }
+      var html = '';
+      for (var i = 0; i < data.length; i++) {
+        var l = data[i];
+        var img = Listings.getImage(l, 0);
+        html += '<div class="listing-card" onclick="window.location.href=\'listing.html?id=' + l.id + '\'">' +
+          '<div class="listing-thumb"><img src="' + img + '" alt="' + l.title + '" loading="lazy" onerror="this.onerror=null;this.style.display=\'none\';this.insertAdjacentHTML(\'afterend\',\'<div class=\\\'img-unavailable\\\'><i class=\\\'fas fa-image\\\'></i><span>Image Unavailable</span></div>\')" /></div>' +
+          '<div class="listing-body">' +
+            '<div class="listing-title">' + l.title + '</div>' +
+            '<div class="listing-seller">by ' + (l.seller_name || 'Seller') + '</div>' +
+            '<div class="listing-foot">' +
+              '<div class="listing-rating"><i class="fas fa-star"></i> ' + (l.rating || 'New') + ' <span class="rc">(' + (l.review_count || 0) + ')</span></div>' +
+              '<div class="listing-price">from $' + l.price + '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      }
+      grid.innerHTML = html;
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      renderListings();
-      // ensure toggle starts in monthly state
-      const btn = document.getElementById('billing-toggle');
-      btn.classList.remove('yearly');
+    async function loadCategoryCounts() {
+      if (!window.Listings) return;
+      var result = await Listings.getCounts();
+      var data = result.data;
+      if (data) {
+        var cats = ['physical','digital','freelance','experience','jobs'];
+        for (var i = 0; i < cats.length; i++) {
+          var cat = cats[i];
+          var el = document.getElementById('cnt-' + cat);
+          if (el) el.textContent = (data[cat] || 0).toLocaleString() + ' listings';
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('billing-toggle').classList.remove('yearly');
+      loadFeaturedListings();
+      loadCategoryCounts();
+      if (window.DB) showCurrentPlan();
+      else setTimeout(showCurrentPlan, 500);
     });
   </script>
 
-  <!-- ══════ Original app scripts ══════ -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="listings.js"></script>
-  <script src="auth.backend.js"></script>
+  <script src="dashboard.backend.js"></script>
   <script src="auth.guard.js"></script>
-  <script>
-    (async () => {
-      try {
-        if (window.Listings) {
-          const { data } = await Listings.getCounts();
-          if (data) {
-            ['physical','digital','freelance','experience','jobs'].forEach(cat => {
-              const el = document.getElementById('cnt-' + cat);
-              if (el) el.textContent = (data[cat] || 0).toLocaleString() + ' listings';
-            });
-          }
-        }
-      } catch(e) {}
-    })();
-  </script>
   <script>
     (function() {
       var t = localStorage.getItem('traydr_theme') || 'light';
       document.documentElement.setAttribute('data-theme', t);
     })();
     function toggleTheme() {
-      var cur  = document.documentElement.getAttribute('data-theme') || 'light';
+      var cur = document.documentElement.getAttribute('data-theme') || 'light';
       var next = cur === 'dark' ? 'light' : 'dark';
       document.documentElement.setAttribute('data-theme', next);
       localStorage.setItem('traydr_theme', next);
-      var tog   = document.getElementById('dark-mode-toggle');
-      var thumb = document.getElementById('dark-mode-thumb');
-      if (tog)   tog.checked = next === 'dark';
-      if (thumb) thumb.style.transform = next === 'dark' ? 'translateX(20px)' : 'translateX(0)';
     }
-    document.addEventListener('DOMContentLoaded', function() {
-      var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      var tog    = document.getElementById('dark-mode-toggle');
-      var thumb  = document.getElementById('dark-mode-thumb');
-      if (tog)   tog.checked = isDark;
-      if (thumb) thumb.style.transform = isDark ? 'translateX(20px)' : 'translateX(0)';
-    });
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js').catch(function() {});
       });
     }
   </script>

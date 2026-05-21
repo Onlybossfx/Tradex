@@ -8,6 +8,8 @@
   <meta name="theme-color" content="#FFB34E">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="dashboard.backend.js"></script>
   <style>
     :root { --amber:#C2690A; --amber-light:#D97706; --bg:#FFF8F0; --bg2:#FFECD2; --border:rgba(255,160,60,0.35); --text:#1C1208; --muted:rgba(28,18,8,0.55); --serif:'Playfair Display',Georgia,serif; --sans:'DM Sans',system-ui,sans-serif; }
     [data-theme="dark"] { --amber:#F59E0B; --bg:#0a0a0a; --bg2:#0f0f0f; --border:rgba(255,255,255,0.07); --text:#fff; --muted:rgba(255,255,255,0.45); }
@@ -29,14 +31,26 @@
     .section { margin-bottom:2rem; padding-bottom:2rem; border-bottom:1px solid var(--border); }
     .section:last-child { border-bottom:none; }
 
-    /* Toggle styles (mirroring index) */
+    /* Toggle styles */
     .toggle-wrapper { display:flex; justify-content:center; align-items:center; gap:0.8rem; margin-bottom:2rem; }
     .toggle-wrapper span { font-weight:600; font-size:0.9rem; }
     .toggle-btn { width:48px; height:26px; border-radius:100px; position:relative; border:none; padding:0; cursor:pointer; background:var(--border); transition:background 0.3s; }
     .toggle-knob { position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%; background:#fff; box-shadow:0 2px 6px rgba(0,0,0,0.15); transition:transform 0.3s; }
     .save-badge { background:var(--amber); color:#fff; font-size:0.7rem; padding:0.2rem 0.6rem; border-radius:100px; font-weight:700; }
+
+    /* Plan indicator banner */
+    .current-plan-banner {
+      background: var(--amber-dim);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.8rem 1.2rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      font-size: 0.85rem;
+    }
+    .current-plan-banner strong { color: var(--amber); }
+    .upgrade-link { color: var(--amber); font-weight: 600; margin-left: 0.5rem; text-decoration: underline; cursor: pointer; }
   </style>
-  <script src="currency.js"></script>
 </head>
 <body>
   <nav>
@@ -47,6 +61,9 @@
     <h1>Pricing</h1>
     <p style="color:var(--muted);font-size:0.82rem">Transparent plans for sellers. All prices in USD.</p>
 
+    <!-- Plan indicator (visible only when logged in) -->
+    <div id="plan-indicator" class="current-plan-banner" style="display:none"></div>
+
     <!-- Toggle -->
     <div class="toggle-wrapper">
       <span style="color:var(--muted);">Monthly</span>
@@ -54,7 +71,7 @@
         <span id="toggle-knob" class="toggle-knob"></span>
       </button>
       <span style="color:var(--amber);">Annual</span>
-      <span class="save-badge">Save up to 37%</span>
+      <span id="save-badge" class="save-badge">Save up to 31%</span>
     </div>
 
     <!-- Free -->
@@ -81,7 +98,7 @@
         <li>5% transaction fee</li>
         <li>Priority support</li>
       </ul>
-      <p><a href="traydr-auth.html#signup?trial=1" id="pro-link">Start Free Trial →</a></p>
+      <p><a href="subscribe.html?plan=pro&period=monthly" id="pro-link">Start Free Trial →</a></p>
     </div>
 
     <!-- Business -->
@@ -98,7 +115,7 @@
       <p><a href="mailto:hello@traydr.market" id="business-link">Contact Sales →</a></p>
     </div>
 
-    <!-- Transaction Fees (unchanged) -->
+    <!-- Transaction Fees -->
     <div class="section">
       <h2>Transaction Fees</h2>
       <p>Transaction fees are calculated on the total order amount when a buyer pays. They are deducted from the seller’s earnings:</p>
@@ -114,7 +131,9 @@
       <p><a href="traydr-auth.html#signup">Create your free account →</a></p>
     </div>
   </div>
+
   <script>
+    // Pricing toggle logic
     let isAnnual = false;
     function toggleBilling() {
       isAnnual = !isAnnual;
@@ -126,31 +145,62 @@
       const businessPrice = document.getElementById('business-price-text');
       const businessSave = document.getElementById('business-save-text');
       const businessLink = document.getElementById('business-link');
+      const saveBadge = document.getElementById('save-badge');
 
       if (isAnnual) {
         btn.style.background = 'var(--amber)';
         knob.style.transform = 'translateX(22px)';
         proPrice.innerHTML = '<strong>$50/year</strong>';
         proSave.style.display = 'inline';
-        proLink.href = 'traydr-auth.html#signup?plan=pro-yearly';
+        proLink.href = 'subscribe.html?plan=pro&period=yearly';
         businessPrice.innerHTML = '<strong>$100/year</strong>';
         businessSave.style.display = 'inline';
-        businessLink.href = 'mailto:hello@traydr.market?subject=Business%20Annual';
+        businessLink.href = 'mailto:hello@traydr.market?subject=Business%20Annual%20Plan';
+        saveBadge.textContent = 'Save up to 31%';
       } else {
         btn.style.background = 'var(--border)';
         knob.style.transform = 'translateX(0)';
         proPrice.innerHTML = '<strong>$5/month</strong>';
         proSave.style.display = 'none';
-        proLink.href = 'traydr-auth.html#signup?trial=1';
+        proLink.href = 'subscribe.html?plan=pro&period=monthly';
         businessPrice.innerHTML = '<strong>$12/month</strong>';
         businessSave.style.display = 'none';
         businessLink.href = 'mailto:hello@traydr.market';
+        saveBadge.textContent = 'Save up to 31%';
       }
     }
-    // Initialize state
+
+    // Plan indicator (show current user plan if logged in)
+    async function showCurrentPlan() {
+      if (!window.DB) return;
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        const planData = await DB.getPlan(user.id);
+        const plan = planData.plan || 'free';
+        let trialText = '';
+        if (planData.isTrialActive) {
+          trialText = ` <span style="color:var(--success)">(Trial – ${planData.daysLeft} days left)</span>`;
+        }
+        const planName = plan.charAt(0).toUpperCase() + plan.slice(1);
+        let upgradeHtml = '';
+        if (plan === 'free') {
+          upgradeHtml = `<span class="upgrade-link" onclick="window.location.href='subscribe.html?plan=pro&period=monthly'">Upgrade now →</span>`;
+        }
+        const banner = document.getElementById('plan-indicator');
+        banner.style.display = 'block';
+        banner.innerHTML = `<i class="fas fa-info-circle"></i> Your current plan: <strong>${planName}</strong>${trialText} ${upgradeHtml}`;
+      } catch(e) { console.warn('Plan indicator error:', e); }
+    }
+
+    // Initialize toggle and plan indicator
     document.addEventListener('DOMContentLoaded', () => {
-      // set initial knob position
       document.getElementById('toggle-knob').style.transform = 'translateX(0)';
+      if (window.DB) {
+        showCurrentPlan();
+      } else {
+        setTimeout(() => showCurrentPlan(), 500);
+      }
     });
   </script>
   <script>(function(){const t=localStorage.getItem('traydr_theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>

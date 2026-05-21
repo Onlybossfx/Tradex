@@ -457,6 +457,22 @@
     .cv-meta { display:flex; flex-direction:column; align-items:flex-end; gap:0.2rem; flex-shrink:0; }
     .cv-time { font-size:0.68rem; color:var(--dim); }
     .cv-unread { background:var(--amber); color:#fff; border-radius:100px; font-size:0.65rem; font-weight:700; padding:0.1rem 0.42rem; min-width:16px; text-align:center; }
+  /* Billing card styles */
+.billing-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 13px; padding: 1.35rem; margin-bottom: 1rem; }
+.billing-plan { font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.billing-status { font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 100px; }
+.status-active { background: var(--success); color: white; }
+.status-trialing { background: var(--amber); color: white; }
+.status-past_due { background: var(--error); color: white; }
+.status-canceled { background: var(--dim); color: var(--text); }
+.billing-detail { margin: 1rem 0; font-size: 0.85rem; color: var(--muted); }
+.btn-danger { background: transparent; border: 1px solid var(--error); color: var(--error); padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; }
+.btn-danger:hover { background: rgba(220,38,38,0.1); }
+.btn-secondary { background: transparent; border: 1px solid var(--border-md); color: var(--muted); padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.8rem; cursor: pointer; }
+.btn-secondary:hover { border-color: var(--amber); color: var(--amber); }
+.invoice-item { display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border); font-size: 0.8rem; }
+.invoice-date { color: var(--dim); }
+.invoice-amount { font-weight: 600; color: var(--amber); }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="icon" type="image/png" href="logo.png">
@@ -628,6 +644,13 @@
     <div class="ph"><div><h1>Settings</h1><p>Manage your account preferences.</p></div></div>
     <div style="max-width:520px;display:flex;flex-direction:column;gap:1rem">
       <div class="pcard">
+        <!-- BILLING SECTION -->
+<div class="billing-card">
+  <h3 style="font-size:0.9rem; font-weight:600; margin-bottom:0.5rem;">Subscription & Billing</h3>
+  <div id="billing-info"></div>
+  <div id="billing-actions" style="margin-top:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;"></div>
+  <div id="invoices-list" style="margin-top:1rem; border-top:1px solid var(--border); padding-top:1rem;"></div>
+</div>
         <h3>Notifications</h3>
         <div style="display:flex;flex-direction:column;gap:0.7rem">
           <div style="display:flex;align-items:center;justify-content:space-between">
@@ -818,6 +841,7 @@
 <script>
 /* ═══════════════════════════════════════════
    SELLER DASHBOARD — FULLY CONNECTED
+   (with plan indicator added)
 ═══════════════════════════════════════════ */
 
 // ✅ Direct Supabase client – needed for loadMyJobs and other direct calls
@@ -904,6 +928,7 @@ async function init() {
   $('ps-since').textContent = fmtD(U.created_at);
   await loadAll();
   loadPayoutMethod();
+  showPlanIndicator(); // added
 }
 
 async function loadAll() {
@@ -913,6 +938,42 @@ async function loadAll() {
   renderMessages();
   loadNotifications();
   updateBadges();
+}
+
+/* ══ PLAN INDICATOR (ADDED) ══ */
+async function showPlanIndicator() {
+  try {
+    const planData = await DB.getPlan(U.id);
+    const plan = planData.plan || 'free';
+    let trialText = '';
+    if (planData.isTrialActive) {
+      trialText = ` <span style="color:var(--success)">(Trial – ${planData.daysLeft} days left)</span>`;
+    }
+    const planName = plan.charAt(0).toUpperCase() + plan.slice(1);
+    let upgradeHtml = '';
+    if (plan === 'free') {
+      upgradeHtml = `<span class="upgrade-link" onclick="upgradePlan()">Upgrade now →</span>`;
+    }
+    // Insert a banner at the top of the overview panel (first panel)
+    const overviewPanel = document.getElementById('panel-overview');
+    const existingBanner = document.getElementById('plan-indicator-banner');
+    if (existingBanner) existingBanner.remove();
+    const banner = document.createElement('div');
+    banner.id = 'plan-indicator-banner';
+    banner.className = 'current-plan-banner';
+    banner.style.marginBottom = '1rem';
+    banner.innerHTML = `<i class="fas fa-info-circle"></i> Your current plan: <strong>${planName}</strong>${trialText} ${upgradeHtml}`;
+    overviewPanel.insertBefore(banner, overviewPanel.firstChild);
+  } catch(e) { console.warn('Plan indicator error:', e); }
+}
+
+function upgradePlan() {
+  // Scroll to settings panel and open pricing section
+  switchP('settings');
+  // Optionally show a modal or scroll to upgrade section inside settings
+  toast('Please go to Settings → Billing to upgrade.', 'inf');
+  // Or open a modal with pricing toggle – but for simplicity we just notify.
+  // You could expand this to show a pricing modal inline.
 }
 
 /* ══ ANALYTICS ══ */
@@ -1338,8 +1399,7 @@ $('m-save').addEventListener('click', async ()=>{
     const limitCheck = await DB.canCreateListing(U.id);
     if (!limitCheck.allowed) {
       toast(limitCheck.reason, 'err');
-      const btn = document.querySelector('#new-listing-modal .btn-primary');
-      if(btn){btn.classList.remove('ld');btn.disabled=false;}
+      btn.classList.remove('ld'); btn.disabled=false;
       return;
     }
   }
@@ -1573,6 +1633,128 @@ init();
       navigator.serviceWorker.register('/sw.js').catch(() => {});
     });
   }
+  // ========== BILLING FUNCTIONS ==========
+async function loadBillingInfo() {
+  if (!U) return;
+  const { data: userData } = await sb.from('users').select('plan_type, subscription_status, trial_ends_at, next_billing_at, flutterwave_token').eq('id', U.id).single();
+  const plan = userData?.plan_type || 'free';
+  const status = userData?.subscription_status || (plan === 'free' ? 'free' : 'trialing');
+  const trialEnds = userData?.trial_ends_at ? new Date(userData.trial_ends_at).toLocaleDateString() : null;
+  const nextBilling = userData?.next_billing_at ? new Date(userData.next_billing_at).toLocaleDateString() : null;
+  
+  let statusHtml = '';
+  let statusClass = '';
+  if (plan === 'free') {
+    statusHtml = '<span class="billing-status status-canceled">Free</span>';
+  } else if (status === 'trialing') {
+    statusClass = 'status-trialing';
+    statusHtml = `<span class="billing-status ${statusClass}">Trial (ends ${trialEnds})</span>`;
+  } else if (status === 'active') {
+    statusClass = 'status-active';
+    statusHtml = `<span class="billing-status ${statusClass}">Active · Next billing ${nextBilling}</span>`;
+  } else if (status === 'past_due') {
+    statusClass = 'status-past_due';
+    statusHtml = `<span class="billing-status ${statusClass}">Past due – update payment method</span>`;
+  } else {
+    statusHtml = `<span class="billing-status status-canceled">${status}</span>`;
+  }
+  
+  const planName = plan === 'pro' ? 'Pro' : (plan === 'business' ? 'Business' : 'Free');
+  document.getElementById('billing-info').innerHTML = `
+    <div class="billing-plan">
+      <span>${planName} plan</span>
+      ${statusHtml}
+    </div>
+    <div class="billing-detail">
+      ${plan !== 'free' ? `<div>💳 Card on file: ending in ${userData?.card_last4 || '****'}</div>` : ''}
+      ${plan !== 'free' && nextBilling ? `<div>📅 Next charge: ${nextBilling}</div>` : ''}
+      ${plan === 'free' ? '<div>Upgrade to Pro or Business to access unlimited listings and lower fees.</div>' : ''}
+    </div>
+  `;
+  
+  const actionsDiv = document.getElementById('billing-actions');
+  actionsDiv.innerHTML = '';
+  if (plan === 'free') {
+    actionsDiv.innerHTML = `
+      <button class="btn-primary" onclick="window.location.href='subscribe.html?plan=pro&period=monthly'">Upgrade to Pro</button>
+      <button class="btn-secondary" onclick="window.location.href='subscribe.html?plan=business&period=monthly'">Upgrade to Business</button>
+    `;
+  } else if (status === 'active' || status === 'trialing') {
+    actionsDiv.innerHTML = `
+      <button class="btn-secondary" id="update-payment-btn">Update Payment Method</button>
+      <button class="btn-danger" id="cancel-subscription-btn">Cancel Subscription</button>
+    `;
+    document.getElementById('update-payment-btn')?.addEventListener('click', updatePaymentMethod);
+    document.getElementById('cancel-subscription-btn')?.addEventListener('click', cancelSubscription);
+  } else if (status === 'past_due') {
+    actionsDiv.innerHTML = `<button class="btn-primary" id="update-payment-btn">Update Payment Method</button>`;
+    document.getElementById('update-payment-btn')?.addEventListener('click', updatePaymentMethod);
+  }
+  
+  // Load invoice history
+  const { data: subs } = await sb.from('subscriptions').select('*').eq('user_id', U.id).order('created_at', { ascending: false });
+  const invoicesHtml = subs && subs.length ? subs.map(s => `
+    <div class="invoice-item">
+      <div><span class="invoice-date">${new Date(s.created_at).toLocaleDateString()}</span><br>${s.plan}</div>
+      <div class="invoice-amount">${s.plan.includes('pro') ? '$5' : '$12'}</div>
+    </div>
+  `).join('') : '<div class="invoice-item">No past invoices</div>';
+  document.getElementById('invoices-list').innerHTML = `<div style="font-weight:600; margin-bottom:0.5rem;">Payment history</div>${invoicesHtml}`;
+}
+
+async function updatePaymentMethod() {
+  if (!U) return;
+  toast('Opening secure form to update your card...', 'inf');
+  const authAmount = 0.5;
+  FlutterwaveCheckout({
+    public_key: 'FLWPUBK_TEST-33416ff627c0b774941dee0bb4e97470-X',
+    tx_ref: 'UPDATE-' + U.id + '-' + Date.now(),
+    amount: authAmount,
+    currency: 'USD',
+    payment_options: 'card',
+    customer: { email: U.email, name: U.user_metadata?.full_name || '' },
+    callback: async (response) => {
+      if (response.status !== 'successful') { toast('Update failed', 'err'); return; }
+      const tokenRes = await fetch('https://rtwbrcbifnowrqpgivma.supabase.co/functions/v1/bright-processor', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ transaction_id: response.transaction_id })
+      });
+      const { token } = await tokenRes.json();
+      if (token) {
+        await sb.from('users').update({ flutterwave_token: token }).eq('id', U.id);
+        toast('Payment method updated!', 'ok');
+        loadBillingInfo();
+      } else { toast('Could not update card', 'err'); }
+    }
+  });
+}
+
+async function cancelSubscription() {
+  if (!confirm('Are you sure you want to cancel your subscription? You will lose Pro/Business benefits at the end of your billing period.')) return;
+  const { data: userData } = await sb.from('users').select('flutterwave_subscription_id').eq('id', U.id).single();
+  if (userData?.flutterwave_subscription_id) {
+    const cancelRes = await fetch('https://rtwbrcbifnowrqpgivma.supabase.co/functions/v1/cancel-subscription', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ subscription_id: userData.flutterwave_subscription_id })
+    });
+    const result = await cancelRes.json();
+    if (result.success) {
+      await sb.from('users').update({ subscription_status: 'canceled' }).eq('id', U.id);
+      toast('Subscription cancelled. You will not be charged again.', 'ok');
+      loadBillingInfo();
+    } else { toast('Cancellation failed. Contact support.', 'err'); }
+  } else {
+    toast('No active subscription found.', 'err');
+  }
+}
+
+// Override switchP to load billing when settings is opened
+const originalSwitchP = window.switchP;
+window.switchP = function(id) {
+  originalSwitchP(id);
+  if (id === 'settings') loadBillingInfo();
+};
 </script>
 </body>
 </html>
