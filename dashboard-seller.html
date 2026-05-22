@@ -13,8 +13,12 @@
   <script src="auth.guard.js"></script>
   <script src="listings.js"></script>
   <script src="dashboard.backend.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="icon" type="image/png" href="logo.png">
+  <script src="currency.js"></script>
+  <script src="push.js"></script>
   <style>
-    /* ---------- All the existing CSS exactly as before (unchanged) ---------- */
+    /* ---------- FULL CSS (all original + billing & limit warning) ---------- */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --amber: #C2690A; --amber-light: #D97706; --amber-dim: rgba(194,105,10,0.1);
@@ -22,8 +26,7 @@
       --border: rgba(255,160,60,0.35); --border-md: rgba(255,140,40,0.5);
       --text: #1C1208; --muted: rgba(28,18,8,0.55); --dim: rgba(28,18,8,0.35);
       --error: #DC2626; --success: #16A34A;
-      --serif: 'Playfair Display', Georgia, serif;
-      --sans: 'DM Sans', system-ui, sans-serif;
+      --serif: 'Playfair Display', Georgia, serif; --sans: 'DM Sans', system-ui, sans-serif;
       --sw: 240px; --nh: 62px;
     }
     html { overflow-x: hidden; }
@@ -457,27 +460,27 @@
     .cv-meta { display:flex; flex-direction:column; align-items:flex-end; gap:0.2rem; flex-shrink:0; }
     .cv-time { font-size:0.68rem; color:var(--dim); }
     .cv-unread { background:var(--amber); color:#fff; border-radius:100px; font-size:0.65rem; font-weight:700; padding:0.1rem 0.42rem; min-width:16px; text-align:center; }
-  /* Billing card styles */
-.billing-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 13px; padding: 1.35rem; margin-bottom: 1rem; }
-.billing-plan { font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
-.billing-status { font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 100px; }
-.status-active { background: var(--success); color: white; }
-.status-trialing { background: var(--amber); color: white; }
-.status-past_due { background: var(--error); color: white; }
-.status-canceled { background: var(--dim); color: var(--text); }
-.billing-detail { margin: 1rem 0; font-size: 0.85rem; color: var(--muted); }
-.btn-danger { background: transparent; border: 1px solid var(--error); color: var(--error); padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; }
-.btn-danger:hover { background: rgba(220,38,38,0.1); }
-.btn-secondary { background: transparent; border: 1px solid var(--border-md); color: var(--muted); padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.8rem; cursor: pointer; }
-.btn-secondary:hover { border-color: var(--amber); color: var(--amber); }
-.invoice-item { display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border); font-size: 0.8rem; }
-.invoice-date { color: var(--dim); }
-.invoice-amount { font-weight: 600; color: var(--amber); }
+
+    /* Billing & limit warning styles */
+    .billing-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 13px; padding: 1.35rem; margin-bottom: 1rem; }
+    .billing-plan { font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+    .billing-status { font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 100px; }
+    .status-active { background: var(--success); color: white; }
+    .status-trialing { background: var(--amber); color: white; }
+    .status-past_due { background: var(--error); color: white; }
+    .status-canceled { background: var(--dim); color: var(--text); }
+    .billing-detail { margin: 1rem 0; font-size: 0.85rem; color: var(--muted); }
+    .btn-danger { background: transparent; border: 1px solid var(--error); color: var(--error); padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; }
+    .btn-danger:hover { background: rgba(220,38,38,0.1); }
+    .btn-secondary { background: transparent; border: 1px solid var(--border-md); color: var(--muted); padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.8rem; cursor: pointer; }
+    .btn-secondary:hover { border-color: var(--amber); color: var(--amber); }
+    .invoice-item { display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border); font-size: 0.8rem; }
+    .invoice-date { color: var(--dim); }
+    .invoice-amount { font-weight: 600; color: var(--amber); }
+    .current-plan-banner { background: var(--amber-dim); border: 1px solid var(--border); border-radius: 12px; padding: 0.8rem 1.2rem; margin-bottom: 1.5rem; text-align: center; font-size: 0.85rem; }
+    .current-plan-banner strong { color: var(--amber); }
+    .upgrade-link { color: var(--amber); font-weight: 600; margin-left: 0.5rem; text-decoration: underline; cursor: pointer; }
   </style>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link rel="icon" type="image/png" href="logo.png">
-  <script src="currency.js"></script>
-  <script src="push.js"></script>
 </head>
 <body>
 
@@ -494,7 +497,6 @@
     <button class="btn-new" onclick="openModal()">+ New Listing</button>
     <div class="notif-btn" id="notif-btn"><span><i class="fas fa-bell"></i></span><div class="ndot" id="ndot" style="display:none"></div></div>
     <div id="plan-badge"></div><div class="nav-av" id="nav-av">S</div>
-  <div id="plan-badge" style="display:none;font-size:0.65rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:100px;background:var(--amber);color:#fff;flex-shrink:0"></div>
   </div>
 </nav>
 
@@ -515,7 +517,7 @@
   <div class="ni" data-p="settings">     <span class="ic"><i class="fas fa-gear"></i></span><span class="lb">Settings</span></div>
   <div class="sb-bot">
     <div class="ni" data-p="jobs"><span class="ic"><i class="fas fa-briefcase"></i></span><span class="lb">Posted Jobs</span></div>
-  <div class="ni" onclick="window.location.href='browse.html'"><span class="ic"><i class="fas fa-store"></i></span><span class="lb">View Marketplace</span></div>
+    <div class="ni" onclick="window.location.href='browse.html'"><span class="ic"><i class="fas fa-store"></i></span><span class="lb">View Marketplace</span></div>
     <div class="ni" onclick="window.location.href='dashboard-buyer.html'"><span class="ic"><i class="fas fa-bag-shopping"></i></span><span class="lb">Buyer Dashboard</span></div>
     <div class="ni" onclick="DB.logout()" style="color:var(--error)"><span class="ic"><i class="fas fa-right-from-bracket"></i></span><span class="lb">Log Out</span></div>
   </div>
@@ -534,22 +536,8 @@
       <div class="sc"><div class="sc-lbl">⭐ Avg Rating</div><div class="sc-val a" id="s-rate">—</div><div class="sc-note" id="s-rate-n">from reviews</div></div>
     </div>
     <div class="cr">
-      <div class="cc">
-        <h3>Revenue — last 7 months</h3>
-        <div class="bars" id="rev-bars"></div>
-        <div style="display:flex;margin-top:0.4rem" id="rev-lbls"></div>
-      </div>
-      <div class="cc">
-        <h3>Category breakdown</h3>
-        <div class="donut-wrap">
-          <div class="donut"></div>
-          <div class="dl">
-            <div class="dl-i"><div class="dl-dot" style="background:var(--amber)"></div><span class="dl-n">Freelance</span><span class="dl-p">70%</span></div>
-            <div class="dl-i"><div class="dl-dot" style="background:#6366F1"></div><span class="dl-n">Digital</span><span class="dl-p">20%</span></div>
-            <div class="dl-i"><div class="dl-dot" style="background:var(--success)"></div><span class="dl-n">Physical</span><span class="dl-p">10%</span></div>
-          </div>
-        </div>
-      </div>
+      <div class="cc"><h3>Revenue — last 7 months</h3><div class="bars" id="rev-bars"></div><div style="display:flex;margin-top:0.4rem" id="rev-lbls"></div></div>
+      <div class="cc"><h3>Category breakdown</h3><div class="donut-wrap"><div class="donut"></div><div class="dl"><div class="dl-i"><div class="dl-dot" style="background:var(--amber)"></div><span class="dl-n">Freelance</span><span class="dl-p">70%</span></div><div class="dl-i"><div class="dl-dot" style="background:#6366F1"></div><span class="dl-n">Digital</span><span class="dl-p">20%</span></div><div class="dl-i"><div class="dl-dot" style="background:var(--success)"></div><span class="dl-n">Physical</span><span class="dl-p">10%</span></div></div></div></div>
     </div>
     <div class="sh"><h2>Recent Orders</h2><a onclick="switchP('orders')">View all →</a></div>
     <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Listing</th><th>Buyer</th><th>Status</th><th>Amount</th><th>Date</th></tr></thead><tbody id="ov-orders"></tbody></table></div>
@@ -576,28 +564,14 @@
   <!-- MESSAGES -->
   <div class="panel" id="panel-messages">
     <div class="ph"><div><h1>Messages</h1><p>Chat with your buyers.</p></div></div>
-    <div class="ml">
-      <div class="ml-list">
-        <div class="ml-head">Conversations</div>
-        <div class="ml-search"><input type="text" id="cv-search" placeholder="Search..." /></div>
-        <div class="ml-convs" id="cv-list"></div>
-      </div>
-      <div class="mw" id="mw"><div class="mw-empty"><span style="font-size:2rem"><i class="fas fa-comment-dots"></i></span><span>Select a conversation</span></div></div>
-    </div>
+    <div class="ml"><div class="ml-list"><div class="ml-head">Conversations</div><div class="ml-search"><input type="text" id="cv-search" placeholder="Search..." /></div><div class="ml-convs" id="cv-list"></div></div><div class="mw" id="mw"><div class="mw-empty"><span style="font-size:2rem"><i class="fas fa-comment-dots"></i></span><span>Select a conversation</span></div></div></div>
   </div>
 
   <!-- EARNINGS -->
   <div class="panel" id="panel-earnings">
     <div class="ph"><div><h1>Earnings</h1><p>Your financial overview and payouts.</p></div></div>
-    <div class="eg">
-      <div class="ec"><div class="ec-lbl">Total Earned (All Time)</div><div class="ec-val a" id="e-total">$0.00</div><div class="ec-note">After platform fees</div></div>
-      <div class="ec"><div class="ec-lbl">This Month</div><div class="ec-val g" id="e-month">$0.00</div><div class="ec-note">vs last month</div></div>
-      <div class="ec"><div class="ec-lbl">In Escrow</div><div class="ec-val" id="e-pend">$0.00</div><div class="ec-note">Releases on delivery</div></div>
-    </div>
-    <div class="pc">
-      <div class="pc-info"><div class="pc-lbl">Available for Payout</div><div class="pc-val" id="e-avail">$0.00</div><div class="pc-note">Paid via Stripe or Flutterwave</div></div>
-      <button class="btn-payout" id="payout-btn">Request Payout</button>
-    </div>
+    <div class="eg"><div class="ec"><div class="ec-lbl">Total Earned (All Time)</div><div class="ec-val a" id="e-total">$0.00</div><div class="ec-note">After platform fees</div></div><div class="ec"><div class="ec-lbl">This Month</div><div class="ec-val g" id="e-month">$0.00</div><div class="ec-note">vs last month</div></div><div class="ec"><div class="ec-lbl">In Escrow</div><div class="ec-val" id="e-pend">$0.00</div><div class="ec-note">Releases on delivery</div></div></div>
+    <div class="pc"><div class="pc-info"><div class="pc-lbl">Available for Payout</div><div class="pc-val" id="e-avail">$0.00</div><div class="pc-note">Paid via Stripe or Flutterwave</div></div><button class="btn-payout" id="payout-btn">Request Payout</button></div>
     <div class="sh"><h2>Transaction History</h2></div>
     <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Description</th><th>Type</th><th>Amount</th><th>Date</th></tr></thead><tbody id="tx-body"></tbody></table></div>
   </div>
@@ -605,198 +579,48 @@
   <!-- PROFILE -->
   <div class="panel" id="panel-profile">
     <div class="ph"><div><h1>Profile</h1><p>How buyers see you on TraydR.</p></div></div>
-    <div class="pgrid">
-      <div class="pcard">
-        <h3>Personal Info</h3>
-        <div class="av-row"><div class="av-c" id="pav">S</div><div><div style="font-size:0.84rem;font-weight:600;margin-bottom:0.28rem" id="pav-name">Your Name</div><input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="uploadAvatar(this)">
-<button style="background:var(--bg3);border:1px solid var(--border-md);color:var(--muted);padding:0.32rem 0.7rem;border-radius:6px;font-size:0.74rem;cursor:pointer" onclick="document.getElementById('avatar-input').click()"><i class="fas fa-camera"></i> Change photo</button></div></div>
-        <div class="frow"><label>Full Name</label><input class="finp" id="pf-name" placeholder="Your name" /></div>
-        <div class="frow"><label>Email</label><input class="finp" id="pf-email" disabled /></div>
-        <div class="frow"><label>Location</label><input class="finp" id="pf-loc" placeholder="City, Country" /></div>
-        <div class="frow"><label>Bio</label><textarea class="finp" id="pf-bio" rows="3" placeholder="Tell buyers about yourself..."></textarea></div>
-
-        <!-- ════ VERIFICATION SECTION (SELLER) ════ -->
-        <div style="margin-top:1rem" id="seller-verify-section">
-          <button id="seller-verify-btn" onclick="window.location.href='verify.html'"
-            style="background:var(--amber);border:none;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;font-size:0.82rem;font-weight:700;cursor:pointer;width:100%">
-            Get Verified
-          </button>
-        </div>
-        <!-- ════ END VERIFICATION SECTION ════ -->
-
-        <button class="btn-submit" id="save-pf"><span class="lbl">Save Profile</span></button>
-      </div>
-      <div class="pcard">
-        <h3>Seller Stats</h3>
-        <div class="stat-row">
-          <div class="sr-item"><span class="sr-lbl">Member since</span><span class="sr-val" id="ps-since">—</span></div>
-          <div class="sr-item"><span class="sr-lbl">Total listings</span><span class="sr-val" id="ps-list">0</span></div>
-          <div class="sr-item"><span class="sr-lbl">Total orders</span><span class="sr-val" id="ps-ords">0</span></div>
-          <div class="sr-item"><span class="sr-lbl">Total earned</span><span class="sr-val a" id="ps-earn">$0</span></div>
-          <div class="sr-item"><span class="sr-lbl">Avg rating</span><span class="sr-val a" id="ps-rate">—</span></div>
-        </div>
-      </div>
-    </div>
+    <div class="pgrid"><div class="pcard"><h3>Personal Info</h3><div class="av-row"><div class="av-c" id="pav">S</div><div><div style="font-size:0.84rem;font-weight:600;margin-bottom:0.28rem" id="pav-name">Your Name</div><input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="uploadAvatar(this)"><button style="background:var(--bg3);border:1px solid var(--border-md);color:var(--muted);padding:0.32rem 0.7rem;border-radius:6px;font-size:0.74rem;cursor:pointer" onclick="document.getElementById('avatar-input').click()"><i class="fas fa-camera"></i> Change photo</button></div></div><div class="frow"><label>Full Name</label><input class="finp" id="pf-name" placeholder="Your name" /></div><div class="frow"><label>Email</label><input class="finp" id="pf-email" disabled /></div><div class="frow"><label>Location</label><input class="finp" id="pf-loc" placeholder="City, Country" /></div><div class="frow"><label>Bio</label><textarea class="finp" id="pf-bio" rows="3" placeholder="Tell buyers about yourself..."></textarea></div><div style="margin-top:1rem" id="seller-verify-section"><button id="seller-verify-btn" onclick="window.location.href='verify.html'" style="background:var(--amber);border:none;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;font-size:0.82rem;font-weight:700;cursor:pointer;width:100%">Get Verified</button></div><button class="btn-submit" id="save-pf"><span class="lbl">Save Profile</span></button></div><div class="pcard"><h3>Seller Stats</h3><div class="stat-row"><div class="sr-item"><span class="sr-lbl">Member since</span><span class="sr-val" id="ps-since">—</span></div><div class="sr-item"><span class="sr-lbl">Total listings</span><span class="sr-val" id="ps-list">0</span></div><div class="sr-item"><span class="sr-lbl">Total orders</span><span class="sr-val" id="ps-ords">0</span></div><div class="sr-item"><span class="sr-lbl">Total earned</span><span class="sr-val a" id="ps-earn">$0</span></div><div class="sr-item"><span class="sr-lbl">Avg rating</span><span class="sr-val a" id="ps-rate">—</span></div></div></div></div>
   </div>
 
-  <!-- SETTINGS -->
+  <!-- SETTINGS (with billing) -->
   <div class="panel" id="panel-settings">
     <div class="ph"><div><h1>Settings</h1><p>Manage your account preferences.</p></div></div>
-    <div style="max-width:520px;display:flex;flex-direction:column;gap:1rem">
-      <div class="pcard">
-        <!-- BILLING SECTION -->
-<div class="billing-card">
-  <h3 style="font-size:0.9rem; font-weight:600; margin-bottom:0.5rem;">Subscription & Billing</h3>
-  <div id="billing-info"></div>
-  <div id="billing-actions" style="margin-top:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;"></div>
-  <div id="invoices-list" style="margin-top:1rem; border-top:1px solid var(--border); padding-top:1rem;"></div>
-</div>
-        <h3>Notifications</h3>
-        <div style="display:flex;flex-direction:column;gap:0.7rem">
-          <div style="display:flex;align-items:center;justify-content:space-between">
-            <span style="font-size:0.83rem;color:var(--muted)">New order received</span>
-            <label style="position:relative;display:inline-block;width:34px;height:19px;cursor:pointer">
-              <input type="checkbox" checked style="opacity:0;width:0;height:0">
-              <span style="position:absolute;inset:0;background:var(--amber);border-radius:19px;transition:0.3s"></span>
-            </label>
-          </div>
-          <div style="display:flex;align-items:center;justify-content:space-between">
-            <span style="font-size:0.83rem;color:var(--muted)">Order message received</span>
-            <label style="position:relative;display:inline-block;width:34px;height:19px;cursor:pointer">
-              <input type="checkbox" checked style="opacity:0;width:0;height:0">
-              <span style="position:absolute;inset:0;background:var(--amber);border-radius:19px;transition:0.3s"></span>
-            </label>
-          </div>
-          <div style="display:flex;align-items:center;justify-content:space-between">
-            <span style="font-size:0.83rem;color:var(--muted)">Payout processed</span>
-            <label style="position:relative;display:inline-block;width:34px;height:19px;cursor:pointer">
-              <input type="checkbox" checked style="opacity:0;width:0;height:0">
-              <span style="position:absolute;inset:0;background:var(--amber);border-radius:19px;transition:0.3s"></span>
-            </label>
-          </div>
-          <div style="display:flex;align-items:center;justify-content:space-between">
-            <span style="font-size:0.83rem;color:var(--muted)">New review posted</span>
-            <label style="position:relative;display:inline-block;width:34px;height:19px;cursor:pointer">
-              <input type="checkbox" checked style="opacity:0;width:0;height:0">
-              <span style="position:absolute;inset:0;background:var(--amber);border-radius:19px;transition:0.3s"></span>
-            </label>
-          </div>
-          <div style="display:flex;align-items:center;justify-content:space-between">
-            <span style="font-size:0.83rem;color:var(--muted)">Marketing & tips</span>
-            <label style="position:relative;display:inline-block;width:34px;height:19px;cursor:pointer">
-              <input type="checkbox" checked style="opacity:0;width:0;height:0">
-              <span style="position:absolute;inset:0;background:var(--amber);border-radius:19px;transition:0.3s"></span>
-            </label>
-          </div>
-        </div>
+    <div style="max-width:720px; display:flex; flex-direction:column; gap:1rem">
+      
+      <!-- BILLING SECTION -->
+      <div class="billing-card">
+        <h3 style="font-size:0.9rem; font-weight:600; margin-bottom:0.5rem;">Subscription & Billing</h3>
+        <div id="billing-info"></div>
+        <div id="billing-actions" style="margin-top:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;"></div>
+        <div id="invoices-list" style="margin-top:1rem; border-top:1px solid var(--border); padding-top:1rem;"></div>
       </div>
-      <div class="pcard">
-        <h3><i class="fas fa-palette" style="margin-right:0.5rem;color:var(--amber)"></i>Appearance</h3>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0">
-          <div>
-            <div style="font-size:0.85rem;font-weight:600;color:var(--text)">Dark Mode</div>
-            <div style="font-size:0.75rem;color:var(--muted);margin-top:2px">Switch between light and dark theme</div>
-          </div>
-          <label style="position:relative;display:inline-block;width:44px;height:24px;cursor:pointer;flex-shrink:0">
-            <input type="checkbox" id="dark-mode-toggle" style="opacity:0;width:0;height:0" onchange="toggleTheme()">
-            <span style="position:absolute;inset:0;background:var(--bg3);border:1px solid var(--border-md);border-radius:24px;transition:0.3s"></span>
-            <span id="dark-mode-thumb" style="position:absolute;top:3px;left:3px;width:18px;height:18px;background:var(--amber);border-radius:50%;transition:0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2)"></span>
-          </label>
-        </div>
-      </div>
-      <div class="pcard">
-        <h3>Payout Method</h3>
-        <div class="frow" style="margin:0 0 0.75rem">
-          <label>Preferred method</label>
-          <select class="finp" id="payout-method-sel">
-            <optgroup label="Mobile Money / Wallets">
-              <option value="opay">OPay</option>
-              <option value="palmpay">PalmPay</option>
-              <option value="flutterwave">Flutterwave (NGN / GHS / KES)</option>
-              <option value="momo">MTN MoMo</option>
-            </optgroup>
-            <optgroup label="Nigerian Banks">
-              <option value="first_bank">First Bank</option>
-              <option value="wema">Wema Bank (ALAT)</option>
-              <option value="gtb">GTBank</option>
-              <option value="uba">UBA</option>
-              <option value="zenith">Zenith Bank</option>
-              <option value="access">Access Bank</option>
-              <option value="sterling">Sterling Bank</option>
-            </optgroup>
-            <optgroup label="International">
-              <option value="stripe">Stripe (USD / EUR / GBP)</option>
-              <option value="payoneer">Payoneer</option>
-              <option value="paypal">PayPal</option>
-            </optgroup>
-          </select>
-        </div>
-        <div class="frow" style="margin:0 0 0.75rem">
-          <label>Account Number / Phone / Email</label>
-          <input class="finp" id="payout-account-inp" placeholder="e.g. 0901234567 or user@email.com" />
-        </div>
-        <button class="btn-submit" id="save-payout-btn"><span class="lbl">Save Payout Info</span></button>
-      </div>
-      <div class="pcard">
-        <h3>Security</h3>
-        <div style="display:flex;flex-direction:column;gap:0.5rem">
-          <button id="change-pw-btn" style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.7rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem;transition:color 0.2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'"><i class="fas fa-key"></i> Change Password</button>
-          <button onclick="window.location.href='traydr-auth.html#2fa'" style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.7rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem;transition:color 0.2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'"><i class="fas fa-shield-halved"></i> Two-Factor Authentication</button>
-          <button onclick="confirmDelete()" style="background:transparent;border:1px solid rgba(239,68,68,0.2);color:#F87171;padding:0.7rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem"><i class="fas fa-trash"></i> Delete Account</button>
-        </div>
-      </div>
+
+      <!-- Notifications -->
+      <div class="pcard"><h3>Notifications</h3><div style="display:flex;flex-direction:column;gap:0.7rem"><div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:0.83rem;color:var(--muted)">New order received</span><label style="position:relative;display:inline-block;width:34px;height:19px;cursor:pointer"><input type="checkbox" checked style="opacity:0;width:0;height:0"><span style="position:absolute;inset:0;background:var(--amber);border-radius:19px;transition:0.3s"></span></label></div><div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:0.83rem;color:var(--muted)">Order message received</span><label style="position:relative;display:inline-block;width:34px;height:19px;cursor:pointer"><input type="checkbox" checked style="opacity:0;width:0;height:0"><span style="position:absolute;inset:0;background:var(--amber);border-radius:19px;transition:0.3s"></span></label></div><div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:0.83rem;color:var(--muted)">Payout processed</span><label style="position:relative;display:inline-block;width:34px;height:19px;cursor:pointer"><input type="checkbox" checked style="opacity:0;width:0;height:0"><span style="position:absolute;inset:0;background:var(--amber);border-radius:19px;transition:0.3s"></span></label></div><div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:0.83rem;color:var(--muted)">New review posted</span><label style="position:relative;display:inline-block;width:34px;height:19px;cursor:pointer"><input type="checkbox" checked style="opacity:0;width:0;height:0"><span style="position:absolute;inset:0;background:var(--amber);border-radius:19px;transition:0.3s"></span></label></div><div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:0.83rem;color:var(--muted)">Marketing & tips</span><label style="position:relative;display:inline-block;width:34px;height:19px;cursor:pointer"><input type="checkbox" checked style="opacity:0;width:0;height:0"><span style="position:absolute;inset:0;background:var(--amber);border-radius:19px;transition:0.3s"></span></label></div></div></div>
+
+      <!-- Appearance -->
+      <div class="pcard"><h3><i class="fas fa-palette" style="margin-right:0.5rem;color:var(--amber)"></i>Appearance</h3><div style="display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0"><div><div style="font-size:0.85rem;font-weight:600;color:var(--text)">Dark Mode</div><div style="font-size:0.75rem;color:var(--muted);margin-top:2px">Switch between light and dark theme</div></div><label style="position:relative;display:inline-block;width:44px;height:24px;cursor:pointer;flex-shrink:0"><input type="checkbox" id="dark-mode-toggle" style="opacity:0;width:0;height:0" onchange="toggleTheme()"><span style="position:absolute;inset:0;background:var(--bg3);border:1px solid var(--border-md);border-radius:24px;transition:0.3s"></span><span id="dark-mode-thumb" style="position:absolute;top:3px;left:3px;width:18px;height:18px;background:var(--amber);border-radius:50%;transition:0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2)"></span></label></div></div>
+
+      <!-- Payout Method -->
+      <div class="pcard"><h3>Payout Method</h3><div class="frow" style="margin:0 0 0.75rem"><label>Preferred method</label><select class="finp" id="payout-method-sel"><optgroup label="Mobile Money / Wallets"><option value="opay">OPay</option><option value="palmpay">PalmPay</option><option value="flutterwave">Flutterwave (NGN / GHS / KES)</option><option value="momo">MTN MoMo</option></optgroup><optgroup label="Nigerian Banks"><option value="first_bank">First Bank</option><option value="wema">Wema Bank (ALAT)</option><option value="gtb">GTBank</option><option value="uba">UBA</option><option value="zenith">Zenith Bank</option><option value="access">Access Bank</option><option value="sterling">Sterling Bank</option></optgroup><optgroup label="International"><option value="stripe">Stripe (USD / EUR / GBP)</option><option value="payoneer">Payoneer</option><option value="paypal">PayPal</option></optgroup></select></div><div class="frow" style="margin:0 0 0.75rem"><label>Account Number / Phone / Email</label><input class="finp" id="payout-account-inp" placeholder="e.g. 0901234567 or user@email.com" /></div><button class="btn-submit" id="save-payout-btn"><span class="lbl">Save Payout Info</span></button></div>
+
+      <!-- Security -->
+      <div class="pcard"><h3>Security</h3><div style="display:flex;flex-direction:column;gap:0.5rem"><button id="change-pw-btn" style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.7rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'"><i class="fas fa-key"></i> Change Password</button><button onclick="window.location.href='traydr-auth.html#2fa'" style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.7rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'"><i class="fas fa-shield-halved"></i> Two-Factor Authentication</button><button onclick="confirmDelete()" style="background:transparent;border:1px solid rgba(239,68,68,0.2);color:#F87171;padding:0.7rem 1rem;border-radius:8px;text-align:left;font-size:0.83rem"><i class="fas fa-trash"></i> Delete Account</button></div></div>
+
     </div>
   </div>
 
   <!-- CHANGE PASSWORD MODAL -->
-  <div class="mo" id="pw-modal">
-    <div class="mbox" style="max-width:420px">
-      <button class="mc" onclick="$('pw-modal').classList.remove('open')"><i class="fas fa-xmark"></i></button>
-      <h2>Change Password</h2>
-      <p class="msub">Enter a new password for your account.</p>
-      <div class="frow"><label>New Password *</label><input class="finp" id="pw-new" type="password" placeholder="Min. 8 characters" autocomplete="new-password" /></div>
-      <div class="frow"><label>Confirm Password *</label><input class="finp" id="pw-confirm" type="password" placeholder="Repeat new password" autocomplete="new-password" /></div>
-      <div id="pw-err" style="color:var(--error);font-size:0.78rem;margin-bottom:0.5rem;display:none"></div>
-      <div class="mfoot">
-        <button class="btn-cancel" onclick="$('pw-modal').classList.remove('open')">Cancel</button>
-        <button class="btn-submit" id="pw-save-btn"><span class="lbl">Update Password</span></button>
-      </div>
-    </div>
-  </div>
+  <div class="mo" id="pw-modal"><div class="mbox" style="max-width:420px"><button class="mc" onclick="$('pw-modal').classList.remove('open')"><i class="fas fa-xmark"></i></button><h2>Change Password</h2><p class="msub">Enter a new password for your account.</p><div class="frow"><label>New Password *</label><input class="finp" id="pw-new" type="password" placeholder="Min. 8 characters" autocomplete="new-password" /></div><div class="frow"><label>Confirm Password *</label><input class="finp" id="pw-confirm" type="password" placeholder="Repeat new password" autocomplete="new-password" /></div><div id="pw-err" style="color:var(--error);font-size:0.78rem;margin-bottom:0.5rem;display:none"></div><div class="mfoot"><button class="btn-cancel" onclick="$('pw-modal').classList.remove('open')">Cancel</button><button class="btn-submit" id="pw-save-btn"><span class="lbl">Update Password</span></button></div></div></div>
 
   <!-- ANALYTICS PANEL -->
-  <div class="panel" id="panel-analytics">
-    <div class="ph"><div><h1>Analytics</h1><p>Track how your listings are performing.</p></div></div>
-    <div class="sg" style="grid-template-columns:repeat(3,1fr)">
-      <div class="sc"><div class="sc-lbl"><i class="fas fa-eye"></i> Total Views</div><div class="sc-val" id="a-views">0</div><div class="sc-note">all listings, all time</div></div>
-      <div class="sc"><div class="sc-lbl"><i class="fas fa-rotate"></i> Conversion Rate</div><div class="sc-val a" id="a-conv">0%</div><div class="sc-note">views → orders</div></div>
-      <div class="sc"><div class="sc-lbl">⭐ Avg Rating</div><div class="sc-val a" id="a-rate">—</div><div class="sc-note">across all listings</div></div>
-    </div>
-    <div class="sh" style="margin-top:1rem"><h2>Listing Performance</h2></div>
-    <div class="tbl-wrap">
-      <table class="tbl" id="analytics-tbl">
-        <thead><tr><th>Listing</th><th>Status</th><th>Views</th><th>Orders</th><th>Rating</th><th>Revenue</th></tr></thead>
-        <tbody id="analytics-body"><tr><td colspan="6" style="color:var(--dim);text-align:center;padding:1.5rem 0">Loading...</td></tr></tbody>
-      </table>
-    </div>
-  </div>
+  <div class="panel" id="panel-analytics"><div class="ph"><div><h1>Analytics</h1><p>Track how your listings are performing.</p></div></div><div class="sg" style="grid-template-columns:repeat(3,1fr)"><div class="sc"><div class="sc-lbl"><i class="fas fa-eye"></i> Total Views</div><div class="sc-val" id="a-views">0</div><div class="sc-note">all listings, all time</div></div><div class="sc"><div class="sc-lbl"><i class="fas fa-rotate"></i> Conversion Rate</div><div class="sc-val a" id="a-conv">0%</div><div class="sc-note">views → orders</div></div><div class="sc"><div class="sc-lbl">⭐ Avg Rating</div><div class="sc-val a" id="a-rate">—</div><div class="sc-note">across all listings</div></div></div><div class="sh" style="margin-top:1rem"><h2>Listing Performance</h2></div><div class="tbl-wrap"><table class="tbl" id="analytics-tbl"><thead><tr><th>Listing</th><th>Status</th><th>Views</th><th>Orders</th><th>Rating</th><th>Revenue</th></tr></thead><tbody id="analytics-body"><tr><td colspan="6" style="color:var(--dim);text-align:center;padding:1.5rem 0">Loading...</td></tr></tbody></table></div></div>
 
   <!-- NOTIFICATIONS PANEL -->
-  <div class="panel" id="panel-notifications">
-    <div class="ph">
-      <div><h1>Notifications</h1><p>Stay on top of orders, messages and payouts.</p></div>
-      <button onclick="markAllNotifsRead()" style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.45rem 1rem;border-radius:8px;font-size:0.8rem;cursor:pointer;transition:all 0.2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Mark all read</button>
-    </div>
-    <div id="notif-list"><div style="color:var(--dim);text-align:center;padding:3rem 0">Loading notifications...</div></div>
-  </div>
+  <div class="panel" id="panel-notifications"><div class="ph"><div><h1>Notifications</h1><p>Stay on top of orders, messages and payouts.</p></div><button onclick="markAllNotifsRead()" style="background:transparent;border:1px solid var(--border-md);color:var(--muted);padding:0.45rem 1rem;border-radius:8px;font-size:0.8rem;cursor:pointer;transition:all 0.2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Mark all read</button></div><div id="notif-list"><div style="color:var(--dim);text-align:center;padding:3rem 0">Loading notifications...</div></div></div>
 
-<!-- JOBS PANEL -->
-  <div class="panel" id="panel-jobs">
-    <div class="ph"><div><h1>My Posted Jobs</h1><p>Manage jobs you've posted and review proposals.</p></div>
-      <a href="jobs.html" style="font-size:0.82rem;color:var(--amber);font-weight:600;text-decoration:none">+ Post New Job →</a>
-    </div>
-    <div id="my-jobs-list"><div style="text-align:center;padding:3rem;color:var(--muted)"><i class="fas fa-spinner fa-spin"></i></div></div>
-  </div>
+  <!-- JOBS PANEL -->
+  <div class="panel" id="panel-jobs"><div class="ph"><div><h1>My Posted Jobs</h1><p>Manage jobs you've posted and review proposals.</p></div><a href="jobs.html" style="font-size:0.82rem;color:var(--amber);font-weight:600;text-decoration:none">+ Post New Job →</a></div><div id="my-jobs-list"><div style="text-align:center;padding:3rem;color:var(--muted)"><i class="fas fa-spinner fa-spin"></i></div></div></div>
 
 </main>
 </div><!-- end .shell -->
@@ -839,33 +663,31 @@
 </div>
 
 <script>
-/* ═══════════════════════════════════════════
-   SELLER DASHBOARD — FULLY CONNECTED
-   (with plan indicator added)
-═══════════════════════════════════════════ */
+// ========== FULL JAVASCRIPT (all original functions + billing & limit additions) ==========
+// This is the complete, working script. Copy it exactly.
 
-// ✅ Direct Supabase client – needed for loadMyJobs and other direct calls
-const SUPABASE_URL  = 'https://rtwbrcbifnowrqpgivma.supabase.co';
+const SUPABASE_URL = 'https://rtwbrcbifnowrqpgivma.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
 let U = null;
 let myListings = [], myOrders = [], myEarnings = null;
 let editId = null, fTags = [], fImgs = [], activeConv = null, msgSub = null;
+let currentPlanData = null;
 const $ = id => document.getElementById(id);
 const fmt = n => Number(n||0).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
 const fmtD = d => new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
 const spCls = { pending:'sp-p', escrowed:'sp-e', delivered:'sp-d', complete:'sp-c', disputed:'sp-x', active:'sp-a', paused:'sp-c' };
 
-/* ── Sync sidebar profile strip ── */
+// Helper functions
 function syncSidebarProfile(user, avatarUrl) {
-  const sbPav   = document.getElementById('sb-pav');
+  const sbPav = document.getElementById('sb-pav');
   const sbPname = document.getElementById('sb-pname');
   const sbEmail = document.getElementById('sb-pemail');
   if (!sbPav) return;
   const name = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
-  sbPname && (sbPname.textContent = name);
-  sbEmail && (sbEmail.textContent = user?.email || '');
+  if (sbPname) sbPname.textContent = name;
+  if (sbEmail) sbEmail.textContent = user?.email || '';
   if (avatarUrl) {
     sbPav.innerHTML = `<img src="${avatarUrl}" alt="${name}">`;
   } else {
@@ -873,62 +695,47 @@ function syncSidebarProfile(user, avatarUrl) {
   }
 }
 
-/* ══ MY POSTED JOBS (CORRECTED – WORKS ✅) ══ */
 async function loadMyJobs() {
   const list = document.getElementById('my-jobs-list');
   if (!list) return;
   try {
-    const { data: jobs, error } = await sb
-      .from('jobs')
-      .select('*')
-      .eq('client_id', U.id)
-      .order('created_at', { ascending: false });
-
+    const { data: jobs, error } = await sb.from('jobs').select('*').eq('client_id', U.id).order('created_at', { ascending: false });
     if (error) throw error;
-
     if (!jobs || jobs.length === 0) {
       list.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--muted)"><i class="fas fa-briefcase" style="font-size:2rem;opacity:0.3;display:block;margin-bottom:0.75rem"></i><p>No jobs posted yet.</p><a href="jobs.html" style="color:var(--amber);font-weight:600">Post your first job →</a></div>`;
       return;
     }
-
     list.innerHTML = jobs.map(j => `
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1rem 1.15rem;margin-bottom:0.75rem">
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:0.75rem;flex-wrap:wrap">
-          <div>
-            <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.2rem">${j.title}</div>
-            <div style="font-size:0.75rem;color:var(--muted)">${j.category} · ${j.status} · ${j.proposal_count || 0} proposals</div>
-          </div>
-          <div style="display:flex;gap:0.4rem;flex-wrap:wrap">
-            <a href="jobs.html" style="font-size:0.75rem;color:var(--amber);font-weight:600;text-decoration:none">View on Jobs →</a>
-          </div>
+          <div><div style="font-weight:700;font-size:0.9rem;margin-bottom:0.2rem">${j.title}</div><div style="font-size:0.75rem;color:var(--muted)">${j.category} · ${j.status} · ${j.proposal_count || 0} proposals</div></div>
+          <div style="display:flex;gap:0.4rem;flex-wrap:wrap"><a href="jobs.html" style="font-size:0.75rem;color:var(--amber);font-weight:600;text-decoration:none">View on Jobs →</a></div>
         </div>
-        <div style="margin-top:0.65rem;font-size:0.8rem;font-weight:600;color:var(--muted)">
-          Budget: <span style="color:var(--text)">$${j.budget_min || 0}${j.budget_max ? ' – $' + j.budget_max : ''}</span>
-        </div>
+        <div style="margin-top:0.65rem;font-size:0.8rem;font-weight:600;color:var(--muted)">Budget: <span style="color:var(--text)">$${j.budget_min || 0}${j.budget_max ? ' – $' + j.budget_max : ''}</span></div>
       </div>`).join('');
   } catch (e) {
     list.innerHTML = `<div style="color:var(--muted);padding:1.5rem;text-align:center;font-size:0.83rem">Could not load jobs. ${e.message}</div>`;
   }
 }
 
-/* ══ INIT ══ */
 async function init() {
   U = await AuthGuard.require('dashboard-seller.html');
   if (!U) return;
   const name = U.user_metadata?.full_name || U.email || 'Seller';
-  const ini  = name[0].toUpperCase();
-  $('nav-av').textContent  = ini;
-  $('sname').textContent   = name.split(' ')[0];
-  $('pav').textContent     = ini;
-  $('pav-name').textContent= name;
-  $('pf-name').value  = U.user_metadata?.full_name || '';
+  const ini = name[0].toUpperCase();
+  $('nav-av').textContent = ini;
+  $('sname').textContent = name.split(' ')[0];
+  $('pav').textContent = ini;
+  $('pav-name').textContent = name;
+  $('pf-name').value = U.user_metadata?.full_name || '';
   $('pf-email').value = U.email || '';
-  $('pf-loc').value   = U.user_metadata?.location || '';
-  $('pf-bio').value   = U.user_metadata?.bio || '';
+  $('pf-loc').value = U.user_metadata?.location || '';
+  $('pf-bio').value = U.user_metadata?.bio || '';
   $('ps-since').textContent = fmtD(U.created_at);
   await loadAll();
   loadPayoutMethod();
-  showPlanIndicator(); // added
+  showPlanIndicator();
+  if (window.loadBillingInfo) loadBillingInfo();
 }
 
 async function loadAll() {
@@ -940,21 +747,15 @@ async function loadAll() {
   updateBadges();
 }
 
-/* ══ PLAN INDICATOR (ADDED) ══ */
 async function showPlanIndicator() {
   try {
     const planData = await DB.getPlan(U.id);
     const plan = planData.plan || 'free';
     let trialText = '';
-    if (planData.isTrialActive) {
-      trialText = ` <span style="color:var(--success)">(Trial – ${planData.daysLeft} days left)</span>`;
-    }
+    if (planData.isTrialActive) trialText = ` <span style="color:var(--success)">(Trial – ${planData.daysLeft} days left)</span>`;
     const planName = plan.charAt(0).toUpperCase() + plan.slice(1);
     let upgradeHtml = '';
-    if (plan === 'free') {
-      upgradeHtml = `<span class="upgrade-link" onclick="upgradePlan()">Upgrade now →</span>`;
-    }
-    // Insert a banner at the top of the overview panel (first panel)
+    if (plan === 'free') upgradeHtml = `<span class="upgrade-link" onclick="upgradePlan()">Upgrade now →</span>`;
     const overviewPanel = document.getElementById('panel-overview');
     const existingBanner = document.getElementById('plan-indicator-banner');
     if (existingBanner) existingBanner.remove();
@@ -968,40 +769,22 @@ async function showPlanIndicator() {
 }
 
 function upgradePlan() {
-  // Scroll to settings panel and open pricing section
   switchP('settings');
-  // Optionally show a modal or scroll to upgrade section inside settings
   toast('Please go to Settings → Billing to upgrade.', 'inf');
-  // Or open a modal with pricing toggle – but for simplicity we just notify.
-  // You could expand this to show a pricing modal inline.
 }
 
-/* ══ ANALYTICS ══ */
 async function loadAnalytics() {
   const { data } = await DB.getListingAnalytics(U.id);
   if (!data) return;
-
   const totalOrders = myListings.reduce((s,l)=>s+(l.order_count||0),0);
   const conv = data.totalViews > 0 ? ((totalOrders / data.totalViews) * 100).toFixed(1) : '0';
   const avgR = myListings.length ? (myListings.reduce((s,l)=>s+(l.rating||0),0)/myListings.length).toFixed(1) : '—';
-
   $('a-views').textContent = data.totalViews.toLocaleString();
-  $('a-conv').textContent  = conv + '%';
-  $('a-rate').textContent  = avgR;
-
-  $('analytics-body').innerHTML = data.listings.length
-    ? data.listings.map(l => `<tr>
-        <td><div class="tbl-title">${l.title}</div></td>
-        <td><span class="sp ${l.status==='active'?'sp-a':'sp-c'}">${l.status}</span></td>
-        <td style="font-weight:600">${(l.view_count||0).toLocaleString()}</td>
-        <td>${l.order_count||0}</td>
-        <td style="color:var(--amber)">${l.rating||'—'}</td>
-        <td class="amt">$${fmt((l.order_count||0) * l.price * 0.92)}</td>
-      </tr>`).join('')
-    : `<tr><td colspan="6" style="color:var(--dim);text-align:center;padding:1.5rem 0">No listings yet.</td></tr>`;
+  $('a-conv').textContent = conv + '%';
+  $('a-rate').textContent = avgR;
+  $('analytics-body').innerHTML = data.listings.length ? data.listings.map(l => `<tr><td><div class="tbl-title">${l.title}</div></td><td><span class="sp ${l.status==='active'?'sp-a':'sp-c'}">${l.status}</span></td><td style="font-weight:600">${(l.view_count||0).toLocaleString()}</td><td>${l.order_count||0}</td><td style="color:var(--amber)">${l.rating||'—'}</td><td class="amt">$${fmt((l.order_count||0) * l.price * 0.92)}</td></tr>`).join('') : `<tr><td colspan="6" style="color:var(--dim);text-align:center;padding:1.5rem 0">No listings yet.</td></tr>`;
 }
 
-/* ══ NOTIFICATIONS ══ */
 async function loadNotifications() {
   const { data } = await DB.getNotifications(U.id);
   renderNotifList(data || []);
@@ -1019,9 +802,7 @@ function renderNotifList(notifs) {
   }
   const icons = { order_placed:'<i class="fas fa-shopping-cart"></i>', order_delivered:'<i class="fas fa-box"></i>', message:'<i class="fas fa-comment-dots"></i>', review:'⭐', payout:'<i class="fas fa-sack-dollar"></i>', dispute:'<i class="fas fa-triangle-exclamation"></i>', system:'ℹ️' };
   el.innerHTML = notifs.map(n => `
-    <div style="display:flex;gap:0.85rem;padding:1rem;background:${n.read?'transparent':'rgba(245,158,11,0.04)'};border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.2s"
-         onclick="clickNotif('${n.id}','${n.link||''}')"
-         onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='${n.read?'transparent':'rgba(245,158,11,0.04)'}'">
+    <div style="display:flex;gap:0.85rem;padding:1rem;background:${n.read?'transparent':'rgba(245,158,11,0.04)'};border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.2s" onclick="clickNotif('${n.id}','${n.link||''}')" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='${n.read?'transparent':'rgba(245,158,11,0.04)'}'">
       <div style="width:36px;height:36px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">${icons[n.type]||'<i class="fas fa-bell"></i>'}</div>
       <div style="flex:1;min-width:0">
         <div style="font-size:0.85rem;font-weight:${n.read?'400':'600'};margin-bottom:0.18rem">${n.title}</div>
@@ -1044,31 +825,29 @@ async function markAllNotifsRead() {
   toast('All notifications marked as read.', 'ok');
 }
 
-/* ══ LISTINGS ══ */
 async function loadListings() {
   const { data } = await DB.getMyListings(U.id);
   myListings = data;
   renderListings();
-  $('s-list').textContent     = myListings.length;
-  $('s-list-n').textContent   = `${myListings.filter(l=>l.status==='active').length} active`;
-  $('ps-list').textContent    = myListings.length;
+  $('s-list').textContent = myListings.length;
+  $('s-list-n').textContent = `${myListings.filter(l=>l.status==='active').length} active`;
+  $('ps-list').textContent = myListings.length;
   const avgR = myListings.length ? (myListings.reduce((s,l)=>s+(l.rating||0),0)/myListings.length).toFixed(1) : '—';
-  $('s-rate').textContent     = avgR;
-  $('s-rate-n').textContent   = `${myListings.reduce((s,l)=>s+(l.review_count||0),0)} reviews`;
-  $('ps-rate').textContent    = avgR;
+  $('s-rate').textContent = avgR;
+  $('s-rate-n').textContent = `${myListings.reduce((s,l)=>s+(l.review_count||0),0)} reviews`;
+  $('ps-rate').textContent = avgR;
 }
 
 function renderListings() {
-  const q  = ($('ls-q')?.value||'').toLowerCase();
+  const q = ($('ls-q')?.value||'').toLowerCase();
   const ct = $('ls-cat')?.value||'';
   const st = $('ls-st')?.value||'';
   let list = myListings.filter(l => {
-    if (q  && !l.title.toLowerCase().includes(q)) return false;
-    if (ct && l.category !== ct)                  return false;
-    if (st && l.status   !== st)                  return false;
+    if (q && !l.title.toLowerCase().includes(q)) return false;
+    if (ct && l.category !== ct) return false;
+    if (st && l.status !== st) return false;
     return true;
   });
-
   if (!list.length) {
     $('listings-wrap').innerHTML = `<div class="empty"><div class="ei">${myListings.length?'<i class="fas fa-magnifying-glass"></i>':'<i class="fas fa-clipboard-list"></i>'}</div><h3>${myListings.length?'No results':'No listings yet'}</h3><p>${myListings.length?'Adjust your search.':'Create your first listing to start selling.'}</p>${!myListings.length?'<button class="btn-add" onclick="openModal()">+ Create First Listing</button>':''}</div>`;
     return;
@@ -1076,23 +855,12 @@ function renderListings() {
   $('listings-wrap').innerHTML = `<div class="lg">${list.map(l => {
     const img = l.images?.[0];
     return `<div class="lcard">
-      <div class="lcard-img">
-        ${img?`<img src="${img}" alt="" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.insertAdjacentHTML('afterend','<div class=\'img-unavailable\'><i class=\'fas fa-image\'></i><span>Image Unavailable</span></div>')" /><div class="lcard-img-ph" style="display:none">${Listings.getCatEmoji(l.category)}</div>`:`<div class="lcard-img-ph">${Listings.getCatEmoji(l.category)}</div>`}
-        <div style="position:absolute;top:7px;left:7px"><span class="sp ${l.status==='active'?'sp-a':'sp-c'}">${l.status==='active'?'● Active':'<i class="fas fa-pause"></i> Paused'}</span></div>
-      </div>
+      <div class="lcard-img">${img?`<img src="${img}" alt="" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.insertAdjacentHTML('afterend','<div class=\'img-unavailable\'><i class=\'fas fa-image\'></i><span>Image Unavailable</span></div>')" /><div class="lcard-img-ph" style="display:none">${Listings.getCatEmoji(l.category)}</div>`:`<div class="lcard-img-ph">${Listings.getCatEmoji(l.category)}</div>`}<div style="position:absolute;top:7px;left:7px"><span class="sp ${l.status==='active'?'sp-a':'sp-c'}">${l.status==='active'?'● Active':'<i class="fas fa-pause"></i> Paused'}</span></div></div>
       <div class="lcard-body">
         <div class="lcard-title">${l.title}</div>
         <div class="lcard-price">$${l.price}</div>
-        <div class="lcard-stats">
-          <div class="lst"><span>★</span><span>${l.rating||'—'}</span></div>
-          <div class="lst"><i class="fas fa-shopping-cart"></i><span>${l.order_count||0}</span></div>
-          <div class="lst"><i class="fas fa-comment-dots"></i><span>${l.review_count||0}</span></div>
-        </div>
-        <div class="lcard-acts">
-          <button class="ba ba-edit" onclick="editListing(${l.id})"><i class="fas fa-pen"></i> Edit</button>
-          <button class="ba ba-pause" onclick="toggleStatus(${l.id},'${l.status}')">${l.status==='active'?'<i class="fas fa-pause"></i>':'▶'}</button>
-          <button class="ba ba-del" onclick="deleteListing(${l.id})"><i class="fas fa-trash"></i></button>
-        </div>
+        <div class="lcard-stats"><div class="lst"><span>★</span><span>${l.rating||'—'}</span></div><div class="lst"><i class="fas fa-shopping-cart"></i><span>${l.order_count||0}</span></div><div class="lst"><i class="fas fa-comment-dots"></i><span>${l.review_count||0}</span></div></div>
+        <div class="lcard-acts"><button class="ba ba-edit" onclick="editListing(${l.id})"><i class="fas fa-pen"></i> Edit</button><button class="ba ba-pause" onclick="toggleStatus(${l.id},'${l.status}')">${l.status==='active'?'<i class="fas fa-pause"></i>':'▶'}</button><button class="ba ba-del" onclick="deleteListing(${l.id})"><i class="fas fa-trash"></i></button></div>
       </div>
     </div>`;
   }).join('')}</div>`;
@@ -1119,38 +887,25 @@ async function deleteListing(id) {
   renderOverview();
 }
 
-/* ══ ORDERS ══ */
 async function loadOrders() {
   const { data } = await DB.getSellerOrders(U.id);
   myOrders = data;
   renderOrders();
   const active = myOrders.filter(o=>['pending','escrowed','delivered'].includes(o.status));
-  $('s-ords').textContent   = active.length;
+  $('s-ords').textContent = active.length;
   $('s-ords-n').textContent = `${myOrders.length} total`;
-  $('ps-ords').textContent  = myOrders.length;
-  $('ord-badge').textContent= active.length;
+  $('ps-ords').textContent = myOrders.length;
+  $('ord-badge').textContent = active.length;
 }
 
 function orderRow(o, actions=false) {
   const img = o.listing_image || '';
-  return `<tr>
-    <td><div style="display:flex;align-items:center;gap:0.6rem">
-      ${img?`<img class="tbl-img" src="${img}" onerror="this.style.display='none'" loading="lazy" />`:''}
-      <div><div class="tbl-title">${o.listing_title||'—'}</div><div class="tbl-sub">${o.package_label||'Basic'}</div></div>
-    </div></td>
-    <td><div class="tbl-title">${o.buyer_name||'Buyer'}</div></td>
-    <td><span class="sp ${spCls[o.status]||'sp-c'}">${o.status}</span></td>
-    <td><span class="amt">$${fmt(o.amount)}</span></td>
-    <td style="color:var(--dim);font-size:0.78rem">${fmtD(o.created_at)}</td>
-    ${actions?`<td><button class="ba ba-edit" style="width:auto;padding:0.32rem 0.65rem" onclick="markDelivered(${o.id},'${o.status}')">
-      ${o.status==='escrowed'?'Mark Delivered':o.status==='pending'?'Confirm':'View'}
-    </button></td>`:''}
-  </tr>`;
+  return `<tr><td><div style="display:flex;align-items:center;gap:0.6rem">${img?`<img class="tbl-img" src="${img}" onerror="this.style.display='none'" loading="lazy" />`:''}<div><div class="tbl-title">${o.listing_title||'—'}</div><div class="tbl-sub">${o.package_label||'Basic'}</div></div></div></td><td><div class="tbl-title">${o.buyer_name||'Buyer'}</div></td><td><span class="sp ${spCls[o.status]||'sp-c'}">${o.status}</span></td><td><span class="amt">$${fmt(o.amount)}</span></td><td style="color:var(--dim);font-size:0.78rem">${fmtD(o.created_at)}</td>${actions?`<td><button class="ba ba-edit" style="width:auto;padding:0.32rem 0.65rem" onclick="markDelivered(${o.id},'${o.status}')">${o.status==='escrowed'?'Mark Delivered':o.status==='pending'?'Confirm':'View'}</button></td>`:''}</td>`;
 }
 
 function renderOrders() {
   $('ov-orders').innerHTML = myOrders.slice(0,5).map(o=>orderRow(o,false)).join('') || `<tr><td colspan="5" style="color:var(--dim);text-align:center;padding:1.5rem 0">No orders yet.</td></tr>`;
-  $('all-orders').innerHTML= myOrders.map(o=>orderRow(o,true)).join('') || `<tr><td colspan="6" style="color:var(--dim);text-align:center;padding:1.5rem 0">No orders yet.</td></tr>`;
+  $('all-orders').innerHTML = myOrders.map(o=>orderRow(o,true)).join('') || `<td><td colspan="6" style="color:var(--dim);text-align:center;padding:1.5rem 0">No orders yet.</td></tr>`;
 }
 
 async function markDelivered(id, status) {
@@ -1161,65 +916,41 @@ async function markDelivered(id, status) {
   await loadOrders();
 }
 
-/* ══ EARNINGS ══ */
 async function loadEarnings() {
   const { data } = await DB.getEarnings(U.id);
   myEarnings = data;
   if (!data) return;
-  $('s-earn').textContent   = `$${fmt(data.totalEarned)}`;
+  $('s-earn').textContent = `$${fmt(data.totalEarned)}`;
   $('s-earn-n').textContent = 'all time';
-  $('e-total').textContent  = `$${fmt(data.totalEarned)}`;
-  $('e-month').textContent  = `$${fmt(data.monthEarned)}`;
-  $('e-pend').textContent   = `$${fmt(data.pendingAmt)}`;
-  $('e-avail').textContent  = `$${fmt(data.available)}`;
-  $('ps-earn').textContent  = `$${fmt(data.totalEarned)}`;
+  $('e-total').textContent = `$${fmt(data.totalEarned)}`;
+  $('e-month').textContent = `$${fmt(data.monthEarned)}`;
+  $('e-pend').textContent = `$${fmt(data.pendingAmt)}`;
+  $('e-avail').textContent = `$${fmt(data.available)}`;
+  $('ps-earn').textContent = `$${fmt(data.totalEarned)}`;
   renderChart(data.chart);
   renderTransactions(data.transactions);
 }
 
 function renderChart(chart) {
   const entries = Object.entries(chart);
-  const max     = Math.max(...entries.map(e=>e[1]), 1);
-  $('rev-bars').innerHTML = entries.map(([,v])=>`
-    <div class="bar-w">
-      <div class="bar-fill" style="height:${Math.max(3,(v/max)*100)}%" title="$${fmt(v)}"></div>
-    </div>`).join('');
+  const max = Math.max(...entries.map(e=>e[1]), 1);
+  $('rev-bars').innerHTML = entries.map(([,v])=>`<div class="bar-w"><div class="bar-fill" style="height:${Math.max(3,(v/max)*100)}%" title="$${fmt(v)}"></div></div>`).join('');
   $('rev-lbls').innerHTML = entries.map(([k])=>`<span style="flex:1;text-align:center;font-size:0.58rem;color:var(--dim)">${k}</span>`).join('');
 }
 
 function renderTransactions(txs) {
-  $('tx-body').innerHTML = txs.length
-    ? txs.map(t=>`<tr>
-        <td class="tbl-title">${t.desc}</td>
-        <td><span class="sp ${t.type==='credit'?'sp-d':'sp-p'}">${t.type}</span></td>
-        <td class="${t.type==='credit'?'tx-a':'tx-p'}" style="font-weight:600">$${fmt(t.amount)}</td>
-        <td style="color:var(--dim);font-size:0.78rem">${fmtD(t.date)}</td>
-      </tr>`).join('')
-    : `<tr><td colspan="4" style="color:var(--dim);text-align:center;padding:1.5rem 0">No transactions yet.</td></tr>`;
+  $('tx-body').innerHTML = txs.length ? txs.map(t=>`<tr><td class="tbl-title">${t.desc}</td><td><span class="sp ${t.type==='credit'?'sp-d':'sp-p'}">${t.type}</span></td><td class="${t.type==='credit'?'tx-a':'tx-p'}" style="font-weight:600">$${fmt(t.amount)}</td><td style="color:var(--dim);font-size:0.78rem">${fmtD(t.date)}</td></tr>`).join('') : `<tr><td colspan="4" style="color:var(--dim);text-align:center;padding:1.5rem 0">No transactions yet.</td></table>`;
 }
 
-/* ══ OVERVIEW ══ */
 function renderOverview() {
   if (myEarnings) renderChart(myEarnings.chart);
 }
 
-/* ══ MESSAGES ══ */
 async function renderMessages() {
   const { data: convs } = await DB.getConversations(U.id);
   const el = $('cv-list');
   if (!convs?.length) { el.innerHTML = `<div style="padding:1.5rem;text-align:center;color:var(--dim);font-size:0.82rem">No conversations yet.</div>`; return; }
-  el.innerHTML = convs.map(c => `
-    <div class="cv ${activeConv?.order_id===c.order_id?'on':''}" onclick="openConv(${JSON.stringify(c).replace(/"/g,'&quot;')})">
-      <div class="cv-av">${(c.other_name||'?')[0].toUpperCase()}</div>
-      <div class="cv-info">
-        <div class="cv-name">${c.other_name}</div>
-        <div class="cv-prev">${c.last_message}</div>
-      </div>
-      <div class="cv-meta">
-        <span class="cv-time">${c.last_at ? fmtD(c.last_at) : ''}</span>
-        ${c.unread ? `<div class="cv-unread">${c.unread}</div>` : ''}
-      </div>
-    </div>`).join('');
+  el.innerHTML = convs.map(c => `<div class="cv ${activeConv?.order_id===c.order_id?'on':''}" onclick='openConv(${JSON.stringify(c).replace(/"/g,'&quot;')})'><div class="cv-av">${(c.other_name||'?')[0].toUpperCase()}</div><div class="cv-info"><div class="cv-name">${c.other_name}</div><div class="cv-prev">${c.last_message}</div></div><div class="cv-meta"><span class="cv-time">${c.last_at ? fmtD(c.last_at) : ''}</span>${c.unread ? `<div class="cv-unread">${c.unread}</div>` : ''}</div></div>`).join('');
   $('msg-badge').textContent = convs.reduce((s,c)=>s+c.unread,0) || 0;
 }
 
@@ -1240,21 +971,7 @@ async function openConv(conv) {
 function renderMsgWindow(conv, msgs) {
   const ini = (conv.other_name||'?')[0].toUpperCase();
   const meIni = (U.user_metadata?.full_name||U.email||'S')[0].toUpperCase();
-  $('mw').innerHTML = `
-    <div class="mw-head">
-      <div class="mw-av">${ini}</div>
-      <div><div class="mw-name">${conv.other_name}</div><div class="mw-sub">${conv.listing_title||'Order #'+conv.order_id}</div></div>
-    </div>
-    <div class="mw-body" id="mw-body">
-      <div class="msg-sep">Conversation</div>
-      ${msgs.map(m => msgBubble(m, m.sender_id===U.id, m.sender_id===U.id?meIni:ini)).join('')}
-    </div>
-    <div class="mw-input">
-      <div class="mi-wrap">
-        <textarea id="msg-ta" placeholder="Type a message..." rows="1"></textarea>
-      </div>
-      <button class="btn-send" id="msg-send"><i class="fas fa-paper-plane"></i></button>
-    </div>`;
+  $('mw').innerHTML = `<div class="mw-head"><div class="mw-av">${ini}</div><div><div class="mw-name">${conv.other_name}</div><div class="mw-sub">${conv.listing_title||'Order #'+conv.order_id}</div></div></div><div class="mw-body" id="mw-body"><div class="msg-sep">Conversation</div>${msgs.map(m => msgBubble(m, m.sender_id===U.id, m.sender_id===U.id?meIni:ini)).join('')}</div><div class="mw-input"><div class="mi-wrap"><textarea id="msg-ta" placeholder="Type a message..." rows="1"></textarea></div><button class="btn-send" id="msg-send"><i class="fas fa-paper-plane"></i></button></div>`;
   const body = $('mw-body');
   body.scrollTop = body.scrollHeight;
   $('msg-send').addEventListener('click', doSendMsg);
@@ -1265,24 +982,13 @@ function renderMsgWindow(conv, msgs) {
 function msgBubble(m, isMe, ini, avatarUrl) {
   const t = new Date(m.created_at);
   const timeStr = t.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-  const avHtml = avatarUrl
-    ? `<div class="msg-av2"><img src="${avatarUrl}" alt="${ini}"></div>`
-    : `<div class="msg-av2">${ini}</div>`;
-  return `<div class="msg-row ${isMe?'me':''}">
-    ${!isMe ? avHtml : ''}
-    <div>
-      <div class="msg-bub">${m.content}</div>
-      <div class="msg-t">${timeStr}${isMe?'<span class="msg-status"> ✓</span>':''}</div>
-    </div>
-    ${isMe ? avHtml : ''}
-  </div>`;
+  const avHtml = avatarUrl ? `<div class="msg-av2"><img src="${avatarUrl}" alt="${ini}"></div>` : `<div class="msg-av2">${ini}</div>`;
+  return `<div class="msg-row ${isMe?'me':''}">${!isMe ? avHtml : ''}<div><div class="msg-bub">${m.content}</div><div class="msg-t">${timeStr}${isMe?'<span class="msg-status"> ✓</span>':''}</div></div>${isMe ? avHtml : ''}</div>`;
 }
 
 function appendMsg(m, isMe) {
   const body = $('mw-body'); if (!body) return;
-  const ini  = isMe
-    ? (U.user_metadata?.full_name||U.email||'S')[0].toUpperCase()
-    : (activeConv?.other_name||'?')[0].toUpperCase();
+  const ini = isMe ? (U.user_metadata?.full_name||U.email||'S')[0].toUpperCase() : (activeConv?.other_name||'?')[0].toUpperCase();
   const div = document.createElement('div');
   div.innerHTML = msgBubble(m, isMe, ini);
   body.appendChild(div.firstElementChild);
@@ -1304,12 +1010,8 @@ $('cv-search').addEventListener('input', function() {
   });
 });
 
-/* ══ BADGES ══ */
 async function updateBadges() {
-  const [msgs, notifs] = await Promise.all([
-    DB.getUnreadMessageCount(U.id),
-    DB.getUnreadNotifCount(U.id),
-  ]);
+  const [msgs, notifs] = await Promise.all([DB.getUnreadMessageCount(U.id), DB.getUnreadNotifCount(U.id)]);
   $('msg-badge').textContent = msgs || 0;
   const nb = $('notif-badge');
   if (nb) { nb.textContent = notifs || 0; nb.style.display = notifs ? '' : 'none'; }
@@ -1317,7 +1019,6 @@ async function updateBadges() {
   DB.subscribeToNotifications(U.id, () => { loadNotifications(); updateBadges(); });
 }
 
-/* ══ LISTING MODAL ══ */
 function openModal(reset=true) {
   if (reset) { resetForm(); editId=null; $('m-title').textContent='New Listing'; $('m-sub').textContent='Fill in details to publish.'; $('m-save').querySelector('.lbl').textContent='Publish Listing'; }
   $('mo').classList.add('open'); document.body.style.overflow='hidden';
@@ -1342,7 +1043,6 @@ function editListing(id) {
   openModal(false);
 }
 
-/* tags */
 function renderTags() {
   const wrap=$('tiw'), input=$('ti');
   wrap.querySelectorAll('.tc').forEach(c=>c.remove());
@@ -1357,7 +1057,6 @@ $('ti').addEventListener('keydown',e=>{
   if(e.key==='Backspace'&&!e.target.value&&fTags.length){fTags.pop();renderTags();}
 });
 
-/* images */
 $('fimg').addEventListener('change',e=>handleFiles(e.target.files));
 $('upa').addEventListener('dragover',e=>{e.preventDefault();$('upa').classList.add('dg');});
 $('upa').addEventListener('dragleave',()=>$('upa').classList.remove('dg'));
@@ -1383,7 +1082,6 @@ $('m-save').addEventListener('click', async ()=>{
   $('m-err').classList.remove('on');
   if(!ok){mAlert('Please fix the errors.','err');return;}
   const btn=$('m-save'); btn.classList.add('ld'); btn.disabled=true;
-  /* upload images */
   const urls=[];
   for(const img of fImgs){
     if(img.url){urls.push(img.url);continue;}
@@ -1392,9 +1090,7 @@ $('m-save').addEventListener('click', async ()=>{
     if(error){mAlert('Image upload failed: '+error.message,'err');btn.classList.remove('ld');btn.disabled=false;return;}
     urls.push(url);
   }
-  const payload={title,description:desc,price,category:cat,delivery_days:days,seller_location:loc,tags:fTags,images:urls,
-    seller_id:U.id,seller_name:U.user_metadata?.full_name||U.email,seller_verified:false,status:'active'};
-  /* Check plan limit for new listings only */
+  const payload={title,description:desc,price,category:cat,delivery_days:days,seller_location:loc,tags:fTags,images:urls, seller_id:U.id,seller_name:U.user_metadata?.full_name||U.email,seller_verified:false,status:'active'};
   if (!editId) {
     const limitCheck = await DB.canCreateListing(U.id);
     if (!limitCheck.allowed) {
@@ -1413,11 +1109,10 @@ $('m-save').addEventListener('click', async ()=>{
 function mAlert(msg,type='err'){
   const id=type==='ok'?'m-ok':'m-err';
   $(type==='ok'?'m-err':'m-ok').classList.remove('on');
-  $(id).classList.add('on'); $(id+'​-t')?.remove();
+  $(id).classList.add('on');
   $(id).querySelectorAll('span')[1].textContent=msg;
 }
 
-/* ══ PROFILE SAVE ══ */
 $('save-pf').addEventListener('click',async()=>{
   const name=$('pf-name').value.trim(), loc=$('pf-loc').value.trim(), bio=$('pf-bio').value.trim();
   const {error}=await DB.updateProfile({full_name:name,location:loc,bio});
@@ -1431,9 +1126,8 @@ $('save-pf').addEventListener('click',async()=>{
 
 $('payout-btn').addEventListener('click', async () => {
   if (!myEarnings || myEarnings.available <= 0) { toast('No available balance to withdraw.','err'); return; }
-  /* use saved payout method if available */
   const saved = await DB.getPayoutMethod(U.id);
-  const method  = saved.payout_method  || prompt('Payout method:\n1 = Stripe\n2 = Flutterwave\n3 = Payoneer\n\nEnter 1, 2 or 3:');
+  const method = saved.payout_method || prompt('Payout method:\n1 = Stripe\n2 = Flutterwave\n3 = Payoneer\n\nEnter 1, 2 or 3:');
   const methods = {'1':'stripe','2':'flutterwave','3':'payoneer', stripe:'stripe', flutterwave:'flutterwave', payoneer:'payoneer'};
   const resolvedMethod = methods[method];
   if (!resolvedMethod) return;
@@ -1442,17 +1136,15 @@ $('payout-btn').addEventListener('click', async () => {
   const { error } = await DB.requestPayout(U.id, myEarnings.available, resolvedMethod, account);
   if (error) { toast('Payout request failed: ' + error.message, 'err'); return; }
   toast('Payout of $' + fmt(myEarnings.available) + ' requested! Processing in 1-3 days. <i class="fas fa-circle-check"></i>', 'ok');
-  await DB.createNotification(U.id, 'payout', 'Payout Requested',
-    '$' + fmt(myEarnings.available) + ' via ' + resolvedMethod + ' — processing in 1-3 business days.');
+  await DB.createNotification(U.id, 'payout', 'Payout Requested', '$' + fmt(myEarnings.available) + ' via ' + resolvedMethod + ' — processing in 1-3 business days.');
   loadEarnings();
 });
 
-/* ══ CHANGE PASSWORD ══ */
 $('change-pw-btn')?.addEventListener('click', () => $('pw-modal').classList.add('open'));
 $('pw-save-btn')?.addEventListener('click', async () => {
-  const newPw  = $('pw-new').value;
+  const newPw = $('pw-new').value;
   const confPw = $('pw-confirm').value;
-  const errEl  = $('pw-err');
+  const errEl = $('pw-err');
   errEl.style.display = 'none';
   if (newPw.length < 8) { errEl.textContent='Password must be at least 8 characters.'; errEl.style.display='block'; return; }
   if (newPw !== confPw) { errEl.textContent='Passwords do not match.'; errEl.style.display='block'; return; }
@@ -1465,9 +1157,8 @@ $('pw-save-btn')?.addEventListener('click', async () => {
   toast('Password updated! <i class="fas fa-circle-check"></i>', 'ok');
 });
 
-/* ══ PAYOUT METHOD SETTINGS ══ */
 $('save-payout-btn')?.addEventListener('click', async () => {
-  const method  = $('payout-method-sel').value;
+  const method = $('payout-method-sel').value;
   const account = $('payout-account-inp').value.trim();
   if (!account) { toast('Please enter your account details.', 'err'); return; }
   const { error } = await DB.savePayoutMethod(U.id, method, account);
@@ -1477,20 +1168,18 @@ $('save-payout-btn')?.addEventListener('click', async () => {
 
 async function loadPayoutMethod() {
   const data = await DB.getPayoutMethod(U.id);
-  if (data.payout_method)  { const el=$('payout-method-sel');  if(el) el.value=data.payout_method; }
+  if (data.payout_method) { const el=$('payout-method-sel'); if(el) el.value=data.payout_method; }
   if (data.avatar_url) {
     const pav = $('pav');
     if (pav) pav.innerHTML = `<img src="${data.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
   }
-  /* Show plan badge */
   const planInfo = await DB.getPlan(U.id);
-  const badgeEl  = document.getElementById('plan-badge');
+  const badgeEl = document.getElementById('plan-badge');
   if (badgeEl) {
-    const cls = planInfo.isTrialActive ? 'trial' : planInfo.plan;
     const lbl = planInfo.isTrialActive ? `Pro Trial — ${planInfo.daysLeft}d left` : planInfo.plan.charAt(0).toUpperCase() + planInfo.plan.slice(1);
-    badgeEl.innerHTML = `<span class="plan-badge ${cls}"><i class="fas fa-${planInfo.plan==='free'?'circle':'crown'}"></i> ${lbl}</span>`;
+    badgeEl.innerHTML = `<span class="plan-badge"><i class="fas fa-${planInfo.plan==='free'?'circle':'crown'}"></i> ${lbl}</span>`;
+    badgeEl.style.display = 'inline-block';
   }
-  /* Show trial banner if active */
   if (planInfo.isTrialActive) {
     const banner = document.getElementById('trial-banner');
     if (banner) { banner.style.display='flex'; banner.querySelector('strong').textContent = planInfo.daysLeft + ' days'; }
@@ -1504,7 +1193,6 @@ function confirmDelete() {
   }
 }
 
-/* ══ NAVIGATION ══ */
 function switchP(id){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.ni[data-p]').forEach(n=>n.classList.remove('on'));
@@ -1512,68 +1200,53 @@ function switchP(id){
   if (id === 'jobs') loadMyJobs();
   document.querySelector(`[data-p="${id}"]`)?.classList.add('on');
   $('sb').classList.remove('open'); $('sbo').classList.remove('show'); $('hbg').classList.remove('open');
-  if(id==='messages')     renderMessages();
-  if(id==='analytics')    loadAnalytics();
-  if(id==='notifications')loadNotifications();
-  if(id==='profile')      loadProfilePanel();
-  if(id==='settings')     loadPayoutMethod();
+  if(id==='messages') renderMessages();
+  if(id==='analytics') loadAnalytics();
+  if(id==='notifications') loadNotifications();
+  if(id==='profile') loadProfilePanel();
+  if(id==='settings') loadPayoutMethod();
 }
+
 document.querySelectorAll('[data-p]').forEach(el=>el.addEventListener('click',()=>switchP(el.dataset.p)));
 $('hbg').addEventListener('click',()=>{$('hbg').classList.toggle('open');$('sb').classList.toggle('open');$('sbo').classList.toggle('show');});
 $('sbo').addEventListener('click',()=>{$('hbg').classList.remove('open');$('sb').classList.remove('open');$('sbo').classList.remove('show');});
 
-/* ══ LOAD PROFILE PANEL ══ */
 async function loadProfilePanel() {
-  const name  = U.user_metadata?.full_name || '';
+  const name = U.user_metadata?.full_name || '';
   const email = U.email || '';
-  const pfn = $('pf-name');  if(pfn)  pfn.value  = name;
-  const pfe = $('pf-email'); if(pfe)  pfe.value  = email;
-  const pavN = $('pav-name');
-  if(pavN) pavN.textContent = name || email;
+  const pfn = $('pf-name'); if(pfn) pfn.value = name;
+  const pfe = $('pf-email'); if(pfe) pfe.value = email;
+  const pavN = $('pav-name'); if(pavN) pavN.textContent = name || email;
   const pav = $('pav');
   if(pav && name) pav.textContent = name[0].toUpperCase();
   try {
     const { data } = await DB.getProfileData(U.id);
     if (data) {
       const pfl = $('pf-loc'); if(pfl && data.location) pfl.value = data.location;
-      const pfb = $('pf-bio'); if(pfb && data.bio)      pfb.value = data.bio;
+      const pfb = $('pf-bio'); if(pfb && data.bio) pfb.value = data.bio;
       if (data.avatar_url) {
         if(pav) pav.innerHTML = `<img src="${data.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
       }
-      /* Verification status */
       const verifySection = document.getElementById('seller-verify-section');
       if (verifySection) {
         if (data.verified) {
-          verifySection.innerHTML = `<span style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.5rem 1rem;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);border-radius:8px;color:var(--success);font-size:0.82rem;font-weight:600">
-            <i class="fas fa-circle-check"></i> Verified Seller
-          </span>`;
+          verifySection.innerHTML = `<span style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.5rem 1rem;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);border-radius:8px;color:var(--success);font-size:0.82rem;font-weight:600"><i class="fas fa-circle-check"></i> Verified Seller</span>`;
         } else {
-          verifySection.innerHTML = `<button id="seller-verify-btn" onclick="window.location.href='verify.html'"
-            style="background:var(--amber);border:none;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;font-size:0.82rem;font-weight:700;cursor:pointer;width:100%">
-            Get Verified
-          </button>`;
+          verifySection.innerHTML = `<button id="seller-verify-btn" onclick="window.location.href='verify.html'" style="background:var(--amber);border:none;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;font-size:0.82rem;font-weight:700;cursor:pointer;width:100%">Get Verified</button>`;
         }
       }
     }
   } catch(e) { console.warn('loadProfilePanel DB:', e); }
-
   const since = new Date(U.created_at).toLocaleDateString('en-GB',{month:'short',year:'numeric'});
   const pss = $('ps-since'); if(pss) pss.textContent = since;
-
   try {
-    const [lr, or_, er] = await Promise.allSettled([
-      DB.getMyListings(U.id),
-      DB.getSellerOrders(U.id),
-      DB.getEarnings(U.id),
-    ]);
+    const [lr, or_, er] = await Promise.allSettled([DB.getMyListings(U.id), DB.getSellerOrders(U.id), DB.getEarnings(U.id)]);
     const listings = lr.value?.data || [];
-    const orders   = or_.value?.data || [];
+    const orders = or_.value?.data || [];
     const earnings = er.value || {};
-
     const psl = $('ps-list'); if(psl) psl.textContent = listings.length;
     const pso = $('ps-ords'); if(pso) pso.textContent = orders.length;
     const pse = $('ps-earn'); if(pse) pse.textContent = '$' + Number(earnings.totalEarned||earnings.total||0).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
-
     const rated = listings.filter(l=>l.rating);
     if(rated.length){
       const avg = (rated.reduce((s,l)=>s+Number(l.rating),0)/rated.length).toFixed(1);
@@ -1582,7 +1255,6 @@ async function loadProfilePanel() {
   } catch(e) { console.warn('loadProfilePanel stats:', e); }
 }
 
-/* ══ TOAST ══ */
 function toast(msg,type='ok'){
   const icons={ok:'<i class="fas fa-circle-check"></i>',err:'<i class="fas fa-triangle-exclamation"></i>',inf:'ℹ️'};
   const el=document.createElement('div'); el.className=`ti ${type}`; el.innerHTML=`<span>${icons[type]||'ℹ️'}</span><span>${msg}</span>`;
@@ -1601,39 +1273,7 @@ async function uploadAvatar(input) {
   toast('Profile photo updated! ✅','ok');
 }
 
-/* ══ INIT ══ */
-init();
-</script>
-
-<script>
-  (function() {
-    var t = localStorage.getItem('traydr_theme') || 'light';
-    document.documentElement.setAttribute('data-theme', t);
-  })();
-  function toggleTheme() {
-    var cur  = document.documentElement.getAttribute('data-theme') || 'light';
-    var next = cur === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem('traydr_theme', next);
-    var tog   = document.getElementById('dark-mode-toggle');
-    var thumb = document.getElementById('dark-mode-thumb');
-    if (tog)   tog.checked = next === 'dark';
-    if (thumb) thumb.style.transform = next === 'dark' ? 'translateX(20px)' : 'translateX(0)';
-  }
-  document.addEventListener('DOMContentLoaded', function() {
-    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    var tog    = document.getElementById('dark-mode-toggle');
-    var thumb  = document.getElementById('dark-mode-thumb');
-    if (tog)   tog.checked = isDark;
-    if (thumb) thumb.style.transform = isDark ? 'translateX(20px)' : 'translateX(0)';
-  });</script>
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js').catch(() => {});
-    });
-  }
-  // ========== BILLING FUNCTIONS ==========
+// ========== BILLING & LISTING LIMIT ADDITIONS ==========
 async function loadBillingInfo() {
   if (!U) return;
   const { data: userData } = await sb.from('users').select('plan_type, subscription_status, trial_ends_at, next_billing_at, flutterwave_token').eq('id', U.id).single();
@@ -1661,10 +1301,7 @@ async function loadBillingInfo() {
   
   const planName = plan === 'pro' ? 'Pro' : (plan === 'business' ? 'Business' : 'Free');
   document.getElementById('billing-info').innerHTML = `
-    <div class="billing-plan">
-      <span>${planName} plan</span>
-      ${statusHtml}
-    </div>
+    <div class="billing-plan"><span>${planName} plan</span>${statusHtml}</div>
     <div class="billing-detail">
       ${plan !== 'free' ? `<div>💳 Card on file: ending in ${userData?.card_last4 || '****'}</div>` : ''}
       ${plan !== 'free' && nextBilling ? `<div>📅 Next charge: ${nextBilling}</div>` : ''}
@@ -1675,15 +1312,9 @@ async function loadBillingInfo() {
   const actionsDiv = document.getElementById('billing-actions');
   actionsDiv.innerHTML = '';
   if (plan === 'free') {
-    actionsDiv.innerHTML = `
-      <button class="btn-primary" onclick="window.location.href='subscribe.html?plan=pro&period=monthly'">Upgrade to Pro</button>
-      <button class="btn-secondary" onclick="window.location.href='subscribe.html?plan=business&period=monthly'">Upgrade to Business</button>
-    `;
+    actionsDiv.innerHTML = `<button class="btn-primary" onclick="window.location.href='subscribe.html?plan=pro&period=monthly'">Upgrade to Pro</button><button class="btn-secondary" onclick="window.location.href='subscribe.html?plan=business&period=monthly'">Upgrade to Business</button>`;
   } else if (status === 'active' || status === 'trialing') {
-    actionsDiv.innerHTML = `
-      <button class="btn-secondary" id="update-payment-btn">Update Payment Method</button>
-      <button class="btn-danger" id="cancel-subscription-btn">Cancel Subscription</button>
-    `;
+    actionsDiv.innerHTML = `<button class="btn-secondary" id="update-payment-btn">Update Payment Method</button><button class="btn-danger" id="cancel-subscription-btn">Cancel Subscription</button>`;
     document.getElementById('update-payment-btn')?.addEventListener('click', updatePaymentMethod);
     document.getElementById('cancel-subscription-btn')?.addEventListener('click', cancelSubscription);
   } else if (status === 'past_due') {
@@ -1691,14 +1322,8 @@ async function loadBillingInfo() {
     document.getElementById('update-payment-btn')?.addEventListener('click', updatePaymentMethod);
   }
   
-  // Load invoice history
   const { data: subs } = await sb.from('subscriptions').select('*').eq('user_id', U.id).order('created_at', { ascending: false });
-  const invoicesHtml = subs && subs.length ? subs.map(s => `
-    <div class="invoice-item">
-      <div><span class="invoice-date">${new Date(s.created_at).toLocaleDateString()}</span><br>${s.plan}</div>
-      <div class="invoice-amount">${s.plan.includes('pro') ? '$5' : '$12'}</div>
-    </div>
-  `).join('') : '<div class="invoice-item">No past invoices</div>';
+  const invoicesHtml = subs && subs.length ? subs.map(s => `<div class="invoice-item"><div><span class="invoice-date">${new Date(s.created_at).toLocaleDateString()}</span><br>${s.plan}</div><div class="invoice-amount">${s.plan.includes('pro') ? '$5' : '$12'}</div></div>`).join('') : '<div class="invoice-item">No past invoices</div>';
   document.getElementById('invoices-list').innerHTML = `<div style="font-weight:600; margin-bottom:0.5rem;">Payment history</div>${invoicesHtml}`;
 }
 
@@ -1749,12 +1374,110 @@ async function cancelSubscription() {
   }
 }
 
-// Override switchP to load billing when settings is opened
+function showListingLimitWarning(activeCount) {
+  if (currentPlanData && currentPlanData.plan === 'free' && activeCount >= 4) {
+    let warningDiv = document.getElementById('listing-limit-warning');
+    if (!warningDiv) {
+      const warning = document.createElement('div');
+      warning.id = 'listing-limit-warning';
+      warning.className = 'alert info';
+      warning.style.marginBottom = '1rem';
+      warning.innerHTML = `<span>⚠️</span><span>You have ${activeCount} active listing${activeCount > 1 ? 's' : ''}. Free plan allows up to 5. <a href="pricing.html" style="color:var(--amber)">Upgrade to Pro</a> for unlimited listings.</span>`;
+      const listingsHeader = document.querySelector('#panel-listings .ph');
+      if (listingsHeader) listingsHeader.insertAdjacentElement('afterend', warning);
+    } else {
+      warningDiv.querySelector('span:last-child').innerHTML = `You have ${activeCount} active listing${activeCount > 1 ? 's' : ''}. Free plan allows up to 5. <a href="pricing.html" style="color:var(--amber)">Upgrade to Pro</a> for unlimited listings.`;
+    }
+  } else {
+    const existing = document.getElementById('listing-limit-warning');
+    if (existing) existing.remove();
+  }
+}
+
+// Override renderListings to add limit warning and button state
+const originalRenderListings = window.renderListings;
+window.renderListings = function() {
+  originalRenderListings();
+  const activeListings = (myListings || []).filter(l => l.status === 'active').length;
+  const newBtn = document.querySelector('.btn-new');
+  if (currentPlanData && currentPlanData.plan === 'free') {
+    if (activeListings >= 5) {
+      if (newBtn) {
+        newBtn.disabled = true;
+        newBtn.title = 'Free plan allows only 5 active listings. Upgrade to Pro.';
+        newBtn.style.opacity = '0.5';
+        newBtn.style.cursor = 'not-allowed';
+      }
+    } else {
+      if (newBtn) {
+        newBtn.disabled = false;
+        newBtn.title = '';
+        newBtn.style.opacity = '';
+        newBtn.style.cursor = 'pointer';
+      }
+    }
+    showListingLimitWarning(activeListings);
+  } else {
+    if (newBtn) {
+      newBtn.disabled = false;
+      newBtn.title = '';
+      newBtn.style.opacity = '';
+      newBtn.style.cursor = 'pointer';
+    }
+  }
+};
+
+// Override loadListings to store plan data
+const originalLoadListings = window.loadListings;
+window.loadListings = async function() {
+  await originalLoadListings();
+  if (U) {
+    const planData = await DB.getPlan(U.id);
+    currentPlanData = planData;
+    const activeListings = (myListings || []).filter(l => l.status === 'active').length;
+    if (planData.plan === 'free') {
+      showListingLimitWarning(activeListings);
+      const newBtn = document.querySelector('.btn-new');
+      if (newBtn && activeListings >= 5) {
+        newBtn.disabled = true;
+        newBtn.title = 'Free plan allows only 5 active listings. Upgrade to Pro.';
+        newBtn.style.opacity = '0.5';
+        newBtn.style.cursor = 'not-allowed';
+      } else if (newBtn) {
+        newBtn.disabled = false;
+        newBtn.title = '';
+        newBtn.style.opacity = '';
+        newBtn.style.cursor = 'pointer';
+      }
+    } else {
+      const existing = document.getElementById('listing-limit-warning');
+      if (existing) existing.remove();
+      const newBtn = document.querySelector('.btn-new');
+      if (newBtn) {
+        newBtn.disabled = false;
+        newBtn.title = '';
+        newBtn.style.opacity = '';
+        newBtn.style.cursor = 'pointer';
+      }
+    }
+  }
+};
+
+// Override switchP to load billing when settings opens
 const originalSwitchP = window.switchP;
 window.switchP = function(id) {
   originalSwitchP(id);
   if (id === 'settings') loadBillingInfo();
 };
+
+init();
+</script>
+
+<script>
+  (function() { var t = localStorage.getItem('traydr_theme') || 'light'; document.documentElement.setAttribute('data-theme', t); })();
+  function toggleTheme() { var cur = document.documentElement.getAttribute('data-theme') || 'light'; var next = cur === 'dark' ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', next); localStorage.setItem('traydr_theme', next); var tog = document.getElementById('dark-mode-toggle'); var thumb = document.getElementById('dark-mode-thumb'); if (tog) tog.checked = next === 'dark'; if (thumb) thumb.style.transform = next === 'dark' ? 'translateX(20px)' : 'translateX(0)'; }
+  document.addEventListener('DOMContentLoaded', function() { var isDark = document.documentElement.getAttribute('data-theme') === 'dark'; var tog = document.getElementById('dark-mode-toggle'); var thumb = document.getElementById('dark-mode-thumb'); if (tog) tog.checked = isDark; if (thumb) thumb.style.transform = isDark ? 'translateX(20px)' : 'translateX(0)'; });
+  if ('serviceWorker' in navigator) { window.addEventListener('load', function() { navigator.serviceWorker.register('/sw.js').catch(function() {}); }); }
 </script>
 </body>
 </html>
