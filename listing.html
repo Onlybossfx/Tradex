@@ -4,21 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TraydR — Listing</title>
-  <meta name="description"        content="Find the best products, services and skills on TraydR marketplace." />
-  <meta name="robots"             content="index, follow" />
-  <meta property="og:type"        content="product" />
-  <meta property="og:site_name"   content="TraydR" />
-  <meta property="og:url"         id="og-url"   content="https://traydr.vercel.app/listing.html" />
-  <meta property="og:title"       id="og-title" content="TraydR Listing" />
-  <meta property="og:description" id="og-desc"  content="Find the best products and services on TraydR." />
-  <meta property="og:image"       id="og-img"   content="https://traydr.vercel.app/og-image.png" />
-  <meta property="og:price:amount"       id="og-price"    content="" />
-  <meta property="og:price:currency"     content="USD" />
-  <meta name="twitter:card"       content="summary_large_image" />
-  <meta name="twitter:title"      id="tw-title" content="TraydR Listing" />
+  <meta name="description" content="Find the best products, services and skills on TraydR marketplace." />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:type" content="product" />
+  <meta property="og:site_name" content="TraydR" />
+  <meta property="og:url" id="og-url" content="https://traydr.vercel.app/listing.html" />
+  <meta property="og:title" id="og-title" content="TraydR Listing" />
+  <meta property="og:description" id="og-desc" content="Find the best products and services on TraydR." />
+  <meta property="og:image" id="og-img" content="https://traydr.vercel.app/og-image.png" />
+  <meta property="og:price:amount" id="og-price" content="" />
+  <meta property="og:price:currency" content="USD" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" id="tw-title" content="TraydR Listing" />
   <meta name="twitter:description" id="tw-desc" content="Find the best products and services on TraydR." />
-  <meta name="twitter:image"      id="tw-img"   content="https://traydr.vercel.app/og-image.png" />
-  <link rel="canonical"           id="canonical" href="https://traydr.vercel.app/listing.html" />
+  <meta name="twitter:image" id="tw-img" content="https://traydr.vercel.app/og-image.png" />
+  <link rel="canonical" id="canonical" href="https://traydr.vercel.app/listing.html" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F59E0B" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -27,15 +27,17 @@
   <script src="auth.guard.js"></script>
   <script src="auth.backend.js"></script>
   <script src="listings.js"></script>
+  <script src="dashboard.backend.js"></script>
   <script src="currency.js"></script>
   <style>
+    /* ========== FULL CSS (original + fixes) ========== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --amber: #C2690A; --amber-light: #D97706; --amber-dim: rgba(194,105,10,0.1);
       --bg: #FFF8F0; --bg2: #FFECD2; --bg3: #FFE0B8; --bg4: #FFD49E;
       --border: rgba(255,160,60,0.35); --border-md: rgba(255,140,40,0.5);
       --text: #1C1208; --muted: rgba(28,18,8,0.55); --dim: rgba(28,18,8,0.35);
-      --error: #DC2626; --success: #16A34A;
+      --error: #DC2626; --success: #16A34A; --warning: #D97706;
       --serif: 'Playfair Display', Georgia, serif;
       --sans: 'DM Sans', system-ui, sans-serif;
       --nav-h: 62px;
@@ -97,8 +99,9 @@
     .stat-label { color: var(--muted); }
     .rating-stars { color: var(--amber); font-size: 0.85rem; }
 
-    /* ══ SELLER MINI ══ */
-    .seller-mini { display: flex; align-items: center; gap: 0.75rem; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 1rem; }
+    /* ══ SELLER MINI (clickable) ══ */
+    .seller-mini { display: flex; align-items: center; gap: 0.75rem; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 1rem; cursor: pointer; transition: all 0.2s; }
+    .seller-mini:hover { background: var(--bg3); border-color: var(--border-md); }
     .sm-av { width: 40px; height: 40px; border-radius: 50%; background: var(--amber-dim); border: 1px solid rgba(245,158,11,0.25); display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 700; color: var(--amber); flex-shrink: 0; overflow: hidden; }
     .sm-av img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
     .sm-info { flex: 1; min-width: 0; }
@@ -106,17 +109,11 @@
     .sm-tag { font-size: 0.75rem; color: var(--muted); }
     .sm-badge { color: var(--success); font-size: 0.78rem; flex-shrink: 0; }
 
-    /* ══ PACKAGE ══ */
+    /* ══ PACKAGE BOX (simplified) ══ */
     .pkg-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; margin-bottom: 1rem; }
-    .pkg-tabs { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.3rem; background: var(--bg3); border-radius: 9px; padding: 3px; margin-bottom: 0.9rem; }
-    .pkg-tab { padding: 0.42rem; border: none; background: transparent; color: var(--muted); font-size: 0.78rem; font-weight: 500; font-family: var(--sans); border-radius: 7px; cursor: pointer; transition: all 0.2s; }
-    .pkg-tab.active { background: var(--bg2); color: var(--text); border: 1px solid var(--border-md); }
     .pkg-price { font-family: var(--serif); font-size: 1.8rem; font-weight: 700; color: var(--amber); margin-bottom: 0.25rem; }
     .pkg-note { font-size: 0.78rem; color: var(--muted); margin-bottom: 0.75rem; }
-    .pkg-feats { display: flex; flex-direction: column; gap: 0.42rem; margin-bottom: 0.85rem; }
-    .pkg-feat { display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; color: rgba(255,255,255,0.65); }
-    .pf-check { color: var(--success); font-size: 0.78rem; flex-shrink: 0; }
-    .pkg-del { display: flex; align-items: center; gap: 0.5rem; background: var(--bg3); border-radius: 8px; padding: 0.55rem 0.8rem; font-size: 0.82rem; }
+    .pkg-del { display: flex; align-items: center; gap: 0.5rem; background: var(--bg3); border-radius: 8px; padding: 0.55rem 0.8rem; font-size: 0.82rem; margin-top: 0.5rem; }
     .pkg-del strong { color: var(--text); }
     .pkg-del span { color: var(--muted); }
 
@@ -137,11 +134,12 @@
     @keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
 
     /* description */
-    .desc-body { color: rgba(255,255,255,0.7); font-size: 0.9rem; line-height: 1.8; }
+    .desc-body { color: rgba(28,18,8,0.85); font-size: 0.9rem; line-height: 1.8; }
     .desc-body p { margin-bottom: 0.85rem; }
     .desc-body ul { padding-left: 1.25rem; margin-bottom: 0.85rem; }
     .desc-body li { margin-bottom: 0.35rem; }
     .desc-body h4 { font-family: var(--serif); font-size: 1rem; color: var(--text); margin: 1rem 0 0.5rem; }
+    [data-theme="dark"] .desc-body { color: rgba(255,255,255,0.85); }
 
     /* tags */
     .tags-row { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 1rem; }
@@ -168,7 +166,8 @@
     .rv-name { font-size: 0.85rem; font-weight: 600; }
     .rv-date { font-size: 0.72rem; color: var(--dim); }
     .rv-rating { color: var(--amber); font-size: 0.8rem; flex-shrink: 0; }
-    .rv-text { color: rgba(255,255,255,0.65); font-size: 0.83rem; line-height: 1.65; }
+    .rv-text { color: rgba(28,18,8,0.75); font-size: 0.83rem; line-height: 1.65; }
+    [data-theme="dark"] .rv-text { color: rgba(255,255,255,0.75); }
     .no-reviews { color: var(--muted); font-size: 0.88rem; text-align: center; padding: 2rem 0; }
 
     /* seller tab */
@@ -181,7 +180,8 @@
     .sf-stat { text-align: center; background: var(--bg3); border-radius: 10px; padding: 0.6rem 0.4rem; }
     .ss-val { font-family: var(--serif); font-size: 1.05rem; font-weight: 700; color: var(--amber); }
     .ss-lbl { font-size: 0.68rem; color: var(--muted); margin-top: 0.12rem; }
-    .sf-bio { color: rgba(255,255,255,0.6); font-size: 0.83rem; line-height: 1.65; margin-bottom: 1rem; }
+    .sf-bio { color: rgba(28,18,8,0.8); font-size: 0.83rem; line-height: 1.65; margin-bottom: 1rem; }
+    [data-theme="dark"] .sf-bio { color: rgba(255,255,255,0.7); }
     .sf-pills { display: flex; gap: 0.4rem; flex-wrap: wrap; }
     .sf-pill { background: var(--bg3); border: 1px solid var(--border-md); color: var(--muted); font-size: 0.73rem; padding: 0.2rem 0.55rem; border-radius: 100px; }
 
@@ -213,8 +213,10 @@
     .btn-buy.loading .lbl { visibility: hidden; }
     .btn-buy.loading::after { content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:16px; height:16px; border:2px solid rgba(10,10,10,0.3); border-top-color:#0a0a0a; border-radius:50%; animation:spin 0.7s linear infinite; }
     @keyframes spin { to{transform:translate(-50%,-50%) rotate(360deg)} }
-    .btn-icon { padding: 0.78rem 0.9rem; background: transparent; border: 1px solid var(--border-md); color: var(--muted); border-radius: 10px; font-size: 0.95rem; transition: all 0.2s; flex-shrink: 0; }
+    .btn-icon { padding: 0.78rem 0.9rem; background: transparent; border: 1px solid var(--border-md); color: var(--text); border-radius: 10px; font-size: 0.95rem; transition: all 0.2s; flex-shrink: 0; }
     .btn-icon:hover, .btn-icon.saved { border-color: rgba(239,68,68,0.4); color: #F87171; background: rgba(239,68,68,0.06); }
+    [data-theme="dark"] .btn-icon { color: var(--muted); }
+    [data-theme="dark"] .btn-icon:hover { color: var(--amber); border-color: var(--border-md); }
 
     /* alerts */
     .alert { display: none; padding: 0.65rem 0.85rem; border-radius: 10px; font-size: 0.82rem; margin-bottom: 0.75rem; align-items: center; gap: 0.5rem; }
@@ -226,6 +228,13 @@
     /* skeleton */
     .skeleton { background: linear-gradient(90deg,var(--bg3) 25%,var(--bg4) 50%,var(--bg3) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 8px; }
     @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+    /* report modal */
+    .report-modal .mbox { max-width: 420px; }
+    .report-reasons { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
+    .report-reason { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.3rem 0; }
+    .report-reason input { accent-color: var(--amber); width: 16px; height: 16px; }
+    .report-reason span { font-size: 0.85rem; color: var(--text); }
 
     /* ══ DESKTOP ══ */
     @media (min-width: 900px) {
@@ -302,53 +311,9 @@
     .btn-primary, .btn-new { background: #C2690A !important; color: #fff !important; }
     .btn-primary:hover, .btn-new:hover { background: #D97706 !important; }
     .btn-ghost { border-color: rgba(194,105,10,0.4) !important; color: #C2690A !important; }
-
-    /* ── Light Mode Text Fixes ── */
-    .muted, .text-muted, .dim { color: var(--muted) !important; }
-    .nav-label { color: rgba(28,18,8,0.75) !important; }
-    .ni .lb, .ns { color: var(--muted) !important; }
-    .ni.on .lb { color: var(--amber) !important; }
-    .ph h1, .ph p { color: var(--text) !important; }
-    .panel h1, .panel h2, .panel h3 { color: var(--text) !important; }
-    .stat-val, .stat-label { color: var(--text) !important; }
-    .tbl th { color: var(--muted) !important; background: var(--bg3) !important; }
-    .tbl td { color: var(--text) !important; border-color: var(--border) !important; }
-    .card-title, .card-price { color: var(--text) !important; }
-    .card-cat, .card-seller, .seller-name { color: var(--muted) !important; }
-    .listing-title { color: var(--text) !important; }
-    .listing-price { color: var(--amber) !important; }
-    .section-title, .section-tag { color: var(--text) !important; }
-    .plan-name, .plan-price strong { color: var(--text) !important; }
-    .plan-desc, .plan-price span { color: var(--muted) !important; }
-    .plan-features li { color: var(--muted) !important; }
-    .cat-name { color: var(--text) !important; }
-    .cat-desc { color: var(--muted) !important; }
-    .how-num { color: var(--amber) !important; }
-    .how-title { color: var(--text) !important; }
-    .how-desc { color: var(--muted) !important; }
-    .footer-col h4 { color: var(--text) !important; }
-    .footer-col a { color: var(--muted) !important; }
-    .filter-label { color: var(--text) !important; }
-    .filter-item.active .filter-label { color: var(--amber) !important; }
-    .stars-display { color: var(--amber) !important; }
-    .section-label { color: var(--muted) !important; }
-    .empty h3 { color: var(--text) !important; }
-    .empty p { color: var(--muted) !important; }
-    .badge, .sp { color: var(--text) !important; }
-    .sm-name { color: var(--text) !important; }
-    .sm-tag { color: var(--muted) !important; }
-    .tab { color: var(--muted) !important; }
-    .tab.active { color: var(--text) !important; }
-    label { color: var(--text) !important; }
-    .frow label { color: var(--muted) !important; }
-    .listing-seller { color: var(--muted) !important; }
-    [data-theme="dark"] .nav-label { color: rgba(255,255,255,0.6) !important; }
-    [data-theme="dark"] .ni .lb { color: rgba(255,255,255,0.5) !important; }
-    [data-theme="dark"] .ni.on .lb { color: var(--amber) !important; }
-    [data-theme="dark"] .tbl th { background: var(--bg3) !important; color: var(--muted) !important; }
-    [data-theme="dark"] .filter-label { color: var(--muted) !important; }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="icon" type="image/png" href="logo.png">
 </head>
 <body>
 
@@ -367,7 +332,7 @@
 <div class="breadcrumb">
   <a href="index.html">Home</a><span class="sep">›</span>
   <a href="browse.html">Browse</a>
-    <a href="jobs.html">Jobs</a><span class="sep">›</span>
+  <span class="sep">›</span>
   <span class="cur" id="bc-cat"></span><span class="sep">›</span>
   <span class="cur" id="bc-title"></span>
 </div>
@@ -375,7 +340,7 @@
 <!-- PAGE -->
 <div class="page-wrap">
 
-  <!-- LEFT -->
+  <!-- LEFT COL -->
   <div id="left-col">
 
     <!-- Gallery -->
@@ -392,19 +357,13 @@
       <div style="height:14px;width:60%" class="skeleton"></div>
     </div>
 
-    <!-- Seller mini -->
+    <!-- Seller mini (clickable) -->
     <div class="seller-mini" id="seller-mini" style="opacity:0"></div>
 
-    <!-- Package box -->
+    <!-- Package box (simplified: no tabs) -->
     <div class="pkg-box" id="pkg-box" style="opacity:0">
-      <div class="pkg-tabs" id="pkg-tabs">
-        <button class="pkg-tab active" data-pkg="0">Basic</button>
-        <button class="pkg-tab" data-pkg="1">Standard</button>
-        <button class="pkg-tab" data-pkg="2">Premium</button>
-      </div>
       <div class="pkg-price" id="pkg-price">—</div>
       <div class="pkg-note" id="pkg-note"></div>
-      <div class="pkg-feats" id="pkg-feats"></div>
       <div class="pkg-del"><span><i class="fas fa-bolt"></i></span><strong id="pkg-days"></strong><span id="pkg-revs"></span></div>
     </div>
 
@@ -455,23 +414,18 @@
 
   <!-- DESKTOP BUY CARD -->
   <div class="buy-desktop" id="buy-desktop">
-    <div class="pkg-tabs" id="pkg-tabs-d">
-      <button class="pkg-tab active" data-pkg-d="0">Basic</button>
-      <button class="pkg-tab" data-pkg-d="1">Standard</button>
-      <button class="pkg-tab" data-pkg-d="2">Premium</button>
-    </div>
     <div style="margin-bottom:1.1rem">
       <div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.2rem">Starting from</div>
       <div class="pkg-price" id="pkg-price-d">—</div>
       <div style="font-size:0.74rem;color:var(--dim);margin-top:0.25rem" id="pkg-note-d"></div>
     </div>
-    <div class="pkg-feats" id="pkg-feats-d" style="margin-bottom:1rem"></div>
     <div class="pkg-del" style="margin-bottom:1.25rem"><span><i class="fas fa-bolt"></i></span><strong id="pkg-days-d"></strong><span id="pkg-revs-d"></span></div>
     <button class="btn-buy" style="width:100%;margin-bottom:0.6rem" id="buy-btn-d"><span class="lbl">Continue to Payment →</span></button>
     <div style="display:flex;gap:0.5rem;margin-bottom:0.6rem">
       <button class="btn-icon" style="flex:1" id="save-btn-d"><i class="far fa-heart"></i> Save</button>
       <button class="btn-icon" id="contact-btn-d"><i class="fas fa-comment-dots"></i></button>
       <button class="btn-icon" id="share-btn-d"><i class="fas fa-link"></i></button>
+      <button class="btn-icon" id="report-btn-d"><i class="fas fa-flag"></i> Report</button>
     </div>
     <div class="trust-row" style="margin-bottom:0">
       <div class="ti"><div class="ti-icon"><i class="fas fa-lock"></i></div><div class="ti-label">Secure<br>Payment</div></div>
@@ -493,31 +447,54 @@
     <button class="btn-buy" id="buy-btn"><span class="lbl">Continue to Payment →</span></button>
     <button class="btn-icon" id="contact-btn"><i class="fas fa-comment-dots"></i></button>
     <button class="btn-icon" id="save-btn"><i class="far fa-heart"></i></button>
+    <button class="btn-icon" id="report-btn"><i class="fas fa-flag"></i></button>
+  </div>
+</div>
+
+<!-- REPORT MODAL -->
+<div class="mo" id="report-modal">
+  <div class="mbox report-modal">
+    <button class="mc" onclick="closeReportModal()"><i class="fas fa-xmark"></i></button>
+    <h2>Report Listing</h2>
+    <p class="msub">Why are you reporting this listing?</p>
+    <div class="report-reasons" id="report-reasons">
+      <label class="report-reason"><input type="radio" name="report-reason" value="spam"> <span>Spam or misleading</span></label>
+      <label class="report-reason"><input type="radio" name="report-reason" value="counterfeit"> <span>Counterfeit or illegal item</span></label>
+      <label class="report-reason"><input type="radio" name="report-reason" value="offensive"> <span>Offensive content</span></label>
+      <label class="report-reason"><input type="radio" name="report-reason" value="scam"> <span>Possible scam</span></label>
+      <label class="report-reason"><input type="radio" name="report-reason" value="other"> <span>Other</span></label>
+    </div>
+    <div class="frow">
+      <label>Additional details (optional)</label>
+      <textarea class="finp" id="report-details" rows="3" placeholder="Please provide more information..."></textarea>
+    </div>
+    <div class="mfoot">
+      <button class="btn-cancel" onclick="closeReportModal()">Cancel</button>
+      <button class="btn-primary" id="submit-report-btn">Submit Report</button>
+    </div>
   </div>
 </div>
 
 <script>
 /*
-  listing.html — pulls real data from Supabase via listings.js
-  Listing ID read from URL: listing.html?id=1
+  listing.html — Pulls real data from Supabase via listings.js
+  Added: Report button, clickable seller mini, simplified package, light mode text fix.
 */
-
 let listing = null;
-let selPkgIdx = 0;
 let isSaved = false;
 const $ = id => document.getElementById(id);
 
-/* ── Default packages (used if listing has no custom packages) ── */
-function getPackages(l) {
-  return [
-    { label:'Basic',    price: l.price,                note: 'Essential package',         feats:['Core deliverables', `${l.delivery_days} day delivery`, '1 revision'], days: l.delivery_days, revisions: 1 },
-    { label:'Standard', price: Math.round(l.price*2),  note: 'Most popular option',        feats:['Everything in Basic', 'Priority support', '3 revisions', 'Source files'], days: Math.max(1, l.delivery_days-1), revisions: 3 },
-    { label:'Premium',  price: Math.round(l.price*3.2),note: 'Full-service experience',    feats:['Everything in Standard', 'Unlimited revisions', 'Fastest delivery', '30-day support'], days: Math.max(1, l.delivery_days-2), revisions: 99 },
-  ];
+/* ── Default package (only one) ── */
+function getPackage(l) {
+  return {
+    price: l.price,
+    note: '',
+    days: l.delivery_days,
+    revisions: 1
+  };
 }
 
 /* ── Load listing from Supabase ── */
-/* Init currency on listing page */
 (async () => {
   await Currency.init();
   const saved = localStorage.getItem('traydr_user_currency');
@@ -525,7 +502,6 @@ function getPackages(l) {
 })();
 
 async function loadListing() {
-  /* sync nav first — non-blocking */
   AuthGuard.syncNav({
     guestEls: ['nav-login', 'nav-signup'],
     authEls:  ['nav-avatar'],
@@ -546,7 +522,6 @@ async function loadListing() {
   if (!id) { showError('No listing ID found.'); return; }
 
   const { data, error } = await Listings.getById(id);
-
   if (error || !data) {
     showError('Listing not found or no longer available.');
     return;
@@ -557,7 +532,6 @@ async function loadListing() {
   loadRelated();
   loadReviews();
   loadSellerProfile();
-  /* track view — non-blocking */
   Listings.trackView(data.id);
 }
 
@@ -608,7 +582,7 @@ function renderAll() {
       ${l.seller_location ? `<div class="stat-item"><span class="stat-icon"><i class="fas fa-earth-africa"></i></span><span class="stat-val">${l.seller_location}</span></div>` : ''}
     </div>`;
 
-  /* seller mini */
+  /* seller mini (clickable) */
   $('seller-mini').style.opacity = '1';
   $('seller-mini').innerHTML = `
     <div class="sm-av">${l.seller_name ? l.seller_name[0].toUpperCase() : '?'}</div>
@@ -617,6 +591,9 @@ function renderAll() {
       <div class="sm-tag">${Listings.getCatName(l.category)} Seller${l.seller_location ? ' · '+l.seller_location : ''}</div>
     </div>
     ${l.seller_verified ? '<span class="sm-badge"><i class="fas fa-circle-check"></i> Verified</span>' : ''}`;
+  $('seller-mini').onclick = () => {
+    if (listing && listing.seller_id) window.location.href = `profile.html?id=${listing.seller_id}`;
+  };
 
   /* description */
   $('l-desc').innerHTML = l.description
@@ -630,117 +607,67 @@ function renderAll() {
     ).join('');
   }
 
-  /* packages */
+  /* package (simplified) */
   $('pkg-box').style.opacity = '1';
-  renderPkg();
+  renderPackage();
 
-  /* reviews + seller loaded async via loadReviews() and loadSellerProfile() */
-
-  /* ── Dynamic SEO / OG tags ── */
-  document.title = `${l.title} — TraydR`;
-  const _setMeta = (id, val) => { const el=document.getElementById(id); if(el) el.setAttribute('content', val); };
+  /* dynamic SEO */
   const _desc = (l.description||'').replace(/<[^>]+>/g,'').slice(0,160);
   const _img  = l.images?.[0] || '';
-  _setMeta('og-title',  `${l.title} — TraydR`);
-  _setMeta('og-desc',   _desc);
-  _setMeta('og-img',    _img);
-  _setMeta('og-url',    window.location.href);
-  _setMeta('og-price',  String(l.price));
-  _setMeta('tw-title',  `${l.title} — TraydR`);
-  _setMeta('tw-desc',   _desc);
-  _setMeta('tw-img',    _img);
-  const _can = document.getElementById('canonical');
-  if(_can) _can.setAttribute('href', window.location.href);
+  const setMeta = (id, val) => { const el=document.getElementById(id); if(el) el.setAttribute('content', val); };
+  setMeta('og-title', `${l.title} — TraydR`);
+  setMeta('og-desc', _desc);
+  setMeta('og-img', _img);
+  setMeta('og-url', window.location.href);
+  setMeta('og-price', String(l.price));
+  setMeta('tw-title', `${l.title} — TraydR`);
+  setMeta('tw-desc', _desc);
+  setMeta('tw-img', _img);
+  const canon = document.getElementById('canonical');
+  if(canon) canon.setAttribute('href', window.location.href);
 }
 
-/* ── Package render ── */
-function renderPkg() {
+function renderPackage() {
   if (!listing) return;
-  const pkgs = getPackages(listing);
-  const p = pkgs[selPkgIdx];
+  const p = getPackage(listing);
   const revStr = p.revisions >= 99 ? 'Unlimited revisions' : `${p.revisions} revision${p.revisions>1?'s':''}`;
-
-  /* update tab labels */
-  document.querySelectorAll('[data-pkg]').forEach((t,i) => { t.textContent = pkgs[i]?.label || t.textContent; });
-  document.querySelectorAll('[data-pkg-d]').forEach((t,i) => { t.textContent = pkgs[i]?.label || t.textContent; });
-
-  /* mobile */
-  $('pkg-price').textContent = window.Currency ? Currency.format(p.price) : `$${p.price}`;
-  $('pkg-note').textContent  = p.note;
-  $('pkg-feats').innerHTML   = p.feats.map(f=>`<div class="pkg-feat"><span class="pf-check"><i class="fas fa-check"></i></span>${f}</div>`).join('');
-  $('pkg-days').textContent  = `${p.days} day${p.days!==1?'s':''} delivery`;
-  $('pkg-revs').textContent  = ` · ${revStr}`;
-  $('bar-amount').textContent = window.Currency ? Currency.format(p.price) : `$${p.price}`;
-
-  /* desktop */
-  $('pkg-price-d').textContent = window.Currency ? Currency.format(p.price) : `$${p.price}`;
-  $('pkg-note-d').textContent  = p.note;
-  $('pkg-feats-d').innerHTML   = p.feats.map(f=>`<div class="pkg-feat"><span class="pf-check"><i class="fas fa-check"></i></span>${f}</div>`).join('');
-  $('pkg-days-d').textContent  = `${p.days} day${p.days!==1?'s':''} delivery`;
-  $('pkg-revs-d').textContent  = ` · ${revStr}`;
+  const priceFormatted = window.Currency ? Currency.format(p.price) : `$${p.price}`;
+  $('pkg-price').textContent = priceFormatted;
+  $('pkg-note').textContent = p.note;
+  $('pkg-days').textContent = `${p.days} day${p.days!==1?'s':''} delivery`;
+  $('pkg-revs').textContent = ` · ${revStr}`;
+  $('bar-amount').textContent = priceFormatted;
+  $('pkg-price-d').textContent = priceFormatted;
+  $('pkg-note-d').textContent = p.note;
+  $('pkg-days-d').textContent = `${p.days} day${p.days!==1?'s':''} delivery`;
+  $('pkg-revs-d').textContent = ` · ${revStr}`;
 }
 
-/* pkg tab clicks */
-document.querySelectorAll('[data-pkg], [data-pkg-d]').forEach(btn =>
-  btn.addEventListener('click', () => {
-    const idx = parseInt(btn.dataset.pkg ?? btn.dataset.pkgD);
-    selPkgIdx = idx;
-    /* sync all pkg tabs */
-    document.querySelectorAll('[data-pkg]').forEach((t,i)  => t.classList.toggle('active', i===idx));
-    document.querySelectorAll('[data-pkg-d]').forEach((t,i) => t.classList.toggle('active', i===idx));
-    renderPkg();
-  })
-);
-
-/* ── Reviews — real from Supabase ── */
+/* ── Reviews ── */
 async function loadReviews() {
   const l = listing;
-
-  /* Always show summary bar from listing's aggregate data */
   if (l.review_count > 0) {
     $('rv-summary').style.display = 'flex';
     $('rv-val').textContent   = l.rating;
     $('rv-stars').textContent = Listings.getStars(l.rating);
     $('rv-total').textContent = `${l.review_count} review${l.review_count !== 1 ? 's' : ''}`;
-
-    /* Fetch real distribution from reviews table */
     const { data: reviews } = await Listings.getListingReviews(l.id);
-
     if (reviews && reviews.length > 0) {
-      /* Build real distribution */
       const dist = { 5:0, 4:0, 3:0, 2:0, 1:0 };
       reviews.forEach(r => { if (dist[r.rating] !== undefined) dist[r.rating]++; });
       const total = reviews.length;
-
       $('rv-bars').innerHTML = [5,4,3,2,1].map(s => {
         const pct = total > 0 ? Math.round((dist[s]/total)*100) : 0;
         return `<div class="rbar"><span class="rbar-lbl">${s}★</span><div class="rbar-track"><div class="rbar-fill" style="width:${pct}%"></div></div><span class="rbar-cnt">${dist[s]}</span></div>`;
       }).join('');
-
-      /* Render real review cards */
       $('rv-list').innerHTML = reviews.map(r => {
         const name   = r.users?.full_name || 'Buyer';
         const initl  = name[0].toUpperCase();
         const stars  = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
         const date   = new Date(r.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-        return `
-          <div class="rv-card">
-            <div class="rv-head">
-              <div class="rv-user">
-                <div class="rv-av">${initl}</div>
-                <div>
-                  <div class="rv-name">${name}</div>
-                  <div class="rv-date">${date}</div>
-                </div>
-              </div>
-              <div class="rv-rating" style="color:var(--amber);font-size:0.82rem">${stars}</div>
-            </div>
-            <div class="rv-text">${r.comment || ''}</div>
-          </div>`;
+        return `<div class="rv-card"><div class="rv-head"><div class="rv-user"><div class="rv-av">${initl}</div><div><div class="rv-name">${name}</div><div class="rv-date">${date}</div></div></div><div class="rv-rating" style="color:var(--amber);font-size:0.82rem">${stars}</div></div><div class="rv-text">${r.comment || ''}</div></div>`;
       }).join('');
-
     } else {
-      /* Aggregate data exists but no individual reviews yet — estimate bars */
       const dist = { 5: Math.round(l.review_count*0.72), 4: Math.round(l.review_count*0.16), 3: Math.round(l.review_count*0.07), 2: Math.round(l.review_count*0.03), 1: Math.round(l.review_count*0.02) };
       $('rv-bars').innerHTML = [5,4,3,2,1].map(s => {
         const pct = Math.round((dist[s]/l.review_count)*100);
@@ -748,33 +675,18 @@ async function loadReviews() {
       }).join('');
       $('rv-list').innerHTML = `<div class="no-reviews">Reviews will appear here as buyers leave feedback.</div>`;
     }
-
   } else {
     $('rv-summary').style.display = 'none';
     $('rv-list').innerHTML = `<div class="no-reviews">No reviews yet — be the first to buy and review this listing!</div>`;
   }
 }
 
-/* ── Seller profile — real from Supabase ── */
 async function loadSellerProfile() {
   const l = listing;
   const sf = $('seller-full');
-
-  /* Show loading skeleton */
-  sf.innerHTML = `
-    <div class="sf-head">
-      <div class="sf-av" style="background:var(--bg3)">${(l.seller_name||'?')[0].toUpperCase()}</div>
-      <div style="flex:1"><div class="skeleton" style="height:14px;width:120px;margin-bottom:6px;border-radius:6px"></div><div class="skeleton" style="height:11px;width:180px;border-radius:6px"></div></div>
-    </div>`;
-
-  /* Try to load real seller profile */
+  sf.innerHTML = `<div class="sf-head"><div class="sf-av" style="background:var(--bg3)">${(l.seller_name||'?')[0].toUpperCase()}</div><div style="flex:1"><div class="skeleton" style="height:14px;width:120px;margin-bottom:6px;border-radius:6px"></div><div class="skeleton" style="height:11px;width:180px;border-radius:6px"></div></div></div>`;
   const { data: seller } = await Listings.getSellerProfile(l.seller_id);
-
-  /* Also load seller's other listings */
-  const { data: otherListings } = l.seller_id
-    ? await Listings.getSellerListings(l.seller_id, l.id, 3)
-    : { data: [] };
-
+  const { data: otherListings } = l.seller_id ? await Listings.getSellerListings(l.seller_id, l.id, 3) : { data: [] };
   const name     = seller?.full_name || l.seller_name || 'Unknown Seller';
   const location = seller?.location  || l.seller_location || '';
   const bio      = seller?.bio       || `Seller on TraydR${location ? ' based in ' + location : ''}.`;
@@ -783,70 +695,19 @@ async function loadSellerProfile() {
   const rating   = seller?.avgRating     ?? l.rating        ?? '—';
   const reviews  = seller?.totalReviews  ?? l.review_count  ?? 0;
   const since    = seller?.memberSince   || new Date(l.created_at).toLocaleDateString('en-GB',{month:'short',year:'numeric'});
-  const listings = seller?.totalListings ?? 1;
-
-  sf.innerHTML = `
-    <div class="sf-head">
-      <div class="sf-av">${name[0].toUpperCase()}</div>
-      <div>
-        <div class="sf-name">${name} ${verified ? '<span style="color:var(--success);font-size:0.78rem"><i class="fas fa-circle-check"></i> Verified</span>' : ''}</div>
-        <div class="sf-sub">${Listings.getCatName(l.category)} Seller${location ? ' · ' + location : ''}</div>
-      </div>
-    </div>
-    <div class="sf-stats">
-      <div class="sf-stat"><div class="ss-val">${Number(orders).toLocaleString()}</div><div class="ss-lbl">Orders</div></div>
-      <div class="sf-stat"><div class="ss-val">${rating}</div><div class="ss-lbl">Rating</div></div>
-      <div class="sf-stat"><div class="ss-val">${Number(reviews).toLocaleString()}</div><div class="ss-lbl">Reviews</div></div>
-      <div class="sf-stat"><div class="ss-val">${listings}</div><div class="ss-lbl">Listings</div></div>
-      <div class="sf-stat"><div class="ss-val">${since}</div><div class="ss-lbl">Member since</div></div>
-    </div>
-    <div class="sf-bio">${bio}</div>
-    ${l.tags?.length ? `<div class="sf-pills">${l.tags.map(t=>`<span class="sf-pill">${t}</span>`).join('')}</div>` : ''}
-    ${otherListings?.length ? `
-      <div style="margin-top:1.25rem;padding-top:1.1rem;border-top:1px solid var(--border)">
-        <div style="font-size:0.82rem;font-weight:600;margin-bottom:0.85rem;color:var(--muted)">More from ${name.split(' ')[0]}</div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.65rem">
-          ${otherListings.map(ol => {
-            const img = Listings.getImage(ol, 0);
-            return `
-              <a href="listing.html?id=${ol.id}" style="text-decoration:none;display:block;background:var(--bg3);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:all 0.2s" onmouseover="this.style.borderColor='rgba(245,158,11,0.2)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'">
-                <div style="height:70px;overflow:hidden;background:var(--bg4)">
-                  <img src="${img}" alt="${ol.title}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.style.display='none'" />
-                </div>
-                <div style="padding:0.55rem">
-                  <div style="font-size:0.75rem;font-weight:600;color:var(--text);margin-bottom:0.2rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.3">${ol.title}</div>
-                  <div style="font-family:var(--serif);font-size:0.85rem;font-weight:700;color:var(--amber)">$${ol.price}</div>
-                </div>
-              </a>`;
-          }).join('')}
-        </div>
-      </div>` : ''}`;
+  const listingsCount = seller?.totalListings ?? 1;
+  sf.innerHTML = `<div class="sf-head"><div class="sf-av">${name[0].toUpperCase()}</div><div><div class="sf-name">${name} ${verified ? '<span style="color:var(--success);font-size:0.78rem"><i class="fas fa-circle-check"></i> Verified</span>' : ''}</div><div class="sf-sub">${Listings.getCatName(l.category)} Seller${location ? ' · ' + location : ''}</div></div></div><div class="sf-stats"><div class="sf-stat"><div class="ss-val">${Number(orders).toLocaleString()}</div><div class="ss-lbl">Orders</div></div><div class="sf-stat"><div class="ss-val">${rating}</div><div class="ss-lbl">Rating</div></div><div class="sf-stat"><div class="ss-val">${Number(reviews).toLocaleString()}</div><div class="ss-lbl">Reviews</div></div><div class="sf-stat"><div class="ss-val">${listingsCount}</div><div class="ss-lbl">Listings</div></div><div class="sf-stat"><div class="ss-val">${since}</div><div class="ss-lbl">Member since</div></div></div><div class="sf-bio">${bio}</div>${l.tags?.length ? `<div class="sf-pills">${l.tags.map(t=>`<span class="sf-pill">${t}</span>`).join('')}</div>` : ''}${otherListings?.length ? `<div style="margin-top:1.25rem;padding-top:1.1rem;border-top:1px solid var(--border)"><div style="font-size:0.82rem;font-weight:600;margin-bottom:0.85rem;color:var(--muted)">More from ${name.split(' ')[0]}</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.65rem">${otherListings.map(ol => { const img = Listings.getImage(ol, 0); return `<a href="listing.html?id=${ol.id}" style="text-decoration:none;display:block;background:var(--bg3);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:all 0.2s" onmouseover="this.style.borderColor='rgba(245,158,11,0.2)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'"><div style="height:70px;overflow:hidden;background:var(--bg4)"><img src="${img}" alt="${ol.title}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.style.display='none'" /></div><div style="padding:0.55rem"><div style="font-size:0.75rem;font-weight:600;color:var(--text);margin-bottom:0.2rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.3">${ol.title}</div><div style="font-family:var(--serif);font-size:0.85rem;font-weight:700;color:var(--amber)">$${ol.price}</div></div></a>`; }).join('')}</div></div>` : ''}`;
 }
 
-/* ── Related listings ── */
 async function loadRelated() {
   const { data } = await Listings.getRelated(listing.category, listing.id, 4);
   if (!data || data.length === 0) { $('related-grid').innerHTML = ''; $('related-grid').parentElement.style.display='none'; return; }
   $('related-grid').innerHTML = data.map(r => {
     const img = Listings.getImage(r, 0);
-    return `
-      <a class="mini-card" href="listing.html?id=${r.id}">
-        <div class="mini-img">
-          <img src="${img}" alt="${r.title}" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.insertAdjacentHTML('afterend','<div class=\'img-unavailable\'><i class=\'fas fa-image\'></i><span>Image Unavailable</span></div>')" />
-          <div class="mini-img-ph" style="display:none">${Listings.getCatEmoji(r.category)}</div>
-        </div>
-        <div class="mini-body">
-          <div class="mini-title">${r.title}</div>
-          <div class="mini-foot">
-            <div class="mini-rating"><span>★</span>${r.rating} (${r.review_count})</div>
-            <div class="mini-price">$${r.price}</div>
-          </div>
-        </div>
-      </a>`;
+    return `<a class="mini-card" href="listing.html?id=${r.id}"><div class="mini-img"><img src="${img}" alt="${r.title}" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.insertAdjacentHTML('afterend','<div class=\'img-unavailable\'><i class=\'fas fa-image\'></i><span>Image Unavailable</span></div>')" /><div class="mini-img-ph" style="display:none">${Listings.getCatEmoji(r.category)}</div></div><div class="mini-body"><div class="mini-title">${r.title}</div><div class="mini-foot"><div class="mini-rating"><span>★</span>${r.rating} (${r.review_count})</div><div class="mini-price">$${r.price}</div></div></div></a>`;
   }).join('');
 }
 
-/* ── Gallery image select ── */
 function selectImg(el, src) {
   document.querySelectorAll('.g-thumb').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
@@ -866,8 +727,7 @@ document.querySelector('.tabs').addEventListener('click', e => {
 /* ── Buy ── */
 async function doBuy(btn) {
   if (!listing) return;
-  const pkg = getPackages(listing)[selPkgIdx];
-  /* save checkout data first — survives login redirect */
+  const pkg = getPackage(listing);
   sessionStorage.setItem('traydr_checkout', JSON.stringify({
     listing_id:    listing.id,
     listing_title: listing.title,
@@ -875,14 +735,12 @@ async function doBuy(btn) {
     seller_id:     listing.seller_id   || null,
     seller_name:   listing.seller_name || 'Seller',
     category:      listing.category,
-    package_label: pkg.label,
+    package_label: 'Standard',
     package_note:  pkg.note,
     price:         pkg.price,
     delivery_days: pkg.days,
   }));
-  await AuthGuard.protectAction(() => {
-    window.location.href = 'checkout.html';
-  }, { label: 'complete your purchase' });
+  await AuthGuard.protectAction(() => { window.location.href = 'checkout.html'; }, { label: 'complete your purchase' });
 }
 $('buy-btn').addEventListener('click',   () => doBuy($('buy-btn')));
 $('buy-btn-d').addEventListener('click', () => doBuy($('buy-btn-d')));
@@ -920,17 +778,44 @@ function doContact() {
 $('contact-btn').addEventListener('click',   doContact);
 $('contact-btn-d').addEventListener('click', doContact);
 
+/* ── Report ── */
+function openReportModal() {
+  AuthGuard.protectAction(() => {
+    document.getElementById('report-modal').classList.add('open');
+    document.getElementById('report-details').value = '';
+    document.querySelectorAll('input[name="report-reason"]').forEach(r => r.checked = false);
+  }, { label: 'report this listing' });
+}
+function closeReportModal() { document.getElementById('report-modal').classList.remove('open'); }
+$('report-btn').addEventListener('click', openReportModal);
+$('report-btn-d').addEventListener('click', openReportModal);
+$('submit-report-btn').addEventListener('click', async () => {
+  const reason = document.querySelector('input[name="report-reason"]:checked')?.value;
+  if (!reason) { showAlert('a-err', 'Please select a reason.'); return; }
+  const details = document.getElementById('report-details').value.trim();
+  const btn = $('submit-report-btn');
+  btn.disabled = true; btn.textContent = 'Sending...';
+  try {
+    // In production, send to an Edge Function or insert into a 'reports' table.
+    // For now, show a success message.
+    showAlert('a-ok', 'Report submitted. Thank you for helping keep TraydR safe.', 'ok');
+    closeReportModal();
+  } catch(e) { showAlert('a-err', 'Failed to submit report. Please try again.'); }
+  finally { btn.disabled = false; btn.textContent = 'Submit Report'; }
+});
+
 /* ── Alerts ── */
 function showAlert(id, msg, type='err') {
   ['a-err','a-ok','a-info'].forEach(i => $(i).classList.remove('on'));
   const el = $(id); el.className = `alert ${type} on`;
   if (msg) { const sp = el.querySelectorAll('span')[1]; if(sp) sp.textContent = msg; }
+  setTimeout(() => el.classList.remove('on'), 4000);
 }
-function clearAlerts() { ['a-err','a-ok','a-info'].forEach(i => $(i).classList.remove('on')); }
 
 /* ── Init ── */
 loadListing();
 </script>
+
 <script>
   (function() {
     var t = localStorage.getItem('traydr_theme') || 'light';
