@@ -13,6 +13,7 @@
   <script src="auth.guard.js"></script>
   <script src="dashboard.backend.js"></script>
   <style>
+    /* ========== SAME CSS AS ORIGINAL (unchanged) ========== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --amber: #C2690A; --amber-light: #D97706; --amber-dim: rgba(194,105,10,0.1);
@@ -320,7 +321,6 @@
         <h2><span class="step-num" style="background:var(--bg3);color:var(--muted);border:1px solid var(--border)">2</span> Delivery Information</h2>
         <div class="frow">
           <label>Full Name *</label>
-          <!-- Saved address selector -->
           <div id="saved-addr-wrap" style="display:none;margin-bottom:1rem">
             <label style="display:block;font-size:0.78rem;font-weight:600;color:var(--muted);margin-bottom:0.38rem">Use a saved address</label>
             <select class="finp" id="saved-addr-sel" onchange="applyAddr(this.value)">
@@ -346,27 +346,16 @@
             <select class="finp" id="d-country">
               <option value="">Select country</option>
               <optgroup label="Africa">
-                <option value="NG">🇳🇬 Nigeria</option>
-                <option value="GH">🇬🇭 Ghana</option>
-                <option value="KE">🇰🇪 Kenya</option>
-                <option value="ZA">🇿🇦 South Africa</option>
-                <option value="EG">🇪🇬 Egypt</option>
-                <option value="ET">🇪🇹 Ethiopia</option>
-                <option value="TZ">🇹🇿 Tanzania</option>
-                <option value="UG">🇺🇬 Uganda</option>
+                <option value="NG">🇳🇬 Nigeria</option><option value="GH">🇬🇭 Ghana</option><option value="KE">🇰🇪 Kenya</option>
+                <option value="ZA">🇿🇦 South Africa</option><option value="EG">🇪🇬 Egypt</option><option value="ET">🇪🇹 Ethiopia</option>
+                <option value="TZ">🇹🇿 Tanzania</option><option value="UG">🇺🇬 Uganda</option>
               </optgroup>
               <optgroup label="Europe">
-                <option value="GB">🇬🇧 United Kingdom</option>
-                <option value="DE">🇩🇪 Germany</option>
-                <option value="FR">🇫🇷 France</option>
-                <option value="NL">🇳🇱 Netherlands</option>
-                <option value="ES">🇪🇸 Spain</option>
-                <option value="IT">🇮🇹 Italy</option>
+                <option value="GB">🇬🇧 United Kingdom</option><option value="DE">🇩🇪 Germany</option><option value="FR">🇫🇷 France</option>
+                <option value="NL">🇳🇱 Netherlands</option><option value="ES">🇪🇸 Spain</option><option value="IT">🇮🇹 Italy</option>
               </optgroup>
               <optgroup label="Americas">
-                <option value="US">🇺🇸 United States</option>
-                <option value="CA">🇨🇦 Canada</option>
-                <option value="BR">🇧🇷 Brazil</option>
+                <option value="US">🇺🇸 United States</option><option value="CA">🇨🇦 Canada</option><option value="BR">🇧🇷 Brazil</option>
               </optgroup>
             </select>
             <div class="ferr" id="e-dcountry">Required.</div>
@@ -400,50 +389,21 @@
 
         <!-- FW Card -->
         <div id="fw-card-fields">
-          <div class="frow">
-            <label>Card Number *</label>
-            <input class="finp" id="fw-cardnum" placeholder="1234 5678 9012 3456" maxlength="19" inputmode="numeric" />
-          </div>
-          <div class="f2">
-            <div class="frow"><label>Expiry *</label><input class="finp" id="fw-exp" placeholder="MM / YY" maxlength="7" /></div>
-            <div class="frow"><label>CVV *</label><input class="finp" id="fw-cvv" placeholder="•••" maxlength="4" type="password" /></div>
-          </div>
+          <div class="frow"><label>Card Number *</label><input class="finp" id="fw-cardnum" placeholder="1234 5678 9012 3456" maxlength="19" inputmode="numeric" /></div>
+          <div class="f2"><div class="frow"><label>Expiry *</label><input class="finp" id="fw-exp" placeholder="MM / YY" maxlength="7" /></div><div class="frow"><label>CVV *</label><input class="finp" id="fw-cvv" placeholder="•••" maxlength="4" type="password" /></div></div>
         </div>
 
         <!-- FW Mobile Money -->
         <div id="fw-mobile-fields" style="display:none">
-          <div class="frow">
-            <label>Network *</label>
-            <select class="finp" id="fw-network">
-              <option value="">Select network</option>
-              <option value="MTN">MTN Mobile Money</option>
-              <option value="VODAFONE">Vodafone Cash</option>
-              <option value="AIRTEL">Airtel Money</option>
-              <option value="MPESA">M-Pesa</option>
-              <option value="TIGO">Tigo Cash</option>
-            </select>
-          </div>
-          <div class="frow">
-            <label>Phone Number *</label>
-            <input class="finp" id="fw-phone" placeholder="+234 800 000 0000" inputmode="tel" />
-          </div>
+          <div class="frow"><label>Network *</label><select class="finp" id="fw-network"><option value="">Select network</option><option value="MTN">MTN Mobile Money</option><option value="VODAFONE">Vodafone Cash</option><option value="AIRTEL">Airtel Money</option><option value="MPESA">M-Pesa</option><option value="TIGO">Tigo Cash</option></select></div>
+          <div class="frow"><label>Phone Number *</label><input class="finp" id="fw-phone" placeholder="+234 800 000 0000" inputmode="tel" /></div>
         </div>
 
         <!-- FW Bank Transfer -->
-        <div id="fw-bank-fields" style="display:none">
-          <div class="alert info on" style="margin-bottom:0"><span>ℹ️</span><span>We'll generate a dedicated account number for this transaction. Funds must be transferred within 30 minutes.</span></div>
-        </div>
+        <div id="fw-bank-fields" style="display:none"><div class="alert info on" style="margin-bottom:0"><span>ℹ️</span><span>We'll generate a dedicated account number for this transaction. Funds must be transferred within 30 minutes.</span></div></div>
 
         <!-- FW USSD -->
-        <div id="fw-ussd-fields" style="display:none">
-          <div class="frow"><label>Bank *</label>
-            <select class="finp" id="fw-bank">
-              <option value="">Select your bank</option>
-              <option>Access Bank</option><option>GTBank</option><option>UBA</option>
-              <option>First Bank</option><option>Zenith Bank</option><option>Sterling Bank</option>
-            </select>
-          </div>
-        </div>
+        <div id="fw-ussd-fields" style="display:none"><div class="frow"><label>Bank *</label><select class="finp" id="fw-bank"><option value="">Select your bank</option><option>Access Bank</option><option>GTBank</option><option>UBA</option><option>First Bank</option><option>Zenith Bank</option><option>Sterling Bank</option></select></div></div>
 
         <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.85rem">
           <span style="font-size:0.72rem;color:var(--dim)">Powered by</span>
@@ -467,41 +427,20 @@
         <h2><span class="step-num">3</span> Confirm Your Order</h2>
         <div id="confirm-detail"></div>
       </div>
-
       <div class="scard" style="background:rgba(16,185,129,0.05);border-color:rgba(16,185,129,0.15)">
-        <div style="display:flex;gap:0.75rem;align-items:flex-start">
-          <span style="font-size:1.4rem;flex-shrink:0"><i class="fas fa-lock"></i></span>
-          <div>
-            <div style="font-size:0.88rem;font-weight:600;margin-bottom:0.3rem;color:var(--success)">Escrow Protection Active</div>
-            <div style="font-size:0.8rem;color:var(--muted);line-height:1.6">Your payment is held securely in escrow. Funds are only released to the seller once you confirm delivery. If anything goes wrong, you're covered by TraydR Buyer Protection.</div>
-          </div>
-        </div>
+        <div style="display:flex;gap:0.75rem;align-items:flex-start"><span style="font-size:1.4rem;flex-shrink:0"><i class="fas fa-lock"></i></span><div><div style="font-size:0.88rem;font-weight:600;margin-bottom:0.3rem;color:var(--success)">Escrow Protection Active</div><div style="font-size:0.8rem;color:var(--muted);line-height:1.6">Your payment is held securely in escrow. Funds are only released to the seller once you confirm delivery. If anything goes wrong, you're covered by TraydR Buyer Protection.</div></div></div>
       </div>
-
       <div class="alert err" id="step3-err"><span><i class="fas fa-triangle-exclamation"></i></span><span id="step3-err-msg"></span></div>
-
-      <div class="btn-row">
-        <button class="btn-back" onclick="goStep(2)">← Back</button>
-        <button class="btn-primary" id="place-order-btn"><span class="lbl">Place Order & Pay $<span id="confirm-price">0</span></span></button>
-      </div>
+      <div class="btn-row"><button class="btn-back" onclick="goStep(2)">← Back</button><button class="btn-primary" id="place-order-btn"><span class="lbl">Place Order & Pay $<span id="confirm-price">0</span></span></button></div>
     </div>
 
     <!-- SUCCESS -->
     <div class="step-panel" id="step-success">
       <div class="success-icon"><i class="fas fa-champagne-glasses"></i></div>
       <div class="success-title">Order Placed!</div>
-      <div class="success-sub">
-        Your payment is held in escrow and your order has been sent to <strong id="success-seller">the seller</strong>.<br><br>
-        You'll receive a confirmation email shortly. Track your order in your dashboard.
-      </div>
-      <div class="order-id-box">
-        <div class="oid-label">Order Reference</div>
-        <div class="oid-val" id="success-order-id">#TRX-000000</div>
-      </div>
-      <div class="success-actions">
-        <button class="btn-primary" style="width:auto;padding:0.75rem 2rem" onclick="window.location.href='dashboard-buyer.html'">Track Order →</button>
-        <button class="btn-outline" onclick="window.location.href='browse.html'">Continue Shopping</button>
-      </div>
+      <div class="success-sub">Your payment is held in escrow and your order has been sent to <strong id="success-seller">the seller</strong>.<br><br>You'll receive a confirmation email shortly. Track your order in your dashboard.</div>
+      <div class="order-id-box"><div class="oid-label">Order Reference</div><div class="oid-val" id="success-order-id">#TRX-000000</div></div>
+      <div class="success-actions"><button class="btn-primary" style="width:auto;padding:0.75rem 2rem" onclick="window.location.href='dashboard-buyer.html'">Track Order →</button><button class="btn-outline" onclick="window.location.href='browse.html'">Continue Shopping</button></div>
     </div>
 
   </div>
@@ -509,33 +448,14 @@
   <!-- RIGHT COL: Order summary -->
   <div class="summary" id="order-summary">
     <h3>Order Summary</h3>
-
-    <div class="sum-listing">
-      <div class="sum-img" id="sum-img">
-        <div class="sum-img-ph"><i class="fas fa-box"></i></div>
-      </div>
-      <div class="sum-info">
-        <div class="sum-title" id="sum-title">Loading...</div>
-        <div class="sum-seller" id="sum-seller"></div>
-        <div class="sum-pkg" id="sum-pkg">Basic</div>
-      </div>
-    </div>
-
+    <div class="sum-listing"><div class="sum-img" id="sum-img"><div class="sum-img-ph"><i class="fas fa-box"></i></div></div><div class="sum-info"><div class="sum-title" id="sum-title">Loading...</div><div class="sum-seller" id="sum-seller"></div><div class="sum-pkg" id="sum-pkg">Basic</div></div></div>
     <div class="sum-row"><span class="lbl">Package price</span><span class="val" id="sum-price">$0</span></div>
-    <div class="sum-row"><span class="lbl">Platform fee (8%)</span><span class="val" id="sum-fee">$0</span></div>
+    <div class="sum-row"><span class="lbl">Platform fee (<span id="fee-percent">8</span>%)</span><span class="val" id="sum-fee">$0</span></div>
     <div class="sum-row"><span class="lbl">Delivery time</span><span class="val" id="sum-delivery">—</span></div>
     <div class="sum-divider"></div>
     <div class="sum-total"><span class="lbl">Total</span><span class="val" id="sum-total">$0</span></div>
-
-    <div class="escrow-note">
-      <p><i class="fas fa-lock"></i> <strong>Escrow protected</strong> — your money is held safely until you confirm delivery.</p>
-    </div>
-
-    <div class="trust-row">
-      <div class="ti"><div class="ti-icon"><i class="fas fa-shield-halved"></i></div><div class="ti-lbl">Buyer<br>Protection</div></div>
-      <div class="ti"><div class="ti-icon">↩️</div><div class="ti-lbl">Refund<br>Policy</div></div>
-      <div class="ti"><div class="ti-icon"><i class="fas fa-comment-dots"></i></div><div class="ti-lbl">24/7<br>Support</div></div>
-    </div>
+    <div class="escrow-note"><p><i class="fas fa-lock"></i> <strong>Escrow protected</strong> — your money is held safely until you confirm delivery.</p></div>
+    <div class="trust-row"><div class="ti"><div class="ti-icon"><i class="fas fa-shield-halved"></i></div><div class="ti-lbl">Buyer<br>Protection</div></div><div class="ti"><div class="ti-icon">↩️</div><div class="ti-lbl">Refund<br>Policy</div></div><div class="ti"><div class="ti-icon"><i class="fas fa-comment-dots"></i></div><div class="ti-lbl">24/7<br>Support</div></div></div>
   </div>
 
 </div>
@@ -543,7 +463,7 @@
 <script>
 /*
   ============================================================
-  checkout.html — TraydR CHECKOUT (Flutterwave only)
+  checkout.html — TraydR CHECKOUT (Flutterwave + pending order + webhook)
   ============================================================
 */
 const SUPABASE_URL  = 'https://rtwbrcbifnowrqpgivma.supabase.co';
@@ -551,22 +471,12 @@ const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
 
-/* ── State ── */
-let _sellerFeeRate = 0.08;
-async function fetchSellerFeeRate(sellerId) {
-  if (!sellerId || !window.DB) return 0.08;
-  try {
-    const { plan } = await DB.getPlan(sellerId);
-    _sellerFeeRate  = DB.getPlanFee(plan);
-  } catch(e) { _sellerFeeRate = 0.08; }
-  return _sellerFeeRate;
-}
-let checkout  = null;
-let user      = null;
+let checkout = null;
+let user = null;
 let currentStep = 1;
-let fwMethod  = 'card';
-
-let delivery  = {};
+let fwMethod = 'card';
+let delivery = {};
+let sellerFeeRate = 0.08;
 
 const $ = id => document.getElementById(id);
 const isEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
@@ -579,11 +489,23 @@ function applyAddr(id) {
 }
 function applyAddrObj(a) {
   if (!a) return;
-  $('d-name').value    = a.full_name || '';
-  $('d-phone').value   = a.phone || '';
+  $('d-name').value = a.full_name || '';
+  $('d-phone').value = a.phone || '';
   $('d-address').value = [a.address, a.city, a.state].filter(Boolean).join(', ');
   const sel = $('d-country');
   if (sel && a.country) sel.value = a.country;
+}
+
+async function updateSellerFee() {
+  if (!checkout || !checkout.seller_id) return;
+  try {
+    const { plan } = await DB.getPlan(checkout.seller_id);
+    sellerFeeRate = DB.getPlanFee(plan);
+    const feePercentSpan = document.getElementById('fee-percent');
+    if (feePercentSpan) feePercentSpan.textContent = (sellerFeeRate * 100).toFixed(0);
+    renderSummary();
+    renderReviewDetail();
+  } catch(e) { console.warn('Failed to fetch seller plan, using default 8%', e); }
 }
 
 async function init() {
@@ -594,7 +516,7 @@ async function init() {
   if (!raw) { showGlobalError('No order data found. Please go back and select a package.'); return; }
   checkout = JSON.parse(raw);
 
-  $('d-name').value  = user.user_metadata?.full_name || '';
+  $('d-name').value = user.user_metadata?.full_name || '';
   $('d-email').value = user.email || '';
 
   try {
@@ -614,50 +536,39 @@ async function init() {
     }
   } catch(e) {}
 
+  await updateSellerFee();
   renderSummary();
   renderReviewDetail();
 }
 
 function renderSummary() {
   const c = checkout;
-  const fee   = +(c.price * _sellerFeeRate).toFixed(2);
+  const fee = +(c.price * sellerFeeRate).toFixed(2);
   const total = +(c.price + fee).toFixed(2);
-
-  if (c.listing_image) {
-    $('sum-img').innerHTML = `<img src="${c.listing_image}" alt="" onerror="this.style.display='none'" style="width:100%;height:100%;object-fit:cover;display:block" />`;
-  }
-  $('sum-title').textContent    = c.listing_title;
-  $('sum-seller').textContent   = `by ${c.seller_name}`;
-  $('sum-pkg').textContent      = c.package_label;
-  $('sum-price').textContent    = `$${fmt(c.price)}`;
-  $('sum-fee').textContent      = `$${fmt(fee)}`;
+  if (c.listing_image) $('sum-img').innerHTML = `<img src="${c.listing_image}" alt="" onerror="this.style.display='none'" style="width:100%;height:100%;object-fit:cover;display:block" />`;
+  $('sum-title').textContent = c.listing_title;
+  $('sum-seller').textContent = `by ${c.seller_name}`;
+  $('sum-pkg').textContent = c.package_label;
+  $('sum-price').textContent = `$${fmt(c.price)}`;
+  $('sum-fee').textContent = `$${fmt(fee)}`;
   $('sum-delivery').textContent = `${c.delivery_days} day${c.delivery_days!==1?'s':''}`;
-  $('sum-total').textContent    = `$${fmt(total)}`;
-  $('confirm-price').textContent= fmt(total);
+  $('sum-total').textContent = `$${fmt(total)}`;
+  $('confirm-price').textContent = fmt(total);
 }
 
 function renderReviewDetail() {
   const c = checkout;
-  const fee   = +(c.price * _sellerFeeRate).toFixed(2);
+  const fee = +(c.price * sellerFeeRate).toFixed(2);
   const total = +(c.price + fee).toFixed(2);
   const catIcons = {physical:'<i class="fas fa-box"></i>',digital:'<i class="fas fa-floppy-disk"></i>',freelance:'<i class="fas fa-screwdriver-wrench"></i>',experience:'<i class="fas fa-graduation-cap"></i>'};
-
   $('review-detail').innerHTML = `
     <div style="display:flex;gap:1rem;padding-bottom:1rem;border-bottom:1px solid var(--border);margin-bottom:1rem">
-      <div style="width:80px;height:80px;border-radius:10px;overflow:hidden;background:var(--bg3);flex-shrink:0">
-        ${c.listing_image
-          ? `<img src="${c.listing_image}" alt="" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.style.display='none'" />`
-          : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem">${catIcons[c.category]||'<i class="fas fa-box"></i>'}</div>`}
-      </div>
-      <div style="flex:1;min-width:0">
-        <div style="font-weight:600;font-size:0.92rem;margin-bottom:0.25rem;line-height:1.35">${c.listing_title}</div>
-        <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.5rem">by ${c.seller_name}</div>
-        <div style="display:inline-flex;align-items:center;gap:0.3rem;background:var(--amber-dim);border:1px solid rgba(245,158,11,0.2);color:var(--amber);font-size:0.7rem;font-weight:600;padding:0.18rem 0.55rem;border-radius:100px">${c.package_label} Package</div>
-      </div>
+      <div style="width:80px;height:80px;border-radius:10px;overflow:hidden;background:var(--bg3);flex-shrink:0">${c.listing_image ? `<img src="${c.listing_image}" alt="" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.style.display='none'" />` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem">${catIcons[c.category]||'<i class="fas fa-box"></i>'}</div>`}</div>
+      <div style="flex:1;min-width:0"><div style="font-weight:600;font-size:0.92rem;margin-bottom:0.25rem;line-height:1.35">${c.listing_title}</div><div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.5rem">by ${c.seller_name}</div><div style="display:inline-flex;align-items:center;gap:0.3rem;background:var(--amber-dim);border:1px solid rgba(245,158,11,0.2);color:var(--amber);font-size:0.7rem;font-weight:600;padding:0.18rem 0.55rem;border-radius:100px">${c.package_label} Package</div></div>
     </div>
     <div style="display:flex;flex-direction:column;gap:0.55rem">
       <div style="display:flex;justify-content:space-between;font-size:0.83rem"><span style="color:var(--muted)">Package</span><span style="font-weight:500">$${fmt(c.price)}</span></div>
-      <div style="display:flex;justify-content:space-between;font-size:0.83rem"><span style="color:var(--muted)">Platform fee (8%)</span><span style="font-weight:500">$${fmt(fee)}</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:0.83rem"><span style="color:var(--muted)">Platform fee (${sellerFeeRate*100}%)</span><span style="font-weight:500">$${fmt(fee)}</span></div>
       <div style="display:flex;justify-content:space-between;font-size:0.83rem"><span style="color:var(--muted)">Delivery</span><span style="font-weight:500">${c.delivery_days} day${c.delivery_days!==1?'s':''}</span></div>
       <div style="height:1px;background:var(--border);margin:0.25rem 0"></div>
       <div style="display:flex;justify-content:space-between"><span style="font-weight:600">Total</span><span style="font-family:var(--serif);font-size:1.2rem;font-weight:700;color:var(--amber)">$${fmt(total)}</span></div>
@@ -666,13 +577,9 @@ function renderReviewDetail() {
 
 function renderConfirmDetail() {
   const c = checkout;
-  const fee   = +(c.price * _sellerFeeRate).toFixed(2);
+  const fee = +(c.price * sellerFeeRate).toFixed(2);
   const total = +(c.price + fee).toFixed(2);
-  const methodLabel = fwMethod === 'card'         ? `<i class="fas fa-credit-card"></i> Card (Flutterwave)`
-    : fwMethod === 'mobile_money' ? `<i class="fas fa-mobile-screen"></i> Mobile Money — ${$('fw-network').value||'—'}`
-    : fwMethod === 'bank_transfer'? `<i class="fas fa-building-columns"></i> Bank Transfer`
-    : `<i class="fas fa-mobile-screen"></i> USSD — ${$('fw-bank').value||'—'}`;
-
+  const methodLabel = fwMethod === 'card' ? `<i class="fas fa-credit-card"></i> Card (Flutterwave)` : fwMethod === 'mobile_money' ? `<i class="fas fa-mobile-screen"></i> Mobile Money — ${$('fw-network').value||'—'}` : fwMethod === 'bank_transfer' ? `<i class="fas fa-building-columns"></i> Bank Transfer` : `<i class="fas fa-mobile-screen"></i> USSD — ${$('fw-bank').value||'—'}`;
   $('confirm-detail').innerHTML = `
     <div style="display:flex;flex-direction:column;gap:0.7rem">
       <div style="display:flex;justify-content:space-between;font-size:0.83rem;padding:0.65rem 0.85rem;background:var(--bg3);border-radius:9px"><span style="color:var(--muted)">Item</span><span style="font-weight:500;max-width:200px;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.listing_title}</span></div>
@@ -689,35 +596,29 @@ function goStep(n) {
   document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
   const panels = ['step-review','step-payment','step-confirm','step-success'];
   $(panels[n-1])?.classList.add('active');
-
   [1,2,3].forEach(i => {
     const dot = $(`ps${i}`);
     dot.classList.remove('done','active');
-    if (i < n)      dot.classList.add('done');
-    else if (i===n) dot.classList.add('active');
+    if (i < n) dot.classList.add('done');
+    else if (i === n) dot.classList.add('active');
     if ($(`pl${i}`)) $(`pl${i}`).classList.toggle('done', i < n);
   });
-
   $('order-summary').style.display = n === 4 ? 'none' : '';
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
 $('step1-next').addEventListener('click', () => {
-  const name    = $('d-name').value.trim();
-  const email   = $('d-email').value.trim();
+  const name = $('d-name').value.trim();
+  const email = $('d-email').value.trim();
   const country = $('d-country').value;
   let ok = true;
-
   const fe = (id, show) => { $(id).classList.toggle('on', show); if(show) ok=false; };
-  fe('e-dname',    !name);
-  fe('e-demail',   !isEmail(email));
+  fe('e-dname', !name);
+  fe('e-demail', !isEmail(email));
   fe('e-dcountry', !country);
   $('step1-err').classList.remove('on');
-
   if (!ok) { showAlert('step1-err','Please fill in all required fields.'); return; }
-
   delivery = { name, email, country, phone: $('d-phone').value, address: $('d-address').value };
-
   goStep(2);
 });
 
@@ -732,21 +633,9 @@ $('fw-methods').addEventListener('click', e => {
 });
 
 const fwCard = $('fw-cardnum');
-if (fwCard) {
-  fwCard.addEventListener('input', function() {
-    let v = this.value.replace(/\D/g,'').slice(0,16);
-    this.value = v.match(/.{1,4}/g)?.join(' ') || v;
-  });
-}
-
+if (fwCard) fwCard.addEventListener('input', function() { let v = this.value.replace(/\D/g,'').slice(0,16); this.value = v.match(/.{1,4}/g)?.join(' ') || v; });
 const fwExp = $('fw-exp');
-if (fwExp) {
-  fwExp.addEventListener('input', function() {
-    let v = this.value.replace(/\D/g,'').slice(0,4);
-    if(v.length > 2) v = v.slice(0,2) + ' / ' + v.slice(2);
-    this.value = v;
-  });
-}
+if (fwExp) fwExp.addEventListener('input', function() { let v = this.value.replace(/\D/g,'').slice(0,4); if(v.length > 2) v = v.slice(0,2) + ' / ' + v.slice(2); this.value = v; });
 
 $('step2-next').addEventListener('click', () => {
   $('step2-err').classList.remove('on');
@@ -756,7 +645,7 @@ $('step2-next').addEventListener('click', () => {
   }
   if (fwMethod === 'mobile_money') {
     if (!$('fw-network').value) { showAlert('step2-err','Please select a network.'); return; }
-    if (!$('fw-phone').value)   { showAlert('step2-err','Please enter your phone number.'); return; }
+    if (!$('fw-phone').value) { showAlert('step2-err','Please enter your phone number.'); return; }
   }
   renderConfirmDetail();
   goStep(3);
@@ -767,63 +656,69 @@ $('place-order-btn').addEventListener('click', async () => {
   btn.classList.add('ld'); btn.disabled = true;
   $('step3-err').classList.remove('on');
 
-  const c       = checkout;
-  const feeRate = _sellerFeeRate;
-  const fee     = +(c.price * feeRate).toFixed(2);
-  const total   = +(c.price + fee).toFixed(2);
-  const payout  = +(c.price * (1 - feeRate)).toFixed(2);
+  const c = checkout;
+  const feeRate = sellerFeeRate;
+  const fee = +(c.price * feeRate).toFixed(2);
+  const total = +(c.price + fee).toFixed(2);
+  const payout = +(c.price * (1 - feeRate)).toFixed(2);
 
   if (!c.seller_id) { btn.classList.remove('ld'); btn.disabled = false; showAlert('step3-err','No seller assigned. Contact support.'); return; }
-  if (!user)         { btn.classList.remove('ld'); btn.disabled = false; showAlert('step3-err','Please log in first.'); return; }
+  if (!user) { btn.classList.remove('ld'); btn.disabled = false; showAlert('step3-err','Please log in first.'); return; }
   if (c.seller_id === user.id) { btn.classList.remove('ld'); btn.disabled = false; showAlert('step3-err','You cannot buy your own listing.'); return; }
 
   btn.querySelector('.lbl').textContent = 'Opening payment...';
 
   const checkoutData = {
-    buyer_id:      user.id,
-    seller_id:     c.seller_id,
-    listing_id:    c.listing_id,
+    buyer_id: user.id,
+    seller_id: c.seller_id,
+    listing_id: c.listing_id,
     listing_title: c.listing_title,
     listing_image: c.listing_image,
-    seller_name:   c.seller_name,
-    buyer_name:    delivery.name,
-    amount:        total,
-    platform_fee:  fee,
+    seller_name: c.seller_name,
+    buyer_name: delivery.name,
+    amount: total,
+    platform_fee: fee,
     seller_payout: payout,
     package_label: c.package_label,
+    delivery_days: c.delivery_days,
   };
-  sessionStorage.setItem('traydr_pending_checkout', JSON.stringify(checkoutData));
 
+  // Generate tx_ref (must start with "TRADDR-" for webhook)
   const tx_ref = 'TRADDR-' + Date.now() + '-' + Math.random().toString(36).slice(2,7).toUpperCase();
   sessionStorage.setItem('traydr_tx_ref', tx_ref);
 
-  const country  = delivery.country || 'NG';
-  const currency = country === 'GH' ? 'GHS' : country === 'KE' ? 'KES' : country === 'ZA' ? 'ZAR' : 'NGN';
+  // Insert pending order for webhook
+  const pendingOrderData = {
+    tx_ref: tx_ref,
+    buyer_id: user.id,
+    seller_id: c.seller_id,
+    listing_id: c.listing_id,
+    listing_title: c.listing_title,
+    listing_image: c.listing_image,
+    seller_name: c.seller_name,
+    buyer_name: delivery.name,
+    amount: total,
+    platform_fee: fee,
+    seller_payout: payout,
+    package_label: c.package_label,
+    delivery_days: c.delivery_days,
+  };
+  const { error: pendingError } = await sb.from('pending_orders').insert(pendingOrderData);
+  if (pendingError) console.error('Failed to create pending order:', pendingError);
 
-  const displayAmount = currency === 'NGN' && c.currency !== 'NGN'
-    ? total * 1600
-    : total;
+  const country = delivery.country || 'NG';
+  const currency = country === 'GH' ? 'GHS' : country === 'KE' ? 'KES' : country === 'ZA' ? 'ZAR' : 'NGN';
+  const displayAmount = (currency === 'NGN' && c.currency !== 'NGN') ? total * 1600 : total;
 
   try {
     window.FlutterwaveCheckout({
-      public_key:      'FLWPUBK-7e690677caf3199951323b1b832003ba-X',
+      public_key: 'FLWPUBK-7e690677caf3199951323b1b832003ba-X',
       tx_ref,
-      amount:          displayAmount,
+      amount: displayAmount,
       currency,
-      payment_options: currency === 'NGN'
-        ? 'card,banktransfer,ussd'
-        : currency === 'GHS' ? 'card,mobilemoneymomo'
-        : currency === 'KES' ? 'card,mpesa' : 'card',
-      customer: {
-        email:        user.email,
-        name:         delivery.name  || 'TraydR Buyer',
-        phone_number: delivery.phone || '',
-      },
-      customizations: {
-        title:       'TraydR Marketplace',
-        description: c.listing_title || 'Order Payment',
-        logo:        window.location.origin + '/logo.png',
-      },
+      payment_options: currency === 'NGN' ? 'card,banktransfer,ussd' : currency === 'GHS' ? 'card,mobilemoneymomo' : currency === 'KES' ? 'card,mpesa' : 'card',
+      customer: { email: user.email, name: delivery.name || 'TraydR Buyer', phone_number: delivery.phone || '' },
+      customizations: { title: 'TraydR Marketplace', description: c.listing_title || 'Order Payment', logo: window.location.origin + '/logo.png' },
       callback: async (response) => {
         if (response.status === 'successful' || response.status === 'completed') {
           await handlePaymentSuccess(response.transaction_id, tx_ref, checkoutData);
@@ -833,10 +728,7 @@ $('place-order-btn').addEventListener('click', async () => {
           showAlert('step3-err', 'Payment was not completed. Please try again.');
         }
       },
-      onclose: () => {
-        btn.classList.remove('ld'); btn.disabled = false;
-        btn.querySelector('.lbl').textContent = 'Place Order & Pay';
-      },
+      onclose: () => { btn.classList.remove('ld'); btn.disabled = false; btn.querySelector('.lbl').textContent = 'Place Order & Pay'; },
     });
   } catch(e) {
     btn.classList.remove('ld'); btn.disabled = false;
@@ -851,32 +743,21 @@ async function handlePaymentSuccess(transaction_id, tx_ref, checkoutData) {
 
   try {
     const controller = new AbortController();
-    const timeout    = setTimeout(() => controller.abort(), 20000);
-    const res = await fetch(
-      'https://rtwbrcbifnowrqpgivma.supabase.co/functions/v1/quick-api',
-      {
-        method : 'POST',
-        signal : controller.signal,
-        headers: {
-          'Content-Type' : 'application/json',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc',
-        },
-        body: JSON.stringify({
-          action:        'verify',
-          transaction_id,
-          tx_ref,
-          checkout_data: checkoutData,
-        }),
-      }
-    );
+    const timeout = setTimeout(() => controller.abort(), 20000);
+    const res = await fetch('https://rtwbrcbifnowrqpgivma.supabase.co/functions/v1/quick-api', {
+      method: 'POST',
+      signal: controller.signal,
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc' },
+      body: JSON.stringify({ action: 'verify', transaction_id, tx_ref, checkout_data: checkoutData }),
+    });
     clearTimeout(timeout);
     const data = await res.json();
     sessionStorage.removeItem('traydr_pending_checkout');
     sessionStorage.removeItem('traydr_tx_ref');
+    // Also delete pending order (if webhook didn't already)
+    await sb.from('pending_orders').delete().eq('tx_ref', tx_ref);
     goStep(4);
-    $('success-order-id').textContent = data.order_id
-      ? '#TRX-' + String(data.order_id).padStart(6,'0')
-      : '#TRX-' + tx_ref.slice(-6);
+    $('success-order-id').textContent = data.order_id ? '#TRX-' + String(data.order_id).padStart(6,'0') : '#TRX-' + tx_ref.slice(-6);
   } catch(e) {
     sessionStorage.removeItem('traydr_pending_checkout');
     sessionStorage.removeItem('traydr_tx_ref');
@@ -886,56 +767,26 @@ async function handlePaymentSuccess(transaction_id, tx_ref, checkoutData) {
 }
 
 (async () => {
-  const urlP           = new URLSearchParams(window.location.search);
+  const urlP = new URLSearchParams(window.location.search);
   if (urlP.get('status') === 'successful' || urlP.get('flw') === 'success') {
     const transaction_id = urlP.get('transaction_id');
-    const tx_ref         = urlP.get('tx_ref') || sessionStorage.getItem('traydr_tx_ref');
-    const checkoutData   = JSON.parse(sessionStorage.getItem('traydr_pending_checkout') || '{}');
+    const tx_ref = urlP.get('tx_ref') || sessionStorage.getItem('traydr_tx_ref');
+    const checkoutData = JSON.parse(sessionStorage.getItem('traydr_pending_checkout') || '{}');
     if (transaction_id && checkoutData.buyer_id) {
-      document.querySelector('.page') && (document.querySelector('.page').innerHTML =
-        '<div style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;text-align:center"><div style="font-size:2.5rem;color:var(--amber)"><i class="fas fa-spinner fa-spin"></i></div><h2 style="font-family:var(--serif);font-size:1.3rem;color:var(--text)">Verifying payment...</h2><p style="color:var(--muted);font-size:0.88rem">Please wait</p></div>');
+      document.querySelector('.page') && (document.querySelector('.page').innerHTML = '<div style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;text-align:center"><div style="font-size:2.5rem;color:var(--amber)"><i class="fas fa-spinner fa-spin"></i></div><h2 style="font-family:var(--serif);font-size:1.3rem;color:var(--text)">Verifying payment...</h2><p style="color:var(--muted);font-size:0.88rem">Please wait</p></div>');
       await handlePaymentSuccess(transaction_id, tx_ref, checkoutData);
     }
   }
 })();
 
-function showAlert(id, msg) {
-  const el = $(id); el.classList.add('on');
-  el.querySelectorAll('span')[1].textContent = msg;
-}
-function showGlobalError(msg) {
-  document.querySelector('.page').innerHTML = `
-    <div style="grid-column:1/-1;text-align:center;padding:4rem 1rem">
-      <div style="font-size:3rem;margin-bottom:1rem"><i class="fas fa-triangle-exclamation"></i></div>
-      <h2 style="font-family:var(--serif);font-size:1.4rem;margin-bottom:0.75rem">Something went wrong</h2>
-      <p style="color:var(--muted);margin-bottom:1.5rem">${msg}</p>
-      <button onclick="history.back()" style="background:var(--amber);border:none;color:#0a0a0a;padding:0.75rem 2rem;border-radius:9px;font-size:0.9rem;font-weight:700;cursor:pointer">← Go Back</button>
-    </div>`;
-}
+function showAlert(id, msg) { const el = $(id); el.classList.add('on'); el.querySelectorAll('span')[1].textContent = msg; }
+function showGlobalError(msg) { document.querySelector('.page').innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:4rem 1rem"><div style="font-size:3rem;margin-bottom:1rem"><i class="fas fa-triangle-exclamation"></i></div><h2 style="font-family:var(--serif);font-size:1.4rem;margin-bottom:0.75rem">Something went wrong</h2><p style="color:var(--muted);margin-bottom:1.5rem">${msg}</p><button onclick="history.back()" style="background:var(--amber);border:none;color:#0a0a0a;padding:0.75rem 2rem;border-radius:9px;font-size:0.9rem;font-weight:700;cursor:pointer">← Go Back</button></div>`; }
 
 init();
 </script>
 <script>
-  (function() {
-    var t = localStorage.getItem('traydr_theme') || 'light';
-    document.documentElement.setAttribute('data-theme', t);
-  })();
-  function toggleTheme() {
-    var cur  = document.documentElement.getAttribute('data-theme') || 'light';
-    var next = cur === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem('traydr_theme', next);
-    var tog   = document.getElementById('dark-mode-toggle');
-    var thumb = document.getElementById('dark-mode-thumb');
-    if (tog)   tog.checked = next === 'dark';
-    if (thumb) thumb.style.transform = next === 'dark' ? 'translateX(20px)' : 'translateX(0)';
-  }
-  document.addEventListener('DOMContentLoaded', function() {
-    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    var tog    = document.getElementById('dark-mode-toggle');
-    var thumb  = document.getElementById('dark-mode-thumb');
-    if (tog)   tog.checked = isDark;
-    if (thumb) thumb.style.transform = isDark ? 'translateX(20px)' : 'translateX(0)';
-  });</script>
+  (function() { var t = localStorage.getItem('traydr_theme') || 'light'; document.documentElement.setAttribute('data-theme', t); })();
+  function toggleTheme() { var cur = document.documentElement.getAttribute('data-theme') || 'light'; var next = cur === 'dark' ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', next); localStorage.setItem('traydr_theme', next); var tog = document.getElementById('dark-mode-toggle'); var thumb = document.getElementById('dark-mode-thumb'); if (tog) tog.checked = next === 'dark'; if (thumb) thumb.style.transform = next === 'dark' ? 'translateX(20px)' : 'translateX(0)'; }
+  document.addEventListener('DOMContentLoaded', function() { var isDark = document.documentElement.getAttribute('data-theme') === 'dark'; var tog = document.getElementById('dark-mode-toggle'); var thumb = document.getElementById('dark-mode-thumb'); if (tog) tog.checked = isDark; if (thumb) thumb.style.transform = isDark ? 'translateX(20px)' : 'translateX(0)'; });</script>
 </body>
 </html>

@@ -24,6 +24,7 @@
   <script src="auth.guard.js"></script>
   <script src="auth.backend.js"></script>
   <script src="listings.js"></script>
+  <script src="dashboard.backend.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -129,6 +130,19 @@
     .chip { display: flex; align-items: center; gap: 0.35rem; background: var(--amber-dim); border: 1px solid rgba(245,158,11,0.25); color: var(--amber); padding: 0.25rem 0.65rem; border-radius: 100px; font-size: 0.76rem; font-weight: 500; }
     .chip button { background: none; border: none; color: var(--amber); font-size: 0.8rem; padding: 0; line-height: 1; cursor: pointer; opacity: 0.7; }
     .chip button:hover { opacity: 1; }
+
+    /* Plan indicator banner */
+    .current-plan-banner {
+      background: var(--amber-dim);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.8rem 1.2rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      font-size: 0.85rem;
+    }
+    .current-plan-banner strong { color: var(--amber); }
+    .upgrade-link { color: var(--amber); font-weight: 600; margin-left: 0.5rem; text-decoration: underline; cursor: pointer; }
 
     /* ══ GRID ══ */
     #grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
@@ -460,6 +474,9 @@
   <!-- MAIN -->
   <main id="main">
 
+    <!-- Plan indicator banner -->
+    <div id="plan-indicator" class="current-plan-banner" style="display:none"></div>
+
     <div class="top-bar">
       <div class="result-info">
         <h1 id="page-title">All Listings</h1>
@@ -523,6 +540,29 @@ let searchTimer = null;
 
 const $ = id => document.getElementById(id);
 const CAT_NAMES = { all:'All Listings', physical:'Physical Goods', digital:'Digital Products', freelance:'Freelance Skills', experience:'Experiences' };
+
+/* ── Plan indicator ── */
+async function showPlanIndicator() {
+  if (!window.DB) return;
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const planData = await DB.getPlan(user.id);
+    const plan = planData.plan || 'free';
+    let trialText = '';
+    if (planData.isTrialActive) {
+      trialText = ` <span style="color:var(--success)">(Trial – ${planData.daysLeft} days left)</span>`;
+    }
+    const planName = plan.charAt(0).toUpperCase() + plan.slice(1);
+    let upgradeHtml = '';
+    if (plan === 'free') {
+      upgradeHtml = `<span class="upgrade-link" onclick="window.location.href='pricing.html'">Upgrade now →</span>`;
+    }
+    const banner = document.getElementById('plan-indicator');
+    banner.style.display = 'block';
+    banner.innerHTML = `<i class="fas fa-info-circle"></i> Your current plan: <strong>${planName}</strong>${trialText} ${upgradeHtml}`;
+  } catch(e) { console.warn('Plan indicator error:', e); }
+}
 
 /* ── Skeletons ── */
 function showSkeletons(n = 6) {
@@ -857,6 +897,7 @@ async function loadSaved() {
     });
   }
   render();
+  showPlanIndicator();
 })();
 </script>
 <script>
