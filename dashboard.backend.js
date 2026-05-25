@@ -82,7 +82,6 @@ window.DB = {
     const { error } = await _dbSb.storage.from('listings').upload(path, file, { upsert: true });
     if (error) return { url: null, error };
     const { data: { publicUrl } } = _dbSb.storage.from('listings').getPublicUrl(path);
-    /* Save avatar_url to users table */
     await _dbSb.from('users').update({ avatar_url: publicUrl }).eq('id', userId);
     return { url: publicUrl, error: null };
   },
@@ -98,7 +97,6 @@ window.DB = {
 
   /* ══ ORDERS ══ */
   getSellerOrders: async (userId) => {
-    /* Exclude 'pending' — these are unpaid, payment not completed yet */
     const { data, error } = await _dbSb.from('orders').select('*')
       .eq('seller_id', userId)
       .neq('status', 'pending')
@@ -106,7 +104,6 @@ window.DB = {
     return { data: data || [], error };
   },
   getBuyerOrders: async (userId) => {
-    /* Exclude 'pending' — buyer shouldn't see unpaid ghost orders */
     const { data, error } = await _dbSb.from('orders').select('*')
       .eq('buyer_id', userId)
       .neq('status', 'pending')
@@ -117,13 +114,11 @@ window.DB = {
     const { data, error } = await _dbSb.from('orders').insert(payload).select().single();
     if (!error && data) {
       const orderRef = `#TRX-${String(data.id).padStart(6,'0')}`;
-      /* notify seller in-app */
       await DB.createNotification(
         data.seller_id, 'order_placed', 'New Order Received <i class="fas fa-shopping-cart"></i>',
         `${data.buyer_name} ordered "${data.listing_title}" — ${orderRef}`,
         'dashboard-seller.html'
       );
-      /* email seller */
       const { data: seller } = await _dbSb.from('users').select('email,full_name').eq('id', data.seller_id).single();
       if (seller) {
         await DB.sendEmail('order_placed', seller.email, {
@@ -134,7 +129,6 @@ window.DB = {
           link: `${window.location.origin}/dashboard-seller.html`,
         });
       }
-      /* email buyer confirmation */
       const { data: buyer } = await _dbSb.from('users').select('email,full_name').eq('id', data.buyer_id).single();
       if (buyer) {
         await DB.sendEmail('order_confirmed_buyer', buyer.email, {
@@ -155,7 +149,6 @@ window.DB = {
     if (!error && order) {
       const orderRef = `#TRX-${String(orderId).padStart(6,'0')}`;
       if (status === 'delivered') {
-        /* seller marked delivered — notify buyer */
         await DB.createNotification(order.buyer_id, 'order_delivered',
           'Delivery Update <i class="fas fa-box"></i>', `"${order.listing_title}" has been marked as delivered. Please confirm receipt.`,
           'dashboard-buyer.html');
@@ -167,7 +160,6 @@ window.DB = {
         });
       }
       if (status === 'complete') {
-        /* buyer confirmed — notify seller payout released */
         await DB.createNotification(order.seller_id, 'order_delivered',
           'Payment Released <i class="fas fa-sack-dollar"></i>', `${order.buyer_name} confirmed delivery of "${order.listing_title}". Your payout is queued.`,
           'dashboard-seller.html');
@@ -217,7 +209,7 @@ window.DB = {
         last_at: msgs?.[0]?.created_at, unread: unread || 0,
       };
     }));
-    return { data: convs, error: null }; /* show all orders, not just ones with messages */
+    return { data: convs, error: null };
   },
   getMessages: async (orderId) => {
     const { data, error } = await _dbSb.from('messages').select('*')
@@ -229,14 +221,12 @@ window.DB = {
       .insert({ order_id: orderId, sender_id: senderId, receiver_id: receiverId, content })
       .select().single();
     if (!error) {
-      /* in-app notification */
       const { data: sender } = await _dbSb.from('users').select('full_name').eq('id', senderId).single();
       const { data: order }  = await _dbSb.from('orders').select('listing_title').eq('id', orderId).single();
       await DB.createNotification(receiverId, 'message',
         `New message from ${sender?.full_name||'User'}`,
         content.slice(0, 80) + (content.length > 80 ? '…' : ''),
         'dashboard-buyer.html');
-      /* email — only if receiver hasn't been active recently (basic throttle) */
       const { data: receiver } = await _dbSb.from('users').select('email,full_name').eq('id', receiverId).single();
       if (receiver) {
         await DB.sendEmail('new_message', receiver.email, {
@@ -265,7 +255,6 @@ window.DB = {
       .insert({ order_id: orderId, listing_id: listingId, reviewer_id: reviewerId, reviewee_id: revieweeId, rating, comment })
       .select().single();
     if (!error) {
-      /* Update listing avg rating */
       const { data: allRevs } = await _dbSb.from('reviews')
         .select('rating').eq('listing_id', listingId);
       if (allRevs?.length) {
@@ -275,10 +264,8 @@ window.DB = {
           review_count: allRevs.length,
         }).eq('id', listingId);
       }
-      /* Also mark order as reviewed so buyer can't double review */
       await _dbSb.from('orders').update({ reviewed: true }).eq('id', orderId);
 
-      /* get listing + seller info for notification */
       const { data: listing } = await _dbSb.from('listings').select('title').eq('id', listingId).single();
       const { data: reviewer } = await _dbSb.from('users').select('full_name').eq('id', reviewerId).single();
       const { data: seller }   = await _dbSb.from('users').select('email,full_name').eq('id', revieweeId).single();
@@ -365,27 +352,29 @@ window.DB = {
 
   /* ══ SUBSCRIPTION / PLAN ══ */
   getPlan: async (userId) => {
+    // Try to get plan from 'plan' column, fallback to 'plan_type' for compatibility
     const { data } = await _dbSb.from('users')
-      .select('plan, trial_started, plan_expires')
+      .select('plan, plan_type, trial_started, plan_expires')
       .eq('id', userId).single();
     if (!data) return { plan: 'free', isTrialActive: false, daysLeft: 0 };
-    const plan     = data.plan || 'free';
-    const expires  = data.plan_expires ? new Date(data.plan_expires) : null;
-    const now      = new Date();
-    const expired  = expires && expires < now;
-    /* Auto-downgrade expired trials */
+    let plan = data.plan || data.plan_type || 'free';
+    const expires = data.plan_expires ? new Date(data.plan_expires) : null;
+    const now = new Date();
+    const expired = expires && expires < now;
     if (expired && plan !== 'free') {
-      await _dbSb.from('users').update({ plan: 'free', plan_expires: null }).eq('id', userId);
+      await _dbSb.from('users').update({ plan: 'free', plan_expires: null, plan_type: 'free' }).eq('id', userId);
       return { plan: 'free', isTrialActive: false, daysLeft: 0 };
     }
     const daysLeft = expires ? Math.max(0, Math.ceil((expires - now) / 86400000)) : 0;
-    return { plan, isTrialActive: plan === 'pro' && !!data.trial_started && !expired, daysLeft };
+    const isTrialActive = plan === 'pro' && !!data.trial_started && !expired;
+    return { plan, isTrialActive, daysLeft };
   },
 
   startTrial: async (userId) => {
     const trialEnd = new Date(Date.now() + 14 * 86400000).toISOString();
     const { error } = await _dbSb.from('users').update({
       plan:          'pro',
+      plan_type:     'pro',
       trial_started: new Date().toISOString(),
       plan_expires:  trialEnd,
     }).eq('id', userId);
@@ -399,7 +388,6 @@ window.DB = {
   canCreateListing: async (userId) => {
     const { plan } = await DB.getPlan(userId);
     if (plan !== 'free') return { allowed: true, reason: '' };
-    /* Free plan: max 5 listings */
     const { count } = await _dbSb.from('listings')
       .select('*', { count: 'exact', head: true })
       .eq('seller_id', userId)
@@ -411,7 +399,6 @@ window.DB = {
   },
 
   savePayoutMethod: async (userId, method, account) => {
-    /* Update user profile with payout info */
     const { error } = await _dbSb.from('users')
       .update({
         payout_method:  method,
@@ -548,7 +535,6 @@ window.DB = {
       ]);
       const {data:revenue}=await _dbSb.from('orders').select('amount,created_at').eq('status','complete');
       const totalRevenue=(revenue||[]).reduce((s,o)=>s+Number(o.amount),0);
-      /* real chart — group by month */
       const chart={};
       for(let i=6;i>=0;i--){const d=new Date();d.setMonth(d.getMonth()-i);chart[d.toLocaleDateString('en-GB',{month:'short'})]=0;}
       (revenue||[]).forEach(o=>{const k=new Date(o.created_at).toLocaleDateString('en-GB',{month:'short'});if(chart[k]!==undefined)chart[k]+=Number(o.amount);});
@@ -595,7 +581,6 @@ window.DB = {
         .eq('id',id).single();
       await _dbSb.from('disputes').update({status,resolution,resolved_at:new Date().toISOString()}).eq('id',id);
       if (dispute?.order_id) {
-        /* Winner gets funds — update order status + payout flag */
         const finalStatus = winner === 'buyer' ? 'refunded' : 'complete';
         await _dbSb.from('orders').update({
           status:     finalStatus,
@@ -603,7 +588,6 @@ window.DB = {
         }).eq('id', dispute.order_id);
       }
       const orderRef=`#TRX-${String(dispute?.order_id||0).padStart(6,'0')}`;
-      /* notify + email both parties */
       if (dispute?.buyer_id) {
         await DB.createNotification(dispute.buyer_id,'dispute','Dispute Resolved <i class="fas fa-circle-check"></i>',`Resolution: ${resolution}`,'dashboard-buyer.html');
         if (dispute?.buyer?.email) await DB.sendEmail('dispute_resolved',dispute.buyer.email,{
@@ -625,7 +609,6 @@ window.DB = {
     updateUserStatus: async (userId, updates) => {
       const {error}=await _dbSb.from('users').update(updates).eq('id',userId);
       if (!error && 'verified' in updates) {
-        /* Also update seller_verified on all their listings */
         await _dbSb.from('listings')
           .update({ seller_verified: updates.verified })
           .eq('seller_id', userId);

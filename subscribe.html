@@ -96,12 +96,10 @@
 </div>
 
 <script>
-  // Initialize Supabase client
   const supabaseUrl = 'https://rtwbrcbifnowrqpgivma.supabase.co';
   const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d2JyY2JpZm5vd3JxcGdpdm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MjQwODUsImV4cCI6MjA4OTUwMDA4NX0.v_jTy9b0hi1I8X8FtSSnWlMty_D60FvnMiiKikdIGgc';
   const sb = supabase.createClient(supabaseUrl, supabaseAnonKey);
 
-  // Get plan from URL
   const urlParams = new URLSearchParams(window.location.search);
   const plan = urlParams.get('plan') || 'pro';
   const period = urlParams.get('period') || 'monthly';
@@ -130,13 +128,11 @@
     }
 
     statusDiv.innerHTML = 'Opening secure payment form...';
-
     const authAmount = plan === 'pro' ? 0.5 : 1.0;
-    // tx_ref MUST start with "SUB-" for the webhook to recognise subscription
     const tx_ref = 'SUB-' + user.id + '-' + Date.now();
 
     FlutterwaveCheckout({
-      public_key: 'FLWPUBK_TEST-33416ff627c0b774941dee0bb4e97470-X',
+      public_key: 'FLWPUBK-a806227bbbe1fb41f06d6d96014497e3-X',
       tx_ref,
       amount: authAmount,
       currency: 'USD',
@@ -164,19 +160,27 @@
           const tokenData = await tokenRes.json();
           if (!tokenData.token) throw new Error('No token returned');
 
-          const subRes = await fetch('https://rtwbrcbifnowrqpgivma.supabase.co/functions/v1/smooth-service', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              user_id: user.id,
-              email: user.email,
-              plan: plan,
-              billing_period: period,
-              card_token: tokenData.token,
+          // Direct database update
+          const trialEnd = new Date(Date.now() + 14 * 86400000).toISOString();
+          const { error: updateError } = await sb
+            .from('users')
+            .update({
+              flutterwave_token: tokenData.token,
+              subscription_status: 'trialing',
+              trial_ends_at: trialEnd,
+              plan_type: plan,
             })
+            .eq('id', user.id);
+
+          if (updateError) throw updateError;
+
+          // Optional: record subscription
+          await sb.from('subscriptions').insert({
+            user_id: user.id,
+            plan: `${plan}_${period}`,
+            status: 'trialing',
+            flutterwave_token: tokenData.token,
           });
-          const subResult = await subRes.json();
-          if (subResult.error) throw new Error(subResult.error);
 
           statusDiv.innerHTML = '<span class="success">✓ Trial activated! Redirecting to dashboard...</span>';
           setTimeout(() => {
